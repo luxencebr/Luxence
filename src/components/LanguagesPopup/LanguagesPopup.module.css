@@ -1,0 +1,82 @@
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  color: var(--contrast-color);
+}
+
+.trigger img {
+  height: 24px;
+}
+
+.popup {
+  background: var(--background-color);
+  padding: 16px;
+
+  border-radius: 16px;
+  box-shadow: 0 0 8px black;
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 8px;
+
+  color: var(--contrast-color);
+}
+
+.popupHeader {
+  margin-bottom: 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+
+  font-size: 20px;
+}
+
+.closeButton {
+  background: transparent;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+
+  border: none;
+
+  display: flex;
+  align-items: center;
+
+  color: var(--contrast-color);
+  font-size: 20px;
+
+  cursor: pointer;
+}
+
+.languageOption {
+  background: transparent;
+  padding: 8px;
+
+  border: none;
+  box-shadow: 0 0 0 1px var(--contrast-color);
+  border-radius: 8px;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  color: var(--contrast-color);
+  font-family: Quicksand;
+  text-align: left;
+  cursor: pointer;
+}
+
+.flagProp {
+  height: 32px;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.langLabel {
+  display: flex;
+  flex-flow: column nowrap;
+}

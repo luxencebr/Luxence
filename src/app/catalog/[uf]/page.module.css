@@ -1,0 +1,124 @@
+.catalogPage {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.layout {
+  padding: 16px;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.genderSelector {
+  width: 100%;
+  display: flex;
+  gap: 16px;
+  position: relative;
+}
+
+.highlight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-bottom: 2px solid var(--primary-color);
+  transition: transform 0.3s ease;
+  z-index: 0;
+}
+
+.genderButton {
+  background: transparent;
+  flex: 1;
+  padding: 12px;
+
+  border: none;
+  border-radius: 8px;
+
+  color: var(--contrast-color);
+  font-size: 20px;
+  font-family: Quicksand;
+
+  cursor: pointer;
+
+  transition: all 0.2s;
+  position: relative;
+  z-index: 1;
+}
+
+.welcomeText {
+  margin: 24px 0;
+
+  color: var(--contrast-color);
+}
+
+.welcomeText p {
+  margin: 0;
+  padding: 0;
+  font-size: 32px;
+}
+
+.gender {
+  border-bottom: 1.5px solid var(--primary-color);
+}
+
+.uf {
+  color: var(--primary-color);
+  text-transform: uppercase;
+}
+
+.productsOptions {
+  display: flex;
+  gap: 8px;
+}
+
+.orderTrigger {
+  background: var(--background-complementary-color);
+  width: 128px;
+  padding: 8px;
+
+  border-radius: 8px;
+
+  color: var(--contrast-color);
+  font-size: 20px;
+
+  cursor: pointer;
+}
+
+.orderTrigger span {
+  display: none;
+}
+
+.orderTrigger span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.orderMenu {
+  background: var(--background-complementary-color);
+
+  border-radius: 8px;
+  box-shadow: 0 0 8px black;
+
+  color: var(--contrast-color);
+}
+
+.orderMenu button {
+  background: transparent;
+
+  border: none;
+
+  color: var(--contrast-color);
+  font-size: 16px;
+  font-family: Quicksand;
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.orderMenu button:hover {
+  opacity: 0.75;
+}

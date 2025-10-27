@@ -1,0 +1,44 @@
+.valueTrigger {
+  padding: 8px;
+  margin: 8px 0;
+
+  border-radius: 8px;
+  box-shadow: 0 0 0 1px var(--contrast-color);
+
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+
+  font-weight: bold;
+}
+
+.triggerText {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.triggerText span {
+  font-size: 12px;
+  font-weight: normal;
+}
+
+.valueMenu {
+  background: var(--background-color);
+
+  border-radius: 8px;
+  box-shadow: 0 0 8px black;
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 4px;
+}
+
+.valueItem {
+  width: 100%;
+
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+
+  font-size: 14px;
+}

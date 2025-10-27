@@ -1,0 +1,46 @@
+@import "../../../styles/variables.css";
+
+.controls {
+  width: 100%;
+
+  display: flex;
+  justify-content: space-between;
+
+  position: absolute;
+}
+
+.controls button {
+  background: transparent;
+  height: 160px;
+  width: 8%;
+
+  border: none;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 2;
+
+  color: var(--contrast-color);
+  font-size: 24px;
+
+  cursor: pointer;
+
+  transition: opacity 0.25s;
+}
+
+.scrollButtonLeft:disabled,
+.scrollButtonRight:disabled {
+  visibility: hidden;
+  cursor: default;
+
+  transition: opacity 0.25s;
+}
+
+@media (max-width: 768px) {
+  .controls {
+    display: none;
+  }
+}

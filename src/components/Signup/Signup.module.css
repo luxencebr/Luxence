@@ -1,0 +1,205 @@
+.trigger {
+  color: var(--primary-color);
+  font-size: 20px;
+}
+
+.trigger:hover {
+  text-decoration: underline;
+}
+
+.formHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.closeButton {
+  background: transparent;
+
+  border: none;
+
+  color: var(--contrast-color);
+  font-size: 20px;
+
+  cursor: pointer;
+}
+
+.closeButton:hover {
+  opacity: 0.75;
+}
+
+.formContent {
+  background-color: var(--background-complementary-color);
+  padding: 16px;
+
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0, 0, 0);
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 8px;
+
+  color: var(--contrast-color);
+}
+
+.form {
+  position: relative;
+}
+
+.fieldsets {
+  position: relative;
+
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.fieldsets::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  height: 90%;
+  background-color: var(--contrast-complementary-color);
+  transform: translate(-50%, -50%);
+}
+
+.fieldsets fieldset {
+  flex: 1;
+  padding: 0;
+  margin: 0;
+
+  border: none;
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 12px;
+}
+
+.form label {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 4px;
+}
+
+.form label input {
+  background: var(--background-color);
+  padding: 8px 12px;
+
+  border: none;
+  border-radius: 4px;
+  outline: none;
+
+  color: var(--contrast-color);
+}
+
+.passwordWrapper {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.showPasswordBtn {
+  background: none;
+  border: none;
+  color: var(--contrast-color);
+  cursor: pointer;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px var(--background-color) inset !important;
+  -webkit-text-fill-color: var(--contrast-color) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.genderGroup input[type="radio"],
+.genderGroup input[type="checkbox"] {
+  display: none;
+}
+
+.genderGroup input[type="radio"]:checked + span,
+.genderGroup input[type="checkbox"]:checked + span {
+  color: var(--primary-color);
+}
+
+.genderGroup {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-around;
+  gap: 8px;
+}
+
+.genderGroup label {
+  cursor: pointer;
+}
+
+.genderGroup label span {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.genderGroup label span i {
+  font-size: 32px;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+
+.buttonGroup button {
+  flex: 1;
+
+  margin-top: 12px;
+  padding: 8px;
+
+  border: none;
+  border-radius: 4px;
+  box-shadow: 0 0 4px black;
+
+  color: var(--background-color);
+  font-size: 16px;
+  font-family: Quicksand;
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+.client {
+  background-color: var(--primary-color);
+}
+
+.advertiser {
+}
+
+.errors {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 8px;
+}
+
+.error {
+  background: var(--contrast-color);
+  width: 300px;
+  padding: 12px;
+
+  overflow: hidden;
+  border-radius: 4px;
+
+  color: var(--background-color);
+  font-size: 12px;
+  font-weight: bold;
+  text-align: justify;
+  hyphens: auto;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}

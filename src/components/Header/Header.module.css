@@ -1,0 +1,214 @@
+@import "../../styles/variables.css";
+
+.header {
+  height: 10vh;
+  width: 100%;
+
+  box-shadow: 0 0 4px black;
+
+  display: flex;
+  justify-content: center;
+}
+
+.layout {
+  height: 100%;
+  width: 100%;
+  max-width: 960px;
+  padding-inline: 16px;
+
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo {
+  height: 40px;
+  aspect-ratio: 1 / 1;
+
+  cursor: pointer;
+}
+
+.news {
+  background: var(--primary-color);
+  padding: 8px;
+
+  border-radius: 4px;
+
+  color: var(--background-color);
+  font-size: 16px;
+  text-decoration: none;
+
+  animation: blink-bg 1s infinite;
+}
+
+@keyframes blink-bg {
+  0% {
+    background: var(--primary-color);
+  }
+  100% {
+    background: var(--contrast-color);
+  }
+}
+
+.headerButtons {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.logInTrigger {
+  font-size: 20px;
+  text-decoration: none;
+}
+
+.logInTrigger {
+  color: var(--contrast-color);
+}
+
+.logInTrigger:hover,
+.signUpTrigger:hover {
+  text-decoration: underline;
+}
+
+.mobileRight {
+  display: none;
+  gap: 16px;
+}
+
+.hamburgerButton {
+  display: flex;
+  background: transparent;
+  border: none;
+  color: var(--contrast-color);
+  font-size: 32px;
+  cursor: pointer;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobileMenu {
+  position: fixed;
+  top: 10vh;
+  right: -100%;
+  width: 280px;
+  background: var(--background-color);
+  box-shadow: 0 0 8px rgba(0, 0, 0);
+  transition: right 0.25s ease-in-out;
+  z-index: 1000;
+  display: none;
+  border-radius: 8px;
+}
+
+.mobileMenuOpen {
+  right: 0;
+}
+
+.mobileMenuContent {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.mobileNews {
+  background: var(--primary-color);
+  padding: 12px;
+  border-radius: 4px;
+  color: var(--background-color);
+  font-size: 18px;
+  text-decoration: none;
+  text-align: center;
+  animation: blink-bg 1s infinite;
+}
+
+.mobileAuthButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mobileLogInTrigger {
+  font-size: 20px;
+  text-decoration: none;
+  color: var(--contrast-color);
+  border-radius: 4px;
+}
+
+.mobileLogInTrigger:hover {
+  text-decoration: underline;
+}
+
+.overlay {
+  display: none;
+  position: fixed;
+  top: 10vh;
+  left: 0;
+  width: 100%;
+  height: 90vh;
+  z-index: 999;
+  backdrop-filter: blur(4px);
+}
+
+@media (max-width: 768px) {
+  .header {
+    height: 7.5vh;
+  }
+
+  .news {
+    display: none;
+  }
+
+  .headerButtons {
+    display: none;
+  }
+
+  .mobileRight {
+    display: flex;
+  }
+
+  .mobileMenu {
+    top: 7.5vh;
+    display: block;
+  }
+
+  .overlay {
+    top: 7.5vh;
+    display: block;
+  }
+
+  .left {
+    gap: 6px;
+  }
+
+  .logo {
+    height: 32px;
+  }
+
+  .trigger img {
+    height: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .left {
+    gap: 4px;
+  }
+
+  .logo {
+    height: 28px;
+  }
+
+  .mobileMenu {
+    width: 240px;
+  }
+}

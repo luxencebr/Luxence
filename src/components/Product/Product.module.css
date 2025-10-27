@@ -1,0 +1,173 @@
+.product {
+  background: var(--background-complementary-color);
+
+  border: 2px solid transparent;
+  border-radius: 12px;
+  box-shadow: 0 0 8px black;
+  overflow: hidden;
+
+  flex-shrink: 0;
+  display: flex;
+
+  position: relative;
+
+  cursor: pointer;
+
+  transition: 0.25s ease-in-out;
+}
+
+.product.row,
+.product.highlight {
+  height: 100%;
+  aspect-ratio: 3 / 4;
+
+  border: 2px solid transparent;
+  box-shadow: none;
+}
+
+.product.highlight {
+  height: 300px;
+}
+
+.product.row {
+  height: 220px;
+}
+
+.product:hover {
+  border: 2px solid var(--contrast-color);
+
+  transition: 0.25s ease;
+}
+
+.productLink {
+  text-decoration: none;
+}
+
+.producerImage {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+
+  object-fit: cover;
+  object-position: top;
+}
+
+.producerImage.row .producerImage.highlight {
+  object-position: center;
+}
+
+.itemInfo {
+  padding: 16px;
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 8px;
+
+  color: var(--contrast-color);
+}
+
+.infoHeader {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.producerName {
+  padding: 0;
+  margin: 0;
+
+  font-size: 16px;
+}
+
+.productLoc.hidden {
+  display: none;
+}
+
+.productLoc {
+  opacity: 0.75;
+
+  font-size: 12px;
+}
+
+.productSlogan.hidden {
+  display: none;
+}
+
+.productSlogan {
+  opacity: 0.75;
+
+  font-size: 12px;
+
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+.product.row:hover,
+.product.highlight:hover {
+  border: 2px solid var(--contrast-color);
+}
+
+.product.row .producerImage,
+.product.highlight .producerImage {
+  background: var(--background-complementary-color);
+  height: 100%;
+}
+
+.product.row .itemInfo,
+.product.highlight .itemInfo {
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(4px);
+  width: 100%;
+
+  position: absolute;
+  transform: translateY(-100%);
+}
+
+.infoContent.hidden {
+  display: none;
+}
+
+.infoContent {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 2px;
+}
+
+.rating {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 4px;
+
+  text-decoration: underline;
+}
+
+.rating span {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+
+  font-size: 16px;
+}
+
+.defaultInfo {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 4px;
+
+  opacity: 0.75;
+
+  text-align: justify;
+  hyphens: auto;
+  word-wrap: break-word;
+
+  font-size: 12px;
+}
+
+.defaultInfo span {
+  display: flex;
+  align-items: center;
+
+  font-size: 16px;
+}

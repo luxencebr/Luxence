@@ -1,0 +1,28 @@
+@import "../styles/variables.css";
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+*:focus {
+  outline: none;
+}
+
+body {
+  background: var(--background-color);
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+
+  font-family: Quicksand;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+}

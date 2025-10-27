@@ -1,0 +1,30 @@
+.layout {
+  height: 100%;
+}
+
+.noResults {
+  height: 90vh;
+
+  color: var(--contrast-color);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.allProducersList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  justify-items: center;
+  gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .allProducersList {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}

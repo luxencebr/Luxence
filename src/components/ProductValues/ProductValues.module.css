@@ -1,0 +1,113 @@
+.producerValues {
+  background: var(--background-complementary-color);
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+
+  border-radius: 16px;
+
+  color: var(--contrast-color);
+}
+
+.layout {
+  padding: 16px;
+
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.header {
+  width: 100%;
+
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.layout h2 {
+  margin: 0;
+
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 4px;
+
+  font-size: 16px;
+  text-align: left;
+}
+
+.header h2 {
+  font-size: 24px;
+}
+
+.header h2 span {
+  display: flex;
+  align-items: center;
+}
+
+.content {
+  width: 100%;
+  position: relative;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  align-items: start;
+}
+
+.content::before {
+  content: "";
+  background: var(--contrast-complementary-color);
+  height: 100%;
+  width: 1px;
+
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-0.5px);
+}
+
+.valueItem {
+  width: 75%;
+  break-inside: avoid;
+  margin: 0 auto;
+  padding: 8px 0;
+
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+
+  border-bottom: 1px solid var(--contrast-complementary-color);
+}
+
+.valueItem dd {
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .valueItem {
+    font-size: 12px;
+  }
+}
+
+.valuesPayments {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  gap: 16px;
+}
+
+.paymentMethod {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+
+  font-size: 12px;
+}
+
+.paymentMethod span {
+  font-size: 24px;
+}

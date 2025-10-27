@@ -1,0 +1,122 @@
+.slider {
+  margin: 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sliderContainer {
+  height: 100%;
+  width: 100%;
+
+  border-radius: 16px;
+  box-shadow: 0 0 8px rgb(0, 0, 0, 0.75);
+  overflow: hidden;
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slideImages {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+
+.slideImage {
+  background: #2f2f2f;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: top;
+  flex-shrink: 0;
+}
+
+.controls {
+  width: 100%;
+
+  display: flex;
+  justify-content: space-between;
+
+  position: absolute;
+  z-index: 2;
+}
+
+.controls button {
+  background: transparent;
+  padding: 8px;
+
+  border: none;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--contrast-color);
+  font-size: 24px;
+
+  cursor: pointer;
+}
+
+.indicators {
+  padding: 8px;
+
+  position: absolute;
+  align-self: flex-end;
+
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 8px;
+
+  text-align: center;
+}
+
+.indicators input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+
+  background: transparent;
+  width: 12px;
+  height: 12px;
+  margin: 0;
+  border-radius: 50%;
+  border: 2px solid var(--contrast-color);
+
+  cursor: pointer;
+
+  transition: background-color 0.3s ease;
+}
+
+.indicators input[type="radio"]:checked {
+  background-color: var(--contrast-color);
+}
+
+.thumbnail {
+  height: 48px;
+  aspect-ratio: 1 / 1;
+
+  object-fit: cover;
+
+  border: 1px solid transparent;
+  border-radius: 4px;
+
+  cursor: pointer;
+  transition: border 0.3s ease;
+}
+
+.thumbnail:hover,
+.thumbnail.active {
+  border-color: var(--contrast-color);
+}
+
+@media (max-width: 768px) {
+  .controls {
+    display: none;
+  }
+}
