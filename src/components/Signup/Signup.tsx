@@ -7,9 +7,8 @@ import { FaMars, FaVenus, FaTransgender } from "react-icons/fa6";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 
-import { validator, type SignupData } from "./validator";
-
 import Popup from "@/components/ui/Popup/Popup";
+import register from "./register";
 
 export default function SignupPage() {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,36 +16,13 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const [role, setRole] = useState<"CLIENT" | "ADVERTISER" | null>(null);
+
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [success, setSuccess] = useState<string>("");
 
   const [isLoading, setIsLoading] = useState(false);
-
-  async function signup(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setSuccess("");
-
-    const formData = new FormData(event.currentTarget);
-    const data: SignupData = {
-      name: formData.get("name") as string,
-      email: formData.get("email") as string,
-      password: formData.get("password") as string,
-      confirmPassword: formData.get("confirmPassword") as string,
-      gender: formData.get("gender") as string,
-      preferences: formData.getAll("genderPreffer") as string[],
-    };
-
-    const validationErrors = validator(data);
-
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-
-    setErrors({});
-
-    setIsLoading(true);
-  }
+  const isFormDisabled = isLoading || success !== "";
 
   useEffect(() => {
     if (isOpen) {
@@ -64,7 +40,7 @@ export default function SignupPage() {
     <Popup
       trigger={"Cadastre-se"}
       triggerClass={styles.trigger}
-      popupClass={styles.popupClass}
+      popupClass={styles.popup}
       isOpen={isOpen}
       onOpenChange={setIsOpen}
     >
@@ -79,7 +55,18 @@ export default function SignupPage() {
           </button>
         </div>
 
-        <form onSubmit={signup} className={styles.form}>
+        <form
+          onSubmit={(e) =>
+            register(e, {
+              setErrors,
+              setSuccess,
+              setIsLoading,
+              role: role as "CLIENT" | "ADVERTISER",
+            })
+          }
+          className={`${styles.form} ${isFormDisabled ? styles.disabled : ""}`}
+          aria-busy={isLoading}
+        >
           <div className={styles.fieldsets}>
             <fieldset>
               <label htmlFor="name">
@@ -89,7 +76,6 @@ export default function SignupPage() {
                   id="name"
                   type="text"
                   placeholder="Seu nome..."
-                  required
                 />
               </label>
 
@@ -100,7 +86,6 @@ export default function SignupPage() {
                   id="email"
                   type="email"
                   placeholder="Seu email..."
-                  required
                 />
               </label>
 
@@ -112,7 +97,6 @@ export default function SignupPage() {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Sua senha..."
-                    required
                   />
                   <button
                     type="button"
@@ -132,7 +116,6 @@ export default function SignupPage() {
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="Confirme a senha..."
-                    required
                   />
                   <button
                     type="button"
@@ -214,31 +197,69 @@ export default function SignupPage() {
               </div>
             </fieldset>
           </div>
-
           <div className={styles.buttonGroup}>
             <button
               type="submit"
+              name="role"
+              value="ADVERTISER"
               className={styles.advertiser}
               data-action="advertiser"
               disabled={isLoading}
+              onClick={() => setRole("ADVERTISER")}
             >
-              Sou Anunciante
+              {isLoading && role === "ADVERTISER" ? (
+                <span className={styles.spinner}></span>
+              ) : (
+                "Sou Anunciante"
+              )}
             </button>
+
             <button
               type="submit"
+              name="role"
+              value="CLIENT"
               className={styles.client}
               data-action="client"
               disabled={isLoading}
+              onClick={() => setRole("CLIENT")}
             >
-              Sou Cliente
+              {isLoading && role === "CLIENT" ? (
+                <span className={styles.spinner}></span>
+              ) : (
+                "Sou Cliente"
+              )}
             </button>
           </div>
-
-          {success && <p className={styles.success}>{success}</p>}
         </form>
       </div>
-
+      {success && (
+        <div className={styles.successContainer}>
+          <svg
+            className={styles.checkmark}
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 52 52"
+          >
+            <circle
+              className={styles.checkmarkCircle}
+              cx="26"
+              cy="26"
+              r="25"
+              fill="none"
+            />
+            <path
+              className={styles.checkmarkCheck}
+              fill="none"
+              d="M14 27l7 7 16-16"
+            />
+          </svg>
+          <p>{success}</p>
+        </div>
+      )}
       <div className={styles.errors}>
+        {errors.general && <p className={styles.error}>{errors.general}</p>}
+
+        {errors.name && <p className={styles.error}>{errors.name}</p>}
+
         {errors.email && <p className={styles.error}>{errors.email}</p>}
 
         {errors.password && <p className={styles.error}>{errors.password}</p>}

@@ -27,6 +27,7 @@ model User {
   name      String
   gender    GENDER
   preffer   String
+  role      String   @default("client")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
