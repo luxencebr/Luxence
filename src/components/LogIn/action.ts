@@ -1,4 +1,3 @@
-// src/components/LogIn/action.ts
 "use client";
 
 import { signIn } from "next-auth/react";
@@ -36,12 +35,11 @@ export default async function logInAction({
   });
 
   if (res?.error) {
-    // Normaliza erro do usuário/senha
     const friendlyError =
       res.error.toLowerCase().includes("credentials") ||
       res.error.toLowerCase().includes("invalid")
         ? "Dados inválidos. Verifique seu email e senha."
-        : res.error; // mantém erro original para outros casos
+        : res.error;
 
     setErrors?.({ form: friendlyError });
   } else {

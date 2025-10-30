@@ -44,224 +44,238 @@ export default function SignupPage() {
       isOpen={isOpen}
       onOpenChange={setIsOpen}
     >
-      <div className={styles.formContent}>
-        <div className={styles.formHeader}>
-          <h1>Cadastre-se</h1>
-          <button
-            onClick={() => setIsOpen(false)}
-            className={styles.closeButton}
+      {!success && (
+        <div className={styles.formContent}>
+          <div className={styles.formHeader}>
+            <h1>Cadastre-se</h1>
+            <button
+              onClick={() => setIsOpen(false)}
+              className={styles.closeButton}
+            >
+              <IoClose />
+            </button>
+          </div>
+
+          <form
+            onSubmit={async (e) => {
+              const result = await register(e, {
+                setErrors,
+                setSuccess,
+                setIsLoading,
+                role: role as "CLIENT" | "ADVERTISER",
+              });
+
+              if (result.ok) {
+                setTimeout(() => {
+                  setIsOpen(false);
+                  setSuccess("");
+                  setErrors({});
+                }, 2000);
+              }
+            }}
+            className={`${styles.form} ${
+              isFormDisabled ? styles.disabled : ""
+            }`}
+            aria-busy={isLoading}
           >
-            <IoClose />
-          </button>
+            <div className={styles.fieldsets}>
+              <fieldset>
+                <label htmlFor="name">
+                  Nome:
+                  <input
+                    name="name"
+                    id="name"
+                    type="text"
+                    placeholder="Seu nome..."
+                    onChange={() => setErrors({})}
+                  />
+                </label>
+
+                <label htmlFor="email">
+                  Email:
+                  <input
+                    name="email"
+                    id="email"
+                    type="email"
+                    placeholder="Seu email..."
+                    onChange={() => setErrors({})}
+                  />
+                </label>
+
+                <label htmlFor="password">
+                  Senha:
+                  <div className={styles.passwordWrapper}>
+                    <input
+                      name="password"
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Sua senha..."
+                      onChange={() => setErrors({})}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className={styles.showPasswordBtn}
+                    >
+                      {showPassword ? <FaEye /> : <FaEyeSlash />}
+                    </button>
+                  </div>
+                </label>
+
+                <label htmlFor="confirmPassword">
+                  Confirmar senha:
+                  <div className={styles.passwordWrapper}>
+                    <input
+                      name="confirmPassword"
+                      id="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Confirme a senha..."
+                      onChange={() => setErrors({})}
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      className={styles.showPasswordBtn}
+                    >
+                      {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
+                    </button>
+                  </div>
+                </label>
+              </fieldset>
+              <fieldset>
+                <h2>
+                  Para melhorar a <br /> sua experiência!
+                </h2>
+                <span>Qual seu gênero?</span>
+                <div className={styles.genderGroup}>
+                  <label>
+                    <input
+                      type="radio"
+                      name="gender"
+                      value="MALE"
+                      onChange={() => setErrors({})}
+                    />
+                    <span>
+                      <i>
+                        <FaMars />
+                      </i>
+                      Homem
+                    </span>
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="gender"
+                      value="FEMALE"
+                      onChange={() => setErrors({})}
+                    />
+                    <span>
+                      <i>
+                        <FaVenus />
+                      </i>
+                      Mulher
+                    </span>
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="gender"
+                      value="FEMALETRANS"
+                      onChange={() => setErrors({})}
+                    />
+                    <span>
+                      <i>
+                        <FaTransgender />
+                      </i>
+                      Trans
+                    </span>
+                  </label>
+                </div>
+                <span>E seus interesses?</span>
+                <div className={styles.genderGroup}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      name="genderPreffer"
+                      value="MALE"
+                      onChange={() => setErrors({})}
+                    />
+                    <span>
+                      <i>
+                        <FaMars />
+                      </i>
+                      Homem
+                    </span>
+                  </label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      name="genderPreffer"
+                      value="FEMALE"
+                      onChange={() => setErrors({})}
+                    />
+                    <span>
+                      <i>
+                        <FaVenus />
+                      </i>
+                      Mulher
+                    </span>
+                  </label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      name="genderPreffer"
+                      value="FEMALETRANS"
+                      onChange={() => setErrors({})}
+                    />
+                    <span>
+                      <i>
+                        <FaTransgender />
+                      </i>
+                      Trans
+                    </span>
+                  </label>
+                </div>
+              </fieldset>
+            </div>
+            <div className={styles.buttonGroup}>
+              <button
+                type="submit"
+                name="role"
+                value="ADVERTISER"
+                className={styles.advertiser}
+                data-action="advertiser"
+                disabled={isLoading}
+                onClick={() => setRole("ADVERTISER")}
+              >
+                {isLoading && role === "ADVERTISER" ? (
+                  <span className={styles.spinner}></span>
+                ) : (
+                  "Sou Anunciante"
+                )}
+              </button>
+
+              <button
+                type="submit"
+                name="role"
+                value="CLIENT"
+                className={styles.client}
+                data-action="client"
+                disabled={isLoading}
+                onClick={() => setRole("CLIENT")}
+              >
+                {isLoading && role === "CLIENT" ? (
+                  <span className={styles.spinner}></span>
+                ) : (
+                  "Sou Cliente"
+                )}
+              </button>
+            </div>
+          </form>
         </div>
-
-        <form
-          onSubmit={(e) =>
-            register(e, {
-              setErrors,
-              setSuccess,
-              setIsLoading,
-              role: role as "CLIENT" | "ADVERTISER",
-            })
-          }
-          className={`${styles.form} ${isFormDisabled ? styles.disabled : ""}`}
-          aria-busy={isLoading}
-        >
-          <div className={styles.fieldsets}>
-            <fieldset>
-              <label htmlFor="name">
-                Nome:
-                <input
-                  name="name"
-                  id="name"
-                  type="text"
-                  placeholder="Seu nome..."
-                  onChange={() => setErrors({})}
-                />
-              </label>
-
-              <label htmlFor="email">
-                Email:
-                <input
-                  name="email"
-                  id="email"
-                  type="email"
-                  placeholder="Seu email..."
-                  onChange={() => setErrors({})}
-                />
-              </label>
-
-              <label htmlFor="password">
-                Senha:
-                <div className={styles.passwordWrapper}>
-                  <input
-                    name="password"
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Sua senha..."
-                    onChange={() => setErrors({})}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className={styles.showPasswordBtn}
-                  >
-                    {showPassword ? <FaEye /> : <FaEyeSlash />}
-                  </button>
-                </div>
-              </label>
-
-              <label htmlFor="confirmPassword">
-                Confirmar senha:
-                <div className={styles.passwordWrapper}>
-                  <input
-                    name="confirmPassword"
-                    id="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Confirme a senha..."
-                    onChange={() => setErrors({})}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className={styles.showPasswordBtn}
-                  >
-                    {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
-                  </button>
-                </div>
-              </label>
-            </fieldset>
-            <fieldset>
-              <h2>
-                Para melhorar a <br /> sua experiência!
-              </h2>
-              <span>Qual seu gênero?</span>
-              <div className={styles.genderGroup}>
-                <label>
-                  <input
-                    type="radio"
-                    name="gender"
-                    value="MALE"
-                    onChange={() => setErrors({})}
-                  />
-                  <span>
-                    <i>
-                      <FaMars />
-                    </i>
-                    Homem
-                  </span>
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="gender"
-                    value="FEMALE"
-                    onChange={() => setErrors({})}
-                  />
-                  <span>
-                    <i>
-                      <FaVenus />
-                    </i>
-                    Mulher
-                  </span>
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="gender"
-                    value="FEMALETRANS"
-                    onChange={() => setErrors({})}
-                  />
-                  <span>
-                    <i>
-                      <FaTransgender />
-                    </i>
-                    Trans
-                  </span>
-                </label>
-              </div>
-              <span>E seus interesses?</span>
-              <div className={styles.genderGroup}>
-                <label>
-                  <input
-                    type="checkbox"
-                    name="genderPreffer"
-                    value="MALE"
-                    onChange={() => setErrors({})}
-                  />
-                  <span>
-                    <i>
-                      <FaMars />
-                    </i>
-                    Homem
-                  </span>
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    name="genderPreffer"
-                    value="FEMALE"
-                    onChange={() => setErrors({})}
-                  />
-                  <span>
-                    <i>
-                      <FaVenus />
-                    </i>
-                    Mulher
-                  </span>
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    name="genderPreffer"
-                    value="FEMALETRANS"
-                    onChange={() => setErrors({})}
-                  />
-                  <span>
-                    <i>
-                      <FaTransgender />
-                    </i>
-                    Trans
-                  </span>
-                </label>
-              </div>
-            </fieldset>
-          </div>
-          <div className={styles.buttonGroup}>
-            <button
-              type="submit"
-              name="role"
-              value="ADVERTISER"
-              className={styles.advertiser}
-              data-action="advertiser"
-              disabled={isLoading}
-              onClick={() => setRole("ADVERTISER")}
-            >
-              {isLoading && role === "ADVERTISER" ? (
-                <span className={styles.spinner}></span>
-              ) : (
-                "Sou Anunciante"
-              )}
-            </button>
-
-            <button
-              type="submit"
-              name="role"
-              value="CLIENT"
-              className={styles.client}
-              data-action="client"
-              disabled={isLoading}
-              onClick={() => setRole("CLIENT")}
-            >
-              {isLoading && role === "CLIENT" ? (
-                <span className={styles.spinner}></span>
-              ) : (
-                "Sou Cliente"
-              )}
-            </button>
-          </div>
-        </form>
-      </div>
+      )}
       {success && (
         <div className={styles.successContainer}>
           <svg

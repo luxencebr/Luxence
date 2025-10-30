@@ -1,4 +1,5 @@
 import { validator } from "./validator";
+import { signIn } from "next-auth/react";
 
 interface RegisterProps {
   setErrors: (errors: { [key: string]: string }) => void;
@@ -18,7 +19,6 @@ export default async function register(
   }
 ) {
   event.preventDefault();
-
   const formData = new FormData(event.currentTarget);
 
   const data = {
@@ -31,22 +31,14 @@ export default async function register(
     role,
   };
 
-  console.log(data);
-
   const errors = validator(data);
-
   if (Object.keys(errors).length > 0) {
     setErrors(errors);
-    return;
+    return { ok: false };
   }
-
-  setErrors({});
-
-  setErrors({});
 
   try {
     setIsLoading?.(true);
-
     const res = await fetch("/api/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -57,12 +49,19 @@ export default async function register(
 
     if (!res.ok) {
       setErrors({ general: result.error || "Erro ao cadastrar." });
-      return;
+      return { ok: false };
     }
 
     setSuccess?.("Cadastro realizado com sucesso!");
+    const loginRes = await signIn("credentials", {
+      redirect: false,
+      email: data.email,
+      password: data.password,
+    });
+    return { ok: true }; // ✅ Retorna sucesso para o componente pai
   } catch (err) {
     setErrors({ general: "Erro inesperado. Tente novamente." });
+    return { ok: false };
   } finally {
     setIsLoading?.(false);
   }
