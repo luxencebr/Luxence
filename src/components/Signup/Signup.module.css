@@ -4,7 +4,7 @@
 }
 
 .trigger:hover {
-  text-decoration: underline;
+  border-bottom: 1px solid var(--primary-color);
 }
 
 .popup {
@@ -192,6 +192,9 @@
 }
 
 .showPasswordBtn {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
   background: none;
   border: none;
   color: var(--contrast-color);

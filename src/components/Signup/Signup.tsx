@@ -24,18 +24,6 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const isFormDisabled = isLoading || success !== "";
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isOpen]);
-
   return (
     <Popup
       trigger={"Cadastre-se"}
@@ -46,7 +34,7 @@ export default function SignupPage() {
     >
       <div className={styles.formContent}>
         <div className={styles.formHeader}>
-          <h1>Faça seu Cadastro</h1>
+          <h1>Cadastre-se</h1>
           <button
             onClick={() => setIsOpen(false)}
             className={styles.closeButton}

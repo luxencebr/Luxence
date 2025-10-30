@@ -1,0 +1,160 @@
+.trigger {
+  color: var(--contrast-color);
+  font-size: 20px;
+}
+
+.trigger:hover {
+  border-bottom: 1px solid var(--contrast-color);
+}
+
+.popup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.formContent {
+  min-width: 300px;
+  background: var(--background-complementary-color);
+  padding: 16px;
+
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0, 0, 0);
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 8px;
+
+  color: var(--contrast-color);
+}
+
+.formHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.closeButton {
+  background: transparent;
+
+  border: none;
+
+  display: flex;
+  align-items: center;
+
+  color: var(--contrast-color);
+  font-size: 20px;
+
+  cursor: pointer;
+}
+
+.closeButton:hover {
+  opacity: 0.75;
+}
+
+.form {
+  position: relative;
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 8px;
+}
+
+.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.disabled button {
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #fff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.form label {
+  width: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 4px;
+}
+
+.form label input {
+  flex: 1;
+  background: var(--background-color);
+  padding: 8px 12px;
+
+  border: none;
+  border-radius: 4px;
+  outline: none;
+
+  color: var(--contrast-color);
+}
+
+.passwordWrapper {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.showPasswordBtn {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  color: var(--contrast-color);
+  cursor: pointer;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px var(--background-color) inset !important;
+  -webkit-text-fill-color: var(--contrast-color) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.submit {
+  width: 100%;
+  background-color: var(--primary-color);
+
+  padding: 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 4px;
+  box-shadow: 0 0 4px black;
+
+  color: var(--background-color);
+  font-size: 16px;
+  font-family: Quicksand;
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+.helpLink {
+  color: var(--contrast-color);
+  font-size: 12px;
+  text-align: right;
+}

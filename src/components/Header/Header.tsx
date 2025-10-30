@@ -9,6 +9,7 @@ import LanguagesPopup from "@/components/LanguagesPopup/LanguagesPopup";
 import LocationSelector from "@/components/LocationSelector/LocationSelector";
 
 import SignUp from "@/components/Signup/Signup";
+import LogIn from "@/components/LogIn/LogIn";
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -42,9 +43,7 @@ function Header() {
 
         <div className={styles.headerButtons}>
           <SignUp />
-          <Link href="/signin" className={styles.logInTrigger}>
-            Entre
-          </Link>
+          <LogIn />
           <LanguagesPopup />
         </div>
 
@@ -75,13 +74,7 @@ function Header() {
 
             <div className={styles.mobileAuthButtons}>
               <SignUp />
-              <Link
-                href="/signin"
-                className={styles.mobileLogInTrigger}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Entre
-              </Link>
+              <LogIn />
             </div>
           </div>
         </div>
