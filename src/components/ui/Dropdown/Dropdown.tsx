@@ -37,6 +37,16 @@ function Dropdown({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   });
 
+  useEffect(() => {
+    const handleScroll = () => closeMenu();
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [closeMenu]);
+
   return (
     <div
       className={`${styles.dropdown} ${containerClassName}`}

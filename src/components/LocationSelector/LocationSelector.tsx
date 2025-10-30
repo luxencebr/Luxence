@@ -68,14 +68,6 @@ export default function LocationSelector() {
       menuClassName={styles.menu}
     >
       {(closeMenu) => {
-        useEffect(() => {
-          const handleScroll = () => closeMenu();
-          window.addEventListener("scroll", handleScroll, { passive: true });
-          return () => {
-            window.removeEventListener("scroll", handleScroll);
-          };
-        }, [closeMenu]);
-
         return ufs.map((uf) => (
           <button
             key={uf.id}

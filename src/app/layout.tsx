@@ -1,5 +1,6 @@
 "use client";
 
+import { SessionProvider } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import "../styles/globals.css";
@@ -48,10 +49,13 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body>
-        <Header />
-        <ScrollTop />
-        {children}
-        <Footer />
+        <SessionProvider>
+          <Header />
+          <ScrollTop />
+
+          {children}
+          <Footer />
+        </SessionProvider>
 
         {!hasConfirmedAge && (
           <StartPopup

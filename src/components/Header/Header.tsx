@@ -1,17 +1,22 @@
 "use client";
 
+import { useSession, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import styles from "./Header.module.css";
 import { IoIosClose, IoIosMenu } from "react-icons/io";
+import { IoPerson } from "react-icons/io5";
 
 import LanguagesPopup from "@/components/LanguagesPopup/LanguagesPopup";
 import LocationSelector from "@/components/LocationSelector/LocationSelector";
+import Dropdown from "@/components/ui/Dropdown/Dropdown";
 
 import SignUp from "@/components/Signup/Signup";
 import LogIn from "@/components/LogIn/LogIn";
 
 function Header() {
+  const { data: session } = useSession();
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -40,11 +45,47 @@ function Header() {
             Novidades
           </Link>
         </div>
-
         <div className={styles.headerButtons}>
-          <SignUp />
-          <LogIn />
-          <LanguagesPopup />
+          {session ? (
+            <>
+              <LanguagesPopup />
+              <Dropdown
+                trigger={
+                  <>
+                    <span>
+                      <IoPerson />
+                    </span>
+                    {(() => {
+                      if (!session.user?.name) return "Usuário";
+
+                      const parts = session.user.name.trim().split(/\s+/);
+                      if (parts.length === 1) return parts[0];
+
+                      const first = parts[0];
+                      const last = parts[parts.length - 1];
+                      return `${first} ${last}`;
+                    })()}
+                  </>
+                }
+                containerClassName={styles.dropdown}
+                triggerClassName={styles.trigger}
+                menuClassName={styles.menu}
+              >
+                <Link href={"/profile"} className={styles.menuItem}>
+                  Ver Perfil
+                </Link>
+                <button onClick={() => signOut()} className={styles.menuItem}>
+                  Sair
+                </button>
+              </Dropdown>
+            </>
+          ) : (
+            <>
+              <SignUp />
+              <LogIn />
+              <LanguagesPopup />
+            </>
+          )}
         </div>
 
         <div className={styles.mobileRight}>
