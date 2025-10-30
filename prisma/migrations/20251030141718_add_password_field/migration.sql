@@ -6,6 +6,7 @@ CREATE TABLE `User` (
     `name` VARCHAR(191) NOT NULL,
     `gender` ENUM('MALE', 'FEMALE', 'TRANS') NOT NULL,
     `preffer` VARCHAR(191) NOT NULL,
+    `role` VARCHAR(191) NOT NULL DEFAULT 'client',
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 

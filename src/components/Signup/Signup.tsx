@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import styles from "./Signup.module.css";
 
 import { FaMars, FaVenus, FaTransgender } from "react-icons/fa6";
@@ -23,6 +23,18 @@ export default function SignupPage() {
 
   const [isLoading, setIsLoading] = useState(false);
   const isFormDisabled = isLoading || success !== "";
+
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setErrors({});
+      setSuccess("");
+      setIsLoading(false);
+      setShowPassword(false);
+      formRef.current?.reset();
+    }
+  }, [isOpen]);
 
   return (
     <Popup
@@ -64,6 +76,7 @@ export default function SignupPage() {
                   id="name"
                   type="text"
                   placeholder="Seu nome..."
+                  onChange={() => setErrors({})}
                 />
               </label>
 
@@ -74,6 +87,7 @@ export default function SignupPage() {
                   id="email"
                   type="email"
                   placeholder="Seu email..."
+                  onChange={() => setErrors({})}
                 />
               </label>
 
@@ -85,6 +99,7 @@ export default function SignupPage() {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Sua senha..."
+                    onChange={() => setErrors({})}
                   />
                   <button
                     type="button"
@@ -104,6 +119,7 @@ export default function SignupPage() {
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="Confirme a senha..."
+                    onChange={() => setErrors({})}
                   />
                   <button
                     type="button"
@@ -122,7 +138,12 @@ export default function SignupPage() {
               <span>Qual seu gênero?</span>
               <div className={styles.genderGroup}>
                 <label>
-                  <input type="radio" name="gender" value="MALE" />
+                  <input
+                    type="radio"
+                    name="gender"
+                    value="MALE"
+                    onChange={() => setErrors({})}
+                  />
                   <span>
                     <i>
                       <FaMars />
@@ -131,7 +152,12 @@ export default function SignupPage() {
                   </span>
                 </label>
                 <label>
-                  <input type="radio" name="gender" value="FEMALE" />
+                  <input
+                    type="radio"
+                    name="gender"
+                    value="FEMALE"
+                    onChange={() => setErrors({})}
+                  />
                   <span>
                     <i>
                       <FaVenus />
@@ -140,7 +166,12 @@ export default function SignupPage() {
                   </span>
                 </label>
                 <label>
-                  <input type="radio" name="gender" value="FEMALETRANS" />
+                  <input
+                    type="radio"
+                    name="gender"
+                    value="FEMALETRANS"
+                    onChange={() => setErrors({})}
+                  />
                   <span>
                     <i>
                       <FaTransgender />
@@ -152,7 +183,12 @@ export default function SignupPage() {
               <span>E seus interesses?</span>
               <div className={styles.genderGroup}>
                 <label>
-                  <input type="checkbox" name="genderPreffer" value="MALE" />
+                  <input
+                    type="checkbox"
+                    name="genderPreffer"
+                    value="MALE"
+                    onChange={() => setErrors({})}
+                  />
                   <span>
                     <i>
                       <FaMars />
@@ -161,7 +197,12 @@ export default function SignupPage() {
                   </span>
                 </label>
                 <label>
-                  <input type="checkbox" name="genderPreffer" value="FEMALE" />
+                  <input
+                    type="checkbox"
+                    name="genderPreffer"
+                    value="FEMALE"
+                    onChange={() => setErrors({})}
+                  />
                   <span>
                     <i>
                       <FaVenus />
@@ -174,6 +215,7 @@ export default function SignupPage() {
                     type="checkbox"
                     name="genderPreffer"
                     value="FEMALETRANS"
+                    onChange={() => setErrors({})}
                   />
                   <span>
                     <i>

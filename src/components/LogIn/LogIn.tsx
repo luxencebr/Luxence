@@ -1,12 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import styles from "./LogIn.module.css";
 import { IoClose } from "react-icons/io5";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 import Popup from "../ui/Popup/Popup";
-
-import connector from "./connector";
+import action from "./action";
 
 export default function LogIn() {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,6 +18,18 @@ export default function LogIn() {
 
   const [isLoading, setIsLoading] = useState(false);
   const isFormDisabled = isLoading || success !== "";
+
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setErrors({});
+      setSuccess("");
+      setIsLoading(false);
+      setShowPassword(false);
+      formRef.current?.reset();
+    }
+  }, [isOpen]);
 
   return (
     <Popup
@@ -40,7 +51,11 @@ export default function LogIn() {
         </div>
 
         <form
-          onSubmit={connector}
+          onSubmit={async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.currentTarget);
+            await action({ formData, setErrors, setSuccess, setIsLoading });
+          }}
           className={`${styles.form} ${isFormDisabled ? styles.disabled : ""}`}
           aria-busy={isLoading}
         >
@@ -51,6 +66,7 @@ export default function LogIn() {
               id="email"
               type="email"
               placeholder="Seu email..."
+              onChange={() => setErrors({})}
             />
           </label>
 
@@ -62,6 +78,7 @@ export default function LogIn() {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="Sua senha..."
+                onChange={() => setErrors({})}
               />
               <button
                 type="button"
@@ -78,10 +95,38 @@ export default function LogIn() {
           </a>
 
           <button type="submit" className={styles.submit}>
-            Conectar-se
+            {isLoading ? (
+              <span className={styles.spinner}></span>
+            ) : (
+              "Conecte-se"
+            )}
           </button>
         </form>
       </div>
+      {success && (
+        <div className={styles.successContainer}>
+          <svg
+            className={styles.checkmark}
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 52 52"
+          >
+            <circle
+              className={styles.checkmarkCircle}
+              cx="26"
+              cy="26"
+              r="25"
+              fill="none"
+            />
+            <path
+              className={styles.checkmarkCheck}
+              fill="none"
+              d="M14 27l7 7 16-16"
+            />
+          </svg>
+          <p>{success}</p>
+        </div>
+      )}
+      {errors.form && <p className={styles.error}>{errors.form}</p>}
     </Popup>
   );
 }
