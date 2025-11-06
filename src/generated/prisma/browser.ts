@@ -17,7 +17,102 @@ export { Prisma }
 export * as $Enums from './enums'
 export * from './enums';
 /**
+ * Model UserPreference
+ * 
+ */
+export type UserPreference = Prisma.UserPreferenceModel
+/**
+ * Model Locality
+ * 
+ */
+export type Locality = Prisma.LocalityModel
+/**
  * Model User
  * 
  */
 export type User = Prisma.UserModel
+/**
+ * Model Appearance
+ * 
+ */
+export type Appearance = Prisma.AppearanceModel
+/**
+ * Model Price
+ * 
+ */
+export type Price = Prisma.PriceModel
+/**
+ * Model ProducerLocal
+ * 
+ */
+export type ProducerLocal = Prisma.ProducerLocalModel
+/**
+ * Model AmenityOption
+ * 
+ */
+export type AmenityOption = Prisma.AmenityOptionModel
+/**
+ * Model LocalAmenity
+ * 
+ */
+export type LocalAmenity = Prisma.LocalAmenityModel
+/**
+ * Model AudienceOption
+ * 
+ */
+export type AudienceOption = Prisma.AudienceOptionModel
+/**
+ * Model ProducerAudience
+ * 
+ */
+export type ProducerAudience = Prisma.ProducerAudienceModel
+/**
+ * Model LocationOption
+ * 
+ */
+export type LocationOption = Prisma.LocationOptionModel
+/**
+ * Model ProducerLocations
+ * 
+ */
+export type ProducerLocations = Prisma.ProducerLocationsModel
+/**
+ * Model ServiceOption
+ * 
+ */
+export type ServiceOption = Prisma.ServiceOptionModel
+/**
+ * Model ProducerService
+ * 
+ */
+export type ProducerService = Prisma.ProducerServiceModel
+/**
+ * Model FetishOption
+ * 
+ */
+export type FetishOption = Prisma.FetishOptionModel
+/**
+ * Model ProducerFetish
+ * 
+ */
+export type ProducerFetish = Prisma.ProducerFetishModel
+/**
+ * Model PaymentOption
+ * 
+ */
+export type PaymentOption = Prisma.PaymentOptionModel
+/**
+ * Model ProducerPayment
+ * 
+ */
+export type ProducerPayment = Prisma.ProducerPaymentModel
+/**
+ * Model Review
+ * 
+ */
+export type Review = Prisma.ReviewModel
+/**
+ * Model Producer
+ * 
+ */
+export type Producer = Prisma.ProducerModel

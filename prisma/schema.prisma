@@ -15,20 +15,304 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ========== USUÁRIOS ==========
+
+enum ROLE {
+  CLIENT
+  ADVERTISER
+}
+
 enum GENDER {
   MALE
   FEMALE
   TRANS
 }
 
-model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  name      String
-  gender    GENDER
-  preffer   String
-  role      String   @default("client")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum SIGNATURE {
+  COPPER
+  SILVER
+  GOLD
+  DIAMOND
 }
+
+model UserPreference {
+  id      Int     @id @default(autoincrement())
+  userId  Int
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  gender  GENDER
+
+  @@unique([userId, gender])
+}
+
+model Locality {
+  id          Int     @id @default(autoincrement())
+  userId      Int     @unique
+  user        User    @relation(fields: [userId], references: [id])
+
+  country     String
+  state       String
+  city        String
+  zone        String?
+  neighborhoods String?  
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+
+  email       String   @unique
+  password    String
+  role        ROLE     @default(CLIENT)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  name        String
+  gender      GENDER
+  preferences UserPreference[]
+  locality    Locality?
+
+  producer    Producer?
+
+  reviews     Review[]
+}
+
+// ========== PRODUTOR ==========
+
+enum ETHNICITY {
+  ASIATICO
+  BRANCO
+  INDIGENA
+  PARDO
+  PRETO
+}
+
+enum HAIRCOLOR {
+  CASTANHO
+  COLORIDO
+  GRISALHO
+  LOIRO
+  PRETO
+  RUIVO
+  SEMCABELO
+}
+
+enum EYESCOLOR {
+  AMBAR
+  AZUIS
+  CASTANHOS
+  PRETOS
+  VERDES
+}
+
+model Appearance {
+  id          Int        @id @default(autoincrement())
+  producerId  Int        @unique
+  producer    Producer   @relation(fields: [producerId], references: [id])
+
+  height      Float
+  mannequin   Int
+  feet        Int
+
+  ethnicity   ETHNICITY
+  hairColor   HAIRCOLOR
+  eyesColor   EYESCOLOR
+
+  tattoos     Boolean
+  piercings   Boolean
+  silicone    Boolean
+}
+
+//---
+
+enum DURATION {
+  MIN15
+  MIN30
+  HOUR1
+  HOURS2
+  HOURS4
+  PERNOITE
+  DIARIA
+}
+
+model Price {
+  id          Int        @id @default(autoincrement())
+  producerId  Int
+  producer    Producer   @relation(fields: [producerId], references: [id])
+
+  duration    DURATION
+  price       Float
+}
+
+model ProducerLocal {
+  id          Int      @id @default(autoincrement())
+  producerId  Int      @unique
+  producer    Producer @relation(fields: [producerId], references: [id])
+
+  country     String
+  state       String
+  city        String
+  neighborhood String
+  street      String?
+  number      String?
+  complement  String?
+
+  amenities LocalAmenity[]
+}
+
+model AmenityOption {
+  id        Int @id @default(autoincrement())
+  name      String @unique
+  label     String
+
+  locals    LocalAmenity[]
+}
+
+model LocalAmenity {
+  id          Int @id @default(autoincrement())
+  localId     Int
+  amenityId   Int
+  local       ProducerLocal @relation(fields: [localId], references: [id])
+  amenity     AmenityOption @relation(fields: [amenityId], references: [id])
+
+  @@unique([localId, amenityId])
+}
+
+model AudienceOption {
+  id        Int               @id @default(autoincrement())
+  name      String            @unique
+  label     String
+
+  producers ProducerAudience[]
+}
+
+model ProducerAudience {
+  id          Int             @id @default(autoincrement())
+  producerId  Int
+  audienceId  Int
+  producer    Producer        @relation(fields: [producerId], references: [id])
+  audience    AudienceOption  @relation(fields: [audienceId], references: [id])
+
+  @@unique([producerId, audienceId])
+}
+
+model LocationOption {
+  id        Int @id @default(autoincrement())
+  name      String @unique
+  label     String
+
+  localities ProducerLocations[]
+}
+
+model ProducerLocations {
+  id           Int @id @default(autoincrement())
+  producerId   Int
+  locationId   Int
+  producer     Producer @relation(fields: [producerId], references: [id])
+  location     LocationOption   @relation(fields: [locationId], references: [id])
+
+  @@unique([producerId, locationId])
+}
+
+model ServiceOption {
+  id        Int              @id @default(autoincrement())
+  name      String           @unique
+  label     String
+  
+  producers ProducerService[]
+}
+
+model ProducerService {
+  id          Int           @id @default(autoincrement())
+  producerId  Int
+  serviceId   Int
+  producer    Producer      @relation(fields: [producerId], references: [id])
+  service     ServiceOption @relation(fields: [serviceId], references: [id])
+
+  @@unique([producerId, serviceId])
+}
+
+model FetishOption {
+  id        Int              @id @default(autoincrement())
+  name      String           @unique
+  label     String
+
+  producers ProducerFetish[]
+}
+
+model ProducerFetish {
+  id          Int           @id @default(autoincrement())
+  producerId  Int
+  fetishId    Int
+  producer    Producer      @relation(fields: [producerId], references: [id])
+  fetish      FetishOption  @relation(fields: [fetishId], references: [id])
+
+  @@unique([producerId, fetishId])
+}
+
+model PaymentOption {
+  id        Int              @id @default(autoincrement())
+  name      String           @unique
+  label     String
+
+  producers ProducerPayment[]
+}
+
+model ProducerPayment {
+  id          Int           @id @default(autoincrement())
+  producerId  Int
+  paymentId   Int
+  producer    Producer      @relation(fields: [producerId], references: [id])
+  payment     PaymentOption @relation(fields: [paymentId], references: [id])
+
+  @@unique([producerId, paymentId])
+}
+
+model Review {
+  id          String   @id @default(cuid())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int
+  producer    Producer @relation(fields: [producerId], references: [id], onDelete: Cascade)
+  producerId  Int
+
+  rating      Int
+  comment     String
+
+  createdAt   DateTime @default(now())
+}
+
+model Producer {
+  id          Int       @id @default(autoincrement())
+  userId      Int       @unique
+  user        User      @relation(fields: [userId], references: [id])
+
+  verified    Boolean   @default(false)
+  signature   SIGNATURE
+  views       Int       @default(0)
+
+  age         Int
+  nationality String
+  scholarity  String
+  languages   Json
+  slogan      String
+  description String
+
+  phone       String
+  instagram   String?
+  telegram    String?
+
+  hasLocal    Boolean   @default(false)
+  local       ProducerLocal?
+
+  appearance  Appearance?
+  prices      Price[]
+
+  services    ProducerService[]
+  fetiches    ProducerFetish[]
+  audiences   ProducerAudience[]
+  locations    ProducerLocations[]
+  payments    ProducerPayment[]
+
+  reviews     Review[]
+}
+

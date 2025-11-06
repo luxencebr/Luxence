@@ -187,7 +187,7 @@ export default function SignupPage() {
                     <input
                       type="radio"
                       name="gender"
-                      value="FEMALETRANS"
+                      value="TRANS"
                       onChange={() => setErrors({})}
                     />
                     <span>
@@ -232,7 +232,7 @@ export default function SignupPage() {
                     <input
                       type="checkbox"
                       name="genderPreffer"
-                      value="FEMALETRANS"
+                      value="TRANS"
                       onChange={() => setErrors({})}
                     />
                     <span>

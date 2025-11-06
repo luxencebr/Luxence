@@ -4,7 +4,8 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { name, email, password, gender, preffer, role } = await req.json();
+    const { name, email, password, gender, preferences, role } =
+      await req.json();
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
@@ -22,8 +23,10 @@ export async function POST(req: Request) {
         email,
         password: hashedPassword,
         gender,
-        preffer,
-        role: role || "client",
+        preferences: {
+          create: preferences.map((gender: string) => ({ gender })),
+        },
+        role: role || "CLIENT",
       },
     });
 

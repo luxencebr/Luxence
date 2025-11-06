@@ -28,8 +28,8 @@ export * from "./enums"
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more Users
- * const users = await prisma.user.findMany()
+ * // Fetch zero or more UserPreferences
+ * const userPreferences = await prisma.userPreference.findMany()
  * ```
  * 
  * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
@@ -48,7 +48,102 @@ path.join(__dirname, "libquery_engine-debian-openssl-3.0.x.so.node")
 path.join(process.cwd(), "src/generated/prisma/libquery_engine-debian-openssl-3.0.x.so.node")
 
 /**
+ * Model UserPreference
+ * 
+ */
+export type UserPreference = Prisma.UserPreferenceModel
+/**
+ * Model Locality
+ * 
+ */
+export type Locality = Prisma.LocalityModel
+/**
  * Model User
  * 
  */
 export type User = Prisma.UserModel
+/**
+ * Model Appearance
+ * 
+ */
+export type Appearance = Prisma.AppearanceModel
+/**
+ * Model Price
+ * 
+ */
+export type Price = Prisma.PriceModel
+/**
+ * Model ProducerLocal
+ * 
+ */
+export type ProducerLocal = Prisma.ProducerLocalModel
+/**
+ * Model AmenityOption
+ * 
+ */
+export type AmenityOption = Prisma.AmenityOptionModel
+/**
+ * Model LocalAmenity
+ * 
+ */
+export type LocalAmenity = Prisma.LocalAmenityModel
+/**
+ * Model AudienceOption
+ * 
+ */
+export type AudienceOption = Prisma.AudienceOptionModel
+/**
+ * Model ProducerAudience
+ * 
+ */
+export type ProducerAudience = Prisma.ProducerAudienceModel
+/**
+ * Model LocationOption
+ * 
+ */
+export type LocationOption = Prisma.LocationOptionModel
+/**
+ * Model ProducerLocations
+ * 
+ */
+export type ProducerLocations = Prisma.ProducerLocationsModel
+/**
+ * Model ServiceOption
+ * 
+ */
+export type ServiceOption = Prisma.ServiceOptionModel
+/**
+ * Model ProducerService
+ * 
+ */
+export type ProducerService = Prisma.ProducerServiceModel
+/**
+ * Model FetishOption
+ * 
+ */
+export type FetishOption = Prisma.FetishOptionModel
+/**
+ * Model ProducerFetish
+ * 
+ */
+export type ProducerFetish = Prisma.ProducerFetishModel
+/**
+ * Model PaymentOption
+ * 
+ */
+export type PaymentOption = Prisma.PaymentOptionModel
+/**
+ * Model ProducerPayment
+ * 
+ */
+export type ProducerPayment = Prisma.ProducerPaymentModel
+/**
+ * Model Review
+ * 
+ */
+export type Review = Prisma.ReviewModel
+/**
+ * Model Producer
+ * 
+ */
+export type Producer = Prisma.ProducerModel

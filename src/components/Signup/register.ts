@@ -1,4 +1,4 @@
-import { validator } from "./validator";
+import { validator, type RegisterFormData } from "./validator";
 import { signIn } from "next-auth/react";
 
 interface RegisterProps {
@@ -19,16 +19,18 @@ export default async function register(
   }
 ) {
   event.preventDefault();
+
   const formData = new FormData(event.currentTarget);
 
-  const data = {
-    name: formData.get("name") as string,
-    email: formData.get("email") as string,
-    password: formData.get("password") as string,
-    confirmPassword: formData.get("confirmPassword") as string,
-    gender: formData.get("gender") as "MALE" | "FEMALE" | "FEMALETRANS" | "",
-    preffer: formData.getAll("genderPreffer").join(","),
-    role,
+  const data: RegisterFormData = {
+    name: (formData.get("name") as string) || "",
+    email: (formData.get("email") as string) || "",
+    password: (formData.get("password") as string) || "",
+    confirmPassword: (formData.get("confirmPassword") as string) || "",
+    gender: (formData.get("gender") as "MALE" | "FEMALE" | "TRANS" | "") || "",
+    preferences: formData
+      .getAll("genderPreffer")
+      .filter((v): v is string => typeof v === "string"),
   };
 
   const errors = validator(data);
@@ -39,10 +41,11 @@ export default async function register(
 
   try {
     setIsLoading?.(true);
+
     const res = await fetch("/api/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+      body: JSON.stringify({ ...data, role }),
     });
 
     const result = await res.json();
@@ -53,13 +56,16 @@ export default async function register(
     }
 
     setSuccess?.("Cadastro realizado com sucesso!");
-    const loginRes = await signIn("credentials", {
+
+    await signIn("credentials", {
       redirect: false,
       email: data.email,
       password: data.password,
     });
+
     return { ok: true, role };
   } catch (err) {
+    console.error("Erro ao registrar:", err);
     setErrors({ general: "Erro inesperado. Tente novamente." });
     return { ok: false };
   } finally {
