@@ -1,0 +1,63 @@
+.container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* Botões base */
+.button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Voltar */
+.buttonBack {
+  color: var(--contrast-color);
+  background: transparent;
+}
+
+.buttonBack:hover {
+  background: var(--background-complementary-color);
+}
+
+.buttonBack:active {
+  background: var(--primary-complementary-color);
+  color: var(--background-color);
+}
+
+.buttonBack:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Pular */
+.buttonSkip {
+  color: var(--contrast-complementary-color);
+  background: transparent;
+}
+
+.buttonSkip:hover {
+  color: var(--contrast-color);
+  background: var(--background-complementary-color);
+}
+
+/* Próximo / Finalizar */
+.buttonNext {
+  background: var(--primary-color);
+  color: var(--background-color);
+}
+
+.buttonNext:hover {
+  background: var(--primary-complementary-color);
+}
+
+.buttonNext:active {
+  opacity: 0.9;
+}

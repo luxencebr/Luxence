@@ -47,6 +47,13 @@ function Dropdown({
     };
   }, [closeMenu]);
 
+  const handleOptionClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    if (target.tagName === "BUTTON") {
+      closeMenu();
+    }
+  };
+
   return (
     <div
       className={`${styles.dropdown} ${containerClassName}`}
@@ -66,6 +73,7 @@ function Dropdown({
 
       <div
         className={`${styles.menu} ${open ? styles.open : ""} ${menuClassName}`}
+        onClick={handleOptionClick}
       >
         <div className={styles.layout}>
           {typeof children === "function"

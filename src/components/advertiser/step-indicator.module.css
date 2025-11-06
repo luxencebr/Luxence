@@ -1,0 +1,60 @@
+.container {
+  flex: 1;
+  margin-bottom: 32px;
+}
+
+.steps {
+  height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.step {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+
+  border-radius: 50%;
+  font-weight: 600;
+
+  transition: all 0.2s ease;
+}
+
+.circleActive {
+  background: var(--primary-color);
+  color: var(--background-color);
+  box-shadow: 0 0 8px black;
+}
+
+.circleCompleted {
+  background: var(--primary-color);
+  color: var(--background-color);
+}
+
+.circleInactive {
+  background: var(--background-complementary-color);
+  color: var(--contrast-complementary-color);
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-left: 12px;
+  color: var(--contrast-complementary-color);
+  transition: color 0.2s ease;
+}
+
+.labelActive {
+  color: var(--contrast-color);
+}

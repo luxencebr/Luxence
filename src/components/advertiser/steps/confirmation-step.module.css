@@ -1,0 +1,93 @@
+.container {
+  width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  color: var(--contrast-color);
+}
+
+/* Cabeçalho */
+.header h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 4px;
+  color: var(--contrast-color);
+}
+
+.header p {
+  color: var(--contrast-complementary-color);
+}
+
+/* Caixa de resumo */
+.summaryBox {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  background: var(--background-complementary-color);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Seções */
+.section {
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--contrast-complementary-color);
+}
+
+.section:last-child {
+  border-bottom: none;
+}
+
+.section h3 {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--contrast-color);
+}
+
+/* Lista de informações */
+.infoList {
+  font-size: 0.9rem;
+  color: var(--contrast-complementary-color);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Termos de serviço */
+.agreement {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--contrast-complementary-color);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.agreement:hover {
+  background: var(--background-complementary-color);
+}
+
+.agreement input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  margin-top: 2px;
+}
+
+.agreement span {
+  font-size: 0.9rem;
+  color: var(--contrast-complementary-color);
+}
+
+.link {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}

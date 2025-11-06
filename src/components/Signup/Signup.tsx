@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import { useEffect, useState, useRef } from "react";
 import styles from "./Signup.module.css";
 
@@ -25,6 +27,8 @@ export default function SignupPage() {
   const isFormDisabled = isLoading || success !== "";
 
   const formRef = useRef<HTMLFormElement>(null);
+
+  const router = useRouter();
 
   useEffect(() => {
     if (!isOpen) {
@@ -58,19 +62,20 @@ export default function SignupPage() {
 
           <form
             onSubmit={async (e) => {
-              const result = await register(e, {
+              const result = (await register(e, {
                 setErrors,
                 setSuccess,
                 setIsLoading,
                 role: role as "CLIENT" | "ADVERTISER",
-              });
+              })) as { ok: boolean; role?: "CLIENT" | "ADVERTISER" };
 
               if (result.ok) {
-                setTimeout(() => {
-                  setIsOpen(false);
-                  setSuccess("");
-                  setErrors({});
-                }, 2000);
+                setIsOpen(false);
+                setSuccess("");
+                setErrors({});
+                if (result.role === "ADVERTISER") {
+                  router.push("/advertiser");
+                }
               }
             }}
             className={`${styles.form} ${

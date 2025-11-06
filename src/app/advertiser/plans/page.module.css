@@ -1,0 +1,90 @@
+.advertiserPage {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 16px;
+}
+
+.layout {
+  padding: 16px;
+
+  display: flex;
+  flex-flow: column wrap;
+  align-items: start;
+  gap: 16px;
+
+  color: var(--contrast-color);
+}
+
+.layout h1 {
+  width: 100%;
+  text-align: center;
+}
+
+.signatures {
+  width: 100%;
+
+  display: flex;
+  gap: 16px;
+}
+
+.signatureCard {
+  background: var(--background-complementary-color);
+  flex: 1;
+  padding: 16px;
+
+  border-radius: 16px;
+
+  transition: 0.25s;
+
+  cursor: default;
+}
+
+.signatureCard:hover {
+  transform: translateY(-4px);
+}
+
+.signatureCard h2 {
+}
+
+.signatureCard h2 span {
+  border-bottom: 1px solid transparent;
+
+  font-size: 12px;
+  font-weight: normal;
+
+  transition: 0.2s;
+}
+
+.signatureCard:hover h2 span {
+  border-bottom: 1px solid var(--primary-color);
+}
+
+.description {
+  margin-bottom: 16px;
+
+  color: var(--contrast-complementary-color);
+  font-size: 12px;
+}
+
+.benefits {
+  margin: 16px 0;
+
+  font-size: 14px;
+}
+
+.signatureCard button {
+  background: var(--primary-color);
+  width: 100%;
+  padding: 8px;
+
+  border: none;
+  border-radius: 8px;
+
+  color: var(--background-color);
+
+  cursor: pointer;
+}

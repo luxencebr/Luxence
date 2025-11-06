@@ -1,0 +1,75 @@
+.sliderLabel {
+  width: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  font-weight: 500;
+  gap: 0.5rem;
+}
+
+.labelContent {
+  display: flex;
+  justify-content: space-between;
+}
+
+.number {
+  appearance: none;
+  -moz-appearance: textfield;
+  -webkit-appearance: none;
+
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--contrast-complementary-color);
+
+  color: var(--contrast-color);
+  font-size: 16px;
+  font-family: Quicksand;
+
+  padding: 0;
+  margin: 0;
+  width: 3.5ch;
+  text-align: center;
+
+  line-height: 1;
+  box-sizing: content-box;
+}
+
+.number::-webkit-inner-spin-button,
+.number::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(
+    to right,
+    var(--primary-color) var(--fill, 50%),
+    #ddd var(--fill, 50%)
+  );
+  outline: none;
+  margin: 8px 0;
+  transition: background 0.2s ease;
+}
+
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 16px;
+  aspect-ratio: 1 / 1;
+  background: var(--primary-color);
+  border-radius: 50%;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+
+.range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: var(--primary-color);
+  border-radius: 50%;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}

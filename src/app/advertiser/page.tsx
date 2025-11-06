@@ -1,28 +1,136 @@
-import styles from "./page.module.css";
-import { plans } from "@/data/plans";
+"use client";
 
-export default function AdvertiserPage() {
+import { useState } from "react";
+
+import styles from "./page.module.css";
+
+import StepIndicator from "@/components/advertiser/step-indicator";
+import ProfileStep from "@/components/advertiser/steps/profile-step";
+import AppearanceStep from "@/components/advertiser/steps/appearance-step";
+import AudienceStep from "@/components/advertiser/steps/audience-step";
+import ServicesStep from "@/components/advertiser/steps/services-step";
+import FetichesStep from "@/components/advertiser/steps/fetiches.step";
+import ConfirmationStep from "@/components/advertiser/steps/confirmation-step";
+import StepNavigation from "@/components/advertiser/step-navigation";
+
+const TOTAL_STEPS = 6;
+
+export default function AdvertiserRegistration() {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [formData, setFormData] = useState({
+    // Profile
+    age: 25,
+    nationality: "",
+    languages: [""],
+    // Appearance
+    ethnicity: "",
+    hair: "",
+    eyes: "",
+    height: 175,
+    mannequin: 40,
+    feet: 40,
+    tattoos: false,
+    piercings: false,
+    silicone: false,
+    // Audience
+    audience: [],
+    locales: [],
+    hasLocation: false,
+    amenities: [],
+    //Services
+    services: [],
+    //Fetiches
+    fetiches: [],
+    // Confirmation
+    agreed: false,
+  });
+
+  const handleNext = () => {
+    if (currentStep < TOTAL_STEPS) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const handleSkip = () => {
+    handleNext();
+  };
+
+  const handleUpdateFormData = (newData: Partial<typeof formData>) => {
+    setFormData((prev) => ({ ...prev, ...newData }));
+  };
+
+  const handleSubmit = () => {
+    console.log("Formulário completo:", formData);
+    // Aqui você pode enviar os dados para um servidor
+  };
+
   return (
-    <div className={styles.advertiserPage}>
-      <div className={styles.layout}>
-        <h1>Anuncie Conosco!</h1>
-        <div className={styles.signatures}>
-          {plans.map((plan) => (
-            <article key={plan.id} className={styles.signatureCard}>
-              <h2>
-                Plano {plan.title} <span>{plan.price}</span>
-              </h2>
-              <p className={styles.price}></p>
-              <p className={styles.description}>{plan.description}</p>
-              <h3>Benefícios</h3>
-              <ul className={styles.benefits}>
-                {plan.benefits.map((benefit, index) => (
-                  <li key={index}>{benefit}</li>
-                ))}
-              </ul>
-              <button>Seja {plan.title}</button>
-            </article>
-          ))}
+    <div className={styles.container}>
+      <div className={styles.wrapper}>
+        <aside className={styles.side}>
+          <div className={styles.header}>
+            <h1>Anuncie Conosco!</h1>
+            <p>Complete seu cadastro em apenas alguns passos</p>
+          </div>
+          <StepIndicator currentStep={currentStep} totalSteps={TOTAL_STEPS} />
+        </aside>
+
+        <div className={styles.content}>
+          <div className={styles.card}>
+            {currentStep === 1 && (
+              <ProfileStep
+                formData={formData}
+                onUpdate={handleUpdateFormData}
+              />
+            )}
+            {currentStep === 2 && (
+              <AppearanceStep
+                formData={formData}
+                onUpdate={handleUpdateFormData}
+              />
+            )}
+            {currentStep === 3 && (
+              <AudienceStep
+                formData={formData}
+                onUpdate={handleUpdateFormData}
+              />
+            )}
+            {currentStep === 4 && (
+              <ServicesStep
+                formData={formData}
+                onUpdate={handleUpdateFormData}
+              />
+            )}
+            {currentStep === 5 && (
+              <FetichesStep
+                formData={formData}
+                onUpdate={handleUpdateFormData}
+              />
+            )}
+            {currentStep === 6 && (
+              <ConfirmationStep
+                formData={formData}
+                onUpdate={handleUpdateFormData}
+              />
+            )}
+          </div>
+
+          <div className={styles.navigation}>
+            <StepNavigation
+              currentStep={currentStep}
+              totalSteps={TOTAL_STEPS}
+              onNext={handleNext}
+              onPrev={handlePrev}
+              onSkip={handleSkip}
+              onSubmit={handleSubmit}
+            />
+          </div>
         </div>
       </div>
     </div>

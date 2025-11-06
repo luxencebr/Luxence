@@ -58,7 +58,7 @@ export default async function register(
       email: data.email,
       password: data.password,
     });
-    return { ok: true }; // ✅ Retorna sucesso para o componente pai
+    return { ok: true, role };
   } catch (err) {
     setErrors({ general: "Erro inesperado. Tente novamente." });
     return { ok: false };

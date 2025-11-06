@@ -1,0 +1,124 @@
+.container {
+  width: 480px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 24px;
+  color: var(--contrast-color);
+}
+
+.header h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 4px;
+  color: var(--contrast-color);
+}
+
+.header p {
+  color: var(--contrast-complementary-color);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--contrast-color);
+}
+
+.dropdownTrigger {
+  flex: 1 1 auto; /* permite crescer e encolher */
+  min-width: 0; /* ESSENCIAL para o flex permitir shrink sem overflow */
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid
+    var(--input-border-color, var(--contrast-complementary-color));
+  border-radius: 8px;
+  background: var(--background-color);
+  color: var(--contrast-color);
+  cursor: pointer;
+  text-align: left;
+  transition: 0.2s ease;
+}
+
+.dropdownTrigger:hover {
+  background: var(--background-complementary-color);
+}
+
+.dropdownMenu {
+  width: 100%;
+  background: var(--background-color);
+  border-radius: 8px;
+}
+
+.dropdownItem {
+  width: 100%;
+  text-align: left;
+  padding: 8px 16px;
+  background: transparent;
+  color: var(--contrast-color);
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.dropdownItem:hover {
+  background: var(--background-complementary-color);
+}
+
+/* Idiomas */
+.languageList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.languageItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.removeButton {
+  padding: 6px 10px;
+  color: var(--destructive-color, #e74c3c);
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.removeButton:hover {
+  background: rgba(231, 76, 60, 0.1);
+}
+
+/* Botão de adicionar idioma */
+.addButton {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px;
+  border: 2px dashed var(--contrast-complementary-color);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--contrast-complementary-color);
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+.addButton:hover {
+  border-color: var(--contrast-color);
+  color: var(--contrast-color);
+}
