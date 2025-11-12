@@ -1,8 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import Range from "@/components/ui/Range/Range";
-import Dropdown from "@/components/ui/Dropdown/Dropdown";
 import styles from "./profile-step.module.css";
 
 interface ProfileStepProps {
@@ -10,125 +7,112 @@ interface ProfileStepProps {
   onUpdate: (data: any) => void;
 }
 
-const nationalities = [
-  "Brasileiro(a)",
-  "Argentino(a)",
-  "Colombiano(a)",
-  "Chileno(a)",
-  "Uruguaio(a)",
-];
-
-const languageOptions = [
-  "Português",
-  "Inglês",
-  "Espanhol",
-  "Francês",
-  "Italiano",
-];
-
 export default function ProfileStep({ formData, onUpdate }: ProfileStepProps) {
-  const [localLanguages, setLocalLanguages] = useState(formData.languages);
-
-  const handleLanguageChange = (index: number, value: string) => {
-    const updated = [...localLanguages];
-    updated[index] = value;
-    setLocalLanguages(updated);
-    onUpdate({ languages: updated });
-  };
-
-  const addLanguage = () => {
-    const updated = [...localLanguages, ""];
-    setLocalLanguages(updated);
-    onUpdate({ languages: updated });
-  };
-
-  const removeLanguage = (index: number) => {
-    const updated = localLanguages.filter(
-      (_: string, i: number) => i !== index
-    );
-    setLocalLanguages(updated);
-    onUpdate({ languages: updated });
-  };
-
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h2>Informações Básicas</h2>
-        <p>Comece preenchendo seus dados pessoais</p>
+        <h2>Perfil</h2>
+        <p>Preencha as informações básicas do seu perfil</p>
       </div>
 
       <div className={styles.section}>
-        {/* Faixa de Idade */}
-        <Range
-          label="Idade"
-          min={18}
-          max={99}
-          value={formData.age}
-          onChange={(age) => onUpdate({ age })}
-          unit="anos"
-        />
+        <label className={styles.label}>
+          CPF:
+          <input
+            type="text"
+            value={formData.cpf || ""}
+            onChange={(e) => onUpdate({ cpf: e.target.value })}
+            placeholder="000.000.000-00"
+            maxLength={14}
+          />
+        </label>
 
-        {/* Nacionalidade */}
-        <div className={styles.field}>
-          <label className={styles.label}>Nacionalidade</label>
-          <Dropdown
-            trigger={formData.nationality || "Selecione a Nacionalidade"}
-            triggerClassName={styles.dropdownTrigger}
-            menuClassName={styles.dropdownMenu}
-          >
-            {nationalities.map((nation) => (
-              <button
-                key={nation}
-                type="button"
-                onClick={() => onUpdate({ nationality: nation })}
-                className={styles.dropdownItem}
-              >
-                {nation}
-              </button>
-            ))}
-          </Dropdown>
-        </div>
+        <label className={styles.label}>
+          Data de nascimento:
+          <input
+            type="text"
+            value={formData.birthDate || ""}
+            onChange={(e) => onUpdate({ birthDate: e.target.value })}
+            placeholder="dd/mm/aaaa"
+            maxLength={14}
+          />
+        </label>
 
-        {/* Idiomas */}
-        <div className={styles.field}>
-          <label className={styles.label}>Idiomas</label>
-          <div className={styles.languageList}>
-            {localLanguages.map((lang: string, index: number) => (
-              <div key={index} className={styles.languageItem}>
-                <Dropdown
-                  trigger={lang || "Selecione o Idioma"}
-                  triggerClassName={styles.dropdownTrigger}
-                  menuClassName={styles.dropdownMenu}
-                >
-                  {languageOptions.map((option) => (
-                    <button
-                      key={option}
-                      type="button"
-                      onClick={() => handleLanguageChange(index, option)}
-                      className={styles.dropdownItem}
-                    >
-                      {option}
-                    </button>
-                  ))}
-                </Dropdown>
-                {localLanguages.length > 1 && (
-                  <button
-                    onClick={() => removeLanguage(index)}
-                    className={styles.removeButton}
-                  >
-                    ✕
-                  </button>
-                )}
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={addLanguage}
-              className={styles.addButton}
-            >
-              + Adicionar idioma
-            </button>
-          </div>
+        <label className={styles.label}>
+          Telefone de contato:
+          <input
+            type="tel"
+            value={formData.phone || ""}
+            onChange={(e) => onUpdate({ phone: e.target.value })}
+            placeholder="(00) 00000-0000"
+          />
+        </label>
+      </div>
+      <div className={styles.address}>
+        <h3>Endereço Residencial</h3>
+
+        <div className={styles.addressContent}>
+          <label className={styles.label}>
+            CEP:
+            <input
+              type="text"
+              value={formData.cep || ""}
+              onChange={(e) => onUpdate({ cep: e.target.value })}
+              placeholder="00000-000"
+              maxLength={9}
+            />
+          </label>
+
+          <label className={styles.label}>
+            Rua:
+            <input
+              type="text"
+              value={formData.street || ""}
+              onChange={(e) => onUpdate({ street: e.target.value })}
+              placeholder="Nome da rua"
+            />
+          </label>
+
+          <label className={styles.label}>
+            Número:
+            <input
+              type="text"
+              value={formData.number || ""}
+              onChange={(e) => onUpdate({ number: e.target.value })}
+              placeholder="Número"
+            />
+          </label>
+
+          <label className={styles.label}>
+            Bairro:
+            <input
+              type="text"
+              value={formData.neighborhood || ""}
+              onChange={(e) => onUpdate({ neighborhood: e.target.value })}
+              placeholder="Bairro"
+            />
+          </label>
+
+          <label className={styles.label}>
+            Cidade:
+            <input
+              type="text"
+              value={formData.city || ""}
+              onChange={(e) => onUpdate({ city: e.target.value })}
+              placeholder="Cidade"
+            />
+          </label>
+
+          <label className={styles.label}>
+            Estado:
+            <input
+              type="text"
+              value={formData.state || ""}
+              onChange={(e) => onUpdate({ state: e.target.value })}
+              placeholder="UF"
+              maxLength={2}
+            />
+          </label>
         </div>
       </div>
     </div>

@@ -15,128 +15,124 @@ export default function ConfirmationStep({
     <div className={styles.container}>
       {/* Cabeçalho */}
       <div className={styles.header}>
-        <h2>Confirmação</h2>
-        <p>Revise cuidadosamente seus dados antes de finalizar o cadastro.</p>
+        <h2 className={styles.title}>Confirmação</h2>
+        <p className={styles.subtitle}>
+          Revise suas informações antes de finalizar o cadastro
+        </p>
       </div>
 
-      {/* Caixa de resumo */}
       <div className={styles.summaryBox}>
         {/* PERFIL */}
         <div className={styles.section}>
           <h3>Perfil</h3>
           <div className={styles.infoList}>
             <p>
-              <strong>Idade:</strong> {formData.age || "Não informado"} anos
+              <strong>CPF:</strong> {formData.cpf || "Não informado"}
             </p>
             <p>
-              <strong>Nacionalidade:</strong>{" "}
-              {formData.nationality || "Não informado"}
+              <strong>Data de Nascimento:</strong>{" "}
+              {formData.birthDate || "Não informado"}
             </p>
             <p>
-              <strong>Idiomas:</strong>{" "}
-              {formData.languages?.filter((l: string) => l).join(", ") ||
-                "Não informado"}
+              <strong>Telefone:</strong> {formData.phone || "Não informado"}
             </p>
           </div>
         </div>
 
-        {/* APARÊNCIA */}
+        {/* ENDEREÇO */}
         <div className={styles.section}>
-          <h3>Aparência</h3>
+          <h3>Endereço Residencial</h3>
           <div className={styles.infoList}>
             <p>
-              <strong>Etnia:</strong> {formData.ethnicity || "Não informado"}
+              <strong>CEP:</strong> {formData.cep || "Não informado"}
             </p>
             <p>
-              <strong>Cabelo:</strong> {formData.hair || "Não informado"}
+              <strong>Rua:</strong> {formData.street || "Não informado"}
             </p>
             <p>
-              <strong>Olhos:</strong> {formData.eyes || "Não informado"}
+              <strong>Número:</strong> {formData.number || "Não informado"}
             </p>
             <p>
-              <strong>Altura:</strong>{" "}
-              {formData.height ? `${formData.height} cm` : "Não informado"}
+              <strong>Bairro:</strong>{" "}
+              {formData.neighborhood || "Não informado"}
             </p>
             <p>
-              <strong>Manequim:</strong> {formData.mannequin || "Não informado"}
+              <strong>Cidade:</strong> {formData.city || "Não informado"}
             </p>
             <p>
-              <strong>Pés:</strong> {formData.feet || "Não informado"}
-            </p>
-
-            <p>
-              <strong>Tatuagens:</strong> {formData.tattoos ? "Sim" : "Não"}
-            </p>
-            <p>
-              <strong>Piercings:</strong> {formData.piercings ? "Sim" : "Não"}
-            </p>
-            <p>
-              <strong>Silicone:</strong> {formData.silicone ? "Sim" : "Não"}
+              <strong>Estado:</strong> {formData.state || "Não informado"}
             </p>
           </div>
         </div>
 
-        {/* ATENDIMENTO */}
+        {/* VERIFICAÇÃO */}
         <div className={styles.section}>
-          <h3>Atendimento</h3>
+          <h3>Verificação de Identidade</h3>
           <div className={styles.infoList}>
             <p>
-              <strong>Público:</strong>{" "}
-              {formData.audience?.length
-                ? formData.audience.join(", ")
-                : "Não selecionado"}
+              <strong>Foto de Perfil:</strong>{" "}
+              {formData.profilePhoto ? (
+                <img
+                  src={
+                    typeof formData.profilePhoto === "string"
+                      ? formData.profilePhoto
+                      : URL.createObjectURL(formData.profilePhoto)
+                  }
+                  alt="Foto de perfil"
+                  className={styles.thumbnail}
+                />
+              ) : (
+                "Não enviada"
+              )}
             </p>
             <p>
-              <strong>Locais de Atendimento:</strong>{" "}
-              {formData.locales?.length
-                ? formData.locales.join(", ")
-                : "Não selecionado"}
-            </p>
-            <p>
-              <strong>Possui Local Próprio:</strong>{" "}
-              {formData.hasLocation ? "Sim" : "Não"}
-            </p>
-            <p>
-              <strong>Comodidades:</strong>{" "}
-              {formData.amenities?.length
-                ? formData.amenities.join(", ")
-                : "Nenhuma selecionada"}
+              <strong>Foto com Documento:</strong>{" "}
+              {formData.documentPhoto ? (
+                <img
+                  src={
+                    typeof formData.documentPhoto === "string"
+                      ? formData.documentPhoto
+                      : URL.createObjectURL(formData.documentPhoto)
+                  }
+                  alt="Foto com documento"
+                  className={styles.thumbnail}
+                />
+              ) : (
+                "Não enviada"
+              )}
             </p>
           </div>
         </div>
 
-        {/* SERVIÇOS */}
+        {/* PAGAMENTO */}
         <div className={styles.section}>
-          <h3>Serviços</h3>
+          <h3>Cartão Cadastrado</h3>
           <div className={styles.infoList}>
             <p>
-              <strong>Serviços Oferecidos:</strong>{" "}
-              {formData.services?.length
-                ? formData.services.join(", ")
-                : "Não selecionado"}
+              <strong>Nome no Cartão:</strong>{" "}
+              {formData.cardName || "Não informado"}
             </p>
-          </div>
-        </div>
-
-        {/* FETICHES */}
-        <div className={styles.section}>
-          <h3>Fetiches</h3>
-          <div className={styles.infoList}>
             <p>
-              <strong>Preferências:</strong>{" "}
-              {formData.fetiches?.length
-                ? formData.fetiches.join(", ")
-                : "Nenhum selecionado"}
+              <strong>Número:</strong>{" "}
+              {formData.cardNumber
+                ? `**** **** **** ${formData.cardNumber.slice(-4)}`
+                : "Não informado"}
+            </p>
+            <p>
+              <strong>Validade:</strong> {formData.expiry || "Não informada"}
+            </p>
+            <p>
+              <strong>CVV:</strong> {formData.cvv ? "•••" : "Não informado"}
             </p>
           </div>
         </div>
       </div>
 
-      {/* Termos de Serviço */}
+      {/* Termos */}
       <label className={styles.agreement}>
         <input
           type="checkbox"
-          checked={formData.agreed}
+          checked={formData.agreed || false}
           onChange={(e) => onUpdate({ agreed: e.target.checked })}
         />
         <span>
@@ -144,7 +140,7 @@ export default function ConfirmationStep({
           <a href="#" className={styles.link}>
             termos de serviço
           </a>{" "}
-          e confirmo que todos os dados fornecidos são verdadeiros e precisos.
+          e confirmo que todas as informações são verdadeiras e atuais.
         </span>
       </label>
     </div>

@@ -6,14 +6,12 @@ import styles from "./page.module.css";
 
 import StepIndicator from "@/components/advertiser/step-indicator";
 import ProfileStep from "@/components/advertiser/steps/profile-step";
-import AppearanceStep from "@/components/advertiser/steps/appearance-step";
-import AudienceStep from "@/components/advertiser/steps/audience-step";
-import ServicesStep from "@/components/advertiser/steps/services-step";
-import FetichesStep from "@/components/advertiser/steps/fetiches.step";
+import AppearanceStep from "@/components/advertiser/steps/verification-step";
+import AudienceStep from "@/components/advertiser/steps/payment-step";
 import ConfirmationStep from "@/components/advertiser/steps/confirmation-step";
 import StepNavigation from "@/components/advertiser/step-navigation";
 
-const TOTAL_STEPS = 6;
+const TOTAL_STEPS = 4;
 
 export default function AdvertiserRegistration() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -102,18 +100,6 @@ export default function AdvertiserRegistration() {
               />
             )}
             {currentStep === 4 && (
-              <ServicesStep
-                formData={formData}
-                onUpdate={handleUpdateFormData}
-              />
-            )}
-            {currentStep === 5 && (
-              <FetichesStep
-                formData={formData}
-                onUpdate={handleUpdateFormData}
-              />
-            )}
-            {currentStep === 6 && (
               <ConfirmationStep
                 formData={formData}
                 onUpdate={handleUpdateFormData}

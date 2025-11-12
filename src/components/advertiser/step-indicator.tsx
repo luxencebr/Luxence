@@ -5,14 +5,7 @@ interface StepIndicatorProps {
   totalSteps: number;
 }
 
-const steps = [
-  "Perfil",
-  "Aparência",
-  "Atendimento",
-  "Serviços",
-  "Fetiches",
-  "Confirmação",
-];
+const steps = ["Perfil", "Verificação", "Método de Pagamento", "Confirmação"];
 
 export default function StepIndicator({
   currentStep,

@@ -2,35 +2,41 @@
   width: 480px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 16px;
+  gap: 24px;
   color: var(--contrast-color);
 }
 
-.header h2 {
-  font-size: 1.5rem;
-  font-weight: bold;
+.header {
+  margin-bottom: 8px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--contrast-color);
   margin-bottom: 4px;
-  color: var(--contrast-color);
 }
 
-.header p {
+.subtitle {
   color: var(--contrast-complementary-color);
+  font-size: 14px;
 }
 
 .section {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--contrast-color);
+  margin-bottom: 4px;
 }
 
-.label {
+.label,
+.labelSmall {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -38,9 +44,8 @@
   color: var(--contrast-complementary-color);
 }
 
-.label input {
+.input {
   background: var(--background-color);
-  width: auto;
   padding: 10px 12px;
 
   outline: none;
@@ -54,14 +59,11 @@
   transition: border-color 0.2s ease;
 }
 
-.address {
+.row {
   display: flex;
-  flex-flow: column nowrap;
-  gap: 16px;
+  gap: 1rem;
 }
 
-.addressContent {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+.labelSmall {
+  flex: 1;
 }

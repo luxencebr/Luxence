@@ -1,0 +1,106 @@
+.container {
+  width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  color: var(--contrast-color);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin-bottom: 0.25rem;
+}
+
+.subtitle {
+  color: var(--muted-foreground);
+}
+
+.section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+}
+
+.label {
+  width: 100%;
+  text-align: left;
+}
+
+.uploadBox {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.uploadBox input[type="file"] {
+  display: none;
+}
+
+.customUpload {
+  background: var(--background-color);
+  width: 100%;
+  aspect-ratio: 1 / 1;
+
+  border: 2px dashed var(--contrast-color);
+  border-radius: 1rem;
+
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--contrast-complementary-color);
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.customUpload:hover {
+  background: var(--contrast-complementary-color);
+  border-color: var(--background-color);
+  color: var(--background-complementary-color);
+}
+
+.previewWrapper {
+  position: relative;
+  display: inline-block;
+  width: 200px;
+  height: 200px;
+}
+
+.previewImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 1rem;
+  border: 1px solid #ccc;
+}
+
+.removeButton {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: background 0.2s;
+}
+
+.removeButton:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
