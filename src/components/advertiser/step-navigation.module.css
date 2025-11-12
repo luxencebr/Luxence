@@ -2,7 +2,7 @@
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: right;
   gap: 16px;
 }
 
@@ -35,17 +35,6 @@
 .buttonBack:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-}
-
-/* Pular */
-.buttonSkip {
-  color: var(--contrast-complementary-color);
-  background: transparent;
-}
-
-.buttonSkip:hover {
-  color: var(--contrast-color);
-  background: var(--background-complementary-color);
 }
 
 /* Próximo / Finalizar */

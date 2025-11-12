@@ -1,76 +1,84 @@
 "use client";
 
 import { useState } from "react";
-
 import styles from "./page.module.css";
 
 import StepIndicator from "@/components/advertiser/step-indicator";
 import ProfileStep from "@/components/advertiser/steps/profile-step";
-import AppearanceStep from "@/components/advertiser/steps/verification-step";
-import AudienceStep from "@/components/advertiser/steps/payment-step";
+import VerificationStep from "@/components/advertiser/steps/verification-step";
+import PaymentStep from "@/components/advertiser/steps/payment-step";
+import AddressStep from "@/components/advertiser/steps/address-step";
 import ConfirmationStep from "@/components/advertiser/steps/confirmation-step";
 import StepNavigation from "@/components/advertiser/step-navigation";
 
-const TOTAL_STEPS = 4;
+const TOTAL_STEPS = 5;
 
 export default function AdvertiserRegistration() {
   const [currentStep, setCurrentStep] = useState(1);
+
+  // Dados principais do formulário
   const [formData, setFormData] = useState({
     // Profile
-    age: 25,
-    nationality: "",
-    languages: [""],
-    // Appearance
-    ethnicity: "",
-    hair: "",
-    eyes: "",
-    height: 175,
-    mannequin: 40,
-    feet: 40,
-    tattoos: false,
-    piercings: false,
-    silicone: false,
-    // Audience
-    audience: [],
-    locales: [],
-    hasLocation: false,
-    amenities: [],
-    //Services
-    services: [],
-    //Fetiches
-    fetiches: [],
-    // Confirmation
-    agreed: false,
+    cpf: "",
+    birthDate: "",
+    phone: "",
+
+    // Verification
+    profilePhoto: null,
+    documentPhoto: null,
+
+    // Payment
+    cardName: "",
+    cardNumber: "",
+    expiry: "",
+    cvv: "",
+
+    // Address
+    cep: "",
+    street: "",
+    neighborhood: "",
+    city: "",
+    state: "",
+    number: "",
+    complement: "",
   });
 
-  const handleNext = () => {
-    if (currentStep < TOTAL_STEPS) {
-      setCurrentStep(currentStep + 1);
-    }
-  };
-
-  const handlePrev = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
-  const handleSkip = () => {
-    handleNext();
-  };
-
+  // Atualização genérica
   const handleUpdateFormData = (newData: Partial<typeof formData>) => {
     setFormData((prev) => ({ ...prev, ...newData }));
   };
 
+  // 🔍 Controle de validade por etapa
+  const [validSteps, setValidSteps] = useState<Record<number, boolean>>({
+    1: false, // Profile
+    2: false, // Verification
+    3: false, // Payment
+    4: false, // Address
+    5: true, // Confirmation (sempre ok)
+  });
+
+  const canProceed = () => validSteps[currentStep];
+
+  // Navegação entre etapas
+  const handleNext = () => {
+    if (currentStep < TOTAL_STEPS && canProceed()) {
+      setCurrentStep((s) => s + 1);
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentStep > 1) setCurrentStep((s) => s - 1);
+  };
+
+  // Submissão final
   const handleSubmit = () => {
-    console.log("Formulário completo:", formData);
-    // Aqui você pode enviar os dados para um servidor
+    console.log("✅ Dados finais enviados:", formData);
   };
 
   return (
     <div className={styles.container}>
       <div className={styles.wrapper}>
+        {/* Lateral esquerda */}
         <aside className={styles.side}>
           <div className={styles.header}>
             <h1>Anuncie Conosco!</h1>
@@ -79,27 +87,50 @@ export default function AdvertiserRegistration() {
           <StepIndicator currentStep={currentStep} totalSteps={TOTAL_STEPS} />
         </aside>
 
+        {/* Conteúdo central */}
         <div className={styles.content}>
           <div className={styles.card}>
             {currentStep === 1 && (
               <ProfileStep
                 formData={formData}
                 onUpdate={handleUpdateFormData}
+                onValidate={(isValid) =>
+                  setValidSteps((v) => ({ ...v, 1: isValid }))
+                }
               />
             )}
+
             {currentStep === 2 && (
-              <AppearanceStep
+              <VerificationStep
                 formData={formData}
                 onUpdate={handleUpdateFormData}
+                onValidate={(isValid) =>
+                  setValidSteps((v) => ({ ...v, 2: isValid }))
+                }
               />
             )}
+
             {currentStep === 3 && (
-              <AudienceStep
+              <PaymentStep
                 formData={formData}
                 onUpdate={handleUpdateFormData}
+                onValidate={(isValid) =>
+                  setValidSteps((v) => ({ ...v, 3: isValid }))
+                }
               />
             )}
+
             {currentStep === 4 && (
+              <AddressStep
+                formData={formData}
+                onUpdate={handleUpdateFormData}
+                onValidate={(isValid) =>
+                  setValidSteps((v) => ({ ...v, 4: isValid }))
+                }
+              />
+            )}
+
+            {currentStep === 5 && (
               <ConfirmationStep
                 formData={formData}
                 onUpdate={handleUpdateFormData}
@@ -107,14 +138,15 @@ export default function AdvertiserRegistration() {
             )}
           </div>
 
+          {/* Navegação entre passos */}
           <div className={styles.navigation}>
             <StepNavigation
               currentStep={currentStep}
               totalSteps={TOTAL_STEPS}
               onNext={handleNext}
               onPrev={handlePrev}
-              onSkip={handleSkip}
               onSubmit={handleSubmit}
+              canProceed={canProceed}
             />
           </div>
         </div>

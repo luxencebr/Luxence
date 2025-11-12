@@ -2,41 +2,41 @@
   width: 480px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  justify-content: center;
+  gap: 16px;
   color: var(--contrast-color);
 }
 
-.header {
-  margin-bottom: 8px;
-}
-
-.title {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--contrast-color);
+.header h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
   margin-bottom: 4px;
+  color: var(--contrast-color);
 }
 
-.subtitle {
+.header p {
   color: var(--contrast-complementary-color);
-  font-size: 14px;
 }
 
 .section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
-.sectionTitle {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--contrast-color);
-  margin-bottom: 4px;
+.address {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 16px;
 }
 
-.label,
-.labelSmall {
+.addressContent {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.label {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -44,8 +44,9 @@
   color: var(--contrast-complementary-color);
 }
 
-.input {
+.label input {
   background: var(--background-color);
+  width: auto;
   padding: 10px 12px;
 
   outline: none;
@@ -59,12 +60,7 @@
   transition: border-color 0.2s ease;
 }
 
-.row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-.labelSmall {
-  flex: 1;
+.label input[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

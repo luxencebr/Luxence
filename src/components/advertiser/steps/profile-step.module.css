@@ -54,6 +54,11 @@
   transition: border-color 0.2s ease;
 }
 
+.label input[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .address {
   display: flex;
   flex-flow: column nowrap;
