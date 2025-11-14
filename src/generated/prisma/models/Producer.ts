@@ -28,67 +28,56 @@ export type AggregateProducer = {
 export type ProducerAvgAggregateOutputType = {
   id: number | null
   userId: number | null
-  views: number | null
-  age: number | null
 }
 
 export type ProducerSumAggregateOutputType = {
   id: number | null
   userId: number | null
-  views: number | null
-  age: number | null
 }
 
 export type ProducerMinAggregateOutputType = {
   id: number | null
   userId: number | null
-  verified: boolean | null
   signature: $Enums.SIGNATURE | null
-  views: number | null
-  age: number | null
+  isVerified: boolean | null
+  verificationStatus: $Enums.STATUS | null
+  birthday: Date | null
   nationality: string | null
-  scholarity: string | null
-  slogan: string | null
-  description: string | null
+  document: string | null
   phone: string | null
-  instagram: string | null
-  telegram: string | null
-  hasLocal: boolean | null
+  documentFrontPhoto: string | null
+  documentBackPhoto: string | null
+  selfieWithDocument: string | null
 }
 
 export type ProducerMaxAggregateOutputType = {
   id: number | null
   userId: number | null
-  verified: boolean | null
   signature: $Enums.SIGNATURE | null
-  views: number | null
-  age: number | null
+  isVerified: boolean | null
+  verificationStatus: $Enums.STATUS | null
+  birthday: Date | null
   nationality: string | null
-  scholarity: string | null
-  slogan: string | null
-  description: string | null
+  document: string | null
   phone: string | null
-  instagram: string | null
-  telegram: string | null
-  hasLocal: boolean | null
+  documentFrontPhoto: string | null
+  documentBackPhoto: string | null
+  selfieWithDocument: string | null
 }
 
 export type ProducerCountAggregateOutputType = {
   id: number
   userId: number
-  verified: number
   signature: number
-  views: number
-  age: number
+  isVerified: number
+  verificationStatus: number
+  birthday: number
   nationality: number
-  scholarity: number
-  languages: number
-  slogan: number
-  description: number
+  document: number
   phone: number
-  instagram: number
-  telegram: number
-  hasLocal: number
+  documentFrontPhoto: number
+  documentBackPhoto: number
+  selfieWithDocument: number
   _all: number
 }
 
@@ -96,67 +85,56 @@ export type ProducerCountAggregateOutputType = {
 export type ProducerAvgAggregateInputType = {
   id?: true
   userId?: true
-  views?: true
-  age?: true
 }
 
 export type ProducerSumAggregateInputType = {
   id?: true
   userId?: true
-  views?: true
-  age?: true
 }
 
 export type ProducerMinAggregateInputType = {
   id?: true
   userId?: true
-  verified?: true
   signature?: true
-  views?: true
-  age?: true
+  isVerified?: true
+  verificationStatus?: true
+  birthday?: true
   nationality?: true
-  scholarity?: true
-  slogan?: true
-  description?: true
+  document?: true
   phone?: true
-  instagram?: true
-  telegram?: true
-  hasLocal?: true
+  documentFrontPhoto?: true
+  documentBackPhoto?: true
+  selfieWithDocument?: true
 }
 
 export type ProducerMaxAggregateInputType = {
   id?: true
   userId?: true
-  verified?: true
   signature?: true
-  views?: true
-  age?: true
+  isVerified?: true
+  verificationStatus?: true
+  birthday?: true
   nationality?: true
-  scholarity?: true
-  slogan?: true
-  description?: true
+  document?: true
   phone?: true
-  instagram?: true
-  telegram?: true
-  hasLocal?: true
+  documentFrontPhoto?: true
+  documentBackPhoto?: true
+  selfieWithDocument?: true
 }
 
 export type ProducerCountAggregateInputType = {
   id?: true
   userId?: true
-  verified?: true
   signature?: true
-  views?: true
-  age?: true
+  isVerified?: true
+  verificationStatus?: true
+  birthday?: true
   nationality?: true
-  scholarity?: true
-  languages?: true
-  slogan?: true
-  description?: true
+  document?: true
   phone?: true
-  instagram?: true
-  telegram?: true
-  hasLocal?: true
+  documentFrontPhoto?: true
+  documentBackPhoto?: true
+  selfieWithDocument?: true
   _all?: true
 }
 
@@ -249,19 +227,16 @@ export type ProducerGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 export type ProducerGroupByOutputType = {
   id: number
   userId: number
-  verified: boolean
   signature: $Enums.SIGNATURE
-  views: number
-  age: number
+  isVerified: boolean
+  verificationStatus: $Enums.STATUS
+  birthday: Date
   nationality: string
-  scholarity: string
-  languages: runtime.JsonValue
-  slogan: string
-  description: string
+  document: string
   phone: string
-  instagram: string | null
-  telegram: string | null
-  hasLocal: boolean
+  documentFrontPhoto: string
+  documentBackPhoto: string
+  selfieWithDocument: string
   _count: ProducerCountAggregateOutputType | null
   _avg: ProducerAvgAggregateOutputType | null
   _sum: ProducerSumAggregateOutputType | null
@@ -290,57 +265,35 @@ export type ProducerWhereInput = {
   NOT?: Prisma.ProducerWhereInput | Prisma.ProducerWhereInput[]
   id?: Prisma.IntFilter<"Producer"> | number
   userId?: Prisma.IntFilter<"Producer"> | number
-  verified?: Prisma.BoolFilter<"Producer"> | boolean
   signature?: Prisma.EnumSIGNATUREFilter<"Producer"> | $Enums.SIGNATURE
-  views?: Prisma.IntFilter<"Producer"> | number
-  age?: Prisma.IntFilter<"Producer"> | number
+  isVerified?: Prisma.BoolFilter<"Producer"> | boolean
+  verificationStatus?: Prisma.EnumSTATUSFilter<"Producer"> | $Enums.STATUS
+  birthday?: Prisma.DateTimeFilter<"Producer"> | Date | string
   nationality?: Prisma.StringFilter<"Producer"> | string
-  scholarity?: Prisma.StringFilter<"Producer"> | string
-  languages?: Prisma.JsonFilter<"Producer">
-  slogan?: Prisma.StringFilter<"Producer"> | string
-  description?: Prisma.StringFilter<"Producer"> | string
+  document?: Prisma.StringFilter<"Producer"> | string
   phone?: Prisma.StringFilter<"Producer"> | string
-  instagram?: Prisma.StringNullableFilter<"Producer"> | string | null
-  telegram?: Prisma.StringNullableFilter<"Producer"> | string | null
-  hasLocal?: Prisma.BoolFilter<"Producer"> | boolean
+  documentFrontPhoto?: Prisma.StringFilter<"Producer"> | string
+  documentBackPhoto?: Prisma.StringFilter<"Producer"> | string
+  selfieWithDocument?: Prisma.StringFilter<"Producer"> | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  local?: Prisma.XOR<Prisma.ProducerLocalNullableScalarRelationFilter, Prisma.ProducerLocalWhereInput> | null
-  appearance?: Prisma.XOR<Prisma.AppearanceNullableScalarRelationFilter, Prisma.AppearanceWhereInput> | null
-  prices?: Prisma.PriceListRelationFilter
-  services?: Prisma.ProducerServiceListRelationFilter
-  fetiches?: Prisma.ProducerFetishListRelationFilter
-  audiences?: Prisma.ProducerAudienceListRelationFilter
-  locations?: Prisma.ProducerLocationsListRelationFilter
-  payments?: Prisma.ProducerPaymentListRelationFilter
-  reviews?: Prisma.ReviewListRelationFilter
+  profile?: Prisma.XOR<Prisma.ProducerProfileNullableScalarRelationFilter, Prisma.ProducerProfileWhereInput> | null
 }
 
 export type ProducerOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  verified?: Prisma.SortOrder
   signature?: Prisma.SortOrder
-  views?: Prisma.SortOrder
-  age?: Prisma.SortOrder
+  isVerified?: Prisma.SortOrder
+  verificationStatus?: Prisma.SortOrder
+  birthday?: Prisma.SortOrder
   nationality?: Prisma.SortOrder
-  scholarity?: Prisma.SortOrder
-  languages?: Prisma.SortOrder
-  slogan?: Prisma.SortOrder
-  description?: Prisma.SortOrder
+  document?: Prisma.SortOrder
   phone?: Prisma.SortOrder
-  instagram?: Prisma.SortOrderInput | Prisma.SortOrder
-  telegram?: Prisma.SortOrderInput | Prisma.SortOrder
-  hasLocal?: Prisma.SortOrder
+  documentFrontPhoto?: Prisma.SortOrder
+  documentBackPhoto?: Prisma.SortOrder
+  selfieWithDocument?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
-  local?: Prisma.ProducerLocalOrderByWithRelationInput
-  appearance?: Prisma.AppearanceOrderByWithRelationInput
-  prices?: Prisma.PriceOrderByRelationAggregateInput
-  services?: Prisma.ProducerServiceOrderByRelationAggregateInput
-  fetiches?: Prisma.ProducerFetishOrderByRelationAggregateInput
-  audiences?: Prisma.ProducerAudienceOrderByRelationAggregateInput
-  locations?: Prisma.ProducerLocationsOrderByRelationAggregateInput
-  payments?: Prisma.ProducerPaymentOrderByRelationAggregateInput
-  reviews?: Prisma.ReviewOrderByRelationAggregateInput
+  profile?: Prisma.ProducerProfileOrderByWithRelationInput
   _relevance?: Prisma.ProducerOrderByRelevanceInput
 }
 
@@ -350,47 +303,33 @@ export type ProducerWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.ProducerWhereInput | Prisma.ProducerWhereInput[]
   OR?: Prisma.ProducerWhereInput[]
   NOT?: Prisma.ProducerWhereInput | Prisma.ProducerWhereInput[]
-  verified?: Prisma.BoolFilter<"Producer"> | boolean
   signature?: Prisma.EnumSIGNATUREFilter<"Producer"> | $Enums.SIGNATURE
-  views?: Prisma.IntFilter<"Producer"> | number
-  age?: Prisma.IntFilter<"Producer"> | number
+  isVerified?: Prisma.BoolFilter<"Producer"> | boolean
+  verificationStatus?: Prisma.EnumSTATUSFilter<"Producer"> | $Enums.STATUS
+  birthday?: Prisma.DateTimeFilter<"Producer"> | Date | string
   nationality?: Prisma.StringFilter<"Producer"> | string
-  scholarity?: Prisma.StringFilter<"Producer"> | string
-  languages?: Prisma.JsonFilter<"Producer">
-  slogan?: Prisma.StringFilter<"Producer"> | string
-  description?: Prisma.StringFilter<"Producer"> | string
+  document?: Prisma.StringFilter<"Producer"> | string
   phone?: Prisma.StringFilter<"Producer"> | string
-  instagram?: Prisma.StringNullableFilter<"Producer"> | string | null
-  telegram?: Prisma.StringNullableFilter<"Producer"> | string | null
-  hasLocal?: Prisma.BoolFilter<"Producer"> | boolean
+  documentFrontPhoto?: Prisma.StringFilter<"Producer"> | string
+  documentBackPhoto?: Prisma.StringFilter<"Producer"> | string
+  selfieWithDocument?: Prisma.StringFilter<"Producer"> | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  local?: Prisma.XOR<Prisma.ProducerLocalNullableScalarRelationFilter, Prisma.ProducerLocalWhereInput> | null
-  appearance?: Prisma.XOR<Prisma.AppearanceNullableScalarRelationFilter, Prisma.AppearanceWhereInput> | null
-  prices?: Prisma.PriceListRelationFilter
-  services?: Prisma.ProducerServiceListRelationFilter
-  fetiches?: Prisma.ProducerFetishListRelationFilter
-  audiences?: Prisma.ProducerAudienceListRelationFilter
-  locations?: Prisma.ProducerLocationsListRelationFilter
-  payments?: Prisma.ProducerPaymentListRelationFilter
-  reviews?: Prisma.ReviewListRelationFilter
+  profile?: Prisma.XOR<Prisma.ProducerProfileNullableScalarRelationFilter, Prisma.ProducerProfileWhereInput> | null
 }, "id" | "userId">
 
 export type ProducerOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  verified?: Prisma.SortOrder
   signature?: Prisma.SortOrder
-  views?: Prisma.SortOrder
-  age?: Prisma.SortOrder
+  isVerified?: Prisma.SortOrder
+  verificationStatus?: Prisma.SortOrder
+  birthday?: Prisma.SortOrder
   nationality?: Prisma.SortOrder
-  scholarity?: Prisma.SortOrder
-  languages?: Prisma.SortOrder
-  slogan?: Prisma.SortOrder
-  description?: Prisma.SortOrder
+  document?: Prisma.SortOrder
   phone?: Prisma.SortOrder
-  instagram?: Prisma.SortOrderInput | Prisma.SortOrder
-  telegram?: Prisma.SortOrderInput | Prisma.SortOrder
-  hasLocal?: Prisma.SortOrder
+  documentFrontPhoto?: Prisma.SortOrder
+  documentBackPhoto?: Prisma.SortOrder
+  selfieWithDocument?: Prisma.SortOrder
   _count?: Prisma.ProducerCountOrderByAggregateInput
   _avg?: Prisma.ProducerAvgOrderByAggregateInput
   _max?: Prisma.ProducerMaxOrderByAggregateInput
@@ -404,187 +343,126 @@ export type ProducerScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ProducerScalarWhereWithAggregatesInput | Prisma.ProducerScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Producer"> | number
   userId?: Prisma.IntWithAggregatesFilter<"Producer"> | number
-  verified?: Prisma.BoolWithAggregatesFilter<"Producer"> | boolean
   signature?: Prisma.EnumSIGNATUREWithAggregatesFilter<"Producer"> | $Enums.SIGNATURE
-  views?: Prisma.IntWithAggregatesFilter<"Producer"> | number
-  age?: Prisma.IntWithAggregatesFilter<"Producer"> | number
+  isVerified?: Prisma.BoolWithAggregatesFilter<"Producer"> | boolean
+  verificationStatus?: Prisma.EnumSTATUSWithAggregatesFilter<"Producer"> | $Enums.STATUS
+  birthday?: Prisma.DateTimeWithAggregatesFilter<"Producer"> | Date | string
   nationality?: Prisma.StringWithAggregatesFilter<"Producer"> | string
-  scholarity?: Prisma.StringWithAggregatesFilter<"Producer"> | string
-  languages?: Prisma.JsonWithAggregatesFilter<"Producer">
-  slogan?: Prisma.StringWithAggregatesFilter<"Producer"> | string
-  description?: Prisma.StringWithAggregatesFilter<"Producer"> | string
+  document?: Prisma.StringWithAggregatesFilter<"Producer"> | string
   phone?: Prisma.StringWithAggregatesFilter<"Producer"> | string
-  instagram?: Prisma.StringNullableWithAggregatesFilter<"Producer"> | string | null
-  telegram?: Prisma.StringNullableWithAggregatesFilter<"Producer"> | string | null
-  hasLocal?: Prisma.BoolWithAggregatesFilter<"Producer"> | boolean
+  documentFrontPhoto?: Prisma.StringWithAggregatesFilter<"Producer"> | string
+  documentBackPhoto?: Prisma.StringWithAggregatesFilter<"Producer"> | string
+  selfieWithDocument?: Prisma.StringWithAggregatesFilter<"Producer"> | string
 }
 
 export type ProducerCreateInput = {
-  verified?: boolean
-  signature: $Enums.SIGNATURE
-  views?: number
-  age: number
+  signature?: $Enums.SIGNATURE
+  isVerified?: boolean
+  verificationStatus?: $Enums.STATUS
+  birthday: Date | string
   nationality: string
-  scholarity: string
-  languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan: string
-  description: string
+  document: string
   phone: string
-  instagram?: string | null
-  telegram?: string | null
-  hasLocal?: boolean
+  documentFrontPhoto: string
+  documentBackPhoto: string
+  selfieWithDocument: string
   user: Prisma.UserCreateNestedOneWithoutProducerInput
-  local?: Prisma.ProducerLocalCreateNestedOneWithoutProducerInput
-  appearance?: Prisma.AppearanceCreateNestedOneWithoutProducerInput
-  prices?: Prisma.PriceCreateNestedManyWithoutProducerInput
-  services?: Prisma.ProducerServiceCreateNestedManyWithoutProducerInput
-  fetiches?: Prisma.ProducerFetishCreateNestedManyWithoutProducerInput
-  audiences?: Prisma.ProducerAudienceCreateNestedManyWithoutProducerInput
-  locations?: Prisma.ProducerLocationsCreateNestedManyWithoutProducerInput
-  payments?: Prisma.ProducerPaymentCreateNestedManyWithoutProducerInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutProducerInput
+  profile?: Prisma.ProducerProfileCreateNestedOneWithoutProducerInput
 }
 
 export type ProducerUncheckedCreateInput = {
   id?: number
   userId: number
-  verified?: boolean
-  signature: $Enums.SIGNATURE
-  views?: number
-  age: number
+  signature?: $Enums.SIGNATURE
+  isVerified?: boolean
+  verificationStatus?: $Enums.STATUS
+  birthday: Date | string
   nationality: string
-  scholarity: string
-  languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan: string
-  description: string
+  document: string
   phone: string
-  instagram?: string | null
-  telegram?: string | null
-  hasLocal?: boolean
-  local?: Prisma.ProducerLocalUncheckedCreateNestedOneWithoutProducerInput
-  appearance?: Prisma.AppearanceUncheckedCreateNestedOneWithoutProducerInput
-  prices?: Prisma.PriceUncheckedCreateNestedManyWithoutProducerInput
-  services?: Prisma.ProducerServiceUncheckedCreateNestedManyWithoutProducerInput
-  fetiches?: Prisma.ProducerFetishUncheckedCreateNestedManyWithoutProducerInput
-  audiences?: Prisma.ProducerAudienceUncheckedCreateNestedManyWithoutProducerInput
-  locations?: Prisma.ProducerLocationsUncheckedCreateNestedManyWithoutProducerInput
-  payments?: Prisma.ProducerPaymentUncheckedCreateNestedManyWithoutProducerInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutProducerInput
+  documentFrontPhoto: string
+  documentBackPhoto: string
+  selfieWithDocument: string
+  profile?: Prisma.ProducerProfileUncheckedCreateNestedOneWithoutProducerInput
 }
 
 export type ProducerUpdateInput = {
-  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   signature?: Prisma.EnumSIGNATUREFieldUpdateOperationsInput | $Enums.SIGNATURE
-  views?: Prisma.IntFieldUpdateOperationsInput | number
-  age?: Prisma.IntFieldUpdateOperationsInput | number
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationStatus?: Prisma.EnumSTATUSFieldUpdateOperationsInput | $Enums.STATUS
+  birthday?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nationality?: Prisma.StringFieldUpdateOperationsInput | string
-  scholarity?: Prisma.StringFieldUpdateOperationsInput | string
-  languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  document?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
-  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  documentFrontPhoto?: Prisma.StringFieldUpdateOperationsInput | string
+  documentBackPhoto?: Prisma.StringFieldUpdateOperationsInput | string
+  selfieWithDocument?: Prisma.StringFieldUpdateOperationsInput | string
   user?: Prisma.UserUpdateOneRequiredWithoutProducerNestedInput
-  local?: Prisma.ProducerLocalUpdateOneWithoutProducerNestedInput
-  appearance?: Prisma.AppearanceUpdateOneWithoutProducerNestedInput
-  prices?: Prisma.PriceUpdateManyWithoutProducerNestedInput
-  services?: Prisma.ProducerServiceUpdateManyWithoutProducerNestedInput
-  fetiches?: Prisma.ProducerFetishUpdateManyWithoutProducerNestedInput
-  audiences?: Prisma.ProducerAudienceUpdateManyWithoutProducerNestedInput
-  locations?: Prisma.ProducerLocationsUpdateManyWithoutProducerNestedInput
-  payments?: Prisma.ProducerPaymentUpdateManyWithoutProducerNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutProducerNestedInput
+  profile?: Prisma.ProducerProfileUpdateOneWithoutProducerNestedInput
 }
 
 export type ProducerUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
-  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   signature?: Prisma.EnumSIGNATUREFieldUpdateOperationsInput | $Enums.SIGNATURE
-  views?: Prisma.IntFieldUpdateOperationsInput | number
-  age?: Prisma.IntFieldUpdateOperationsInput | number
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationStatus?: Prisma.EnumSTATUSFieldUpdateOperationsInput | $Enums.STATUS
+  birthday?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nationality?: Prisma.StringFieldUpdateOperationsInput | string
-  scholarity?: Prisma.StringFieldUpdateOperationsInput | string
-  languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  document?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
-  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  local?: Prisma.ProducerLocalUncheckedUpdateOneWithoutProducerNestedInput
-  appearance?: Prisma.AppearanceUncheckedUpdateOneWithoutProducerNestedInput
-  prices?: Prisma.PriceUncheckedUpdateManyWithoutProducerNestedInput
-  services?: Prisma.ProducerServiceUncheckedUpdateManyWithoutProducerNestedInput
-  fetiches?: Prisma.ProducerFetishUncheckedUpdateManyWithoutProducerNestedInput
-  audiences?: Prisma.ProducerAudienceUncheckedUpdateManyWithoutProducerNestedInput
-  locations?: Prisma.ProducerLocationsUncheckedUpdateManyWithoutProducerNestedInput
-  payments?: Prisma.ProducerPaymentUncheckedUpdateManyWithoutProducerNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutProducerNestedInput
+  documentFrontPhoto?: Prisma.StringFieldUpdateOperationsInput | string
+  documentBackPhoto?: Prisma.StringFieldUpdateOperationsInput | string
+  selfieWithDocument?: Prisma.StringFieldUpdateOperationsInput | string
+  profile?: Prisma.ProducerProfileUncheckedUpdateOneWithoutProducerNestedInput
 }
 
 export type ProducerCreateManyInput = {
   id?: number
   userId: number
-  verified?: boolean
-  signature: $Enums.SIGNATURE
-  views?: number
-  age: number
+  signature?: $Enums.SIGNATURE
+  isVerified?: boolean
+  verificationStatus?: $Enums.STATUS
+  birthday: Date | string
   nationality: string
-  scholarity: string
-  languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan: string
-  description: string
+  document: string
   phone: string
-  instagram?: string | null
-  telegram?: string | null
-  hasLocal?: boolean
+  documentFrontPhoto: string
+  documentBackPhoto: string
+  selfieWithDocument: string
 }
 
 export type ProducerUpdateManyMutationInput = {
-  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   signature?: Prisma.EnumSIGNATUREFieldUpdateOperationsInput | $Enums.SIGNATURE
-  views?: Prisma.IntFieldUpdateOperationsInput | number
-  age?: Prisma.IntFieldUpdateOperationsInput | number
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationStatus?: Prisma.EnumSTATUSFieldUpdateOperationsInput | $Enums.STATUS
+  birthday?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nationality?: Prisma.StringFieldUpdateOperationsInput | string
-  scholarity?: Prisma.StringFieldUpdateOperationsInput | string
-  languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  document?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
-  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  documentFrontPhoto?: Prisma.StringFieldUpdateOperationsInput | string
+  documentBackPhoto?: Prisma.StringFieldUpdateOperationsInput | string
+  selfieWithDocument?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type ProducerUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
-  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   signature?: Prisma.EnumSIGNATUREFieldUpdateOperationsInput | $Enums.SIGNATURE
-  views?: Prisma.IntFieldUpdateOperationsInput | number
-  age?: Prisma.IntFieldUpdateOperationsInput | number
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationStatus?: Prisma.EnumSTATUSFieldUpdateOperationsInput | $Enums.STATUS
+  birthday?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nationality?: Prisma.StringFieldUpdateOperationsInput | string
-  scholarity?: Prisma.StringFieldUpdateOperationsInput | string
-  languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  document?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
-  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  documentFrontPhoto?: Prisma.StringFieldUpdateOperationsInput | string
+  documentBackPhoto?: Prisma.StringFieldUpdateOperationsInput | string
+  selfieWithDocument?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type ProducerNullableScalarRelationFilter = {
   is?: Prisma.ProducerWhereInput | null
   isNot?: Prisma.ProducerWhereInput | null
-}
-
-export type ProducerScalarRelationFilter = {
-  is?: Prisma.ProducerWhereInput
-  isNot?: Prisma.ProducerWhereInput
 }
 
 export type ProducerOrderByRelevanceInput = {
@@ -596,67 +474,61 @@ export type ProducerOrderByRelevanceInput = {
 export type ProducerCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  verified?: Prisma.SortOrder
   signature?: Prisma.SortOrder
-  views?: Prisma.SortOrder
-  age?: Prisma.SortOrder
+  isVerified?: Prisma.SortOrder
+  verificationStatus?: Prisma.SortOrder
+  birthday?: Prisma.SortOrder
   nationality?: Prisma.SortOrder
-  scholarity?: Prisma.SortOrder
-  languages?: Prisma.SortOrder
-  slogan?: Prisma.SortOrder
-  description?: Prisma.SortOrder
+  document?: Prisma.SortOrder
   phone?: Prisma.SortOrder
-  instagram?: Prisma.SortOrder
-  telegram?: Prisma.SortOrder
-  hasLocal?: Prisma.SortOrder
+  documentFrontPhoto?: Prisma.SortOrder
+  documentBackPhoto?: Prisma.SortOrder
+  selfieWithDocument?: Prisma.SortOrder
 }
 
 export type ProducerAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  views?: Prisma.SortOrder
-  age?: Prisma.SortOrder
 }
 
 export type ProducerMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  verified?: Prisma.SortOrder
   signature?: Prisma.SortOrder
-  views?: Prisma.SortOrder
-  age?: Prisma.SortOrder
+  isVerified?: Prisma.SortOrder
+  verificationStatus?: Prisma.SortOrder
+  birthday?: Prisma.SortOrder
   nationality?: Prisma.SortOrder
-  scholarity?: Prisma.SortOrder
-  slogan?: Prisma.SortOrder
-  description?: Prisma.SortOrder
+  document?: Prisma.SortOrder
   phone?: Prisma.SortOrder
-  instagram?: Prisma.SortOrder
-  telegram?: Prisma.SortOrder
-  hasLocal?: Prisma.SortOrder
+  documentFrontPhoto?: Prisma.SortOrder
+  documentBackPhoto?: Prisma.SortOrder
+  selfieWithDocument?: Prisma.SortOrder
 }
 
 export type ProducerMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  verified?: Prisma.SortOrder
   signature?: Prisma.SortOrder
-  views?: Prisma.SortOrder
-  age?: Prisma.SortOrder
+  isVerified?: Prisma.SortOrder
+  verificationStatus?: Prisma.SortOrder
+  birthday?: Prisma.SortOrder
   nationality?: Prisma.SortOrder
-  scholarity?: Prisma.SortOrder
-  slogan?: Prisma.SortOrder
-  description?: Prisma.SortOrder
+  document?: Prisma.SortOrder
   phone?: Prisma.SortOrder
-  instagram?: Prisma.SortOrder
-  telegram?: Prisma.SortOrder
-  hasLocal?: Prisma.SortOrder
+  documentFrontPhoto?: Prisma.SortOrder
+  documentBackPhoto?: Prisma.SortOrder
+  selfieWithDocument?: Prisma.SortOrder
 }
 
 export type ProducerSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  views?: Prisma.SortOrder
-  age?: Prisma.SortOrder
+}
+
+export type ProducerScalarRelationFilter = {
+  is?: Prisma.ProducerWhereInput
+  isNot?: Prisma.ProducerWhereInput
 }
 
 export type ProducerCreateNestedOneWithoutUserInput = {
@@ -691,185 +563,59 @@ export type ProducerUncheckedUpdateOneWithoutUserNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProducerUpdateToOneWithWhereWithoutUserInput, Prisma.ProducerUpdateWithoutUserInput>, Prisma.ProducerUncheckedUpdateWithoutUserInput>
 }
 
-export type ProducerCreateNestedOneWithoutAppearanceInput = {
-  create?: Prisma.XOR<Prisma.ProducerCreateWithoutAppearanceInput, Prisma.ProducerUncheckedCreateWithoutAppearanceInput>
-  connectOrCreate?: Prisma.ProducerCreateOrConnectWithoutAppearanceInput
-  connect?: Prisma.ProducerWhereUniqueInput
-}
-
-export type ProducerUpdateOneRequiredWithoutAppearanceNestedInput = {
-  create?: Prisma.XOR<Prisma.ProducerCreateWithoutAppearanceInput, Prisma.ProducerUncheckedCreateWithoutAppearanceInput>
-  connectOrCreate?: Prisma.ProducerCreateOrConnectWithoutAppearanceInput
-  upsert?: Prisma.ProducerUpsertWithoutAppearanceInput
-  connect?: Prisma.ProducerWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProducerUpdateToOneWithWhereWithoutAppearanceInput, Prisma.ProducerUpdateWithoutAppearanceInput>, Prisma.ProducerUncheckedUpdateWithoutAppearanceInput>
-}
-
-export type ProducerCreateNestedOneWithoutPricesInput = {
-  create?: Prisma.XOR<Prisma.ProducerCreateWithoutPricesInput, Prisma.ProducerUncheckedCreateWithoutPricesInput>
-  connectOrCreate?: Prisma.ProducerCreateOrConnectWithoutPricesInput
-  connect?: Prisma.ProducerWhereUniqueInput
-}
-
-export type ProducerUpdateOneRequiredWithoutPricesNestedInput = {
-  create?: Prisma.XOR<Prisma.ProducerCreateWithoutPricesInput, Prisma.ProducerUncheckedCreateWithoutPricesInput>
-  connectOrCreate?: Prisma.ProducerCreateOrConnectWithoutPricesInput
-  upsert?: Prisma.ProducerUpsertWithoutPricesInput
-  connect?: Prisma.ProducerWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProducerUpdateToOneWithWhereWithoutPricesInput, Prisma.ProducerUpdateWithoutPricesInput>, Prisma.ProducerUncheckedUpdateWithoutPricesInput>
-}
-
-export type ProducerCreateNestedOneWithoutLocalInput = {
-  create?: Prisma.XOR<Prisma.ProducerCreateWithoutLocalInput, Prisma.ProducerUncheckedCreateWithoutLocalInput>
-  connectOrCreate?: Prisma.ProducerCreateOrConnectWithoutLocalInput
-  connect?: Prisma.ProducerWhereUniqueInput
-}
-
-export type ProducerUpdateOneRequiredWithoutLocalNestedInput = {
-  create?: Prisma.XOR<Prisma.ProducerCreateWithoutLocalInput, Prisma.ProducerUncheckedCreateWithoutLocalInput>
-  connectOrCreate?: Prisma.ProducerCreateOrConnectWithoutLocalInput
-  upsert?: Prisma.ProducerUpsertWithoutLocalInput
-  connect?: Prisma.ProducerWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProducerUpdateToOneWithWhereWithoutLocalInput, Prisma.ProducerUpdateWithoutLocalInput>, Prisma.ProducerUncheckedUpdateWithoutLocalInput>
-}
-
-export type ProducerCreateNestedOneWithoutAudiencesInput = {
-  create?: Prisma.XOR<Prisma.ProducerCreateWithoutAudiencesInput, Prisma.ProducerUncheckedCreateWithoutAudiencesInput>
-  connectOrCreate?: Prisma.ProducerCreateOrConnectWithoutAudiencesInput
-  connect?: Prisma.ProducerWhereUniqueInput
-}
-
-export type ProducerUpdateOneRequiredWithoutAudiencesNestedInput = {
-  create?: Prisma.XOR<Prisma.ProducerCreateWithoutAudiencesInput, Prisma.ProducerUncheckedCreateWithoutAudiencesInput>
-  connectOrCreate?: Prisma.ProducerCreateOrConnectWithoutAudiencesInput
-  upsert?: Prisma.ProducerUpsertWithoutAudiencesInput
-  connect?: Prisma.ProducerWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProducerUpdateToOneWithWhereWithoutAudiencesInput, Prisma.ProducerUpdateWithoutAudiencesInput>, Prisma.ProducerUncheckedUpdateWithoutAudiencesInput>
-}
-
-export type ProducerCreateNestedOneWithoutLocationsInput = {
-  create?: Prisma.XOR<Prisma.ProducerCreateWithoutLocationsInput, Prisma.ProducerUncheckedCreateWithoutLocationsInput>
-  connectOrCreate?: Prisma.ProducerCreateOrConnectWithoutLocationsInput
-  connect?: Prisma.ProducerWhereUniqueInput
-}
-
-export type ProducerUpdateOneRequiredWithoutLocationsNestedInput = {
-  create?: Prisma.XOR<Prisma.ProducerCreateWithoutLocationsInput, Prisma.ProducerUncheckedCreateWithoutLocationsInput>
-  connectOrCreate?: Prisma.ProducerCreateOrConnectWithoutLocationsInput
-  upsert?: Prisma.ProducerUpsertWithoutLocationsInput
-  connect?: Prisma.ProducerWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProducerUpdateToOneWithWhereWithoutLocationsInput, Prisma.ProducerUpdateWithoutLocationsInput>, Prisma.ProducerUncheckedUpdateWithoutLocationsInput>
-}
-
-export type ProducerCreateNestedOneWithoutServicesInput = {
-  create?: Prisma.XOR<Prisma.ProducerCreateWithoutServicesInput, Prisma.ProducerUncheckedCreateWithoutServicesInput>
-  connectOrCreate?: Prisma.ProducerCreateOrConnectWithoutServicesInput
-  connect?: Prisma.ProducerWhereUniqueInput
-}
-
-export type ProducerUpdateOneRequiredWithoutServicesNestedInput = {
-  create?: Prisma.XOR<Prisma.ProducerCreateWithoutServicesInput, Prisma.ProducerUncheckedCreateWithoutServicesInput>
-  connectOrCreate?: Prisma.ProducerCreateOrConnectWithoutServicesInput
-  upsert?: Prisma.ProducerUpsertWithoutServicesInput
-  connect?: Prisma.ProducerWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProducerUpdateToOneWithWhereWithoutServicesInput, Prisma.ProducerUpdateWithoutServicesInput>, Prisma.ProducerUncheckedUpdateWithoutServicesInput>
-}
-
-export type ProducerCreateNestedOneWithoutFetichesInput = {
-  create?: Prisma.XOR<Prisma.ProducerCreateWithoutFetichesInput, Prisma.ProducerUncheckedCreateWithoutFetichesInput>
-  connectOrCreate?: Prisma.ProducerCreateOrConnectWithoutFetichesInput
-  connect?: Prisma.ProducerWhereUniqueInput
-}
-
-export type ProducerUpdateOneRequiredWithoutFetichesNestedInput = {
-  create?: Prisma.XOR<Prisma.ProducerCreateWithoutFetichesInput, Prisma.ProducerUncheckedCreateWithoutFetichesInput>
-  connectOrCreate?: Prisma.ProducerCreateOrConnectWithoutFetichesInput
-  upsert?: Prisma.ProducerUpsertWithoutFetichesInput
-  connect?: Prisma.ProducerWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProducerUpdateToOneWithWhereWithoutFetichesInput, Prisma.ProducerUpdateWithoutFetichesInput>, Prisma.ProducerUncheckedUpdateWithoutFetichesInput>
-}
-
-export type ProducerCreateNestedOneWithoutPaymentsInput = {
-  create?: Prisma.XOR<Prisma.ProducerCreateWithoutPaymentsInput, Prisma.ProducerUncheckedCreateWithoutPaymentsInput>
-  connectOrCreate?: Prisma.ProducerCreateOrConnectWithoutPaymentsInput
-  connect?: Prisma.ProducerWhereUniqueInput
-}
-
-export type ProducerUpdateOneRequiredWithoutPaymentsNestedInput = {
-  create?: Prisma.XOR<Prisma.ProducerCreateWithoutPaymentsInput, Prisma.ProducerUncheckedCreateWithoutPaymentsInput>
-  connectOrCreate?: Prisma.ProducerCreateOrConnectWithoutPaymentsInput
-  upsert?: Prisma.ProducerUpsertWithoutPaymentsInput
-  connect?: Prisma.ProducerWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProducerUpdateToOneWithWhereWithoutPaymentsInput, Prisma.ProducerUpdateWithoutPaymentsInput>, Prisma.ProducerUncheckedUpdateWithoutPaymentsInput>
-}
-
-export type ProducerCreateNestedOneWithoutReviewsInput = {
-  create?: Prisma.XOR<Prisma.ProducerCreateWithoutReviewsInput, Prisma.ProducerUncheckedCreateWithoutReviewsInput>
-  connectOrCreate?: Prisma.ProducerCreateOrConnectWithoutReviewsInput
-  connect?: Prisma.ProducerWhereUniqueInput
-}
-
-export type ProducerUpdateOneRequiredWithoutReviewsNestedInput = {
-  create?: Prisma.XOR<Prisma.ProducerCreateWithoutReviewsInput, Prisma.ProducerUncheckedCreateWithoutReviewsInput>
-  connectOrCreate?: Prisma.ProducerCreateOrConnectWithoutReviewsInput
-  upsert?: Prisma.ProducerUpsertWithoutReviewsInput
-  connect?: Prisma.ProducerWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProducerUpdateToOneWithWhereWithoutReviewsInput, Prisma.ProducerUpdateWithoutReviewsInput>, Prisma.ProducerUncheckedUpdateWithoutReviewsInput>
-}
-
 export type EnumSIGNATUREFieldUpdateOperationsInput = {
   set?: $Enums.SIGNATURE
 }
 
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
+}
+
+export type EnumSTATUSFieldUpdateOperationsInput = {
+  set?: $Enums.STATUS
+}
+
+export type ProducerCreateNestedOneWithoutProfileInput = {
+  create?: Prisma.XOR<Prisma.ProducerCreateWithoutProfileInput, Prisma.ProducerUncheckedCreateWithoutProfileInput>
+  connectOrCreate?: Prisma.ProducerCreateOrConnectWithoutProfileInput
+  connect?: Prisma.ProducerWhereUniqueInput
+}
+
+export type ProducerUpdateOneRequiredWithoutProfileNestedInput = {
+  create?: Prisma.XOR<Prisma.ProducerCreateWithoutProfileInput, Prisma.ProducerUncheckedCreateWithoutProfileInput>
+  connectOrCreate?: Prisma.ProducerCreateOrConnectWithoutProfileInput
+  upsert?: Prisma.ProducerUpsertWithoutProfileInput
+  connect?: Prisma.ProducerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProducerUpdateToOneWithWhereWithoutProfileInput, Prisma.ProducerUpdateWithoutProfileInput>, Prisma.ProducerUncheckedUpdateWithoutProfileInput>
+}
+
 export type ProducerCreateWithoutUserInput = {
-  verified?: boolean
-  signature: $Enums.SIGNATURE
-  views?: number
-  age: number
+  signature?: $Enums.SIGNATURE
+  isVerified?: boolean
+  verificationStatus?: $Enums.STATUS
+  birthday: Date | string
   nationality: string
-  scholarity: string
-  languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan: string
-  description: string
+  document: string
   phone: string
-  instagram?: string | null
-  telegram?: string | null
-  hasLocal?: boolean
-  local?: Prisma.ProducerLocalCreateNestedOneWithoutProducerInput
-  appearance?: Prisma.AppearanceCreateNestedOneWithoutProducerInput
-  prices?: Prisma.PriceCreateNestedManyWithoutProducerInput
-  services?: Prisma.ProducerServiceCreateNestedManyWithoutProducerInput
-  fetiches?: Prisma.ProducerFetishCreateNestedManyWithoutProducerInput
-  audiences?: Prisma.ProducerAudienceCreateNestedManyWithoutProducerInput
-  locations?: Prisma.ProducerLocationsCreateNestedManyWithoutProducerInput
-  payments?: Prisma.ProducerPaymentCreateNestedManyWithoutProducerInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutProducerInput
+  documentFrontPhoto: string
+  documentBackPhoto: string
+  selfieWithDocument: string
+  profile?: Prisma.ProducerProfileCreateNestedOneWithoutProducerInput
 }
 
 export type ProducerUncheckedCreateWithoutUserInput = {
   id?: number
-  verified?: boolean
-  signature: $Enums.SIGNATURE
-  views?: number
-  age: number
+  signature?: $Enums.SIGNATURE
+  isVerified?: boolean
+  verificationStatus?: $Enums.STATUS
+  birthday: Date | string
   nationality: string
-  scholarity: string
-  languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan: string
-  description: string
+  document: string
   phone: string
-  instagram?: string | null
-  telegram?: string | null
-  hasLocal?: boolean
-  local?: Prisma.ProducerLocalUncheckedCreateNestedOneWithoutProducerInput
-  appearance?: Prisma.AppearanceUncheckedCreateNestedOneWithoutProducerInput
-  prices?: Prisma.PriceUncheckedCreateNestedManyWithoutProducerInput
-  services?: Prisma.ProducerServiceUncheckedCreateNestedManyWithoutProducerInput
-  fetiches?: Prisma.ProducerFetishUncheckedCreateNestedManyWithoutProducerInput
-  audiences?: Prisma.ProducerAudienceUncheckedCreateNestedManyWithoutProducerInput
-  locations?: Prisma.ProducerLocationsUncheckedCreateNestedManyWithoutProducerInput
-  payments?: Prisma.ProducerPaymentUncheckedCreateNestedManyWithoutProducerInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutProducerInput
+  documentFrontPhoto: string
+  documentBackPhoto: string
+  selfieWithDocument: string
+  profile?: Prisma.ProducerProfileUncheckedCreateNestedOneWithoutProducerInput
 }
 
 export type ProducerCreateOrConnectWithoutUserInput = {
@@ -889,1230 +635,125 @@ export type ProducerUpdateToOneWithWhereWithoutUserInput = {
 }
 
 export type ProducerUpdateWithoutUserInput = {
-  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   signature?: Prisma.EnumSIGNATUREFieldUpdateOperationsInput | $Enums.SIGNATURE
-  views?: Prisma.IntFieldUpdateOperationsInput | number
-  age?: Prisma.IntFieldUpdateOperationsInput | number
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationStatus?: Prisma.EnumSTATUSFieldUpdateOperationsInput | $Enums.STATUS
+  birthday?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nationality?: Prisma.StringFieldUpdateOperationsInput | string
-  scholarity?: Prisma.StringFieldUpdateOperationsInput | string
-  languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  document?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
-  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  local?: Prisma.ProducerLocalUpdateOneWithoutProducerNestedInput
-  appearance?: Prisma.AppearanceUpdateOneWithoutProducerNestedInput
-  prices?: Prisma.PriceUpdateManyWithoutProducerNestedInput
-  services?: Prisma.ProducerServiceUpdateManyWithoutProducerNestedInput
-  fetiches?: Prisma.ProducerFetishUpdateManyWithoutProducerNestedInput
-  audiences?: Prisma.ProducerAudienceUpdateManyWithoutProducerNestedInput
-  locations?: Prisma.ProducerLocationsUpdateManyWithoutProducerNestedInput
-  payments?: Prisma.ProducerPaymentUpdateManyWithoutProducerNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutProducerNestedInput
+  documentFrontPhoto?: Prisma.StringFieldUpdateOperationsInput | string
+  documentBackPhoto?: Prisma.StringFieldUpdateOperationsInput | string
+  selfieWithDocument?: Prisma.StringFieldUpdateOperationsInput | string
+  profile?: Prisma.ProducerProfileUpdateOneWithoutProducerNestedInput
 }
 
 export type ProducerUncheckedUpdateWithoutUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   signature?: Prisma.EnumSIGNATUREFieldUpdateOperationsInput | $Enums.SIGNATURE
-  views?: Prisma.IntFieldUpdateOperationsInput | number
-  age?: Prisma.IntFieldUpdateOperationsInput | number
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationStatus?: Prisma.EnumSTATUSFieldUpdateOperationsInput | $Enums.STATUS
+  birthday?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nationality?: Prisma.StringFieldUpdateOperationsInput | string
-  scholarity?: Prisma.StringFieldUpdateOperationsInput | string
-  languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  document?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
-  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  local?: Prisma.ProducerLocalUncheckedUpdateOneWithoutProducerNestedInput
-  appearance?: Prisma.AppearanceUncheckedUpdateOneWithoutProducerNestedInput
-  prices?: Prisma.PriceUncheckedUpdateManyWithoutProducerNestedInput
-  services?: Prisma.ProducerServiceUncheckedUpdateManyWithoutProducerNestedInput
-  fetiches?: Prisma.ProducerFetishUncheckedUpdateManyWithoutProducerNestedInput
-  audiences?: Prisma.ProducerAudienceUncheckedUpdateManyWithoutProducerNestedInput
-  locations?: Prisma.ProducerLocationsUncheckedUpdateManyWithoutProducerNestedInput
-  payments?: Prisma.ProducerPaymentUncheckedUpdateManyWithoutProducerNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutProducerNestedInput
+  documentFrontPhoto?: Prisma.StringFieldUpdateOperationsInput | string
+  documentBackPhoto?: Prisma.StringFieldUpdateOperationsInput | string
+  selfieWithDocument?: Prisma.StringFieldUpdateOperationsInput | string
+  profile?: Prisma.ProducerProfileUncheckedUpdateOneWithoutProducerNestedInput
 }
 
-export type ProducerCreateWithoutAppearanceInput = {
-  verified?: boolean
-  signature: $Enums.SIGNATURE
-  views?: number
-  age: number
+export type ProducerCreateWithoutProfileInput = {
+  signature?: $Enums.SIGNATURE
+  isVerified?: boolean
+  verificationStatus?: $Enums.STATUS
+  birthday: Date | string
   nationality: string
-  scholarity: string
-  languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan: string
-  description: string
+  document: string
   phone: string
-  instagram?: string | null
-  telegram?: string | null
-  hasLocal?: boolean
+  documentFrontPhoto: string
+  documentBackPhoto: string
+  selfieWithDocument: string
   user: Prisma.UserCreateNestedOneWithoutProducerInput
-  local?: Prisma.ProducerLocalCreateNestedOneWithoutProducerInput
-  prices?: Prisma.PriceCreateNestedManyWithoutProducerInput
-  services?: Prisma.ProducerServiceCreateNestedManyWithoutProducerInput
-  fetiches?: Prisma.ProducerFetishCreateNestedManyWithoutProducerInput
-  audiences?: Prisma.ProducerAudienceCreateNestedManyWithoutProducerInput
-  locations?: Prisma.ProducerLocationsCreateNestedManyWithoutProducerInput
-  payments?: Prisma.ProducerPaymentCreateNestedManyWithoutProducerInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutProducerInput
 }
 
-export type ProducerUncheckedCreateWithoutAppearanceInput = {
+export type ProducerUncheckedCreateWithoutProfileInput = {
   id?: number
   userId: number
-  verified?: boolean
-  signature: $Enums.SIGNATURE
-  views?: number
-  age: number
+  signature?: $Enums.SIGNATURE
+  isVerified?: boolean
+  verificationStatus?: $Enums.STATUS
+  birthday: Date | string
   nationality: string
-  scholarity: string
-  languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan: string
-  description: string
+  document: string
   phone: string
-  instagram?: string | null
-  telegram?: string | null
-  hasLocal?: boolean
-  local?: Prisma.ProducerLocalUncheckedCreateNestedOneWithoutProducerInput
-  prices?: Prisma.PriceUncheckedCreateNestedManyWithoutProducerInput
-  services?: Prisma.ProducerServiceUncheckedCreateNestedManyWithoutProducerInput
-  fetiches?: Prisma.ProducerFetishUncheckedCreateNestedManyWithoutProducerInput
-  audiences?: Prisma.ProducerAudienceUncheckedCreateNestedManyWithoutProducerInput
-  locations?: Prisma.ProducerLocationsUncheckedCreateNestedManyWithoutProducerInput
-  payments?: Prisma.ProducerPaymentUncheckedCreateNestedManyWithoutProducerInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutProducerInput
+  documentFrontPhoto: string
+  documentBackPhoto: string
+  selfieWithDocument: string
 }
 
-export type ProducerCreateOrConnectWithoutAppearanceInput = {
+export type ProducerCreateOrConnectWithoutProfileInput = {
   where: Prisma.ProducerWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProducerCreateWithoutAppearanceInput, Prisma.ProducerUncheckedCreateWithoutAppearanceInput>
+  create: Prisma.XOR<Prisma.ProducerCreateWithoutProfileInput, Prisma.ProducerUncheckedCreateWithoutProfileInput>
 }
 
-export type ProducerUpsertWithoutAppearanceInput = {
-  update: Prisma.XOR<Prisma.ProducerUpdateWithoutAppearanceInput, Prisma.ProducerUncheckedUpdateWithoutAppearanceInput>
-  create: Prisma.XOR<Prisma.ProducerCreateWithoutAppearanceInput, Prisma.ProducerUncheckedCreateWithoutAppearanceInput>
+export type ProducerUpsertWithoutProfileInput = {
+  update: Prisma.XOR<Prisma.ProducerUpdateWithoutProfileInput, Prisma.ProducerUncheckedUpdateWithoutProfileInput>
+  create: Prisma.XOR<Prisma.ProducerCreateWithoutProfileInput, Prisma.ProducerUncheckedCreateWithoutProfileInput>
   where?: Prisma.ProducerWhereInput
 }
 
-export type ProducerUpdateToOneWithWhereWithoutAppearanceInput = {
+export type ProducerUpdateToOneWithWhereWithoutProfileInput = {
   where?: Prisma.ProducerWhereInput
-  data: Prisma.XOR<Prisma.ProducerUpdateWithoutAppearanceInput, Prisma.ProducerUncheckedUpdateWithoutAppearanceInput>
+  data: Prisma.XOR<Prisma.ProducerUpdateWithoutProfileInput, Prisma.ProducerUncheckedUpdateWithoutProfileInput>
 }
 
-export type ProducerUpdateWithoutAppearanceInput = {
-  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+export type ProducerUpdateWithoutProfileInput = {
   signature?: Prisma.EnumSIGNATUREFieldUpdateOperationsInput | $Enums.SIGNATURE
-  views?: Prisma.IntFieldUpdateOperationsInput | number
-  age?: Prisma.IntFieldUpdateOperationsInput | number
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationStatus?: Prisma.EnumSTATUSFieldUpdateOperationsInput | $Enums.STATUS
+  birthday?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nationality?: Prisma.StringFieldUpdateOperationsInput | string
-  scholarity?: Prisma.StringFieldUpdateOperationsInput | string
-  languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  document?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
-  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  documentFrontPhoto?: Prisma.StringFieldUpdateOperationsInput | string
+  documentBackPhoto?: Prisma.StringFieldUpdateOperationsInput | string
+  selfieWithDocument?: Prisma.StringFieldUpdateOperationsInput | string
   user?: Prisma.UserUpdateOneRequiredWithoutProducerNestedInput
-  local?: Prisma.ProducerLocalUpdateOneWithoutProducerNestedInput
-  prices?: Prisma.PriceUpdateManyWithoutProducerNestedInput
-  services?: Prisma.ProducerServiceUpdateManyWithoutProducerNestedInput
-  fetiches?: Prisma.ProducerFetishUpdateManyWithoutProducerNestedInput
-  audiences?: Prisma.ProducerAudienceUpdateManyWithoutProducerNestedInput
-  locations?: Prisma.ProducerLocationsUpdateManyWithoutProducerNestedInput
-  payments?: Prisma.ProducerPaymentUpdateManyWithoutProducerNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutProducerNestedInput
 }
 
-export type ProducerUncheckedUpdateWithoutAppearanceInput = {
+export type ProducerUncheckedUpdateWithoutProfileInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
-  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   signature?: Prisma.EnumSIGNATUREFieldUpdateOperationsInput | $Enums.SIGNATURE
-  views?: Prisma.IntFieldUpdateOperationsInput | number
-  age?: Prisma.IntFieldUpdateOperationsInput | number
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationStatus?: Prisma.EnumSTATUSFieldUpdateOperationsInput | $Enums.STATUS
+  birthday?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nationality?: Prisma.StringFieldUpdateOperationsInput | string
-  scholarity?: Prisma.StringFieldUpdateOperationsInput | string
-  languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  document?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
-  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  local?: Prisma.ProducerLocalUncheckedUpdateOneWithoutProducerNestedInput
-  prices?: Prisma.PriceUncheckedUpdateManyWithoutProducerNestedInput
-  services?: Prisma.ProducerServiceUncheckedUpdateManyWithoutProducerNestedInput
-  fetiches?: Prisma.ProducerFetishUncheckedUpdateManyWithoutProducerNestedInput
-  audiences?: Prisma.ProducerAudienceUncheckedUpdateManyWithoutProducerNestedInput
-  locations?: Prisma.ProducerLocationsUncheckedUpdateManyWithoutProducerNestedInput
-  payments?: Prisma.ProducerPaymentUncheckedUpdateManyWithoutProducerNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutProducerNestedInput
+  documentFrontPhoto?: Prisma.StringFieldUpdateOperationsInput | string
+  documentBackPhoto?: Prisma.StringFieldUpdateOperationsInput | string
+  selfieWithDocument?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
-export type ProducerCreateWithoutPricesInput = {
-  verified?: boolean
-  signature: $Enums.SIGNATURE
-  views?: number
-  age: number
-  nationality: string
-  scholarity: string
-  languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan: string
-  description: string
-  phone: string
-  instagram?: string | null
-  telegram?: string | null
-  hasLocal?: boolean
-  user: Prisma.UserCreateNestedOneWithoutProducerInput
-  local?: Prisma.ProducerLocalCreateNestedOneWithoutProducerInput
-  appearance?: Prisma.AppearanceCreateNestedOneWithoutProducerInput
-  services?: Prisma.ProducerServiceCreateNestedManyWithoutProducerInput
-  fetiches?: Prisma.ProducerFetishCreateNestedManyWithoutProducerInput
-  audiences?: Prisma.ProducerAudienceCreateNestedManyWithoutProducerInput
-  locations?: Prisma.ProducerLocationsCreateNestedManyWithoutProducerInput
-  payments?: Prisma.ProducerPaymentCreateNestedManyWithoutProducerInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutProducerInput
-}
-
-export type ProducerUncheckedCreateWithoutPricesInput = {
-  id?: number
-  userId: number
-  verified?: boolean
-  signature: $Enums.SIGNATURE
-  views?: number
-  age: number
-  nationality: string
-  scholarity: string
-  languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan: string
-  description: string
-  phone: string
-  instagram?: string | null
-  telegram?: string | null
-  hasLocal?: boolean
-  local?: Prisma.ProducerLocalUncheckedCreateNestedOneWithoutProducerInput
-  appearance?: Prisma.AppearanceUncheckedCreateNestedOneWithoutProducerInput
-  services?: Prisma.ProducerServiceUncheckedCreateNestedManyWithoutProducerInput
-  fetiches?: Prisma.ProducerFetishUncheckedCreateNestedManyWithoutProducerInput
-  audiences?: Prisma.ProducerAudienceUncheckedCreateNestedManyWithoutProducerInput
-  locations?: Prisma.ProducerLocationsUncheckedCreateNestedManyWithoutProducerInput
-  payments?: Prisma.ProducerPaymentUncheckedCreateNestedManyWithoutProducerInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutProducerInput
-}
-
-export type ProducerCreateOrConnectWithoutPricesInput = {
-  where: Prisma.ProducerWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProducerCreateWithoutPricesInput, Prisma.ProducerUncheckedCreateWithoutPricesInput>
-}
-
-export type ProducerUpsertWithoutPricesInput = {
-  update: Prisma.XOR<Prisma.ProducerUpdateWithoutPricesInput, Prisma.ProducerUncheckedUpdateWithoutPricesInput>
-  create: Prisma.XOR<Prisma.ProducerCreateWithoutPricesInput, Prisma.ProducerUncheckedCreateWithoutPricesInput>
-  where?: Prisma.ProducerWhereInput
-}
-
-export type ProducerUpdateToOneWithWhereWithoutPricesInput = {
-  where?: Prisma.ProducerWhereInput
-  data: Prisma.XOR<Prisma.ProducerUpdateWithoutPricesInput, Prisma.ProducerUncheckedUpdateWithoutPricesInput>
-}
-
-export type ProducerUpdateWithoutPricesInput = {
-  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  signature?: Prisma.EnumSIGNATUREFieldUpdateOperationsInput | $Enums.SIGNATURE
-  views?: Prisma.IntFieldUpdateOperationsInput | number
-  age?: Prisma.IntFieldUpdateOperationsInput | number
-  nationality?: Prisma.StringFieldUpdateOperationsInput | string
-  scholarity?: Prisma.StringFieldUpdateOperationsInput | string
-  languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
-  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  user?: Prisma.UserUpdateOneRequiredWithoutProducerNestedInput
-  local?: Prisma.ProducerLocalUpdateOneWithoutProducerNestedInput
-  appearance?: Prisma.AppearanceUpdateOneWithoutProducerNestedInput
-  services?: Prisma.ProducerServiceUpdateManyWithoutProducerNestedInput
-  fetiches?: Prisma.ProducerFetishUpdateManyWithoutProducerNestedInput
-  audiences?: Prisma.ProducerAudienceUpdateManyWithoutProducerNestedInput
-  locations?: Prisma.ProducerLocationsUpdateManyWithoutProducerNestedInput
-  payments?: Prisma.ProducerPaymentUpdateManyWithoutProducerNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutProducerNestedInput
-}
-
-export type ProducerUncheckedUpdateWithoutPricesInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  userId?: Prisma.IntFieldUpdateOperationsInput | number
-  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  signature?: Prisma.EnumSIGNATUREFieldUpdateOperationsInput | $Enums.SIGNATURE
-  views?: Prisma.IntFieldUpdateOperationsInput | number
-  age?: Prisma.IntFieldUpdateOperationsInput | number
-  nationality?: Prisma.StringFieldUpdateOperationsInput | string
-  scholarity?: Prisma.StringFieldUpdateOperationsInput | string
-  languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
-  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  local?: Prisma.ProducerLocalUncheckedUpdateOneWithoutProducerNestedInput
-  appearance?: Prisma.AppearanceUncheckedUpdateOneWithoutProducerNestedInput
-  services?: Prisma.ProducerServiceUncheckedUpdateManyWithoutProducerNestedInput
-  fetiches?: Prisma.ProducerFetishUncheckedUpdateManyWithoutProducerNestedInput
-  audiences?: Prisma.ProducerAudienceUncheckedUpdateManyWithoutProducerNestedInput
-  locations?: Prisma.ProducerLocationsUncheckedUpdateManyWithoutProducerNestedInput
-  payments?: Prisma.ProducerPaymentUncheckedUpdateManyWithoutProducerNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutProducerNestedInput
-}
-
-export type ProducerCreateWithoutLocalInput = {
-  verified?: boolean
-  signature: $Enums.SIGNATURE
-  views?: number
-  age: number
-  nationality: string
-  scholarity: string
-  languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan: string
-  description: string
-  phone: string
-  instagram?: string | null
-  telegram?: string | null
-  hasLocal?: boolean
-  user: Prisma.UserCreateNestedOneWithoutProducerInput
-  appearance?: Prisma.AppearanceCreateNestedOneWithoutProducerInput
-  prices?: Prisma.PriceCreateNestedManyWithoutProducerInput
-  services?: Prisma.ProducerServiceCreateNestedManyWithoutProducerInput
-  fetiches?: Prisma.ProducerFetishCreateNestedManyWithoutProducerInput
-  audiences?: Prisma.ProducerAudienceCreateNestedManyWithoutProducerInput
-  locations?: Prisma.ProducerLocationsCreateNestedManyWithoutProducerInput
-  payments?: Prisma.ProducerPaymentCreateNestedManyWithoutProducerInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutProducerInput
-}
-
-export type ProducerUncheckedCreateWithoutLocalInput = {
-  id?: number
-  userId: number
-  verified?: boolean
-  signature: $Enums.SIGNATURE
-  views?: number
-  age: number
-  nationality: string
-  scholarity: string
-  languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan: string
-  description: string
-  phone: string
-  instagram?: string | null
-  telegram?: string | null
-  hasLocal?: boolean
-  appearance?: Prisma.AppearanceUncheckedCreateNestedOneWithoutProducerInput
-  prices?: Prisma.PriceUncheckedCreateNestedManyWithoutProducerInput
-  services?: Prisma.ProducerServiceUncheckedCreateNestedManyWithoutProducerInput
-  fetiches?: Prisma.ProducerFetishUncheckedCreateNestedManyWithoutProducerInput
-  audiences?: Prisma.ProducerAudienceUncheckedCreateNestedManyWithoutProducerInput
-  locations?: Prisma.ProducerLocationsUncheckedCreateNestedManyWithoutProducerInput
-  payments?: Prisma.ProducerPaymentUncheckedCreateNestedManyWithoutProducerInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutProducerInput
-}
-
-export type ProducerCreateOrConnectWithoutLocalInput = {
-  where: Prisma.ProducerWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProducerCreateWithoutLocalInput, Prisma.ProducerUncheckedCreateWithoutLocalInput>
-}
-
-export type ProducerUpsertWithoutLocalInput = {
-  update: Prisma.XOR<Prisma.ProducerUpdateWithoutLocalInput, Prisma.ProducerUncheckedUpdateWithoutLocalInput>
-  create: Prisma.XOR<Prisma.ProducerCreateWithoutLocalInput, Prisma.ProducerUncheckedCreateWithoutLocalInput>
-  where?: Prisma.ProducerWhereInput
-}
-
-export type ProducerUpdateToOneWithWhereWithoutLocalInput = {
-  where?: Prisma.ProducerWhereInput
-  data: Prisma.XOR<Prisma.ProducerUpdateWithoutLocalInput, Prisma.ProducerUncheckedUpdateWithoutLocalInput>
-}
-
-export type ProducerUpdateWithoutLocalInput = {
-  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  signature?: Prisma.EnumSIGNATUREFieldUpdateOperationsInput | $Enums.SIGNATURE
-  views?: Prisma.IntFieldUpdateOperationsInput | number
-  age?: Prisma.IntFieldUpdateOperationsInput | number
-  nationality?: Prisma.StringFieldUpdateOperationsInput | string
-  scholarity?: Prisma.StringFieldUpdateOperationsInput | string
-  languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
-  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  user?: Prisma.UserUpdateOneRequiredWithoutProducerNestedInput
-  appearance?: Prisma.AppearanceUpdateOneWithoutProducerNestedInput
-  prices?: Prisma.PriceUpdateManyWithoutProducerNestedInput
-  services?: Prisma.ProducerServiceUpdateManyWithoutProducerNestedInput
-  fetiches?: Prisma.ProducerFetishUpdateManyWithoutProducerNestedInput
-  audiences?: Prisma.ProducerAudienceUpdateManyWithoutProducerNestedInput
-  locations?: Prisma.ProducerLocationsUpdateManyWithoutProducerNestedInput
-  payments?: Prisma.ProducerPaymentUpdateManyWithoutProducerNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutProducerNestedInput
-}
-
-export type ProducerUncheckedUpdateWithoutLocalInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  userId?: Prisma.IntFieldUpdateOperationsInput | number
-  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  signature?: Prisma.EnumSIGNATUREFieldUpdateOperationsInput | $Enums.SIGNATURE
-  views?: Prisma.IntFieldUpdateOperationsInput | number
-  age?: Prisma.IntFieldUpdateOperationsInput | number
-  nationality?: Prisma.StringFieldUpdateOperationsInput | string
-  scholarity?: Prisma.StringFieldUpdateOperationsInput | string
-  languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
-  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  appearance?: Prisma.AppearanceUncheckedUpdateOneWithoutProducerNestedInput
-  prices?: Prisma.PriceUncheckedUpdateManyWithoutProducerNestedInput
-  services?: Prisma.ProducerServiceUncheckedUpdateManyWithoutProducerNestedInput
-  fetiches?: Prisma.ProducerFetishUncheckedUpdateManyWithoutProducerNestedInput
-  audiences?: Prisma.ProducerAudienceUncheckedUpdateManyWithoutProducerNestedInput
-  locations?: Prisma.ProducerLocationsUncheckedUpdateManyWithoutProducerNestedInput
-  payments?: Prisma.ProducerPaymentUncheckedUpdateManyWithoutProducerNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutProducerNestedInput
-}
-
-export type ProducerCreateWithoutAudiencesInput = {
-  verified?: boolean
-  signature: $Enums.SIGNATURE
-  views?: number
-  age: number
-  nationality: string
-  scholarity: string
-  languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan: string
-  description: string
-  phone: string
-  instagram?: string | null
-  telegram?: string | null
-  hasLocal?: boolean
-  user: Prisma.UserCreateNestedOneWithoutProducerInput
-  local?: Prisma.ProducerLocalCreateNestedOneWithoutProducerInput
-  appearance?: Prisma.AppearanceCreateNestedOneWithoutProducerInput
-  prices?: Prisma.PriceCreateNestedManyWithoutProducerInput
-  services?: Prisma.ProducerServiceCreateNestedManyWithoutProducerInput
-  fetiches?: Prisma.ProducerFetishCreateNestedManyWithoutProducerInput
-  locations?: Prisma.ProducerLocationsCreateNestedManyWithoutProducerInput
-  payments?: Prisma.ProducerPaymentCreateNestedManyWithoutProducerInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutProducerInput
-}
-
-export type ProducerUncheckedCreateWithoutAudiencesInput = {
-  id?: number
-  userId: number
-  verified?: boolean
-  signature: $Enums.SIGNATURE
-  views?: number
-  age: number
-  nationality: string
-  scholarity: string
-  languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan: string
-  description: string
-  phone: string
-  instagram?: string | null
-  telegram?: string | null
-  hasLocal?: boolean
-  local?: Prisma.ProducerLocalUncheckedCreateNestedOneWithoutProducerInput
-  appearance?: Prisma.AppearanceUncheckedCreateNestedOneWithoutProducerInput
-  prices?: Prisma.PriceUncheckedCreateNestedManyWithoutProducerInput
-  services?: Prisma.ProducerServiceUncheckedCreateNestedManyWithoutProducerInput
-  fetiches?: Prisma.ProducerFetishUncheckedCreateNestedManyWithoutProducerInput
-  locations?: Prisma.ProducerLocationsUncheckedCreateNestedManyWithoutProducerInput
-  payments?: Prisma.ProducerPaymentUncheckedCreateNestedManyWithoutProducerInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutProducerInput
-}
-
-export type ProducerCreateOrConnectWithoutAudiencesInput = {
-  where: Prisma.ProducerWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProducerCreateWithoutAudiencesInput, Prisma.ProducerUncheckedCreateWithoutAudiencesInput>
-}
-
-export type ProducerUpsertWithoutAudiencesInput = {
-  update: Prisma.XOR<Prisma.ProducerUpdateWithoutAudiencesInput, Prisma.ProducerUncheckedUpdateWithoutAudiencesInput>
-  create: Prisma.XOR<Prisma.ProducerCreateWithoutAudiencesInput, Prisma.ProducerUncheckedCreateWithoutAudiencesInput>
-  where?: Prisma.ProducerWhereInput
-}
-
-export type ProducerUpdateToOneWithWhereWithoutAudiencesInput = {
-  where?: Prisma.ProducerWhereInput
-  data: Prisma.XOR<Prisma.ProducerUpdateWithoutAudiencesInput, Prisma.ProducerUncheckedUpdateWithoutAudiencesInput>
-}
-
-export type ProducerUpdateWithoutAudiencesInput = {
-  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  signature?: Prisma.EnumSIGNATUREFieldUpdateOperationsInput | $Enums.SIGNATURE
-  views?: Prisma.IntFieldUpdateOperationsInput | number
-  age?: Prisma.IntFieldUpdateOperationsInput | number
-  nationality?: Prisma.StringFieldUpdateOperationsInput | string
-  scholarity?: Prisma.StringFieldUpdateOperationsInput | string
-  languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
-  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  user?: Prisma.UserUpdateOneRequiredWithoutProducerNestedInput
-  local?: Prisma.ProducerLocalUpdateOneWithoutProducerNestedInput
-  appearance?: Prisma.AppearanceUpdateOneWithoutProducerNestedInput
-  prices?: Prisma.PriceUpdateManyWithoutProducerNestedInput
-  services?: Prisma.ProducerServiceUpdateManyWithoutProducerNestedInput
-  fetiches?: Prisma.ProducerFetishUpdateManyWithoutProducerNestedInput
-  locations?: Prisma.ProducerLocationsUpdateManyWithoutProducerNestedInput
-  payments?: Prisma.ProducerPaymentUpdateManyWithoutProducerNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutProducerNestedInput
-}
-
-export type ProducerUncheckedUpdateWithoutAudiencesInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  userId?: Prisma.IntFieldUpdateOperationsInput | number
-  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  signature?: Prisma.EnumSIGNATUREFieldUpdateOperationsInput | $Enums.SIGNATURE
-  views?: Prisma.IntFieldUpdateOperationsInput | number
-  age?: Prisma.IntFieldUpdateOperationsInput | number
-  nationality?: Prisma.StringFieldUpdateOperationsInput | string
-  scholarity?: Prisma.StringFieldUpdateOperationsInput | string
-  languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
-  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  local?: Prisma.ProducerLocalUncheckedUpdateOneWithoutProducerNestedInput
-  appearance?: Prisma.AppearanceUncheckedUpdateOneWithoutProducerNestedInput
-  prices?: Prisma.PriceUncheckedUpdateManyWithoutProducerNestedInput
-  services?: Prisma.ProducerServiceUncheckedUpdateManyWithoutProducerNestedInput
-  fetiches?: Prisma.ProducerFetishUncheckedUpdateManyWithoutProducerNestedInput
-  locations?: Prisma.ProducerLocationsUncheckedUpdateManyWithoutProducerNestedInput
-  payments?: Prisma.ProducerPaymentUncheckedUpdateManyWithoutProducerNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutProducerNestedInput
-}
-
-export type ProducerCreateWithoutLocationsInput = {
-  verified?: boolean
-  signature: $Enums.SIGNATURE
-  views?: number
-  age: number
-  nationality: string
-  scholarity: string
-  languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan: string
-  description: string
-  phone: string
-  instagram?: string | null
-  telegram?: string | null
-  hasLocal?: boolean
-  user: Prisma.UserCreateNestedOneWithoutProducerInput
-  local?: Prisma.ProducerLocalCreateNestedOneWithoutProducerInput
-  appearance?: Prisma.AppearanceCreateNestedOneWithoutProducerInput
-  prices?: Prisma.PriceCreateNestedManyWithoutProducerInput
-  services?: Prisma.ProducerServiceCreateNestedManyWithoutProducerInput
-  fetiches?: Prisma.ProducerFetishCreateNestedManyWithoutProducerInput
-  audiences?: Prisma.ProducerAudienceCreateNestedManyWithoutProducerInput
-  payments?: Prisma.ProducerPaymentCreateNestedManyWithoutProducerInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutProducerInput
-}
-
-export type ProducerUncheckedCreateWithoutLocationsInput = {
-  id?: number
-  userId: number
-  verified?: boolean
-  signature: $Enums.SIGNATURE
-  views?: number
-  age: number
-  nationality: string
-  scholarity: string
-  languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan: string
-  description: string
-  phone: string
-  instagram?: string | null
-  telegram?: string | null
-  hasLocal?: boolean
-  local?: Prisma.ProducerLocalUncheckedCreateNestedOneWithoutProducerInput
-  appearance?: Prisma.AppearanceUncheckedCreateNestedOneWithoutProducerInput
-  prices?: Prisma.PriceUncheckedCreateNestedManyWithoutProducerInput
-  services?: Prisma.ProducerServiceUncheckedCreateNestedManyWithoutProducerInput
-  fetiches?: Prisma.ProducerFetishUncheckedCreateNestedManyWithoutProducerInput
-  audiences?: Prisma.ProducerAudienceUncheckedCreateNestedManyWithoutProducerInput
-  payments?: Prisma.ProducerPaymentUncheckedCreateNestedManyWithoutProducerInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutProducerInput
-}
-
-export type ProducerCreateOrConnectWithoutLocationsInput = {
-  where: Prisma.ProducerWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProducerCreateWithoutLocationsInput, Prisma.ProducerUncheckedCreateWithoutLocationsInput>
-}
-
-export type ProducerUpsertWithoutLocationsInput = {
-  update: Prisma.XOR<Prisma.ProducerUpdateWithoutLocationsInput, Prisma.ProducerUncheckedUpdateWithoutLocationsInput>
-  create: Prisma.XOR<Prisma.ProducerCreateWithoutLocationsInput, Prisma.ProducerUncheckedCreateWithoutLocationsInput>
-  where?: Prisma.ProducerWhereInput
-}
-
-export type ProducerUpdateToOneWithWhereWithoutLocationsInput = {
-  where?: Prisma.ProducerWhereInput
-  data: Prisma.XOR<Prisma.ProducerUpdateWithoutLocationsInput, Prisma.ProducerUncheckedUpdateWithoutLocationsInput>
-}
-
-export type ProducerUpdateWithoutLocationsInput = {
-  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  signature?: Prisma.EnumSIGNATUREFieldUpdateOperationsInput | $Enums.SIGNATURE
-  views?: Prisma.IntFieldUpdateOperationsInput | number
-  age?: Prisma.IntFieldUpdateOperationsInput | number
-  nationality?: Prisma.StringFieldUpdateOperationsInput | string
-  scholarity?: Prisma.StringFieldUpdateOperationsInput | string
-  languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
-  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  user?: Prisma.UserUpdateOneRequiredWithoutProducerNestedInput
-  local?: Prisma.ProducerLocalUpdateOneWithoutProducerNestedInput
-  appearance?: Prisma.AppearanceUpdateOneWithoutProducerNestedInput
-  prices?: Prisma.PriceUpdateManyWithoutProducerNestedInput
-  services?: Prisma.ProducerServiceUpdateManyWithoutProducerNestedInput
-  fetiches?: Prisma.ProducerFetishUpdateManyWithoutProducerNestedInput
-  audiences?: Prisma.ProducerAudienceUpdateManyWithoutProducerNestedInput
-  payments?: Prisma.ProducerPaymentUpdateManyWithoutProducerNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutProducerNestedInput
-}
-
-export type ProducerUncheckedUpdateWithoutLocationsInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  userId?: Prisma.IntFieldUpdateOperationsInput | number
-  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  signature?: Prisma.EnumSIGNATUREFieldUpdateOperationsInput | $Enums.SIGNATURE
-  views?: Prisma.IntFieldUpdateOperationsInput | number
-  age?: Prisma.IntFieldUpdateOperationsInput | number
-  nationality?: Prisma.StringFieldUpdateOperationsInput | string
-  scholarity?: Prisma.StringFieldUpdateOperationsInput | string
-  languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
-  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  local?: Prisma.ProducerLocalUncheckedUpdateOneWithoutProducerNestedInput
-  appearance?: Prisma.AppearanceUncheckedUpdateOneWithoutProducerNestedInput
-  prices?: Prisma.PriceUncheckedUpdateManyWithoutProducerNestedInput
-  services?: Prisma.ProducerServiceUncheckedUpdateManyWithoutProducerNestedInput
-  fetiches?: Prisma.ProducerFetishUncheckedUpdateManyWithoutProducerNestedInput
-  audiences?: Prisma.ProducerAudienceUncheckedUpdateManyWithoutProducerNestedInput
-  payments?: Prisma.ProducerPaymentUncheckedUpdateManyWithoutProducerNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutProducerNestedInput
-}
-
-export type ProducerCreateWithoutServicesInput = {
-  verified?: boolean
-  signature: $Enums.SIGNATURE
-  views?: number
-  age: number
-  nationality: string
-  scholarity: string
-  languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan: string
-  description: string
-  phone: string
-  instagram?: string | null
-  telegram?: string | null
-  hasLocal?: boolean
-  user: Prisma.UserCreateNestedOneWithoutProducerInput
-  local?: Prisma.ProducerLocalCreateNestedOneWithoutProducerInput
-  appearance?: Prisma.AppearanceCreateNestedOneWithoutProducerInput
-  prices?: Prisma.PriceCreateNestedManyWithoutProducerInput
-  fetiches?: Prisma.ProducerFetishCreateNestedManyWithoutProducerInput
-  audiences?: Prisma.ProducerAudienceCreateNestedManyWithoutProducerInput
-  locations?: Prisma.ProducerLocationsCreateNestedManyWithoutProducerInput
-  payments?: Prisma.ProducerPaymentCreateNestedManyWithoutProducerInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutProducerInput
-}
-
-export type ProducerUncheckedCreateWithoutServicesInput = {
-  id?: number
-  userId: number
-  verified?: boolean
-  signature: $Enums.SIGNATURE
-  views?: number
-  age: number
-  nationality: string
-  scholarity: string
-  languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan: string
-  description: string
-  phone: string
-  instagram?: string | null
-  telegram?: string | null
-  hasLocal?: boolean
-  local?: Prisma.ProducerLocalUncheckedCreateNestedOneWithoutProducerInput
-  appearance?: Prisma.AppearanceUncheckedCreateNestedOneWithoutProducerInput
-  prices?: Prisma.PriceUncheckedCreateNestedManyWithoutProducerInput
-  fetiches?: Prisma.ProducerFetishUncheckedCreateNestedManyWithoutProducerInput
-  audiences?: Prisma.ProducerAudienceUncheckedCreateNestedManyWithoutProducerInput
-  locations?: Prisma.ProducerLocationsUncheckedCreateNestedManyWithoutProducerInput
-  payments?: Prisma.ProducerPaymentUncheckedCreateNestedManyWithoutProducerInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutProducerInput
-}
-
-export type ProducerCreateOrConnectWithoutServicesInput = {
-  where: Prisma.ProducerWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProducerCreateWithoutServicesInput, Prisma.ProducerUncheckedCreateWithoutServicesInput>
-}
-
-export type ProducerUpsertWithoutServicesInput = {
-  update: Prisma.XOR<Prisma.ProducerUpdateWithoutServicesInput, Prisma.ProducerUncheckedUpdateWithoutServicesInput>
-  create: Prisma.XOR<Prisma.ProducerCreateWithoutServicesInput, Prisma.ProducerUncheckedCreateWithoutServicesInput>
-  where?: Prisma.ProducerWhereInput
-}
-
-export type ProducerUpdateToOneWithWhereWithoutServicesInput = {
-  where?: Prisma.ProducerWhereInput
-  data: Prisma.XOR<Prisma.ProducerUpdateWithoutServicesInput, Prisma.ProducerUncheckedUpdateWithoutServicesInput>
-}
-
-export type ProducerUpdateWithoutServicesInput = {
-  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  signature?: Prisma.EnumSIGNATUREFieldUpdateOperationsInput | $Enums.SIGNATURE
-  views?: Prisma.IntFieldUpdateOperationsInput | number
-  age?: Prisma.IntFieldUpdateOperationsInput | number
-  nationality?: Prisma.StringFieldUpdateOperationsInput | string
-  scholarity?: Prisma.StringFieldUpdateOperationsInput | string
-  languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
-  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  user?: Prisma.UserUpdateOneRequiredWithoutProducerNestedInput
-  local?: Prisma.ProducerLocalUpdateOneWithoutProducerNestedInput
-  appearance?: Prisma.AppearanceUpdateOneWithoutProducerNestedInput
-  prices?: Prisma.PriceUpdateManyWithoutProducerNestedInput
-  fetiches?: Prisma.ProducerFetishUpdateManyWithoutProducerNestedInput
-  audiences?: Prisma.ProducerAudienceUpdateManyWithoutProducerNestedInput
-  locations?: Prisma.ProducerLocationsUpdateManyWithoutProducerNestedInput
-  payments?: Prisma.ProducerPaymentUpdateManyWithoutProducerNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutProducerNestedInput
-}
-
-export type ProducerUncheckedUpdateWithoutServicesInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  userId?: Prisma.IntFieldUpdateOperationsInput | number
-  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  signature?: Prisma.EnumSIGNATUREFieldUpdateOperationsInput | $Enums.SIGNATURE
-  views?: Prisma.IntFieldUpdateOperationsInput | number
-  age?: Prisma.IntFieldUpdateOperationsInput | number
-  nationality?: Prisma.StringFieldUpdateOperationsInput | string
-  scholarity?: Prisma.StringFieldUpdateOperationsInput | string
-  languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
-  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  local?: Prisma.ProducerLocalUncheckedUpdateOneWithoutProducerNestedInput
-  appearance?: Prisma.AppearanceUncheckedUpdateOneWithoutProducerNestedInput
-  prices?: Prisma.PriceUncheckedUpdateManyWithoutProducerNestedInput
-  fetiches?: Prisma.ProducerFetishUncheckedUpdateManyWithoutProducerNestedInput
-  audiences?: Prisma.ProducerAudienceUncheckedUpdateManyWithoutProducerNestedInput
-  locations?: Prisma.ProducerLocationsUncheckedUpdateManyWithoutProducerNestedInput
-  payments?: Prisma.ProducerPaymentUncheckedUpdateManyWithoutProducerNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutProducerNestedInput
-}
-
-export type ProducerCreateWithoutFetichesInput = {
-  verified?: boolean
-  signature: $Enums.SIGNATURE
-  views?: number
-  age: number
-  nationality: string
-  scholarity: string
-  languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan: string
-  description: string
-  phone: string
-  instagram?: string | null
-  telegram?: string | null
-  hasLocal?: boolean
-  user: Prisma.UserCreateNestedOneWithoutProducerInput
-  local?: Prisma.ProducerLocalCreateNestedOneWithoutProducerInput
-  appearance?: Prisma.AppearanceCreateNestedOneWithoutProducerInput
-  prices?: Prisma.PriceCreateNestedManyWithoutProducerInput
-  services?: Prisma.ProducerServiceCreateNestedManyWithoutProducerInput
-  audiences?: Prisma.ProducerAudienceCreateNestedManyWithoutProducerInput
-  locations?: Prisma.ProducerLocationsCreateNestedManyWithoutProducerInput
-  payments?: Prisma.ProducerPaymentCreateNestedManyWithoutProducerInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutProducerInput
-}
-
-export type ProducerUncheckedCreateWithoutFetichesInput = {
-  id?: number
-  userId: number
-  verified?: boolean
-  signature: $Enums.SIGNATURE
-  views?: number
-  age: number
-  nationality: string
-  scholarity: string
-  languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan: string
-  description: string
-  phone: string
-  instagram?: string | null
-  telegram?: string | null
-  hasLocal?: boolean
-  local?: Prisma.ProducerLocalUncheckedCreateNestedOneWithoutProducerInput
-  appearance?: Prisma.AppearanceUncheckedCreateNestedOneWithoutProducerInput
-  prices?: Prisma.PriceUncheckedCreateNestedManyWithoutProducerInput
-  services?: Prisma.ProducerServiceUncheckedCreateNestedManyWithoutProducerInput
-  audiences?: Prisma.ProducerAudienceUncheckedCreateNestedManyWithoutProducerInput
-  locations?: Prisma.ProducerLocationsUncheckedCreateNestedManyWithoutProducerInput
-  payments?: Prisma.ProducerPaymentUncheckedCreateNestedManyWithoutProducerInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutProducerInput
-}
-
-export type ProducerCreateOrConnectWithoutFetichesInput = {
-  where: Prisma.ProducerWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProducerCreateWithoutFetichesInput, Prisma.ProducerUncheckedCreateWithoutFetichesInput>
-}
-
-export type ProducerUpsertWithoutFetichesInput = {
-  update: Prisma.XOR<Prisma.ProducerUpdateWithoutFetichesInput, Prisma.ProducerUncheckedUpdateWithoutFetichesInput>
-  create: Prisma.XOR<Prisma.ProducerCreateWithoutFetichesInput, Prisma.ProducerUncheckedCreateWithoutFetichesInput>
-  where?: Prisma.ProducerWhereInput
-}
-
-export type ProducerUpdateToOneWithWhereWithoutFetichesInput = {
-  where?: Prisma.ProducerWhereInput
-  data: Prisma.XOR<Prisma.ProducerUpdateWithoutFetichesInput, Prisma.ProducerUncheckedUpdateWithoutFetichesInput>
-}
-
-export type ProducerUpdateWithoutFetichesInput = {
-  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  signature?: Prisma.EnumSIGNATUREFieldUpdateOperationsInput | $Enums.SIGNATURE
-  views?: Prisma.IntFieldUpdateOperationsInput | number
-  age?: Prisma.IntFieldUpdateOperationsInput | number
-  nationality?: Prisma.StringFieldUpdateOperationsInput | string
-  scholarity?: Prisma.StringFieldUpdateOperationsInput | string
-  languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
-  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  user?: Prisma.UserUpdateOneRequiredWithoutProducerNestedInput
-  local?: Prisma.ProducerLocalUpdateOneWithoutProducerNestedInput
-  appearance?: Prisma.AppearanceUpdateOneWithoutProducerNestedInput
-  prices?: Prisma.PriceUpdateManyWithoutProducerNestedInput
-  services?: Prisma.ProducerServiceUpdateManyWithoutProducerNestedInput
-  audiences?: Prisma.ProducerAudienceUpdateManyWithoutProducerNestedInput
-  locations?: Prisma.ProducerLocationsUpdateManyWithoutProducerNestedInput
-  payments?: Prisma.ProducerPaymentUpdateManyWithoutProducerNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutProducerNestedInput
-}
-
-export type ProducerUncheckedUpdateWithoutFetichesInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  userId?: Prisma.IntFieldUpdateOperationsInput | number
-  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  signature?: Prisma.EnumSIGNATUREFieldUpdateOperationsInput | $Enums.SIGNATURE
-  views?: Prisma.IntFieldUpdateOperationsInput | number
-  age?: Prisma.IntFieldUpdateOperationsInput | number
-  nationality?: Prisma.StringFieldUpdateOperationsInput | string
-  scholarity?: Prisma.StringFieldUpdateOperationsInput | string
-  languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
-  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  local?: Prisma.ProducerLocalUncheckedUpdateOneWithoutProducerNestedInput
-  appearance?: Prisma.AppearanceUncheckedUpdateOneWithoutProducerNestedInput
-  prices?: Prisma.PriceUncheckedUpdateManyWithoutProducerNestedInput
-  services?: Prisma.ProducerServiceUncheckedUpdateManyWithoutProducerNestedInput
-  audiences?: Prisma.ProducerAudienceUncheckedUpdateManyWithoutProducerNestedInput
-  locations?: Prisma.ProducerLocationsUncheckedUpdateManyWithoutProducerNestedInput
-  payments?: Prisma.ProducerPaymentUncheckedUpdateManyWithoutProducerNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutProducerNestedInput
-}
-
-export type ProducerCreateWithoutPaymentsInput = {
-  verified?: boolean
-  signature: $Enums.SIGNATURE
-  views?: number
-  age: number
-  nationality: string
-  scholarity: string
-  languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan: string
-  description: string
-  phone: string
-  instagram?: string | null
-  telegram?: string | null
-  hasLocal?: boolean
-  user: Prisma.UserCreateNestedOneWithoutProducerInput
-  local?: Prisma.ProducerLocalCreateNestedOneWithoutProducerInput
-  appearance?: Prisma.AppearanceCreateNestedOneWithoutProducerInput
-  prices?: Prisma.PriceCreateNestedManyWithoutProducerInput
-  services?: Prisma.ProducerServiceCreateNestedManyWithoutProducerInput
-  fetiches?: Prisma.ProducerFetishCreateNestedManyWithoutProducerInput
-  audiences?: Prisma.ProducerAudienceCreateNestedManyWithoutProducerInput
-  locations?: Prisma.ProducerLocationsCreateNestedManyWithoutProducerInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutProducerInput
-}
-
-export type ProducerUncheckedCreateWithoutPaymentsInput = {
-  id?: number
-  userId: number
-  verified?: boolean
-  signature: $Enums.SIGNATURE
-  views?: number
-  age: number
-  nationality: string
-  scholarity: string
-  languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan: string
-  description: string
-  phone: string
-  instagram?: string | null
-  telegram?: string | null
-  hasLocal?: boolean
-  local?: Prisma.ProducerLocalUncheckedCreateNestedOneWithoutProducerInput
-  appearance?: Prisma.AppearanceUncheckedCreateNestedOneWithoutProducerInput
-  prices?: Prisma.PriceUncheckedCreateNestedManyWithoutProducerInput
-  services?: Prisma.ProducerServiceUncheckedCreateNestedManyWithoutProducerInput
-  fetiches?: Prisma.ProducerFetishUncheckedCreateNestedManyWithoutProducerInput
-  audiences?: Prisma.ProducerAudienceUncheckedCreateNestedManyWithoutProducerInput
-  locations?: Prisma.ProducerLocationsUncheckedCreateNestedManyWithoutProducerInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutProducerInput
-}
-
-export type ProducerCreateOrConnectWithoutPaymentsInput = {
-  where: Prisma.ProducerWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProducerCreateWithoutPaymentsInput, Prisma.ProducerUncheckedCreateWithoutPaymentsInput>
-}
-
-export type ProducerUpsertWithoutPaymentsInput = {
-  update: Prisma.XOR<Prisma.ProducerUpdateWithoutPaymentsInput, Prisma.ProducerUncheckedUpdateWithoutPaymentsInput>
-  create: Prisma.XOR<Prisma.ProducerCreateWithoutPaymentsInput, Prisma.ProducerUncheckedCreateWithoutPaymentsInput>
-  where?: Prisma.ProducerWhereInput
-}
-
-export type ProducerUpdateToOneWithWhereWithoutPaymentsInput = {
-  where?: Prisma.ProducerWhereInput
-  data: Prisma.XOR<Prisma.ProducerUpdateWithoutPaymentsInput, Prisma.ProducerUncheckedUpdateWithoutPaymentsInput>
-}
-
-export type ProducerUpdateWithoutPaymentsInput = {
-  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  signature?: Prisma.EnumSIGNATUREFieldUpdateOperationsInput | $Enums.SIGNATURE
-  views?: Prisma.IntFieldUpdateOperationsInput | number
-  age?: Prisma.IntFieldUpdateOperationsInput | number
-  nationality?: Prisma.StringFieldUpdateOperationsInput | string
-  scholarity?: Prisma.StringFieldUpdateOperationsInput | string
-  languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
-  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  user?: Prisma.UserUpdateOneRequiredWithoutProducerNestedInput
-  local?: Prisma.ProducerLocalUpdateOneWithoutProducerNestedInput
-  appearance?: Prisma.AppearanceUpdateOneWithoutProducerNestedInput
-  prices?: Prisma.PriceUpdateManyWithoutProducerNestedInput
-  services?: Prisma.ProducerServiceUpdateManyWithoutProducerNestedInput
-  fetiches?: Prisma.ProducerFetishUpdateManyWithoutProducerNestedInput
-  audiences?: Prisma.ProducerAudienceUpdateManyWithoutProducerNestedInput
-  locations?: Prisma.ProducerLocationsUpdateManyWithoutProducerNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutProducerNestedInput
-}
-
-export type ProducerUncheckedUpdateWithoutPaymentsInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  userId?: Prisma.IntFieldUpdateOperationsInput | number
-  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  signature?: Prisma.EnumSIGNATUREFieldUpdateOperationsInput | $Enums.SIGNATURE
-  views?: Prisma.IntFieldUpdateOperationsInput | number
-  age?: Prisma.IntFieldUpdateOperationsInput | number
-  nationality?: Prisma.StringFieldUpdateOperationsInput | string
-  scholarity?: Prisma.StringFieldUpdateOperationsInput | string
-  languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
-  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  local?: Prisma.ProducerLocalUncheckedUpdateOneWithoutProducerNestedInput
-  appearance?: Prisma.AppearanceUncheckedUpdateOneWithoutProducerNestedInput
-  prices?: Prisma.PriceUncheckedUpdateManyWithoutProducerNestedInput
-  services?: Prisma.ProducerServiceUncheckedUpdateManyWithoutProducerNestedInput
-  fetiches?: Prisma.ProducerFetishUncheckedUpdateManyWithoutProducerNestedInput
-  audiences?: Prisma.ProducerAudienceUncheckedUpdateManyWithoutProducerNestedInput
-  locations?: Prisma.ProducerLocationsUncheckedUpdateManyWithoutProducerNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutProducerNestedInput
-}
-
-export type ProducerCreateWithoutReviewsInput = {
-  verified?: boolean
-  signature: $Enums.SIGNATURE
-  views?: number
-  age: number
-  nationality: string
-  scholarity: string
-  languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan: string
-  description: string
-  phone: string
-  instagram?: string | null
-  telegram?: string | null
-  hasLocal?: boolean
-  user: Prisma.UserCreateNestedOneWithoutProducerInput
-  local?: Prisma.ProducerLocalCreateNestedOneWithoutProducerInput
-  appearance?: Prisma.AppearanceCreateNestedOneWithoutProducerInput
-  prices?: Prisma.PriceCreateNestedManyWithoutProducerInput
-  services?: Prisma.ProducerServiceCreateNestedManyWithoutProducerInput
-  fetiches?: Prisma.ProducerFetishCreateNestedManyWithoutProducerInput
-  audiences?: Prisma.ProducerAudienceCreateNestedManyWithoutProducerInput
-  locations?: Prisma.ProducerLocationsCreateNestedManyWithoutProducerInput
-  payments?: Prisma.ProducerPaymentCreateNestedManyWithoutProducerInput
-}
-
-export type ProducerUncheckedCreateWithoutReviewsInput = {
-  id?: number
-  userId: number
-  verified?: boolean
-  signature: $Enums.SIGNATURE
-  views?: number
-  age: number
-  nationality: string
-  scholarity: string
-  languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan: string
-  description: string
-  phone: string
-  instagram?: string | null
-  telegram?: string | null
-  hasLocal?: boolean
-  local?: Prisma.ProducerLocalUncheckedCreateNestedOneWithoutProducerInput
-  appearance?: Prisma.AppearanceUncheckedCreateNestedOneWithoutProducerInput
-  prices?: Prisma.PriceUncheckedCreateNestedManyWithoutProducerInput
-  services?: Prisma.ProducerServiceUncheckedCreateNestedManyWithoutProducerInput
-  fetiches?: Prisma.ProducerFetishUncheckedCreateNestedManyWithoutProducerInput
-  audiences?: Prisma.ProducerAudienceUncheckedCreateNestedManyWithoutProducerInput
-  locations?: Prisma.ProducerLocationsUncheckedCreateNestedManyWithoutProducerInput
-  payments?: Prisma.ProducerPaymentUncheckedCreateNestedManyWithoutProducerInput
-}
-
-export type ProducerCreateOrConnectWithoutReviewsInput = {
-  where: Prisma.ProducerWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProducerCreateWithoutReviewsInput, Prisma.ProducerUncheckedCreateWithoutReviewsInput>
-}
-
-export type ProducerUpsertWithoutReviewsInput = {
-  update: Prisma.XOR<Prisma.ProducerUpdateWithoutReviewsInput, Prisma.ProducerUncheckedUpdateWithoutReviewsInput>
-  create: Prisma.XOR<Prisma.ProducerCreateWithoutReviewsInput, Prisma.ProducerUncheckedCreateWithoutReviewsInput>
-  where?: Prisma.ProducerWhereInput
-}
-
-export type ProducerUpdateToOneWithWhereWithoutReviewsInput = {
-  where?: Prisma.ProducerWhereInput
-  data: Prisma.XOR<Prisma.ProducerUpdateWithoutReviewsInput, Prisma.ProducerUncheckedUpdateWithoutReviewsInput>
-}
-
-export type ProducerUpdateWithoutReviewsInput = {
-  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  signature?: Prisma.EnumSIGNATUREFieldUpdateOperationsInput | $Enums.SIGNATURE
-  views?: Prisma.IntFieldUpdateOperationsInput | number
-  age?: Prisma.IntFieldUpdateOperationsInput | number
-  nationality?: Prisma.StringFieldUpdateOperationsInput | string
-  scholarity?: Prisma.StringFieldUpdateOperationsInput | string
-  languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
-  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  user?: Prisma.UserUpdateOneRequiredWithoutProducerNestedInput
-  local?: Prisma.ProducerLocalUpdateOneWithoutProducerNestedInput
-  appearance?: Prisma.AppearanceUpdateOneWithoutProducerNestedInput
-  prices?: Prisma.PriceUpdateManyWithoutProducerNestedInput
-  services?: Prisma.ProducerServiceUpdateManyWithoutProducerNestedInput
-  fetiches?: Prisma.ProducerFetishUpdateManyWithoutProducerNestedInput
-  audiences?: Prisma.ProducerAudienceUpdateManyWithoutProducerNestedInput
-  locations?: Prisma.ProducerLocationsUpdateManyWithoutProducerNestedInput
-  payments?: Prisma.ProducerPaymentUpdateManyWithoutProducerNestedInput
-}
-
-export type ProducerUncheckedUpdateWithoutReviewsInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  userId?: Prisma.IntFieldUpdateOperationsInput | number
-  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  signature?: Prisma.EnumSIGNATUREFieldUpdateOperationsInput | $Enums.SIGNATURE
-  views?: Prisma.IntFieldUpdateOperationsInput | number
-  age?: Prisma.IntFieldUpdateOperationsInput | number
-  nationality?: Prisma.StringFieldUpdateOperationsInput | string
-  scholarity?: Prisma.StringFieldUpdateOperationsInput | string
-  languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  slogan?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.StringFieldUpdateOperationsInput | string
-  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  telegram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  local?: Prisma.ProducerLocalUncheckedUpdateOneWithoutProducerNestedInput
-  appearance?: Prisma.AppearanceUncheckedUpdateOneWithoutProducerNestedInput
-  prices?: Prisma.PriceUncheckedUpdateManyWithoutProducerNestedInput
-  services?: Prisma.ProducerServiceUncheckedUpdateManyWithoutProducerNestedInput
-  fetiches?: Prisma.ProducerFetishUncheckedUpdateManyWithoutProducerNestedInput
-  audiences?: Prisma.ProducerAudienceUncheckedUpdateManyWithoutProducerNestedInput
-  locations?: Prisma.ProducerLocationsUncheckedUpdateManyWithoutProducerNestedInput
-  payments?: Prisma.ProducerPaymentUncheckedUpdateManyWithoutProducerNestedInput
-}
-
-
-/**
- * Count Type ProducerCountOutputType
- */
-
-export type ProducerCountOutputType = {
-  prices: number
-  services: number
-  fetiches: number
-  audiences: number
-  locations: number
-  payments: number
-  reviews: number
-}
-
-export type ProducerCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  prices?: boolean | ProducerCountOutputTypeCountPricesArgs
-  services?: boolean | ProducerCountOutputTypeCountServicesArgs
-  fetiches?: boolean | ProducerCountOutputTypeCountFetichesArgs
-  audiences?: boolean | ProducerCountOutputTypeCountAudiencesArgs
-  locations?: boolean | ProducerCountOutputTypeCountLocationsArgs
-  payments?: boolean | ProducerCountOutputTypeCountPaymentsArgs
-  reviews?: boolean | ProducerCountOutputTypeCountReviewsArgs
-}
-
-/**
- * ProducerCountOutputType without action
- */
-export type ProducerCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the ProducerCountOutputType
-   */
-  select?: Prisma.ProducerCountOutputTypeSelect<ExtArgs> | null
-}
-
-/**
- * ProducerCountOutputType without action
- */
-export type ProducerCountOutputTypeCountPricesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.PriceWhereInput
-}
-
-/**
- * ProducerCountOutputType without action
- */
-export type ProducerCountOutputTypeCountServicesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ProducerServiceWhereInput
-}
-
-/**
- * ProducerCountOutputType without action
- */
-export type ProducerCountOutputTypeCountFetichesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ProducerFetishWhereInput
-}
-
-/**
- * ProducerCountOutputType without action
- */
-export type ProducerCountOutputTypeCountAudiencesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ProducerAudienceWhereInput
-}
-
-/**
- * ProducerCountOutputType without action
- */
-export type ProducerCountOutputTypeCountLocationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ProducerLocationsWhereInput
-}
-
-/**
- * ProducerCountOutputType without action
- */
-export type ProducerCountOutputTypeCountPaymentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ProducerPaymentWhereInput
-}
-
-/**
- * ProducerCountOutputType without action
- */
-export type ProducerCountOutputTypeCountReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ReviewWhereInput
-}
 
 
 export type ProducerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
-  verified?: boolean
   signature?: boolean
-  views?: boolean
-  age?: boolean
+  isVerified?: boolean
+  verificationStatus?: boolean
+  birthday?: boolean
   nationality?: boolean
-  scholarity?: boolean
-  languages?: boolean
-  slogan?: boolean
-  description?: boolean
+  document?: boolean
   phone?: boolean
-  instagram?: boolean
-  telegram?: boolean
-  hasLocal?: boolean
+  documentFrontPhoto?: boolean
+  documentBackPhoto?: boolean
+  selfieWithDocument?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  local?: boolean | Prisma.Producer$localArgs<ExtArgs>
-  appearance?: boolean | Prisma.Producer$appearanceArgs<ExtArgs>
-  prices?: boolean | Prisma.Producer$pricesArgs<ExtArgs>
-  services?: boolean | Prisma.Producer$servicesArgs<ExtArgs>
-  fetiches?: boolean | Prisma.Producer$fetichesArgs<ExtArgs>
-  audiences?: boolean | Prisma.Producer$audiencesArgs<ExtArgs>
-  locations?: boolean | Prisma.Producer$locationsArgs<ExtArgs>
-  payments?: boolean | Prisma.Producer$paymentsArgs<ExtArgs>
-  reviews?: boolean | Prisma.Producer$reviewsArgs<ExtArgs>
-  _count?: boolean | Prisma.ProducerCountOutputTypeDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.Producer$profileArgs<ExtArgs>
 }, ExtArgs["result"]["producer"]>
 
 
@@ -2120,66 +761,43 @@ export type ProducerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
 export type ProducerSelectScalar = {
   id?: boolean
   userId?: boolean
-  verified?: boolean
   signature?: boolean
-  views?: boolean
-  age?: boolean
+  isVerified?: boolean
+  verificationStatus?: boolean
+  birthday?: boolean
   nationality?: boolean
-  scholarity?: boolean
-  languages?: boolean
-  slogan?: boolean
-  description?: boolean
+  document?: boolean
   phone?: boolean
-  instagram?: boolean
-  telegram?: boolean
-  hasLocal?: boolean
+  documentFrontPhoto?: boolean
+  documentBackPhoto?: boolean
+  selfieWithDocument?: boolean
 }
 
-export type ProducerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "verified" | "signature" | "views" | "age" | "nationality" | "scholarity" | "languages" | "slogan" | "description" | "phone" | "instagram" | "telegram" | "hasLocal", ExtArgs["result"]["producer"]>
+export type ProducerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "signature" | "isVerified" | "verificationStatus" | "birthday" | "nationality" | "document" | "phone" | "documentFrontPhoto" | "documentBackPhoto" | "selfieWithDocument", ExtArgs["result"]["producer"]>
 export type ProducerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  local?: boolean | Prisma.Producer$localArgs<ExtArgs>
-  appearance?: boolean | Prisma.Producer$appearanceArgs<ExtArgs>
-  prices?: boolean | Prisma.Producer$pricesArgs<ExtArgs>
-  services?: boolean | Prisma.Producer$servicesArgs<ExtArgs>
-  fetiches?: boolean | Prisma.Producer$fetichesArgs<ExtArgs>
-  audiences?: boolean | Prisma.Producer$audiencesArgs<ExtArgs>
-  locations?: boolean | Prisma.Producer$locationsArgs<ExtArgs>
-  payments?: boolean | Prisma.Producer$paymentsArgs<ExtArgs>
-  reviews?: boolean | Prisma.Producer$reviewsArgs<ExtArgs>
-  _count?: boolean | Prisma.ProducerCountOutputTypeDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.Producer$profileArgs<ExtArgs>
 }
 
 export type $ProducerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Producer"
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
-    local: Prisma.$ProducerLocalPayload<ExtArgs> | null
-    appearance: Prisma.$AppearancePayload<ExtArgs> | null
-    prices: Prisma.$PricePayload<ExtArgs>[]
-    services: Prisma.$ProducerServicePayload<ExtArgs>[]
-    fetiches: Prisma.$ProducerFetishPayload<ExtArgs>[]
-    audiences: Prisma.$ProducerAudiencePayload<ExtArgs>[]
-    locations: Prisma.$ProducerLocationsPayload<ExtArgs>[]
-    payments: Prisma.$ProducerPaymentPayload<ExtArgs>[]
-    reviews: Prisma.$ReviewPayload<ExtArgs>[]
+    profile: Prisma.$ProducerProfilePayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     userId: number
-    verified: boolean
     signature: $Enums.SIGNATURE
-    views: number
-    age: number
+    isVerified: boolean
+    verificationStatus: $Enums.STATUS
+    birthday: Date
     nationality: string
-    scholarity: string
-    languages: runtime.JsonValue
-    slogan: string
-    description: string
+    document: string
     phone: string
-    instagram: string | null
-    telegram: string | null
-    hasLocal: boolean
+    documentFrontPhoto: string
+    documentBackPhoto: string
+    selfieWithDocument: string
   }, ExtArgs["result"]["producer"]>
   composites: {}
 }
@@ -2521,15 +1139,7 @@ readonly fields: ProducerFieldRefs;
 export interface Prisma__ProducerClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  local<T extends Prisma.Producer$localArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Producer$localArgs<ExtArgs>>): Prisma.Prisma__ProducerLocalClient<runtime.Types.Result.GetResult<Prisma.$ProducerLocalPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  appearance<T extends Prisma.Producer$appearanceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Producer$appearanceArgs<ExtArgs>>): Prisma.Prisma__AppearanceClient<runtime.Types.Result.GetResult<Prisma.$AppearancePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  prices<T extends Prisma.Producer$pricesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Producer$pricesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PricePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  services<T extends Prisma.Producer$servicesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Producer$servicesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProducerServicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  fetiches<T extends Prisma.Producer$fetichesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Producer$fetichesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProducerFetishPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  audiences<T extends Prisma.Producer$audiencesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Producer$audiencesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProducerAudiencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  locations<T extends Prisma.Producer$locationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Producer$locationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProducerLocationsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  payments<T extends Prisma.Producer$paymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Producer$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProducerPaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  reviews<T extends Prisma.Producer$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Producer$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  profile<T extends Prisma.Producer$profileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Producer$profileArgs<ExtArgs>>): Prisma.Prisma__ProducerProfileClient<runtime.Types.Result.GetResult<Prisma.$ProducerProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2561,19 +1171,16 @@ export interface Prisma__ProducerClient<T, Null = never, ExtArgs extends runtime
 export interface ProducerFieldRefs {
   readonly id: Prisma.FieldRef<"Producer", 'Int'>
   readonly userId: Prisma.FieldRef<"Producer", 'Int'>
-  readonly verified: Prisma.FieldRef<"Producer", 'Boolean'>
   readonly signature: Prisma.FieldRef<"Producer", 'SIGNATURE'>
-  readonly views: Prisma.FieldRef<"Producer", 'Int'>
-  readonly age: Prisma.FieldRef<"Producer", 'Int'>
+  readonly isVerified: Prisma.FieldRef<"Producer", 'Boolean'>
+  readonly verificationStatus: Prisma.FieldRef<"Producer", 'STATUS'>
+  readonly birthday: Prisma.FieldRef<"Producer", 'DateTime'>
   readonly nationality: Prisma.FieldRef<"Producer", 'String'>
-  readonly scholarity: Prisma.FieldRef<"Producer", 'String'>
-  readonly languages: Prisma.FieldRef<"Producer", 'Json'>
-  readonly slogan: Prisma.FieldRef<"Producer", 'String'>
-  readonly description: Prisma.FieldRef<"Producer", 'String'>
+  readonly document: Prisma.FieldRef<"Producer", 'String'>
   readonly phone: Prisma.FieldRef<"Producer", 'String'>
-  readonly instagram: Prisma.FieldRef<"Producer", 'String'>
-  readonly telegram: Prisma.FieldRef<"Producer", 'String'>
-  readonly hasLocal: Prisma.FieldRef<"Producer", 'Boolean'>
+  readonly documentFrontPhoto: Prisma.FieldRef<"Producer", 'String'>
+  readonly documentBackPhoto: Prisma.FieldRef<"Producer", 'String'>
+  readonly selfieWithDocument: Prisma.FieldRef<"Producer", 'String'>
 }
     
 
@@ -2917,209 +1524,22 @@ export type ProducerDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
 }
 
 /**
- * Producer.local
+ * Producer.profile
  */
-export type Producer$localArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Producer$profileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the ProducerLocal
+   * Select specific fields to fetch from the ProducerProfile
    */
-  select?: Prisma.ProducerLocalSelect<ExtArgs> | null
+  select?: Prisma.ProducerProfileSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the ProducerLocal
+   * Omit specific fields from the ProducerProfile
    */
-  omit?: Prisma.ProducerLocalOmit<ExtArgs> | null
+  omit?: Prisma.ProducerProfileOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.ProducerLocalInclude<ExtArgs> | null
-  where?: Prisma.ProducerLocalWhereInput
-}
-
-/**
- * Producer.appearance
- */
-export type Producer$appearanceArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Appearance
-   */
-  select?: Prisma.AppearanceSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Appearance
-   */
-  omit?: Prisma.AppearanceOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.AppearanceInclude<ExtArgs> | null
-  where?: Prisma.AppearanceWhereInput
-}
-
-/**
- * Producer.prices
- */
-export type Producer$pricesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Price
-   */
-  select?: Prisma.PriceSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Price
-   */
-  omit?: Prisma.PriceOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.PriceInclude<ExtArgs> | null
-  where?: Prisma.PriceWhereInput
-  orderBy?: Prisma.PriceOrderByWithRelationInput | Prisma.PriceOrderByWithRelationInput[]
-  cursor?: Prisma.PriceWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.PriceScalarFieldEnum | Prisma.PriceScalarFieldEnum[]
-}
-
-/**
- * Producer.services
- */
-export type Producer$servicesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the ProducerService
-   */
-  select?: Prisma.ProducerServiceSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the ProducerService
-   */
-  omit?: Prisma.ProducerServiceOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ProducerServiceInclude<ExtArgs> | null
-  where?: Prisma.ProducerServiceWhereInput
-  orderBy?: Prisma.ProducerServiceOrderByWithRelationInput | Prisma.ProducerServiceOrderByWithRelationInput[]
-  cursor?: Prisma.ProducerServiceWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ProducerServiceScalarFieldEnum | Prisma.ProducerServiceScalarFieldEnum[]
-}
-
-/**
- * Producer.fetiches
- */
-export type Producer$fetichesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the ProducerFetish
-   */
-  select?: Prisma.ProducerFetishSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the ProducerFetish
-   */
-  omit?: Prisma.ProducerFetishOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ProducerFetishInclude<ExtArgs> | null
-  where?: Prisma.ProducerFetishWhereInput
-  orderBy?: Prisma.ProducerFetishOrderByWithRelationInput | Prisma.ProducerFetishOrderByWithRelationInput[]
-  cursor?: Prisma.ProducerFetishWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ProducerFetishScalarFieldEnum | Prisma.ProducerFetishScalarFieldEnum[]
-}
-
-/**
- * Producer.audiences
- */
-export type Producer$audiencesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the ProducerAudience
-   */
-  select?: Prisma.ProducerAudienceSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the ProducerAudience
-   */
-  omit?: Prisma.ProducerAudienceOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ProducerAudienceInclude<ExtArgs> | null
-  where?: Prisma.ProducerAudienceWhereInput
-  orderBy?: Prisma.ProducerAudienceOrderByWithRelationInput | Prisma.ProducerAudienceOrderByWithRelationInput[]
-  cursor?: Prisma.ProducerAudienceWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ProducerAudienceScalarFieldEnum | Prisma.ProducerAudienceScalarFieldEnum[]
-}
-
-/**
- * Producer.locations
- */
-export type Producer$locationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the ProducerLocations
-   */
-  select?: Prisma.ProducerLocationsSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the ProducerLocations
-   */
-  omit?: Prisma.ProducerLocationsOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ProducerLocationsInclude<ExtArgs> | null
-  where?: Prisma.ProducerLocationsWhereInput
-  orderBy?: Prisma.ProducerLocationsOrderByWithRelationInput | Prisma.ProducerLocationsOrderByWithRelationInput[]
-  cursor?: Prisma.ProducerLocationsWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ProducerLocationsScalarFieldEnum | Prisma.ProducerLocationsScalarFieldEnum[]
-}
-
-/**
- * Producer.payments
- */
-export type Producer$paymentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the ProducerPayment
-   */
-  select?: Prisma.ProducerPaymentSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the ProducerPayment
-   */
-  omit?: Prisma.ProducerPaymentOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ProducerPaymentInclude<ExtArgs> | null
-  where?: Prisma.ProducerPaymentWhereInput
-  orderBy?: Prisma.ProducerPaymentOrderByWithRelationInput | Prisma.ProducerPaymentOrderByWithRelationInput[]
-  cursor?: Prisma.ProducerPaymentWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ProducerPaymentScalarFieldEnum | Prisma.ProducerPaymentScalarFieldEnum[]
-}
-
-/**
- * Producer.reviews
- */
-export type Producer$reviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Review
-   */
-  select?: Prisma.ReviewSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Review
-   */
-  omit?: Prisma.ReviewOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ReviewInclude<ExtArgs> | null
-  where?: Prisma.ReviewWhereInput
-  orderBy?: Prisma.ReviewOrderByWithRelationInput | Prisma.ReviewOrderByWithRelationInput[]
-  cursor?: Prisma.ReviewWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ReviewScalarFieldEnum | Prisma.ReviewScalarFieldEnum[]
+  include?: Prisma.ProducerProfileInclude<ExtArgs> | null
+  where?: Prisma.ProducerProfileWhereInput
 }
 
 /**

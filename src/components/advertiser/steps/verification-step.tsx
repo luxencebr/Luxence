@@ -14,149 +14,263 @@ export default function VerificationStep({
   onUpdate,
   onValidate,
 }: VerificationStepProps) {
-  const [previewProfile, setPreviewProfile] = useState<string | null>(
-    formData.profilePhoto ? URL.createObjectURL(formData.profilePhoto) : null
-  );
-  const [previewDocument, setPreviewDocument] = useState<string | null>(
-    formData.documentPhoto ? URL.createObjectURL(formData.documentPhoto) : null
+  const [substep, setSubstep] = useState<1 | 2>(1);
+
+  // Previews
+  const [previewFront, setPreviewFront] = useState<string | null>(
+    formData.documentFront ? URL.createObjectURL(formData.documentFront) : null
   );
 
-  const [isValid, setIsValid] = useState(false);
+  const [previewBack, setPreviewBack] = useState<string | null>(
+    formData.documentBack ? URL.createObjectURL(formData.documentBack) : null
+  );
 
-  // Erros de validação local
-  const [profileError, setProfileError] = useState<string | null>(null);
-  const [documentError, setDocumentError] = useState<string | null>(null);
+  const [previewSelfie, setPreviewSelfie] = useState<string | null>(
+    formData.selfieDocument
+      ? URL.createObjectURL(formData.selfieDocument)
+      : null
+  );
+
+  // Errors
+  const [frontError, setFrontError] = useState<string | null>(null);
+  const [backError, setBackError] = useState<string | null>(null);
+  const [selfieError, setSelfieError] = useState<string | null>(null);
 
   const handleFileChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    field: "profilePhoto" | "documentPhoto",
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: "documentFront" | "documentBack" | "selfieDocument",
     setPreview: (url: string | null) => void
   ) => {
-    const file = event.target.files?.[0];
+    const file = e.target.files?.[0];
     if (file) {
-      const fileURL = URL.createObjectURL(file);
-      setPreview(fileURL);
+      const url = URL.createObjectURL(file);
+      setPreview(url);
       onUpdate({ [field]: file });
 
-      // Limpa erros ao enviar o arquivo
-      if (field === "profilePhoto") setProfileError(null);
-      if (field === "documentPhoto") setDocumentError(null);
+      if (field === "documentFront") setFrontError(null);
+      if (field === "documentBack") setBackError(null);
+      if (field === "selfieDocument") setSelfieError(null);
     }
   };
 
-  // Validação automática quando formData muda
+  // 👉 AUTO-AVANÇO PARA SUBETAPA 2
   useEffect(() => {
-    if (!formData.profilePhoto) setProfileError("Envie uma foto de perfil.");
-    else setProfileError(null);
+    if (formData.documentFront && formData.documentBack) {
+      setSubstep(2);
+    }
+  }, [formData.documentFront, formData.documentBack]);
 
-    if (!formData.documentPhoto)
-      setDocumentError("Envie uma foto com documento.");
-    else setDocumentError(null);
-  }, [formData.profilePhoto, formData.documentPhoto]);
+  // 👉 AUTO-FINALIZAR QUANDO A SELFIE FOR ENVIADA
+  useEffect(() => {
+    if (formData.selfieDocument) {
+      onValidate?.(true);
+    }
+  }, [formData.selfieDocument]);
 
   useEffect(() => {
-    const valid = !!formData.profilePhoto && !!formData.documentPhoto;
-    setIsValid(valid);
-    onValidate?.(valid);
-  }, [formData.profilePhoto, formData.documentPhoto, onValidate]);
+    const hasFront = !!formData.documentFront;
+    const hasBack = !!formData.documentBack;
+    const hasSelfie = !!formData.selfieDocument;
 
+    // Erros locais
+    if (!hasFront) setFrontError("Envie a frente do documento.");
+    if (!hasBack) setBackError("Envie o verso do documento.");
+    if (substep === 2 && !hasSelfie)
+      setSelfieError(
+        "Envie uma selfie segurando o documento ao lado do rosto."
+      );
+
+    // Validação geral da etapa
+    const isValid = hasFront && hasBack && hasSelfie;
+
+    onValidate?.(isValid);
+  }, [
+    formData.documentFront,
+    formData.documentBack,
+    formData.selfieDocument,
+    substep,
+  ]);
+
+  const goToSelfie = () => {
+    const hasFront = !!formData.documentFront;
+    const hasBack = !!formData.documentBack;
+
+    if (!hasFront) setFrontError("Envie a frente do documento.");
+    if (!hasBack) setBackError("Envie o verso do documento.");
+
+    if (hasFront && hasBack) {
+      setSubstep(2);
+    }
+  };
+
+  const canAdvance = !!formData.documentFront && !!formData.documentBack;
+
+  // -------------------- RENDERIZAÇÃO --------------------
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h2 className={styles.title}>Verificação</h2>
+        <h2 className={styles.title}>
+          Verificação de Identidade
+          {substep === 2 ? (
+            <button
+              type="button"
+              className={styles.backButton}
+              onClick={() => setSubstep(1)}
+            >
+              Voltar
+            </button>
+          ) : (
+            <button
+              type="button"
+              className={`${styles.backButton} ${
+                !canAdvance ? styles.disable : ""
+              }`}
+              onClick={goToSelfie}
+              disabled={!canAdvance}
+            >
+              Próximo
+            </button>
+          )}
+        </h2>
+
         <p className={styles.subtitle}>
-          Envie suas fotos para confirmar sua identidade.
+          {substep === 1
+            ? "Envie fotos nítidas da frente e verso do seu documento."
+            : "Agora uma selfie segurando o documento ao lado do rosto."}
         </p>
       </div>
 
       <div className={styles.section}>
-        {/* Foto de Perfil */}
-        <div className={styles.uploadBox}>
-          <label className={styles.label}>Foto de Perfil</label>
-          {previewProfile ? (
-            <div className={styles.previewWrapper}>
-              <img
-                src={previewProfile}
-                alt="Foto de perfil"
-                className={styles.previewImage}
-              />
-              <button
-                type="button"
-                className={styles.removeButton}
-                onClick={() => {
-                  setPreviewProfile(null);
-                  onUpdate({ profilePhoto: null });
-                }}
-              >
-                Remover
-              </button>
-            </div>
-          ) : (
-            <>
-              <label htmlFor="profile-upload" className={styles.customUpload}>
-                <span>Enviar Foto</span>
-              </label>
-              <input
-                id="profile-upload"
-                type="file"
-                accept="image/*"
-                onChange={(e) =>
-                  handleFileChange(e, "profilePhoto", setPreviewProfile)
-                }
-              />
-            </>
-          )}
-          {profileError && (
-            <small className={styles.error}>{profileError}</small>
-          )}
-        </div>
+        {/* ---------------- SUBETAPA 1 ---------------- */}
+        {substep === 1 && (
+          <>
+            {/* Frente */}
+            <div className={styles.uploadBox}>
+              <label className={styles.label}>Frente do Documento</label>
 
-        {/* Foto com Documento */}
-        <div className={styles.uploadBox}>
-          <label className={styles.label}>Foto com Documento</label>
-          {previewDocument ? (
-            <div className={styles.previewWrapper}>
-              <img
-                src={previewDocument}
-                alt="Foto com documento"
-                className={styles.previewImage}
-              />
-              <button
-                type="button"
-                className={styles.removeButton}
-                onClick={() => {
-                  setPreviewDocument(null);
-                  onUpdate({ documentPhoto: null });
-                }}
-              >
-                Remover
-              </button>
+              {previewFront ? (
+                <div className={styles.previewWrapper}>
+                  <img src={previewFront} className={styles.previewImage} />
+
+                  <button
+                    type="button"
+                    className={styles.removeButton}
+                    onClick={() => {
+                      setPreviewFront(null);
+                      onUpdate({ documentFront: null });
+                    }}
+                  >
+                    Remover
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <label htmlFor="front-upload" className={styles.customUpload}>
+                    <span>Enviar Foto</span>
+                  </label>
+                  <input
+                    id="front-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) =>
+                      handleFileChange(e, "documentFront", setPreviewFront)
+                    }
+                  />
+                </>
+              )}
+
+              {frontError && (
+                <small className={styles.error}>{frontError}</small>
+              )}
             </div>
-          ) : (
-            <>
-              <label htmlFor="document-upload" className={styles.customUpload}>
-                <span>Enviar Foto</span>
-              </label>
-              <input
-                id="document-upload"
-                type="file"
-                accept="image/*"
-                onChange={(e) =>
-                  handleFileChange(e, "documentPhoto", setPreviewDocument)
-                }
-              />
-            </>
-          )}
-          {documentError && (
-            <small className={styles.error}>{documentError}</small>
-          )}
-        </div>
+
+            {/* Verso */}
+            <div className={styles.uploadBox}>
+              <label className={styles.label}>Verso do Documento</label>
+
+              {previewBack ? (
+                <div className={styles.previewWrapper}>
+                  <img src={previewBack} className={styles.previewImage} />
+
+                  <button
+                    type="button"
+                    className={styles.removeButton}
+                    onClick={() => {
+                      setPreviewBack(null);
+                      onUpdate({ documentBack: null });
+                    }}
+                  >
+                    Remover
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <label htmlFor="back-upload" className={styles.customUpload}>
+                    <span>Enviar Foto</span>
+                  </label>
+                  <input
+                    id="back-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) =>
+                      handleFileChange(e, "documentBack", setPreviewBack)
+                    }
+                  />
+                </>
+              )}
+
+              {backError && <small className={styles.error}>{backError}</small>}
+            </div>
+          </>
+        )}
+        {/* ---------------- SUBETAPA 2 ---------------- */}
+        {substep === 2 && (
+          <>
+            {/* Selfie */}
+            <div className={styles.uploadBox}>
+              <label className={styles.label}>Selfie com o documento</label>
+
+              {previewSelfie ? (
+                <div className={styles.previewWrapper}>
+                  <img src={previewSelfie} className={styles.previewImage} />
+
+                  <button
+                    type="button"
+                    className={styles.removeButton}
+                    onClick={() => {
+                      setPreviewSelfie(null);
+                      onUpdate({ selfieDocument: null });
+                    }}
+                  >
+                    Remover
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <label
+                    htmlFor="selfie-upload"
+                    className={styles.customUpload}
+                  >
+                    <span>Enviar Foto</span>
+                  </label>
+                  <input
+                    id="selfie-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) =>
+                      handleFileChange(e, "selfieDocument", setPreviewSelfie)
+                    }
+                  />
+                </>
+              )}
+
+              {selfieError && (
+                <small className={styles.error}>{selfieError}</small>
+              )}
+            </div>
+          </>
+        )}{" "}
       </div>
-      {!isValid && (
-        <p style={{ color: "orange", margin: 0 }}>
-          ⚠ Preencha corretamente as informações
-        </p>
-      )}
     </div>
   );
 }

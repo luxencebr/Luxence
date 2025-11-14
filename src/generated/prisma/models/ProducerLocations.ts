@@ -27,31 +27,31 @@ export type AggregateProducerLocations = {
 
 export type ProducerLocationsAvgAggregateOutputType = {
   id: number | null
-  producerId: number | null
+  profileId: number | null
   locationId: number | null
 }
 
 export type ProducerLocationsSumAggregateOutputType = {
   id: number | null
-  producerId: number | null
+  profileId: number | null
   locationId: number | null
 }
 
 export type ProducerLocationsMinAggregateOutputType = {
   id: number | null
-  producerId: number | null
+  profileId: number | null
   locationId: number | null
 }
 
 export type ProducerLocationsMaxAggregateOutputType = {
   id: number | null
-  producerId: number | null
+  profileId: number | null
   locationId: number | null
 }
 
 export type ProducerLocationsCountAggregateOutputType = {
   id: number
-  producerId: number
+  profileId: number
   locationId: number
   _all: number
 }
@@ -59,31 +59,31 @@ export type ProducerLocationsCountAggregateOutputType = {
 
 export type ProducerLocationsAvgAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   locationId?: true
 }
 
 export type ProducerLocationsSumAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   locationId?: true
 }
 
 export type ProducerLocationsMinAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   locationId?: true
 }
 
 export type ProducerLocationsMaxAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   locationId?: true
 }
 
 export type ProducerLocationsCountAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   locationId?: true
   _all?: true
 }
@@ -176,7 +176,7 @@ export type ProducerLocationsGroupByArgs<ExtArgs extends runtime.Types.Extension
 
 export type ProducerLocationsGroupByOutputType = {
   id: number
-  producerId: number
+  profileId: number
   locationId: number
   _count: ProducerLocationsCountAggregateOutputType | null
   _avg: ProducerLocationsAvgAggregateOutputType | null
@@ -205,35 +205,35 @@ export type ProducerLocationsWhereInput = {
   OR?: Prisma.ProducerLocationsWhereInput[]
   NOT?: Prisma.ProducerLocationsWhereInput | Prisma.ProducerLocationsWhereInput[]
   id?: Prisma.IntFilter<"ProducerLocations"> | number
-  producerId?: Prisma.IntFilter<"ProducerLocations"> | number
+  profileId?: Prisma.IntFilter<"ProducerLocations"> | number
   locationId?: Prisma.IntFilter<"ProducerLocations"> | number
-  producer?: Prisma.XOR<Prisma.ProducerScalarRelationFilter, Prisma.ProducerWhereInput>
+  profile?: Prisma.XOR<Prisma.ProducerProfileScalarRelationFilter, Prisma.ProducerProfileWhereInput>
   location?: Prisma.XOR<Prisma.LocationOptionScalarRelationFilter, Prisma.LocationOptionWhereInput>
 }
 
 export type ProducerLocationsOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   locationId?: Prisma.SortOrder
-  producer?: Prisma.ProducerOrderByWithRelationInput
+  profile?: Prisma.ProducerProfileOrderByWithRelationInput
   location?: Prisma.LocationOptionOrderByWithRelationInput
 }
 
 export type ProducerLocationsWhereUniqueInput = Prisma.AtLeast<{
   id?: number
-  producerId_locationId?: Prisma.ProducerLocationsProducerIdLocationIdCompoundUniqueInput
+  profileId_locationId?: Prisma.ProducerLocationsProfileIdLocationIdCompoundUniqueInput
   AND?: Prisma.ProducerLocationsWhereInput | Prisma.ProducerLocationsWhereInput[]
   OR?: Prisma.ProducerLocationsWhereInput[]
   NOT?: Prisma.ProducerLocationsWhereInput | Prisma.ProducerLocationsWhereInput[]
-  producerId?: Prisma.IntFilter<"ProducerLocations"> | number
+  profileId?: Prisma.IntFilter<"ProducerLocations"> | number
   locationId?: Prisma.IntFilter<"ProducerLocations"> | number
-  producer?: Prisma.XOR<Prisma.ProducerScalarRelationFilter, Prisma.ProducerWhereInput>
+  profile?: Prisma.XOR<Prisma.ProducerProfileScalarRelationFilter, Prisma.ProducerProfileWhereInput>
   location?: Prisma.XOR<Prisma.LocationOptionScalarRelationFilter, Prisma.LocationOptionWhereInput>
-}, "id" | "producerId_locationId">
+}, "id" | "profileId_locationId">
 
 export type ProducerLocationsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   locationId?: Prisma.SortOrder
   _count?: Prisma.ProducerLocationsCountOrderByAggregateInput
   _avg?: Prisma.ProducerLocationsAvgOrderByAggregateInput
@@ -247,35 +247,35 @@ export type ProducerLocationsScalarWhereWithAggregatesInput = {
   OR?: Prisma.ProducerLocationsScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ProducerLocationsScalarWhereWithAggregatesInput | Prisma.ProducerLocationsScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"ProducerLocations"> | number
-  producerId?: Prisma.IntWithAggregatesFilter<"ProducerLocations"> | number
+  profileId?: Prisma.IntWithAggregatesFilter<"ProducerLocations"> | number
   locationId?: Prisma.IntWithAggregatesFilter<"ProducerLocations"> | number
 }
 
 export type ProducerLocationsCreateInput = {
-  producer: Prisma.ProducerCreateNestedOneWithoutLocationsInput
+  profile: Prisma.ProducerProfileCreateNestedOneWithoutLocationsInput
   location: Prisma.LocationOptionCreateNestedOneWithoutLocalitiesInput
 }
 
 export type ProducerLocationsUncheckedCreateInput = {
   id?: number
-  producerId: number
+  profileId: number
   locationId: number
 }
 
 export type ProducerLocationsUpdateInput = {
-  producer?: Prisma.ProducerUpdateOneRequiredWithoutLocationsNestedInput
+  profile?: Prisma.ProducerProfileUpdateOneRequiredWithoutLocationsNestedInput
   location?: Prisma.LocationOptionUpdateOneRequiredWithoutLocalitiesNestedInput
 }
 
 export type ProducerLocationsUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  producerId?: Prisma.IntFieldUpdateOperationsInput | number
+  profileId?: Prisma.IntFieldUpdateOperationsInput | number
   locationId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ProducerLocationsCreateManyInput = {
   id?: number
-  producerId: number
+  profileId: number
   locationId: number
 }
 
@@ -285,7 +285,7 @@ export type ProducerLocationsUpdateManyMutationInput = {
 
 export type ProducerLocationsUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  producerId?: Prisma.IntFieldUpdateOperationsInput | number
+  profileId?: Prisma.IntFieldUpdateOperationsInput | number
   locationId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
@@ -299,39 +299,81 @@ export type ProducerLocationsOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type ProducerLocationsProducerIdLocationIdCompoundUniqueInput = {
-  producerId: number
+export type ProducerLocationsProfileIdLocationIdCompoundUniqueInput = {
+  profileId: number
   locationId: number
 }
 
 export type ProducerLocationsCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   locationId?: Prisma.SortOrder
 }
 
 export type ProducerLocationsAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   locationId?: Prisma.SortOrder
 }
 
 export type ProducerLocationsMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   locationId?: Prisma.SortOrder
 }
 
 export type ProducerLocationsMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   locationId?: Prisma.SortOrder
 }
 
 export type ProducerLocationsSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   locationId?: Prisma.SortOrder
+}
+
+export type ProducerLocationsCreateNestedManyWithoutProfileInput = {
+  create?: Prisma.XOR<Prisma.ProducerLocationsCreateWithoutProfileInput, Prisma.ProducerLocationsUncheckedCreateWithoutProfileInput> | Prisma.ProducerLocationsCreateWithoutProfileInput[] | Prisma.ProducerLocationsUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.ProducerLocationsCreateOrConnectWithoutProfileInput | Prisma.ProducerLocationsCreateOrConnectWithoutProfileInput[]
+  createMany?: Prisma.ProducerLocationsCreateManyProfileInputEnvelope
+  connect?: Prisma.ProducerLocationsWhereUniqueInput | Prisma.ProducerLocationsWhereUniqueInput[]
+}
+
+export type ProducerLocationsUncheckedCreateNestedManyWithoutProfileInput = {
+  create?: Prisma.XOR<Prisma.ProducerLocationsCreateWithoutProfileInput, Prisma.ProducerLocationsUncheckedCreateWithoutProfileInput> | Prisma.ProducerLocationsCreateWithoutProfileInput[] | Prisma.ProducerLocationsUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.ProducerLocationsCreateOrConnectWithoutProfileInput | Prisma.ProducerLocationsCreateOrConnectWithoutProfileInput[]
+  createMany?: Prisma.ProducerLocationsCreateManyProfileInputEnvelope
+  connect?: Prisma.ProducerLocationsWhereUniqueInput | Prisma.ProducerLocationsWhereUniqueInput[]
+}
+
+export type ProducerLocationsUpdateManyWithoutProfileNestedInput = {
+  create?: Prisma.XOR<Prisma.ProducerLocationsCreateWithoutProfileInput, Prisma.ProducerLocationsUncheckedCreateWithoutProfileInput> | Prisma.ProducerLocationsCreateWithoutProfileInput[] | Prisma.ProducerLocationsUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.ProducerLocationsCreateOrConnectWithoutProfileInput | Prisma.ProducerLocationsCreateOrConnectWithoutProfileInput[]
+  upsert?: Prisma.ProducerLocationsUpsertWithWhereUniqueWithoutProfileInput | Prisma.ProducerLocationsUpsertWithWhereUniqueWithoutProfileInput[]
+  createMany?: Prisma.ProducerLocationsCreateManyProfileInputEnvelope
+  set?: Prisma.ProducerLocationsWhereUniqueInput | Prisma.ProducerLocationsWhereUniqueInput[]
+  disconnect?: Prisma.ProducerLocationsWhereUniqueInput | Prisma.ProducerLocationsWhereUniqueInput[]
+  delete?: Prisma.ProducerLocationsWhereUniqueInput | Prisma.ProducerLocationsWhereUniqueInput[]
+  connect?: Prisma.ProducerLocationsWhereUniqueInput | Prisma.ProducerLocationsWhereUniqueInput[]
+  update?: Prisma.ProducerLocationsUpdateWithWhereUniqueWithoutProfileInput | Prisma.ProducerLocationsUpdateWithWhereUniqueWithoutProfileInput[]
+  updateMany?: Prisma.ProducerLocationsUpdateManyWithWhereWithoutProfileInput | Prisma.ProducerLocationsUpdateManyWithWhereWithoutProfileInput[]
+  deleteMany?: Prisma.ProducerLocationsScalarWhereInput | Prisma.ProducerLocationsScalarWhereInput[]
+}
+
+export type ProducerLocationsUncheckedUpdateManyWithoutProfileNestedInput = {
+  create?: Prisma.XOR<Prisma.ProducerLocationsCreateWithoutProfileInput, Prisma.ProducerLocationsUncheckedCreateWithoutProfileInput> | Prisma.ProducerLocationsCreateWithoutProfileInput[] | Prisma.ProducerLocationsUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.ProducerLocationsCreateOrConnectWithoutProfileInput | Prisma.ProducerLocationsCreateOrConnectWithoutProfileInput[]
+  upsert?: Prisma.ProducerLocationsUpsertWithWhereUniqueWithoutProfileInput | Prisma.ProducerLocationsUpsertWithWhereUniqueWithoutProfileInput[]
+  createMany?: Prisma.ProducerLocationsCreateManyProfileInputEnvelope
+  set?: Prisma.ProducerLocationsWhereUniqueInput | Prisma.ProducerLocationsWhereUniqueInput[]
+  disconnect?: Prisma.ProducerLocationsWhereUniqueInput | Prisma.ProducerLocationsWhereUniqueInput[]
+  delete?: Prisma.ProducerLocationsWhereUniqueInput | Prisma.ProducerLocationsWhereUniqueInput[]
+  connect?: Prisma.ProducerLocationsWhereUniqueInput | Prisma.ProducerLocationsWhereUniqueInput[]
+  update?: Prisma.ProducerLocationsUpdateWithWhereUniqueWithoutProfileInput | Prisma.ProducerLocationsUpdateWithWhereUniqueWithoutProfileInput[]
+  updateMany?: Prisma.ProducerLocationsUpdateManyWithWhereWithoutProfileInput | Prisma.ProducerLocationsUpdateManyWithWhereWithoutProfileInput[]
+  deleteMany?: Prisma.ProducerLocationsScalarWhereInput | Prisma.ProducerLocationsScalarWhereInput[]
 }
 
 export type ProducerLocationsCreateNestedManyWithoutLocationInput = {
@@ -376,55 +418,57 @@ export type ProducerLocationsUncheckedUpdateManyWithoutLocationNestedInput = {
   deleteMany?: Prisma.ProducerLocationsScalarWhereInput | Prisma.ProducerLocationsScalarWhereInput[]
 }
 
-export type ProducerLocationsCreateNestedManyWithoutProducerInput = {
-  create?: Prisma.XOR<Prisma.ProducerLocationsCreateWithoutProducerInput, Prisma.ProducerLocationsUncheckedCreateWithoutProducerInput> | Prisma.ProducerLocationsCreateWithoutProducerInput[] | Prisma.ProducerLocationsUncheckedCreateWithoutProducerInput[]
-  connectOrCreate?: Prisma.ProducerLocationsCreateOrConnectWithoutProducerInput | Prisma.ProducerLocationsCreateOrConnectWithoutProducerInput[]
-  createMany?: Prisma.ProducerLocationsCreateManyProducerInputEnvelope
-  connect?: Prisma.ProducerLocationsWhereUniqueInput | Prisma.ProducerLocationsWhereUniqueInput[]
+export type ProducerLocationsCreateWithoutProfileInput = {
+  location: Prisma.LocationOptionCreateNestedOneWithoutLocalitiesInput
 }
 
-export type ProducerLocationsUncheckedCreateNestedManyWithoutProducerInput = {
-  create?: Prisma.XOR<Prisma.ProducerLocationsCreateWithoutProducerInput, Prisma.ProducerLocationsUncheckedCreateWithoutProducerInput> | Prisma.ProducerLocationsCreateWithoutProducerInput[] | Prisma.ProducerLocationsUncheckedCreateWithoutProducerInput[]
-  connectOrCreate?: Prisma.ProducerLocationsCreateOrConnectWithoutProducerInput | Prisma.ProducerLocationsCreateOrConnectWithoutProducerInput[]
-  createMany?: Prisma.ProducerLocationsCreateManyProducerInputEnvelope
-  connect?: Prisma.ProducerLocationsWhereUniqueInput | Prisma.ProducerLocationsWhereUniqueInput[]
+export type ProducerLocationsUncheckedCreateWithoutProfileInput = {
+  id?: number
+  locationId: number
 }
 
-export type ProducerLocationsUpdateManyWithoutProducerNestedInput = {
-  create?: Prisma.XOR<Prisma.ProducerLocationsCreateWithoutProducerInput, Prisma.ProducerLocationsUncheckedCreateWithoutProducerInput> | Prisma.ProducerLocationsCreateWithoutProducerInput[] | Prisma.ProducerLocationsUncheckedCreateWithoutProducerInput[]
-  connectOrCreate?: Prisma.ProducerLocationsCreateOrConnectWithoutProducerInput | Prisma.ProducerLocationsCreateOrConnectWithoutProducerInput[]
-  upsert?: Prisma.ProducerLocationsUpsertWithWhereUniqueWithoutProducerInput | Prisma.ProducerLocationsUpsertWithWhereUniqueWithoutProducerInput[]
-  createMany?: Prisma.ProducerLocationsCreateManyProducerInputEnvelope
-  set?: Prisma.ProducerLocationsWhereUniqueInput | Prisma.ProducerLocationsWhereUniqueInput[]
-  disconnect?: Prisma.ProducerLocationsWhereUniqueInput | Prisma.ProducerLocationsWhereUniqueInput[]
-  delete?: Prisma.ProducerLocationsWhereUniqueInput | Prisma.ProducerLocationsWhereUniqueInput[]
-  connect?: Prisma.ProducerLocationsWhereUniqueInput | Prisma.ProducerLocationsWhereUniqueInput[]
-  update?: Prisma.ProducerLocationsUpdateWithWhereUniqueWithoutProducerInput | Prisma.ProducerLocationsUpdateWithWhereUniqueWithoutProducerInput[]
-  updateMany?: Prisma.ProducerLocationsUpdateManyWithWhereWithoutProducerInput | Prisma.ProducerLocationsUpdateManyWithWhereWithoutProducerInput[]
-  deleteMany?: Prisma.ProducerLocationsScalarWhereInput | Prisma.ProducerLocationsScalarWhereInput[]
+export type ProducerLocationsCreateOrConnectWithoutProfileInput = {
+  where: Prisma.ProducerLocationsWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProducerLocationsCreateWithoutProfileInput, Prisma.ProducerLocationsUncheckedCreateWithoutProfileInput>
 }
 
-export type ProducerLocationsUncheckedUpdateManyWithoutProducerNestedInput = {
-  create?: Prisma.XOR<Prisma.ProducerLocationsCreateWithoutProducerInput, Prisma.ProducerLocationsUncheckedCreateWithoutProducerInput> | Prisma.ProducerLocationsCreateWithoutProducerInput[] | Prisma.ProducerLocationsUncheckedCreateWithoutProducerInput[]
-  connectOrCreate?: Prisma.ProducerLocationsCreateOrConnectWithoutProducerInput | Prisma.ProducerLocationsCreateOrConnectWithoutProducerInput[]
-  upsert?: Prisma.ProducerLocationsUpsertWithWhereUniqueWithoutProducerInput | Prisma.ProducerLocationsUpsertWithWhereUniqueWithoutProducerInput[]
-  createMany?: Prisma.ProducerLocationsCreateManyProducerInputEnvelope
-  set?: Prisma.ProducerLocationsWhereUniqueInput | Prisma.ProducerLocationsWhereUniqueInput[]
-  disconnect?: Prisma.ProducerLocationsWhereUniqueInput | Prisma.ProducerLocationsWhereUniqueInput[]
-  delete?: Prisma.ProducerLocationsWhereUniqueInput | Prisma.ProducerLocationsWhereUniqueInput[]
-  connect?: Prisma.ProducerLocationsWhereUniqueInput | Prisma.ProducerLocationsWhereUniqueInput[]
-  update?: Prisma.ProducerLocationsUpdateWithWhereUniqueWithoutProducerInput | Prisma.ProducerLocationsUpdateWithWhereUniqueWithoutProducerInput[]
-  updateMany?: Prisma.ProducerLocationsUpdateManyWithWhereWithoutProducerInput | Prisma.ProducerLocationsUpdateManyWithWhereWithoutProducerInput[]
-  deleteMany?: Prisma.ProducerLocationsScalarWhereInput | Prisma.ProducerLocationsScalarWhereInput[]
+export type ProducerLocationsCreateManyProfileInputEnvelope = {
+  data: Prisma.ProducerLocationsCreateManyProfileInput | Prisma.ProducerLocationsCreateManyProfileInput[]
+  skipDuplicates?: boolean
+}
+
+export type ProducerLocationsUpsertWithWhereUniqueWithoutProfileInput = {
+  where: Prisma.ProducerLocationsWhereUniqueInput
+  update: Prisma.XOR<Prisma.ProducerLocationsUpdateWithoutProfileInput, Prisma.ProducerLocationsUncheckedUpdateWithoutProfileInput>
+  create: Prisma.XOR<Prisma.ProducerLocationsCreateWithoutProfileInput, Prisma.ProducerLocationsUncheckedCreateWithoutProfileInput>
+}
+
+export type ProducerLocationsUpdateWithWhereUniqueWithoutProfileInput = {
+  where: Prisma.ProducerLocationsWhereUniqueInput
+  data: Prisma.XOR<Prisma.ProducerLocationsUpdateWithoutProfileInput, Prisma.ProducerLocationsUncheckedUpdateWithoutProfileInput>
+}
+
+export type ProducerLocationsUpdateManyWithWhereWithoutProfileInput = {
+  where: Prisma.ProducerLocationsScalarWhereInput
+  data: Prisma.XOR<Prisma.ProducerLocationsUpdateManyMutationInput, Prisma.ProducerLocationsUncheckedUpdateManyWithoutProfileInput>
+}
+
+export type ProducerLocationsScalarWhereInput = {
+  AND?: Prisma.ProducerLocationsScalarWhereInput | Prisma.ProducerLocationsScalarWhereInput[]
+  OR?: Prisma.ProducerLocationsScalarWhereInput[]
+  NOT?: Prisma.ProducerLocationsScalarWhereInput | Prisma.ProducerLocationsScalarWhereInput[]
+  id?: Prisma.IntFilter<"ProducerLocations"> | number
+  profileId?: Prisma.IntFilter<"ProducerLocations"> | number
+  locationId?: Prisma.IntFilter<"ProducerLocations"> | number
 }
 
 export type ProducerLocationsCreateWithoutLocationInput = {
-  producer: Prisma.ProducerCreateNestedOneWithoutLocationsInput
+  profile: Prisma.ProducerProfileCreateNestedOneWithoutLocationsInput
 }
 
 export type ProducerLocationsUncheckedCreateWithoutLocationInput = {
   id?: number
-  producerId: number
+  profileId: number
 }
 
 export type ProducerLocationsCreateOrConnectWithoutLocationInput = {
@@ -453,95 +497,51 @@ export type ProducerLocationsUpdateManyWithWhereWithoutLocationInput = {
   data: Prisma.XOR<Prisma.ProducerLocationsUpdateManyMutationInput, Prisma.ProducerLocationsUncheckedUpdateManyWithoutLocationInput>
 }
 
-export type ProducerLocationsScalarWhereInput = {
-  AND?: Prisma.ProducerLocationsScalarWhereInput | Prisma.ProducerLocationsScalarWhereInput[]
-  OR?: Prisma.ProducerLocationsScalarWhereInput[]
-  NOT?: Prisma.ProducerLocationsScalarWhereInput | Prisma.ProducerLocationsScalarWhereInput[]
-  id?: Prisma.IntFilter<"ProducerLocations"> | number
-  producerId?: Prisma.IntFilter<"ProducerLocations"> | number
-  locationId?: Prisma.IntFilter<"ProducerLocations"> | number
-}
-
-export type ProducerLocationsCreateWithoutProducerInput = {
-  location: Prisma.LocationOptionCreateNestedOneWithoutLocalitiesInput
-}
-
-export type ProducerLocationsUncheckedCreateWithoutProducerInput = {
+export type ProducerLocationsCreateManyProfileInput = {
   id?: number
   locationId: number
 }
 
-export type ProducerLocationsCreateOrConnectWithoutProducerInput = {
-  where: Prisma.ProducerLocationsWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProducerLocationsCreateWithoutProducerInput, Prisma.ProducerLocationsUncheckedCreateWithoutProducerInput>
+export type ProducerLocationsUpdateWithoutProfileInput = {
+  location?: Prisma.LocationOptionUpdateOneRequiredWithoutLocalitiesNestedInput
 }
 
-export type ProducerLocationsCreateManyProducerInputEnvelope = {
-  data: Prisma.ProducerLocationsCreateManyProducerInput | Prisma.ProducerLocationsCreateManyProducerInput[]
-  skipDuplicates?: boolean
+export type ProducerLocationsUncheckedUpdateWithoutProfileInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  locationId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
-export type ProducerLocationsUpsertWithWhereUniqueWithoutProducerInput = {
-  where: Prisma.ProducerLocationsWhereUniqueInput
-  update: Prisma.XOR<Prisma.ProducerLocationsUpdateWithoutProducerInput, Prisma.ProducerLocationsUncheckedUpdateWithoutProducerInput>
-  create: Prisma.XOR<Prisma.ProducerLocationsCreateWithoutProducerInput, Prisma.ProducerLocationsUncheckedCreateWithoutProducerInput>
-}
-
-export type ProducerLocationsUpdateWithWhereUniqueWithoutProducerInput = {
-  where: Prisma.ProducerLocationsWhereUniqueInput
-  data: Prisma.XOR<Prisma.ProducerLocationsUpdateWithoutProducerInput, Prisma.ProducerLocationsUncheckedUpdateWithoutProducerInput>
-}
-
-export type ProducerLocationsUpdateManyWithWhereWithoutProducerInput = {
-  where: Prisma.ProducerLocationsScalarWhereInput
-  data: Prisma.XOR<Prisma.ProducerLocationsUpdateManyMutationInput, Prisma.ProducerLocationsUncheckedUpdateManyWithoutProducerInput>
+export type ProducerLocationsUncheckedUpdateManyWithoutProfileInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  locationId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ProducerLocationsCreateManyLocationInput = {
   id?: number
-  producerId: number
+  profileId: number
 }
 
 export type ProducerLocationsUpdateWithoutLocationInput = {
-  producer?: Prisma.ProducerUpdateOneRequiredWithoutLocationsNestedInput
+  profile?: Prisma.ProducerProfileUpdateOneRequiredWithoutLocationsNestedInput
 }
 
 export type ProducerLocationsUncheckedUpdateWithoutLocationInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  producerId?: Prisma.IntFieldUpdateOperationsInput | number
+  profileId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ProducerLocationsUncheckedUpdateManyWithoutLocationInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  producerId?: Prisma.IntFieldUpdateOperationsInput | number
-}
-
-export type ProducerLocationsCreateManyProducerInput = {
-  id?: number
-  locationId: number
-}
-
-export type ProducerLocationsUpdateWithoutProducerInput = {
-  location?: Prisma.LocationOptionUpdateOneRequiredWithoutLocalitiesNestedInput
-}
-
-export type ProducerLocationsUncheckedUpdateWithoutProducerInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  locationId?: Prisma.IntFieldUpdateOperationsInput | number
-}
-
-export type ProducerLocationsUncheckedUpdateManyWithoutProducerInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  locationId?: Prisma.IntFieldUpdateOperationsInput | number
+  profileId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 
 
 export type ProducerLocationsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  producerId?: boolean
+  profileId?: boolean
   locationId?: boolean
-  producer?: boolean | Prisma.ProducerDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.ProducerProfileDefaultArgs<ExtArgs>
   location?: boolean | Prisma.LocationOptionDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["producerLocations"]>
 
@@ -549,25 +549,25 @@ export type ProducerLocationsSelect<ExtArgs extends runtime.Types.Extensions.Int
 
 export type ProducerLocationsSelectScalar = {
   id?: boolean
-  producerId?: boolean
+  profileId?: boolean
   locationId?: boolean
 }
 
-export type ProducerLocationsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "producerId" | "locationId", ExtArgs["result"]["producerLocations"]>
+export type ProducerLocationsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "profileId" | "locationId", ExtArgs["result"]["producerLocations"]>
 export type ProducerLocationsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  producer?: boolean | Prisma.ProducerDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.ProducerProfileDefaultArgs<ExtArgs>
   location?: boolean | Prisma.LocationOptionDefaultArgs<ExtArgs>
 }
 
 export type $ProducerLocationsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ProducerLocations"
   objects: {
-    producer: Prisma.$ProducerPayload<ExtArgs>
+    profile: Prisma.$ProducerProfilePayload<ExtArgs>
     location: Prisma.$LocationOptionPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
-    producerId: number
+    profileId: number
     locationId: number
   }, ExtArgs["result"]["producerLocations"]>
   composites: {}
@@ -909,7 +909,7 @@ readonly fields: ProducerLocationsFieldRefs;
  */
 export interface Prisma__ProducerLocationsClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  producer<T extends Prisma.ProducerDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProducerDefaultArgs<ExtArgs>>): Prisma.Prisma__ProducerClient<runtime.Types.Result.GetResult<Prisma.$ProducerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  profile<T extends Prisma.ProducerProfileDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProducerProfileDefaultArgs<ExtArgs>>): Prisma.Prisma__ProducerProfileClient<runtime.Types.Result.GetResult<Prisma.$ProducerProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   location<T extends Prisma.LocationOptionDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LocationOptionDefaultArgs<ExtArgs>>): Prisma.Prisma__LocationOptionClient<runtime.Types.Result.GetResult<Prisma.$LocationOptionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -941,7 +941,7 @@ export interface Prisma__ProducerLocationsClient<T, Null = never, ExtArgs extend
  */
 export interface ProducerLocationsFieldRefs {
   readonly id: Prisma.FieldRef<"ProducerLocations", 'Int'>
-  readonly producerId: Prisma.FieldRef<"ProducerLocations", 'Int'>
+  readonly profileId: Prisma.FieldRef<"ProducerLocations", 'Int'>
   readonly locationId: Prisma.FieldRef<"ProducerLocations", 'Int'>
 }
     

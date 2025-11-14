@@ -27,31 +27,31 @@ export type AggregateProducerFetish = {
 
 export type ProducerFetishAvgAggregateOutputType = {
   id: number | null
-  producerId: number | null
+  profileId: number | null
   fetishId: number | null
 }
 
 export type ProducerFetishSumAggregateOutputType = {
   id: number | null
-  producerId: number | null
+  profileId: number | null
   fetishId: number | null
 }
 
 export type ProducerFetishMinAggregateOutputType = {
   id: number | null
-  producerId: number | null
+  profileId: number | null
   fetishId: number | null
 }
 
 export type ProducerFetishMaxAggregateOutputType = {
   id: number | null
-  producerId: number | null
+  profileId: number | null
   fetishId: number | null
 }
 
 export type ProducerFetishCountAggregateOutputType = {
   id: number
-  producerId: number
+  profileId: number
   fetishId: number
   _all: number
 }
@@ -59,31 +59,31 @@ export type ProducerFetishCountAggregateOutputType = {
 
 export type ProducerFetishAvgAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   fetishId?: true
 }
 
 export type ProducerFetishSumAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   fetishId?: true
 }
 
 export type ProducerFetishMinAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   fetishId?: true
 }
 
 export type ProducerFetishMaxAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   fetishId?: true
 }
 
 export type ProducerFetishCountAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   fetishId?: true
   _all?: true
 }
@@ -176,7 +176,7 @@ export type ProducerFetishGroupByArgs<ExtArgs extends runtime.Types.Extensions.I
 
 export type ProducerFetishGroupByOutputType = {
   id: number
-  producerId: number
+  profileId: number
   fetishId: number
   _count: ProducerFetishCountAggregateOutputType | null
   _avg: ProducerFetishAvgAggregateOutputType | null
@@ -205,35 +205,35 @@ export type ProducerFetishWhereInput = {
   OR?: Prisma.ProducerFetishWhereInput[]
   NOT?: Prisma.ProducerFetishWhereInput | Prisma.ProducerFetishWhereInput[]
   id?: Prisma.IntFilter<"ProducerFetish"> | number
-  producerId?: Prisma.IntFilter<"ProducerFetish"> | number
+  profileId?: Prisma.IntFilter<"ProducerFetish"> | number
   fetishId?: Prisma.IntFilter<"ProducerFetish"> | number
-  producer?: Prisma.XOR<Prisma.ProducerScalarRelationFilter, Prisma.ProducerWhereInput>
+  profile?: Prisma.XOR<Prisma.ProducerProfileScalarRelationFilter, Prisma.ProducerProfileWhereInput>
   fetish?: Prisma.XOR<Prisma.FetishOptionScalarRelationFilter, Prisma.FetishOptionWhereInput>
 }
 
 export type ProducerFetishOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   fetishId?: Prisma.SortOrder
-  producer?: Prisma.ProducerOrderByWithRelationInput
+  profile?: Prisma.ProducerProfileOrderByWithRelationInput
   fetish?: Prisma.FetishOptionOrderByWithRelationInput
 }
 
 export type ProducerFetishWhereUniqueInput = Prisma.AtLeast<{
   id?: number
-  producerId_fetishId?: Prisma.ProducerFetishProducerIdFetishIdCompoundUniqueInput
+  profileId_fetishId?: Prisma.ProducerFetishProfileIdFetishIdCompoundUniqueInput
   AND?: Prisma.ProducerFetishWhereInput | Prisma.ProducerFetishWhereInput[]
   OR?: Prisma.ProducerFetishWhereInput[]
   NOT?: Prisma.ProducerFetishWhereInput | Prisma.ProducerFetishWhereInput[]
-  producerId?: Prisma.IntFilter<"ProducerFetish"> | number
+  profileId?: Prisma.IntFilter<"ProducerFetish"> | number
   fetishId?: Prisma.IntFilter<"ProducerFetish"> | number
-  producer?: Prisma.XOR<Prisma.ProducerScalarRelationFilter, Prisma.ProducerWhereInput>
+  profile?: Prisma.XOR<Prisma.ProducerProfileScalarRelationFilter, Prisma.ProducerProfileWhereInput>
   fetish?: Prisma.XOR<Prisma.FetishOptionScalarRelationFilter, Prisma.FetishOptionWhereInput>
-}, "id" | "producerId_fetishId">
+}, "id" | "profileId_fetishId">
 
 export type ProducerFetishOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   fetishId?: Prisma.SortOrder
   _count?: Prisma.ProducerFetishCountOrderByAggregateInput
   _avg?: Prisma.ProducerFetishAvgOrderByAggregateInput
@@ -247,35 +247,35 @@ export type ProducerFetishScalarWhereWithAggregatesInput = {
   OR?: Prisma.ProducerFetishScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ProducerFetishScalarWhereWithAggregatesInput | Prisma.ProducerFetishScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"ProducerFetish"> | number
-  producerId?: Prisma.IntWithAggregatesFilter<"ProducerFetish"> | number
+  profileId?: Prisma.IntWithAggregatesFilter<"ProducerFetish"> | number
   fetishId?: Prisma.IntWithAggregatesFilter<"ProducerFetish"> | number
 }
 
 export type ProducerFetishCreateInput = {
-  producer: Prisma.ProducerCreateNestedOneWithoutFetichesInput
+  profile: Prisma.ProducerProfileCreateNestedOneWithoutFetichesInput
   fetish: Prisma.FetishOptionCreateNestedOneWithoutProducersInput
 }
 
 export type ProducerFetishUncheckedCreateInput = {
   id?: number
-  producerId: number
+  profileId: number
   fetishId: number
 }
 
 export type ProducerFetishUpdateInput = {
-  producer?: Prisma.ProducerUpdateOneRequiredWithoutFetichesNestedInput
+  profile?: Prisma.ProducerProfileUpdateOneRequiredWithoutFetichesNestedInput
   fetish?: Prisma.FetishOptionUpdateOneRequiredWithoutProducersNestedInput
 }
 
 export type ProducerFetishUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  producerId?: Prisma.IntFieldUpdateOperationsInput | number
+  profileId?: Prisma.IntFieldUpdateOperationsInput | number
   fetishId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ProducerFetishCreateManyInput = {
   id?: number
-  producerId: number
+  profileId: number
   fetishId: number
 }
 
@@ -285,7 +285,7 @@ export type ProducerFetishUpdateManyMutationInput = {
 
 export type ProducerFetishUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  producerId?: Prisma.IntFieldUpdateOperationsInput | number
+  profileId?: Prisma.IntFieldUpdateOperationsInput | number
   fetishId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
@@ -299,39 +299,81 @@ export type ProducerFetishOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type ProducerFetishProducerIdFetishIdCompoundUniqueInput = {
-  producerId: number
+export type ProducerFetishProfileIdFetishIdCompoundUniqueInput = {
+  profileId: number
   fetishId: number
 }
 
 export type ProducerFetishCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   fetishId?: Prisma.SortOrder
 }
 
 export type ProducerFetishAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   fetishId?: Prisma.SortOrder
 }
 
 export type ProducerFetishMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   fetishId?: Prisma.SortOrder
 }
 
 export type ProducerFetishMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   fetishId?: Prisma.SortOrder
 }
 
 export type ProducerFetishSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   fetishId?: Prisma.SortOrder
+}
+
+export type ProducerFetishCreateNestedManyWithoutProfileInput = {
+  create?: Prisma.XOR<Prisma.ProducerFetishCreateWithoutProfileInput, Prisma.ProducerFetishUncheckedCreateWithoutProfileInput> | Prisma.ProducerFetishCreateWithoutProfileInput[] | Prisma.ProducerFetishUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.ProducerFetishCreateOrConnectWithoutProfileInput | Prisma.ProducerFetishCreateOrConnectWithoutProfileInput[]
+  createMany?: Prisma.ProducerFetishCreateManyProfileInputEnvelope
+  connect?: Prisma.ProducerFetishWhereUniqueInput | Prisma.ProducerFetishWhereUniqueInput[]
+}
+
+export type ProducerFetishUncheckedCreateNestedManyWithoutProfileInput = {
+  create?: Prisma.XOR<Prisma.ProducerFetishCreateWithoutProfileInput, Prisma.ProducerFetishUncheckedCreateWithoutProfileInput> | Prisma.ProducerFetishCreateWithoutProfileInput[] | Prisma.ProducerFetishUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.ProducerFetishCreateOrConnectWithoutProfileInput | Prisma.ProducerFetishCreateOrConnectWithoutProfileInput[]
+  createMany?: Prisma.ProducerFetishCreateManyProfileInputEnvelope
+  connect?: Prisma.ProducerFetishWhereUniqueInput | Prisma.ProducerFetishWhereUniqueInput[]
+}
+
+export type ProducerFetishUpdateManyWithoutProfileNestedInput = {
+  create?: Prisma.XOR<Prisma.ProducerFetishCreateWithoutProfileInput, Prisma.ProducerFetishUncheckedCreateWithoutProfileInput> | Prisma.ProducerFetishCreateWithoutProfileInput[] | Prisma.ProducerFetishUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.ProducerFetishCreateOrConnectWithoutProfileInput | Prisma.ProducerFetishCreateOrConnectWithoutProfileInput[]
+  upsert?: Prisma.ProducerFetishUpsertWithWhereUniqueWithoutProfileInput | Prisma.ProducerFetishUpsertWithWhereUniqueWithoutProfileInput[]
+  createMany?: Prisma.ProducerFetishCreateManyProfileInputEnvelope
+  set?: Prisma.ProducerFetishWhereUniqueInput | Prisma.ProducerFetishWhereUniqueInput[]
+  disconnect?: Prisma.ProducerFetishWhereUniqueInput | Prisma.ProducerFetishWhereUniqueInput[]
+  delete?: Prisma.ProducerFetishWhereUniqueInput | Prisma.ProducerFetishWhereUniqueInput[]
+  connect?: Prisma.ProducerFetishWhereUniqueInput | Prisma.ProducerFetishWhereUniqueInput[]
+  update?: Prisma.ProducerFetishUpdateWithWhereUniqueWithoutProfileInput | Prisma.ProducerFetishUpdateWithWhereUniqueWithoutProfileInput[]
+  updateMany?: Prisma.ProducerFetishUpdateManyWithWhereWithoutProfileInput | Prisma.ProducerFetishUpdateManyWithWhereWithoutProfileInput[]
+  deleteMany?: Prisma.ProducerFetishScalarWhereInput | Prisma.ProducerFetishScalarWhereInput[]
+}
+
+export type ProducerFetishUncheckedUpdateManyWithoutProfileNestedInput = {
+  create?: Prisma.XOR<Prisma.ProducerFetishCreateWithoutProfileInput, Prisma.ProducerFetishUncheckedCreateWithoutProfileInput> | Prisma.ProducerFetishCreateWithoutProfileInput[] | Prisma.ProducerFetishUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.ProducerFetishCreateOrConnectWithoutProfileInput | Prisma.ProducerFetishCreateOrConnectWithoutProfileInput[]
+  upsert?: Prisma.ProducerFetishUpsertWithWhereUniqueWithoutProfileInput | Prisma.ProducerFetishUpsertWithWhereUniqueWithoutProfileInput[]
+  createMany?: Prisma.ProducerFetishCreateManyProfileInputEnvelope
+  set?: Prisma.ProducerFetishWhereUniqueInput | Prisma.ProducerFetishWhereUniqueInput[]
+  disconnect?: Prisma.ProducerFetishWhereUniqueInput | Prisma.ProducerFetishWhereUniqueInput[]
+  delete?: Prisma.ProducerFetishWhereUniqueInput | Prisma.ProducerFetishWhereUniqueInput[]
+  connect?: Prisma.ProducerFetishWhereUniqueInput | Prisma.ProducerFetishWhereUniqueInput[]
+  update?: Prisma.ProducerFetishUpdateWithWhereUniqueWithoutProfileInput | Prisma.ProducerFetishUpdateWithWhereUniqueWithoutProfileInput[]
+  updateMany?: Prisma.ProducerFetishUpdateManyWithWhereWithoutProfileInput | Prisma.ProducerFetishUpdateManyWithWhereWithoutProfileInput[]
+  deleteMany?: Prisma.ProducerFetishScalarWhereInput | Prisma.ProducerFetishScalarWhereInput[]
 }
 
 export type ProducerFetishCreateNestedManyWithoutFetishInput = {
@@ -376,55 +418,57 @@ export type ProducerFetishUncheckedUpdateManyWithoutFetishNestedInput = {
   deleteMany?: Prisma.ProducerFetishScalarWhereInput | Prisma.ProducerFetishScalarWhereInput[]
 }
 
-export type ProducerFetishCreateNestedManyWithoutProducerInput = {
-  create?: Prisma.XOR<Prisma.ProducerFetishCreateWithoutProducerInput, Prisma.ProducerFetishUncheckedCreateWithoutProducerInput> | Prisma.ProducerFetishCreateWithoutProducerInput[] | Prisma.ProducerFetishUncheckedCreateWithoutProducerInput[]
-  connectOrCreate?: Prisma.ProducerFetishCreateOrConnectWithoutProducerInput | Prisma.ProducerFetishCreateOrConnectWithoutProducerInput[]
-  createMany?: Prisma.ProducerFetishCreateManyProducerInputEnvelope
-  connect?: Prisma.ProducerFetishWhereUniqueInput | Prisma.ProducerFetishWhereUniqueInput[]
+export type ProducerFetishCreateWithoutProfileInput = {
+  fetish: Prisma.FetishOptionCreateNestedOneWithoutProducersInput
 }
 
-export type ProducerFetishUncheckedCreateNestedManyWithoutProducerInput = {
-  create?: Prisma.XOR<Prisma.ProducerFetishCreateWithoutProducerInput, Prisma.ProducerFetishUncheckedCreateWithoutProducerInput> | Prisma.ProducerFetishCreateWithoutProducerInput[] | Prisma.ProducerFetishUncheckedCreateWithoutProducerInput[]
-  connectOrCreate?: Prisma.ProducerFetishCreateOrConnectWithoutProducerInput | Prisma.ProducerFetishCreateOrConnectWithoutProducerInput[]
-  createMany?: Prisma.ProducerFetishCreateManyProducerInputEnvelope
-  connect?: Prisma.ProducerFetishWhereUniqueInput | Prisma.ProducerFetishWhereUniqueInput[]
+export type ProducerFetishUncheckedCreateWithoutProfileInput = {
+  id?: number
+  fetishId: number
 }
 
-export type ProducerFetishUpdateManyWithoutProducerNestedInput = {
-  create?: Prisma.XOR<Prisma.ProducerFetishCreateWithoutProducerInput, Prisma.ProducerFetishUncheckedCreateWithoutProducerInput> | Prisma.ProducerFetishCreateWithoutProducerInput[] | Prisma.ProducerFetishUncheckedCreateWithoutProducerInput[]
-  connectOrCreate?: Prisma.ProducerFetishCreateOrConnectWithoutProducerInput | Prisma.ProducerFetishCreateOrConnectWithoutProducerInput[]
-  upsert?: Prisma.ProducerFetishUpsertWithWhereUniqueWithoutProducerInput | Prisma.ProducerFetishUpsertWithWhereUniqueWithoutProducerInput[]
-  createMany?: Prisma.ProducerFetishCreateManyProducerInputEnvelope
-  set?: Prisma.ProducerFetishWhereUniqueInput | Prisma.ProducerFetishWhereUniqueInput[]
-  disconnect?: Prisma.ProducerFetishWhereUniqueInput | Prisma.ProducerFetishWhereUniqueInput[]
-  delete?: Prisma.ProducerFetishWhereUniqueInput | Prisma.ProducerFetishWhereUniqueInput[]
-  connect?: Prisma.ProducerFetishWhereUniqueInput | Prisma.ProducerFetishWhereUniqueInput[]
-  update?: Prisma.ProducerFetishUpdateWithWhereUniqueWithoutProducerInput | Prisma.ProducerFetishUpdateWithWhereUniqueWithoutProducerInput[]
-  updateMany?: Prisma.ProducerFetishUpdateManyWithWhereWithoutProducerInput | Prisma.ProducerFetishUpdateManyWithWhereWithoutProducerInput[]
-  deleteMany?: Prisma.ProducerFetishScalarWhereInput | Prisma.ProducerFetishScalarWhereInput[]
+export type ProducerFetishCreateOrConnectWithoutProfileInput = {
+  where: Prisma.ProducerFetishWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProducerFetishCreateWithoutProfileInput, Prisma.ProducerFetishUncheckedCreateWithoutProfileInput>
 }
 
-export type ProducerFetishUncheckedUpdateManyWithoutProducerNestedInput = {
-  create?: Prisma.XOR<Prisma.ProducerFetishCreateWithoutProducerInput, Prisma.ProducerFetishUncheckedCreateWithoutProducerInput> | Prisma.ProducerFetishCreateWithoutProducerInput[] | Prisma.ProducerFetishUncheckedCreateWithoutProducerInput[]
-  connectOrCreate?: Prisma.ProducerFetishCreateOrConnectWithoutProducerInput | Prisma.ProducerFetishCreateOrConnectWithoutProducerInput[]
-  upsert?: Prisma.ProducerFetishUpsertWithWhereUniqueWithoutProducerInput | Prisma.ProducerFetishUpsertWithWhereUniqueWithoutProducerInput[]
-  createMany?: Prisma.ProducerFetishCreateManyProducerInputEnvelope
-  set?: Prisma.ProducerFetishWhereUniqueInput | Prisma.ProducerFetishWhereUniqueInput[]
-  disconnect?: Prisma.ProducerFetishWhereUniqueInput | Prisma.ProducerFetishWhereUniqueInput[]
-  delete?: Prisma.ProducerFetishWhereUniqueInput | Prisma.ProducerFetishWhereUniqueInput[]
-  connect?: Prisma.ProducerFetishWhereUniqueInput | Prisma.ProducerFetishWhereUniqueInput[]
-  update?: Prisma.ProducerFetishUpdateWithWhereUniqueWithoutProducerInput | Prisma.ProducerFetishUpdateWithWhereUniqueWithoutProducerInput[]
-  updateMany?: Prisma.ProducerFetishUpdateManyWithWhereWithoutProducerInput | Prisma.ProducerFetishUpdateManyWithWhereWithoutProducerInput[]
-  deleteMany?: Prisma.ProducerFetishScalarWhereInput | Prisma.ProducerFetishScalarWhereInput[]
+export type ProducerFetishCreateManyProfileInputEnvelope = {
+  data: Prisma.ProducerFetishCreateManyProfileInput | Prisma.ProducerFetishCreateManyProfileInput[]
+  skipDuplicates?: boolean
+}
+
+export type ProducerFetishUpsertWithWhereUniqueWithoutProfileInput = {
+  where: Prisma.ProducerFetishWhereUniqueInput
+  update: Prisma.XOR<Prisma.ProducerFetishUpdateWithoutProfileInput, Prisma.ProducerFetishUncheckedUpdateWithoutProfileInput>
+  create: Prisma.XOR<Prisma.ProducerFetishCreateWithoutProfileInput, Prisma.ProducerFetishUncheckedCreateWithoutProfileInput>
+}
+
+export type ProducerFetishUpdateWithWhereUniqueWithoutProfileInput = {
+  where: Prisma.ProducerFetishWhereUniqueInput
+  data: Prisma.XOR<Prisma.ProducerFetishUpdateWithoutProfileInput, Prisma.ProducerFetishUncheckedUpdateWithoutProfileInput>
+}
+
+export type ProducerFetishUpdateManyWithWhereWithoutProfileInput = {
+  where: Prisma.ProducerFetishScalarWhereInput
+  data: Prisma.XOR<Prisma.ProducerFetishUpdateManyMutationInput, Prisma.ProducerFetishUncheckedUpdateManyWithoutProfileInput>
+}
+
+export type ProducerFetishScalarWhereInput = {
+  AND?: Prisma.ProducerFetishScalarWhereInput | Prisma.ProducerFetishScalarWhereInput[]
+  OR?: Prisma.ProducerFetishScalarWhereInput[]
+  NOT?: Prisma.ProducerFetishScalarWhereInput | Prisma.ProducerFetishScalarWhereInput[]
+  id?: Prisma.IntFilter<"ProducerFetish"> | number
+  profileId?: Prisma.IntFilter<"ProducerFetish"> | number
+  fetishId?: Prisma.IntFilter<"ProducerFetish"> | number
 }
 
 export type ProducerFetishCreateWithoutFetishInput = {
-  producer: Prisma.ProducerCreateNestedOneWithoutFetichesInput
+  profile: Prisma.ProducerProfileCreateNestedOneWithoutFetichesInput
 }
 
 export type ProducerFetishUncheckedCreateWithoutFetishInput = {
   id?: number
-  producerId: number
+  profileId: number
 }
 
 export type ProducerFetishCreateOrConnectWithoutFetishInput = {
@@ -453,95 +497,51 @@ export type ProducerFetishUpdateManyWithWhereWithoutFetishInput = {
   data: Prisma.XOR<Prisma.ProducerFetishUpdateManyMutationInput, Prisma.ProducerFetishUncheckedUpdateManyWithoutFetishInput>
 }
 
-export type ProducerFetishScalarWhereInput = {
-  AND?: Prisma.ProducerFetishScalarWhereInput | Prisma.ProducerFetishScalarWhereInput[]
-  OR?: Prisma.ProducerFetishScalarWhereInput[]
-  NOT?: Prisma.ProducerFetishScalarWhereInput | Prisma.ProducerFetishScalarWhereInput[]
-  id?: Prisma.IntFilter<"ProducerFetish"> | number
-  producerId?: Prisma.IntFilter<"ProducerFetish"> | number
-  fetishId?: Prisma.IntFilter<"ProducerFetish"> | number
-}
-
-export type ProducerFetishCreateWithoutProducerInput = {
-  fetish: Prisma.FetishOptionCreateNestedOneWithoutProducersInput
-}
-
-export type ProducerFetishUncheckedCreateWithoutProducerInput = {
+export type ProducerFetishCreateManyProfileInput = {
   id?: number
   fetishId: number
 }
 
-export type ProducerFetishCreateOrConnectWithoutProducerInput = {
-  where: Prisma.ProducerFetishWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProducerFetishCreateWithoutProducerInput, Prisma.ProducerFetishUncheckedCreateWithoutProducerInput>
+export type ProducerFetishUpdateWithoutProfileInput = {
+  fetish?: Prisma.FetishOptionUpdateOneRequiredWithoutProducersNestedInput
 }
 
-export type ProducerFetishCreateManyProducerInputEnvelope = {
-  data: Prisma.ProducerFetishCreateManyProducerInput | Prisma.ProducerFetishCreateManyProducerInput[]
-  skipDuplicates?: boolean
+export type ProducerFetishUncheckedUpdateWithoutProfileInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  fetishId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
-export type ProducerFetishUpsertWithWhereUniqueWithoutProducerInput = {
-  where: Prisma.ProducerFetishWhereUniqueInput
-  update: Prisma.XOR<Prisma.ProducerFetishUpdateWithoutProducerInput, Prisma.ProducerFetishUncheckedUpdateWithoutProducerInput>
-  create: Prisma.XOR<Prisma.ProducerFetishCreateWithoutProducerInput, Prisma.ProducerFetishUncheckedCreateWithoutProducerInput>
-}
-
-export type ProducerFetishUpdateWithWhereUniqueWithoutProducerInput = {
-  where: Prisma.ProducerFetishWhereUniqueInput
-  data: Prisma.XOR<Prisma.ProducerFetishUpdateWithoutProducerInput, Prisma.ProducerFetishUncheckedUpdateWithoutProducerInput>
-}
-
-export type ProducerFetishUpdateManyWithWhereWithoutProducerInput = {
-  where: Prisma.ProducerFetishScalarWhereInput
-  data: Prisma.XOR<Prisma.ProducerFetishUpdateManyMutationInput, Prisma.ProducerFetishUncheckedUpdateManyWithoutProducerInput>
+export type ProducerFetishUncheckedUpdateManyWithoutProfileInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  fetishId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ProducerFetishCreateManyFetishInput = {
   id?: number
-  producerId: number
+  profileId: number
 }
 
 export type ProducerFetishUpdateWithoutFetishInput = {
-  producer?: Prisma.ProducerUpdateOneRequiredWithoutFetichesNestedInput
+  profile?: Prisma.ProducerProfileUpdateOneRequiredWithoutFetichesNestedInput
 }
 
 export type ProducerFetishUncheckedUpdateWithoutFetishInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  producerId?: Prisma.IntFieldUpdateOperationsInput | number
+  profileId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ProducerFetishUncheckedUpdateManyWithoutFetishInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  producerId?: Prisma.IntFieldUpdateOperationsInput | number
-}
-
-export type ProducerFetishCreateManyProducerInput = {
-  id?: number
-  fetishId: number
-}
-
-export type ProducerFetishUpdateWithoutProducerInput = {
-  fetish?: Prisma.FetishOptionUpdateOneRequiredWithoutProducersNestedInput
-}
-
-export type ProducerFetishUncheckedUpdateWithoutProducerInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  fetishId?: Prisma.IntFieldUpdateOperationsInput | number
-}
-
-export type ProducerFetishUncheckedUpdateManyWithoutProducerInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  fetishId?: Prisma.IntFieldUpdateOperationsInput | number
+  profileId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 
 
 export type ProducerFetishSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  producerId?: boolean
+  profileId?: boolean
   fetishId?: boolean
-  producer?: boolean | Prisma.ProducerDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.ProducerProfileDefaultArgs<ExtArgs>
   fetish?: boolean | Prisma.FetishOptionDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["producerFetish"]>
 
@@ -549,25 +549,25 @@ export type ProducerFetishSelect<ExtArgs extends runtime.Types.Extensions.Intern
 
 export type ProducerFetishSelectScalar = {
   id?: boolean
-  producerId?: boolean
+  profileId?: boolean
   fetishId?: boolean
 }
 
-export type ProducerFetishOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "producerId" | "fetishId", ExtArgs["result"]["producerFetish"]>
+export type ProducerFetishOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "profileId" | "fetishId", ExtArgs["result"]["producerFetish"]>
 export type ProducerFetishInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  producer?: boolean | Prisma.ProducerDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.ProducerProfileDefaultArgs<ExtArgs>
   fetish?: boolean | Prisma.FetishOptionDefaultArgs<ExtArgs>
 }
 
 export type $ProducerFetishPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ProducerFetish"
   objects: {
-    producer: Prisma.$ProducerPayload<ExtArgs>
+    profile: Prisma.$ProducerProfilePayload<ExtArgs>
     fetish: Prisma.$FetishOptionPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
-    producerId: number
+    profileId: number
     fetishId: number
   }, ExtArgs["result"]["producerFetish"]>
   composites: {}
@@ -909,7 +909,7 @@ readonly fields: ProducerFetishFieldRefs;
  */
 export interface Prisma__ProducerFetishClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  producer<T extends Prisma.ProducerDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProducerDefaultArgs<ExtArgs>>): Prisma.Prisma__ProducerClient<runtime.Types.Result.GetResult<Prisma.$ProducerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  profile<T extends Prisma.ProducerProfileDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProducerProfileDefaultArgs<ExtArgs>>): Prisma.Prisma__ProducerProfileClient<runtime.Types.Result.GetResult<Prisma.$ProducerProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   fetish<T extends Prisma.FetishOptionDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FetishOptionDefaultArgs<ExtArgs>>): Prisma.Prisma__FetishOptionClient<runtime.Types.Result.GetResult<Prisma.$FetishOptionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -941,7 +941,7 @@ export interface Prisma__ProducerFetishClient<T, Null = never, ExtArgs extends r
  */
 export interface ProducerFetishFieldRefs {
   readonly id: Prisma.FieldRef<"ProducerFetish", 'Int'>
-  readonly producerId: Prisma.FieldRef<"ProducerFetish", 'Int'>
+  readonly profileId: Prisma.FieldRef<"ProducerFetish", 'Int'>
   readonly fetishId: Prisma.FieldRef<"ProducerFetish", 'Int'>
 }
     

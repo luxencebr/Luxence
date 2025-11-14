@@ -12,6 +12,9 @@
   font-weight: bold;
   margin-bottom: 4px;
   color: var(--contrast-color);
+
+  display: flex;
+  justify-content: space-between;
 }
 
 .header p {
@@ -42,7 +45,7 @@
 
 .customUpload {
   background: var(--background-color);
-  height: 200px;
+  width: 100%;
   aspect-ratio: 1 / 1;
 
   border: 2px dashed var(--contrast-color);
@@ -70,8 +73,8 @@
 .previewWrapper {
   position: relative;
   display: inline-block;
-  width: 200px;
-  height: 200px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
 }
 
 .previewImage {
@@ -93,9 +96,35 @@
   padding: 4px 8px;
   cursor: pointer;
   font-size: 0.75rem;
-  transition: background 0.2s;
+  transition: 0.2s;
 }
 
 .removeButton:hover {
   background: rgba(0, 0, 0, 0.8);
+}
+
+.backButton {
+  background: var(--background-color);
+  padding: 4px 8px;
+
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 0 4px black;
+
+  color: var(--contrast-color);
+  font-size: 12px;
+  letter-spacing: 1px;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.backButton:hover {
+  opacity: 0.75;
+}
+
+.disable {
+  opacity: 0.75;
+  cursor: not-allowed;
 }

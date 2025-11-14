@@ -1,16 +1,24 @@
 "use client";
 
+import { useEffect } from "react";
 import styles from "./confirmation-step.module.css";
 
 interface ConfirmationStepProps {
   formData: any;
   onUpdate: (data: any) => void;
+  onValidate?: (isValid: boolean) => void;
 }
 
 export default function ConfirmationStep({
   formData,
   onUpdate,
+  onValidate,
 }: ConfirmationStepProps) {
+  useEffect(() => {
+    if (onValidate) {
+      onValidate(!!formData.agreed);
+    }
+  }, [formData.agreed]);
   return (
     <div className={styles.container}>
       {/* Cabeçalho */}
@@ -26,11 +34,15 @@ export default function ConfirmationStep({
         <h3>Perfil</h3>
         <div className={styles.infoList}>
           <p>
-            <strong>CPF:</strong> {formData.cpf || "Não informado"}
+            <strong>Data de Nascimento:</strong>{" "}
+            {formData.birthday || "Não informado"}
           </p>
           <p>
-            <strong>Data de Nascimento:</strong>{" "}
-            {formData.birthDate || "Não informado"}
+            <strong>Nacionalidade:</strong>{" "}
+            {formData.nationality || "Não informado"}
+          </p>
+          <p>
+            <strong>Documento:</strong> {formData.document || "Não informado"}
           </p>
           <p>
             <strong>Telefone:</strong> {formData.phone || "Não informado"}
@@ -43,13 +55,13 @@ export default function ConfirmationStep({
         <h3>Verificação de Identidade</h3>
         <div className={styles.infoList}>
           <p>
-            <strong>Foto de Perfil:</strong>{" "}
-            {formData.profilePhoto ? (
+            <strong>Frente do Documento:</strong>{" "}
+            {formData.documentFront ? (
               <img
                 src={
                   typeof formData.profilePhoto === "string"
                     ? formData.profilePhoto
-                    : URL.createObjectURL(formData.profilePhoto)
+                    : URL.createObjectURL(formData.documentFront)
                 }
                 alt="Foto de perfil"
                 className={styles.thumbnail}
@@ -59,13 +71,13 @@ export default function ConfirmationStep({
             )}
           </p>
           <p>
-            <strong>Foto com Documento:</strong>{" "}
-            {formData.documentPhoto ? (
+            <strong>Verso do Documento:</strong>{" "}
+            {formData.documentBack ? (
               <img
                 src={
-                  typeof formData.documentPhoto === "string"
+                  typeof formData.documentFront === "string"
                     ? formData.documentPhoto
-                    : URL.createObjectURL(formData.documentPhoto)
+                    : URL.createObjectURL(formData.documentBack)
                 }
                 alt="Foto com documento"
                 className={styles.thumbnail}
@@ -74,53 +86,21 @@ export default function ConfirmationStep({
               "Não enviada"
             )}
           </p>
-        </div>
-      </div>
-
-      {/* PAGAMENTO */}
-      <div className={styles.section}>
-        <h3>Cartão Cadastrado</h3>
-        <div className={styles.infoList}>
           <p>
-            <strong>Nome no Cartão:</strong>{" "}
-            {formData.cardName || "Não informado"}
-          </p>
-          <p>
-            <strong>Número:</strong>{" "}
-            {formData.cardNumber
-              ? `**** **** **** ${formData.cardNumber.slice(-4)}`
-              : "Não informado"}
-          </p>
-          <p>
-            <strong>Validade:</strong> {formData.expiry || "Não informada"}
-          </p>
-          <p>
-            <strong>CVV:</strong> {formData.cvv ? "•••" : "Não informado"}
-          </p>
-        </div>
-      </div>
-
-      {/* ENDEREÇO */}
-      <div className={styles.section}>
-        <h3>Endereço Residencial</h3>
-        <div className={styles.infoList}>
-          <p>
-            <strong>CEP:</strong> {formData.cep || "Não informado"}
-          </p>
-          <p>
-            <strong>Rua:</strong> {formData.street || "Não informado"}
-          </p>
-          <p>
-            <strong>Número:</strong> {formData.number || "Não informado"}
-          </p>
-          <p>
-            <strong>Bairro:</strong> {formData.neighborhood || "Não informado"}
-          </p>
-          <p>
-            <strong>Cidade:</strong> {formData.city || "Não informado"}
-          </p>
-          <p>
-            <strong>Estado:</strong> {formData.state || "Não informado"}
+            <strong>Selfie com Documento:</strong>{" "}
+            {formData.selfieDocument ? (
+              <img
+                src={
+                  typeof formData.documentFront === "string"
+                    ? formData.documentPhoto
+                    : URL.createObjectURL(formData.selfieDocument)
+                }
+                alt="Foto com documento"
+                className={styles.thumbnail}
+              />
+            ) : (
+              "Não enviada"
+            )}
           </p>
         </div>
       </div>

@@ -38,7 +38,12 @@
   color: var(--contrast-complementary-color);
 }
 
-.label input {
+.trigger {
+  width: 100% !important;
+}
+
+.label input,
+.trigger {
   background: var(--background-color);
   width: auto;
   padding: 10px 12px;
@@ -52,6 +57,51 @@
   letter-spacing: 1px;
 
   transition: border-color 0.2s ease;
+}
+
+.menu {
+  background: var(--background-color);
+  max-height: 120px;
+
+  overflow-y: scroll;
+  box-shadow: 0 0 8px black;
+}
+
+.dropdownItem {
+  background: var(--background-complementary-color);
+  padding: 4px;
+
+  border: none;
+  border-radius: 4px;
+
+  color: var(--contrast-complementary-color);
+  font-family: quicksand;
+  font-size: 16px;
+  text-align: left;
+  font-weight: normal;
+
+  cursor: pointer;
+}
+
+.dropdownItem:hover {
+  opacity: 0.75;
+}
+
+.menu::-webkit-scrollbar {
+  width: 2px;
+}
+
+.menu::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 4px;
+}
+
+.menu::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-complementary-color);
+}
+
+.menu::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .label input[disabled] {

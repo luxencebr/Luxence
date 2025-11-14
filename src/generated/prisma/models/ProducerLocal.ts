@@ -27,17 +27,17 @@ export type AggregateProducerLocal = {
 
 export type ProducerLocalAvgAggregateOutputType = {
   id: number | null
-  producerId: number | null
+  profileId: number | null
 }
 
 export type ProducerLocalSumAggregateOutputType = {
   id: number | null
-  producerId: number | null
+  profileId: number | null
 }
 
 export type ProducerLocalMinAggregateOutputType = {
   id: number | null
-  producerId: number | null
+  profileId: number | null
   country: string | null
   state: string | null
   city: string | null
@@ -49,7 +49,7 @@ export type ProducerLocalMinAggregateOutputType = {
 
 export type ProducerLocalMaxAggregateOutputType = {
   id: number | null
-  producerId: number | null
+  profileId: number | null
   country: string | null
   state: string | null
   city: string | null
@@ -61,7 +61,7 @@ export type ProducerLocalMaxAggregateOutputType = {
 
 export type ProducerLocalCountAggregateOutputType = {
   id: number
-  producerId: number
+  profileId: number
   country: number
   state: number
   city: number
@@ -75,17 +75,17 @@ export type ProducerLocalCountAggregateOutputType = {
 
 export type ProducerLocalAvgAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
 }
 
 export type ProducerLocalSumAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
 }
 
 export type ProducerLocalMinAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   country?: true
   state?: true
   city?: true
@@ -97,7 +97,7 @@ export type ProducerLocalMinAggregateInputType = {
 
 export type ProducerLocalMaxAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   country?: true
   state?: true
   city?: true
@@ -109,7 +109,7 @@ export type ProducerLocalMaxAggregateInputType = {
 
 export type ProducerLocalCountAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   country?: true
   state?: true
   city?: true
@@ -208,7 +208,7 @@ export type ProducerLocalGroupByArgs<ExtArgs extends runtime.Types.Extensions.In
 
 export type ProducerLocalGroupByOutputType = {
   id: number
-  producerId: number
+  profileId: number
   country: string
   state: string
   city: string
@@ -243,7 +243,7 @@ export type ProducerLocalWhereInput = {
   OR?: Prisma.ProducerLocalWhereInput[]
   NOT?: Prisma.ProducerLocalWhereInput | Prisma.ProducerLocalWhereInput[]
   id?: Prisma.IntFilter<"ProducerLocal"> | number
-  producerId?: Prisma.IntFilter<"ProducerLocal"> | number
+  profileId?: Prisma.IntFilter<"ProducerLocal"> | number
   country?: Prisma.StringFilter<"ProducerLocal"> | string
   state?: Prisma.StringFilter<"ProducerLocal"> | string
   city?: Prisma.StringFilter<"ProducerLocal"> | string
@@ -251,13 +251,13 @@ export type ProducerLocalWhereInput = {
   street?: Prisma.StringNullableFilter<"ProducerLocal"> | string | null
   number?: Prisma.StringNullableFilter<"ProducerLocal"> | string | null
   complement?: Prisma.StringNullableFilter<"ProducerLocal"> | string | null
-  producer?: Prisma.XOR<Prisma.ProducerScalarRelationFilter, Prisma.ProducerWhereInput>
+  profile?: Prisma.XOR<Prisma.ProducerProfileScalarRelationFilter, Prisma.ProducerProfileWhereInput>
   amenities?: Prisma.LocalAmenityListRelationFilter
 }
 
 export type ProducerLocalOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   country?: Prisma.SortOrder
   state?: Prisma.SortOrder
   city?: Prisma.SortOrder
@@ -265,14 +265,14 @@ export type ProducerLocalOrderByWithRelationInput = {
   street?: Prisma.SortOrderInput | Prisma.SortOrder
   number?: Prisma.SortOrderInput | Prisma.SortOrder
   complement?: Prisma.SortOrderInput | Prisma.SortOrder
-  producer?: Prisma.ProducerOrderByWithRelationInput
+  profile?: Prisma.ProducerProfileOrderByWithRelationInput
   amenities?: Prisma.LocalAmenityOrderByRelationAggregateInput
   _relevance?: Prisma.ProducerLocalOrderByRelevanceInput
 }
 
 export type ProducerLocalWhereUniqueInput = Prisma.AtLeast<{
   id?: number
-  producerId?: number
+  profileId?: number
   AND?: Prisma.ProducerLocalWhereInput | Prisma.ProducerLocalWhereInput[]
   OR?: Prisma.ProducerLocalWhereInput[]
   NOT?: Prisma.ProducerLocalWhereInput | Prisma.ProducerLocalWhereInput[]
@@ -283,13 +283,13 @@ export type ProducerLocalWhereUniqueInput = Prisma.AtLeast<{
   street?: Prisma.StringNullableFilter<"ProducerLocal"> | string | null
   number?: Prisma.StringNullableFilter<"ProducerLocal"> | string | null
   complement?: Prisma.StringNullableFilter<"ProducerLocal"> | string | null
-  producer?: Prisma.XOR<Prisma.ProducerScalarRelationFilter, Prisma.ProducerWhereInput>
+  profile?: Prisma.XOR<Prisma.ProducerProfileScalarRelationFilter, Prisma.ProducerProfileWhereInput>
   amenities?: Prisma.LocalAmenityListRelationFilter
-}, "id" | "producerId">
+}, "id" | "profileId">
 
 export type ProducerLocalOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   country?: Prisma.SortOrder
   state?: Prisma.SortOrder
   city?: Prisma.SortOrder
@@ -309,7 +309,7 @@ export type ProducerLocalScalarWhereWithAggregatesInput = {
   OR?: Prisma.ProducerLocalScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ProducerLocalScalarWhereWithAggregatesInput | Prisma.ProducerLocalScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"ProducerLocal"> | number
-  producerId?: Prisma.IntWithAggregatesFilter<"ProducerLocal"> | number
+  profileId?: Prisma.IntWithAggregatesFilter<"ProducerLocal"> | number
   country?: Prisma.StringWithAggregatesFilter<"ProducerLocal"> | string
   state?: Prisma.StringWithAggregatesFilter<"ProducerLocal"> | string
   city?: Prisma.StringWithAggregatesFilter<"ProducerLocal"> | string
@@ -327,13 +327,13 @@ export type ProducerLocalCreateInput = {
   street?: string | null
   number?: string | null
   complement?: string | null
-  producer: Prisma.ProducerCreateNestedOneWithoutLocalInput
+  profile: Prisma.ProducerProfileCreateNestedOneWithoutLocalInput
   amenities?: Prisma.LocalAmenityCreateNestedManyWithoutLocalInput
 }
 
 export type ProducerLocalUncheckedCreateInput = {
   id?: number
-  producerId: number
+  profileId: number
   country: string
   state: string
   city: string
@@ -352,13 +352,13 @@ export type ProducerLocalUpdateInput = {
   street?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   complement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  producer?: Prisma.ProducerUpdateOneRequiredWithoutLocalNestedInput
+  profile?: Prisma.ProducerProfileUpdateOneRequiredWithoutLocalNestedInput
   amenities?: Prisma.LocalAmenityUpdateManyWithoutLocalNestedInput
 }
 
 export type ProducerLocalUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  producerId?: Prisma.IntFieldUpdateOperationsInput | number
+  profileId?: Prisma.IntFieldUpdateOperationsInput | number
   country?: Prisma.StringFieldUpdateOperationsInput | string
   state?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
@@ -371,7 +371,7 @@ export type ProducerLocalUncheckedUpdateInput = {
 
 export type ProducerLocalCreateManyInput = {
   id?: number
-  producerId: number
+  profileId: number
   country: string
   state: string
   city: string
@@ -393,7 +393,7 @@ export type ProducerLocalUpdateManyMutationInput = {
 
 export type ProducerLocalUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  producerId?: Prisma.IntFieldUpdateOperationsInput | number
+  profileId?: Prisma.IntFieldUpdateOperationsInput | number
   country?: Prisma.StringFieldUpdateOperationsInput | string
   state?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
@@ -401,6 +401,11 @@ export type ProducerLocalUncheckedUpdateManyInput = {
   street?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   complement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type ProducerLocalNullableScalarRelationFilter = {
+  is?: Prisma.ProducerLocalWhereInput | null
+  isNot?: Prisma.ProducerLocalWhereInput | null
 }
 
 export type ProducerLocalOrderByRelevanceInput = {
@@ -411,7 +416,7 @@ export type ProducerLocalOrderByRelevanceInput = {
 
 export type ProducerLocalCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   country?: Prisma.SortOrder
   state?: Prisma.SortOrder
   city?: Prisma.SortOrder
@@ -423,12 +428,12 @@ export type ProducerLocalCountOrderByAggregateInput = {
 
 export type ProducerLocalAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
 }
 
 export type ProducerLocalMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   country?: Prisma.SortOrder
   state?: Prisma.SortOrder
   city?: Prisma.SortOrder
@@ -440,7 +445,7 @@ export type ProducerLocalMaxOrderByAggregateInput = {
 
 export type ProducerLocalMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   country?: Prisma.SortOrder
   state?: Prisma.SortOrder
   city?: Prisma.SortOrder
@@ -452,7 +457,7 @@ export type ProducerLocalMinOrderByAggregateInput = {
 
 export type ProducerLocalSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
 }
 
 export type ProducerLocalScalarRelationFilter = {
@@ -460,9 +465,36 @@ export type ProducerLocalScalarRelationFilter = {
   isNot?: Prisma.ProducerLocalWhereInput
 }
 
-export type ProducerLocalNullableScalarRelationFilter = {
-  is?: Prisma.ProducerLocalWhereInput | null
-  isNot?: Prisma.ProducerLocalWhereInput | null
+export type ProducerLocalCreateNestedOneWithoutProfileInput = {
+  create?: Prisma.XOR<Prisma.ProducerLocalCreateWithoutProfileInput, Prisma.ProducerLocalUncheckedCreateWithoutProfileInput>
+  connectOrCreate?: Prisma.ProducerLocalCreateOrConnectWithoutProfileInput
+  connect?: Prisma.ProducerLocalWhereUniqueInput
+}
+
+export type ProducerLocalUncheckedCreateNestedOneWithoutProfileInput = {
+  create?: Prisma.XOR<Prisma.ProducerLocalCreateWithoutProfileInput, Prisma.ProducerLocalUncheckedCreateWithoutProfileInput>
+  connectOrCreate?: Prisma.ProducerLocalCreateOrConnectWithoutProfileInput
+  connect?: Prisma.ProducerLocalWhereUniqueInput
+}
+
+export type ProducerLocalUpdateOneWithoutProfileNestedInput = {
+  create?: Prisma.XOR<Prisma.ProducerLocalCreateWithoutProfileInput, Prisma.ProducerLocalUncheckedCreateWithoutProfileInput>
+  connectOrCreate?: Prisma.ProducerLocalCreateOrConnectWithoutProfileInput
+  upsert?: Prisma.ProducerLocalUpsertWithoutProfileInput
+  disconnect?: Prisma.ProducerLocalWhereInput | boolean
+  delete?: Prisma.ProducerLocalWhereInput | boolean
+  connect?: Prisma.ProducerLocalWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProducerLocalUpdateToOneWithWhereWithoutProfileInput, Prisma.ProducerLocalUpdateWithoutProfileInput>, Prisma.ProducerLocalUncheckedUpdateWithoutProfileInput>
+}
+
+export type ProducerLocalUncheckedUpdateOneWithoutProfileNestedInput = {
+  create?: Prisma.XOR<Prisma.ProducerLocalCreateWithoutProfileInput, Prisma.ProducerLocalUncheckedCreateWithoutProfileInput>
+  connectOrCreate?: Prisma.ProducerLocalCreateOrConnectWithoutProfileInput
+  upsert?: Prisma.ProducerLocalUpsertWithoutProfileInput
+  disconnect?: Prisma.ProducerLocalWhereInput | boolean
+  delete?: Prisma.ProducerLocalWhereInput | boolean
+  connect?: Prisma.ProducerLocalWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProducerLocalUpdateToOneWithWhereWithoutProfileInput, Prisma.ProducerLocalUpdateWithoutProfileInput>, Prisma.ProducerLocalUncheckedUpdateWithoutProfileInput>
 }
 
 export type ProducerLocalCreateNestedOneWithoutAmenitiesInput = {
@@ -479,36 +511,66 @@ export type ProducerLocalUpdateOneRequiredWithoutAmenitiesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProducerLocalUpdateToOneWithWhereWithoutAmenitiesInput, Prisma.ProducerLocalUpdateWithoutAmenitiesInput>, Prisma.ProducerLocalUncheckedUpdateWithoutAmenitiesInput>
 }
 
-export type ProducerLocalCreateNestedOneWithoutProducerInput = {
-  create?: Prisma.XOR<Prisma.ProducerLocalCreateWithoutProducerInput, Prisma.ProducerLocalUncheckedCreateWithoutProducerInput>
-  connectOrCreate?: Prisma.ProducerLocalCreateOrConnectWithoutProducerInput
-  connect?: Prisma.ProducerLocalWhereUniqueInput
+export type ProducerLocalCreateWithoutProfileInput = {
+  country: string
+  state: string
+  city: string
+  neighborhood: string
+  street?: string | null
+  number?: string | null
+  complement?: string | null
+  amenities?: Prisma.LocalAmenityCreateNestedManyWithoutLocalInput
 }
 
-export type ProducerLocalUncheckedCreateNestedOneWithoutProducerInput = {
-  create?: Prisma.XOR<Prisma.ProducerLocalCreateWithoutProducerInput, Prisma.ProducerLocalUncheckedCreateWithoutProducerInput>
-  connectOrCreate?: Prisma.ProducerLocalCreateOrConnectWithoutProducerInput
-  connect?: Prisma.ProducerLocalWhereUniqueInput
+export type ProducerLocalUncheckedCreateWithoutProfileInput = {
+  id?: number
+  country: string
+  state: string
+  city: string
+  neighborhood: string
+  street?: string | null
+  number?: string | null
+  complement?: string | null
+  amenities?: Prisma.LocalAmenityUncheckedCreateNestedManyWithoutLocalInput
 }
 
-export type ProducerLocalUpdateOneWithoutProducerNestedInput = {
-  create?: Prisma.XOR<Prisma.ProducerLocalCreateWithoutProducerInput, Prisma.ProducerLocalUncheckedCreateWithoutProducerInput>
-  connectOrCreate?: Prisma.ProducerLocalCreateOrConnectWithoutProducerInput
-  upsert?: Prisma.ProducerLocalUpsertWithoutProducerInput
-  disconnect?: Prisma.ProducerLocalWhereInput | boolean
-  delete?: Prisma.ProducerLocalWhereInput | boolean
-  connect?: Prisma.ProducerLocalWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProducerLocalUpdateToOneWithWhereWithoutProducerInput, Prisma.ProducerLocalUpdateWithoutProducerInput>, Prisma.ProducerLocalUncheckedUpdateWithoutProducerInput>
+export type ProducerLocalCreateOrConnectWithoutProfileInput = {
+  where: Prisma.ProducerLocalWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProducerLocalCreateWithoutProfileInput, Prisma.ProducerLocalUncheckedCreateWithoutProfileInput>
 }
 
-export type ProducerLocalUncheckedUpdateOneWithoutProducerNestedInput = {
-  create?: Prisma.XOR<Prisma.ProducerLocalCreateWithoutProducerInput, Prisma.ProducerLocalUncheckedCreateWithoutProducerInput>
-  connectOrCreate?: Prisma.ProducerLocalCreateOrConnectWithoutProducerInput
-  upsert?: Prisma.ProducerLocalUpsertWithoutProducerInput
-  disconnect?: Prisma.ProducerLocalWhereInput | boolean
-  delete?: Prisma.ProducerLocalWhereInput | boolean
-  connect?: Prisma.ProducerLocalWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProducerLocalUpdateToOneWithWhereWithoutProducerInput, Prisma.ProducerLocalUpdateWithoutProducerInput>, Prisma.ProducerLocalUncheckedUpdateWithoutProducerInput>
+export type ProducerLocalUpsertWithoutProfileInput = {
+  update: Prisma.XOR<Prisma.ProducerLocalUpdateWithoutProfileInput, Prisma.ProducerLocalUncheckedUpdateWithoutProfileInput>
+  create: Prisma.XOR<Prisma.ProducerLocalCreateWithoutProfileInput, Prisma.ProducerLocalUncheckedCreateWithoutProfileInput>
+  where?: Prisma.ProducerLocalWhereInput
+}
+
+export type ProducerLocalUpdateToOneWithWhereWithoutProfileInput = {
+  where?: Prisma.ProducerLocalWhereInput
+  data: Prisma.XOR<Prisma.ProducerLocalUpdateWithoutProfileInput, Prisma.ProducerLocalUncheckedUpdateWithoutProfileInput>
+}
+
+export type ProducerLocalUpdateWithoutProfileInput = {
+  country?: Prisma.StringFieldUpdateOperationsInput | string
+  state?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  neighborhood?: Prisma.StringFieldUpdateOperationsInput | string
+  street?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  complement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amenities?: Prisma.LocalAmenityUpdateManyWithoutLocalNestedInput
+}
+
+export type ProducerLocalUncheckedUpdateWithoutProfileInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  country?: Prisma.StringFieldUpdateOperationsInput | string
+  state?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  neighborhood?: Prisma.StringFieldUpdateOperationsInput | string
+  street?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  complement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amenities?: Prisma.LocalAmenityUncheckedUpdateManyWithoutLocalNestedInput
 }
 
 export type ProducerLocalCreateWithoutAmenitiesInput = {
@@ -519,12 +581,12 @@ export type ProducerLocalCreateWithoutAmenitiesInput = {
   street?: string | null
   number?: string | null
   complement?: string | null
-  producer: Prisma.ProducerCreateNestedOneWithoutLocalInput
+  profile: Prisma.ProducerProfileCreateNestedOneWithoutLocalInput
 }
 
 export type ProducerLocalUncheckedCreateWithoutAmenitiesInput = {
   id?: number
-  producerId: number
+  profileId: number
   country: string
   state: string
   city: string
@@ -558,12 +620,12 @@ export type ProducerLocalUpdateWithoutAmenitiesInput = {
   street?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   complement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  producer?: Prisma.ProducerUpdateOneRequiredWithoutLocalNestedInput
+  profile?: Prisma.ProducerProfileUpdateOneRequiredWithoutLocalNestedInput
 }
 
 export type ProducerLocalUncheckedUpdateWithoutAmenitiesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  producerId?: Prisma.IntFieldUpdateOperationsInput | number
+  profileId?: Prisma.IntFieldUpdateOperationsInput | number
   country?: Prisma.StringFieldUpdateOperationsInput | string
   state?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
@@ -571,68 +633,6 @@ export type ProducerLocalUncheckedUpdateWithoutAmenitiesInput = {
   street?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   complement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-}
-
-export type ProducerLocalCreateWithoutProducerInput = {
-  country: string
-  state: string
-  city: string
-  neighborhood: string
-  street?: string | null
-  number?: string | null
-  complement?: string | null
-  amenities?: Prisma.LocalAmenityCreateNestedManyWithoutLocalInput
-}
-
-export type ProducerLocalUncheckedCreateWithoutProducerInput = {
-  id?: number
-  country: string
-  state: string
-  city: string
-  neighborhood: string
-  street?: string | null
-  number?: string | null
-  complement?: string | null
-  amenities?: Prisma.LocalAmenityUncheckedCreateNestedManyWithoutLocalInput
-}
-
-export type ProducerLocalCreateOrConnectWithoutProducerInput = {
-  where: Prisma.ProducerLocalWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProducerLocalCreateWithoutProducerInput, Prisma.ProducerLocalUncheckedCreateWithoutProducerInput>
-}
-
-export type ProducerLocalUpsertWithoutProducerInput = {
-  update: Prisma.XOR<Prisma.ProducerLocalUpdateWithoutProducerInput, Prisma.ProducerLocalUncheckedUpdateWithoutProducerInput>
-  create: Prisma.XOR<Prisma.ProducerLocalCreateWithoutProducerInput, Prisma.ProducerLocalUncheckedCreateWithoutProducerInput>
-  where?: Prisma.ProducerLocalWhereInput
-}
-
-export type ProducerLocalUpdateToOneWithWhereWithoutProducerInput = {
-  where?: Prisma.ProducerLocalWhereInput
-  data: Prisma.XOR<Prisma.ProducerLocalUpdateWithoutProducerInput, Prisma.ProducerLocalUncheckedUpdateWithoutProducerInput>
-}
-
-export type ProducerLocalUpdateWithoutProducerInput = {
-  country?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  neighborhood?: Prisma.StringFieldUpdateOperationsInput | string
-  street?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  complement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  amenities?: Prisma.LocalAmenityUpdateManyWithoutLocalNestedInput
-}
-
-export type ProducerLocalUncheckedUpdateWithoutProducerInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  country?: Prisma.StringFieldUpdateOperationsInput | string
-  state?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  neighborhood?: Prisma.StringFieldUpdateOperationsInput | string
-  street?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  complement?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  amenities?: Prisma.LocalAmenityUncheckedUpdateManyWithoutLocalNestedInput
 }
 
 
@@ -668,7 +668,7 @@ export type ProducerLocalCountOutputTypeCountAmenitiesArgs<ExtArgs extends runti
 
 export type ProducerLocalSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  producerId?: boolean
+  profileId?: boolean
   country?: boolean
   state?: boolean
   city?: boolean
@@ -676,7 +676,7 @@ export type ProducerLocalSelect<ExtArgs extends runtime.Types.Extensions.Interna
   street?: boolean
   number?: boolean
   complement?: boolean
-  producer?: boolean | Prisma.ProducerDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.ProducerProfileDefaultArgs<ExtArgs>
   amenities?: boolean | Prisma.ProducerLocal$amenitiesArgs<ExtArgs>
   _count?: boolean | Prisma.ProducerLocalCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["producerLocal"]>
@@ -685,7 +685,7 @@ export type ProducerLocalSelect<ExtArgs extends runtime.Types.Extensions.Interna
 
 export type ProducerLocalSelectScalar = {
   id?: boolean
-  producerId?: boolean
+  profileId?: boolean
   country?: boolean
   state?: boolean
   city?: boolean
@@ -695,9 +695,9 @@ export type ProducerLocalSelectScalar = {
   complement?: boolean
 }
 
-export type ProducerLocalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "producerId" | "country" | "state" | "city" | "neighborhood" | "street" | "number" | "complement", ExtArgs["result"]["producerLocal"]>
+export type ProducerLocalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "profileId" | "country" | "state" | "city" | "neighborhood" | "street" | "number" | "complement", ExtArgs["result"]["producerLocal"]>
 export type ProducerLocalInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  producer?: boolean | Prisma.ProducerDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.ProducerProfileDefaultArgs<ExtArgs>
   amenities?: boolean | Prisma.ProducerLocal$amenitiesArgs<ExtArgs>
   _count?: boolean | Prisma.ProducerLocalCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -705,12 +705,12 @@ export type ProducerLocalInclude<ExtArgs extends runtime.Types.Extensions.Intern
 export type $ProducerLocalPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ProducerLocal"
   objects: {
-    producer: Prisma.$ProducerPayload<ExtArgs>
+    profile: Prisma.$ProducerProfilePayload<ExtArgs>
     amenities: Prisma.$LocalAmenityPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
-    producerId: number
+    profileId: number
     country: string
     state: string
     city: string
@@ -1058,7 +1058,7 @@ readonly fields: ProducerLocalFieldRefs;
  */
 export interface Prisma__ProducerLocalClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  producer<T extends Prisma.ProducerDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProducerDefaultArgs<ExtArgs>>): Prisma.Prisma__ProducerClient<runtime.Types.Result.GetResult<Prisma.$ProducerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  profile<T extends Prisma.ProducerProfileDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProducerProfileDefaultArgs<ExtArgs>>): Prisma.Prisma__ProducerProfileClient<runtime.Types.Result.GetResult<Prisma.$ProducerProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   amenities<T extends Prisma.ProducerLocal$amenitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProducerLocal$amenitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LocalAmenityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1090,7 +1090,7 @@ export interface Prisma__ProducerLocalClient<T, Null = never, ExtArgs extends ru
  */
 export interface ProducerLocalFieldRefs {
   readonly id: Prisma.FieldRef<"ProducerLocal", 'Int'>
-  readonly producerId: Prisma.FieldRef<"ProducerLocal", 'Int'>
+  readonly profileId: Prisma.FieldRef<"ProducerLocal", 'Int'>
   readonly country: Prisma.FieldRef<"ProducerLocal", 'String'>
   readonly state: Prisma.FieldRef<"ProducerLocal", 'String'>
   readonly city: Prisma.FieldRef<"ProducerLocal", 'String'>

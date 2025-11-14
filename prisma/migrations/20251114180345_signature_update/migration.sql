@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Producer` MODIFY `signature` ENUM('COPPER', 'SILVER', 'GOLD', 'DIAMOND') NOT NULL DEFAULT 'COPPER';

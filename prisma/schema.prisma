@@ -28,13 +28,6 @@ enum GENDER {
   TRANS
 }
 
-enum SIGNATURE {
-  COPPER
-  SILVER
-  GOLD
-  DIAMOND
-}
-
 model UserPreference {
   id      Int     @id @default(autoincrement())
   userId  Int
@@ -71,82 +64,94 @@ model User {
   preferences UserPreference[]
   locality    Locality?
 
-  producer    Producer?
+  producer    Producer? @relation("UserProducer")
 
   reviews     Review[]
 }
 
+model Review {
+  id          String   @id @default(cuid())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int
+  profile    ProducerProfile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId  Int
+
+  rating      Int
+  comment     String
+
+  createdAt   DateTime @default(now())
+}
+
 // ========== PRODUTOR ==========
 
-enum ETHNICITY {
-  ASIATICO
-  BRANCO
-  INDIGENA
-  PARDO
-  PRETO
+enum SIGNATURE {
+  COPPER
+  SILVER
+  GOLD
+  DIAMOND
 }
 
-enum HAIRCOLOR {
-  CASTANHO
-  COLORIDO
-  GRISALHO
-  LOIRO
-  PRETO
-  RUIVO
-  SEMCABELO
+enum STATUS {
+  YELLOW
+  GREEN
+  RED
 }
 
-enum EYESCOLOR {
-  AMBAR
-  AZUIS
-  CASTANHOS
-  PRETOS
-  VERDES
+model Producer {
+  id          Int       @id @default(autoincrement())
+  userId      Int       @unique
+  user        User      @relation("UserProducer", fields: [userId], references: [id], onDelete: Cascade)
+
+  signature   SIGNATURE @default(COPPER)
+
+  isVerified    Boolean   @default(false)
+  verificationStatus STATUS @default(YELLOW)
+
+  birthday    DateTime
+  nationality String
+  document    String
+  phone       String
+
+  documentFrontPhoto  String
+  documentBackPhoto   String
+  selfieWithDocument  String
+
+  profile ProducerProfile? @relation("ProducerProfileRelation")
 }
 
-model Appearance {
+model ProducerProfile {
   id          Int        @id @default(autoincrement())
   producerId  Int        @unique
-  producer    Producer   @relation(fields: [producerId], references: [id])
+  producer    Producer   @relation("ProducerProfileRelation", fields: [producerId], references: [id], onDelete: Cascade)
 
-  height      Float
-  mannequin   Int
-  feet        Int
+  slogan      String
+  description String
 
-  ethnicity   ETHNICITY
-  hairColor   HAIRCOLOR
-  eyesColor   EYESCOLOR
+  scholarity  String
+  languages   Json  
 
-  tattoos     Boolean
-  piercings   Boolean
-  silicone    Boolean
+  hasLocal    Boolean   @default(false)
+  local       ProducerLocal?
+
+  appearance  ProducerAppearance[]
+  prices      ProducerPrice[]
+  services    ProducerService[]
+  fetiches    ProducerFetish[]
+  audience   ProducerAudience[]
+  locations    ProducerLocations[]
+  payments    ProducerPayment[]
+
+  views       Int       @default(0)
+  reviews     Review[]
 }
 
 //---
 
-enum DURATION {
-  MIN15
-  MIN30
-  HOUR1
-  HOURS2
-  HOURS4
-  PERNOITE
-  DIARIA
-}
-
-model Price {
-  id          Int        @id @default(autoincrement())
-  producerId  Int
-  producer    Producer   @relation(fields: [producerId], references: [id])
-
-  duration    DURATION
-  price       Float
-}
-
 model ProducerLocal {
-  id          Int      @id @default(autoincrement())
-  producerId  Int      @unique
-  producer    Producer @relation(fields: [producerId], references: [id])
+  id         Int        @id @default(autoincrement())
+  profileId  Int        @unique
+  profile    ProducerProfile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   country     String
   state       String
@@ -177,40 +182,48 @@ model LocalAmenity {
   @@unique([localId, amenityId])
 }
 
-model AudienceOption {
-  id        Int               @id @default(autoincrement())
-  name      String            @unique
-  label     String
+model AppearanceOption {
+  id     Int     @id @default(autoincrement())
+  name   String  @unique
+  label  String
+  type   String 
 
-  producers ProducerAudience[]
+  producers ProducerAppearance[]
 }
 
-model ProducerAudience {
-  id          Int             @id @default(autoincrement())
-  producerId  Int
-  audienceId  Int
-  producer    Producer        @relation(fields: [producerId], references: [id])
-  audience    AudienceOption  @relation(fields: [audienceId], references: [id])
+model ProducerAppearance {
+  id          Int              @id @default(autoincrement())
+  profileId   Int
+  appearanceId Int
+  profile     ProducerProfile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  appearance  AppearanceOption @relation(fields: [appearanceId], references: [id])
 
-  @@unique([producerId, audienceId])
+  height      Float?
+  mannequin   Int?
+  feet        Int?
+  tattoos     Boolean?
+  piercings   Boolean?
+  silicone    Boolean?
+
+  @@unique([profileId, appearanceId])
 }
 
-model LocationOption {
-  id        Int @id @default(autoincrement())
-  name      String @unique
-  label     String
-
-  localities ProducerLocations[]
+model PriceOption {
+  id       Int     @id @default(autoincrement())
+  name     String  @unique
+  label    String
+  producers ProducerPrice[]
 }
 
-model ProducerLocations {
-  id           Int @id @default(autoincrement())
-  producerId   Int
-  locationId   Int
-  producer     Producer @relation(fields: [producerId], references: [id])
-  location     LocationOption   @relation(fields: [locationId], references: [id])
-
-  @@unique([producerId, locationId])
+model ProducerPrice {
+  id         Int             @id @default(autoincrement())
+  profileId  Int
+  priceId    Int
+  profile    ProducerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  option     PriceOption     @relation(fields: [priceId], references: [id])
+  
+  value      Float           // o preço definido pelo produtor
+  @@unique([profileId, priceId])
 }
 
 model ServiceOption {
@@ -223,12 +236,12 @@ model ServiceOption {
 
 model ProducerService {
   id          Int           @id @default(autoincrement())
-  producerId  Int
+  profileId  Int
   serviceId   Int
-  producer    Producer      @relation(fields: [producerId], references: [id])
+  profile    ProducerProfile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
   service     ServiceOption @relation(fields: [serviceId], references: [id])
 
-  @@unique([producerId, serviceId])
+  @@unique([profileId, serviceId])
 }
 
 model FetishOption {
@@ -241,12 +254,48 @@ model FetishOption {
 
 model ProducerFetish {
   id          Int           @id @default(autoincrement())
-  producerId  Int
+  profileId  Int
   fetishId    Int
-  producer    Producer      @relation(fields: [producerId], references: [id])
+  profile    ProducerProfile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
   fetish      FetishOption  @relation(fields: [fetishId], references: [id])
 
-  @@unique([producerId, fetishId])
+  @@unique([profileId, fetishId])
+}
+
+model AudienceOption {
+  id        Int               @id @default(autoincrement())
+  name      String            @unique
+  label     String
+
+  producers ProducerAudience[]
+}
+
+model ProducerAudience {
+  id          Int             @id @default(autoincrement())
+  profileId  Int        
+  audienceId  Int
+  profile    ProducerProfile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  audience    AudienceOption  @relation(fields: [audienceId], references: [id])
+
+  @@unique([profileId, audienceId])
+}
+
+model LocationOption {
+  id        Int @id @default(autoincrement())
+  name      String @unique
+  label     String
+
+  localities ProducerLocations[]
+}
+
+model ProducerLocations {
+  id           Int @id @default(autoincrement())
+  profileId  Int        
+  locationId   Int
+  profile    ProducerProfile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  location     LocationOption   @relation(fields: [locationId], references: [id])
+
+  @@unique([profileId, locationId])
 }
 
 model PaymentOption {
@@ -259,60 +308,10 @@ model PaymentOption {
 
 model ProducerPayment {
   id          Int           @id @default(autoincrement())
-  producerId  Int
+  profileId  Int
   paymentId   Int
-  producer    Producer      @relation(fields: [producerId], references: [id])
+  profile    ProducerProfile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
   payment     PaymentOption @relation(fields: [paymentId], references: [id])
 
-  @@unique([producerId, paymentId])
+  @@unique([profileId, paymentId])
 }
-
-model Review {
-  id          String   @id @default(cuid())
-
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      Int
-  producer    Producer @relation(fields: [producerId], references: [id], onDelete: Cascade)
-  producerId  Int
-
-  rating      Int
-  comment     String
-
-  createdAt   DateTime @default(now())
-}
-
-model Producer {
-  id          Int       @id @default(autoincrement())
-  userId      Int       @unique
-  user        User      @relation(fields: [userId], references: [id])
-
-  verified    Boolean   @default(false)
-  signature   SIGNATURE
-  views       Int       @default(0)
-
-  age         Int
-  nationality String
-  scholarity  String
-  languages   Json
-  slogan      String
-  description String
-
-  phone       String
-  instagram   String?
-  telegram    String?
-
-  hasLocal    Boolean   @default(false)
-  local       ProducerLocal?
-
-  appearance  Appearance?
-  prices      Price[]
-
-  services    ProducerService[]
-  fetiches    ProducerFetish[]
-  audiences   ProducerAudience[]
-  locations    ProducerLocations[]
-  payments    ProducerPayment[]
-
-  reviews     Review[]
-}
-

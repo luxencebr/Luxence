@@ -6,41 +6,35 @@ import styles from "./page.module.css";
 import StepIndicator from "@/components/advertiser/step-indicator";
 import ProfileStep from "@/components/advertiser/steps/profile-step";
 import VerificationStep from "@/components/advertiser/steps/verification-step";
-import PaymentStep from "@/components/advertiser/steps/payment-step";
-import AddressStep from "@/components/advertiser/steps/address-step";
 import ConfirmationStep from "@/components/advertiser/steps/confirmation-step";
 import StepNavigation from "@/components/advertiser/step-navigation";
 
-const TOTAL_STEPS = 5;
+import { useSearchParams } from "next/navigation";
+
+const TOTAL_STEPS = 3;
 
 export default function AdvertiserRegistration() {
   const [currentStep, setCurrentStep] = useState(1);
 
+  const searchParams = useSearchParams();
+  const userId = searchParams.get("uid");
+
   // Dados principais do formulário
   const [formData, setFormData] = useState({
+    userId,
+
     // Profile
-    cpf: "",
-    birthDate: "",
+    birthday: "",
+    nationality: "",
+    document: "",
     phone: "",
 
     // Verification
-    profilePhoto: null,
-    documentPhoto: null,
+    documentFrontPhoto: "",
+    documentBackPhoto: "",
+    selfieWithDocument: "",
 
-    // Payment
-    cardName: "",
-    cardNumber: "",
-    expiry: "",
-    cvv: "",
-
-    // Address
-    cep: "",
-    street: "",
-    neighborhood: "",
-    city: "",
-    state: "",
-    number: "",
-    complement: "",
+    agreed: false,
   });
 
   // Atualização genérica
@@ -52,9 +46,7 @@ export default function AdvertiserRegistration() {
   const [validSteps, setValidSteps] = useState<Record<number, boolean>>({
     1: false, // Profile
     2: false, // Verification
-    3: false, // Payment
-    4: false, // Address
-    5: true, // Confirmation (sempre ok)
+    3: false, // Confirmation (sempre ok)
   });
 
   const canProceed = () => validSteps[currentStep];
@@ -71,8 +63,31 @@ export default function AdvertiserRegistration() {
   };
 
   // Submissão final
-  const handleSubmit = () => {
-    console.log("✅ Dados finais enviados:", formData);
+  const handleSubmit = async () => {
+    try {
+      const res = await fetch("/api/register/advertiser", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        alert("Erro ao criar cadastro: " + error.message);
+        return;
+      }
+
+      const data = await res.json();
+
+      // ID do producer criado
+      const producerId = data.producer.id;
+
+      // Redireciona para a página do perfil
+      window.location.href = `/product/${producerId}`;
+    } catch (e) {
+      console.error(e);
+      alert("Erro inesperado ao finalizar cadastro.");
+    }
   };
 
   return (
@@ -111,29 +126,12 @@ export default function AdvertiserRegistration() {
             )}
 
             {currentStep === 3 && (
-              <PaymentStep
+              <ConfirmationStep
                 formData={formData}
                 onUpdate={handleUpdateFormData}
                 onValidate={(isValid) =>
                   setValidSteps((v) => ({ ...v, 3: isValid }))
                 }
-              />
-            )}
-
-            {currentStep === 4 && (
-              <AddressStep
-                formData={formData}
-                onUpdate={handleUpdateFormData}
-                onValidate={(isValid) =>
-                  setValidSteps((v) => ({ ...v, 4: isValid }))
-                }
-              />
-            )}
-
-            {currentStep === 5 && (
-              <ConfirmationStep
-                formData={formData}
-                onUpdate={handleUpdateFormData}
               />
             )}
           </div>

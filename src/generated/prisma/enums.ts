@@ -35,49 +35,10 @@ export const SIGNATURE = {
 export type SIGNATURE = (typeof SIGNATURE)[keyof typeof SIGNATURE]
 
 
-export const ETHNICITY = {
-  ASIATICO: 'ASIATICO',
-  BRANCO: 'BRANCO',
-  INDIGENA: 'INDIGENA',
-  PARDO: 'PARDO',
-  PRETO: 'PRETO'
+export const STATUS = {
+  YELLOW: 'YELLOW',
+  GREEN: 'GREEN',
+  RED: 'RED'
 } as const
 
-export type ETHNICITY = (typeof ETHNICITY)[keyof typeof ETHNICITY]
-
-
-export const HAIRCOLOR = {
-  CASTANHO: 'CASTANHO',
-  COLORIDO: 'COLORIDO',
-  GRISALHO: 'GRISALHO',
-  LOIRO: 'LOIRO',
-  PRETO: 'PRETO',
-  RUIVO: 'RUIVO',
-  SEMCABELO: 'SEMCABELO'
-} as const
-
-export type HAIRCOLOR = (typeof HAIRCOLOR)[keyof typeof HAIRCOLOR]
-
-
-export const EYESCOLOR = {
-  AMBAR: 'AMBAR',
-  AZUIS: 'AZUIS',
-  CASTANHOS: 'CASTANHOS',
-  PRETOS: 'PRETOS',
-  VERDES: 'VERDES'
-} as const
-
-export type EYESCOLOR = (typeof EYESCOLOR)[keyof typeof EYESCOLOR]
-
-
-export const DURATION = {
-  MIN15: 'MIN15',
-  MIN30: 'MIN30',
-  HOUR1: 'HOUR1',
-  HOURS2: 'HOURS2',
-  HOURS4: 'HOURS4',
-  PERNOITE: 'PERNOITE',
-  DIARIA: 'DIARIA'
-} as const
-
-export type DURATION = (typeof DURATION)[keyof typeof DURATION]
+export type STATUS = (typeof STATUS)[keyof typeof STATUS]

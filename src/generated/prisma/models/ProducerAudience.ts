@@ -27,31 +27,31 @@ export type AggregateProducerAudience = {
 
 export type ProducerAudienceAvgAggregateOutputType = {
   id: number | null
-  producerId: number | null
+  profileId: number | null
   audienceId: number | null
 }
 
 export type ProducerAudienceSumAggregateOutputType = {
   id: number | null
-  producerId: number | null
+  profileId: number | null
   audienceId: number | null
 }
 
 export type ProducerAudienceMinAggregateOutputType = {
   id: number | null
-  producerId: number | null
+  profileId: number | null
   audienceId: number | null
 }
 
 export type ProducerAudienceMaxAggregateOutputType = {
   id: number | null
-  producerId: number | null
+  profileId: number | null
   audienceId: number | null
 }
 
 export type ProducerAudienceCountAggregateOutputType = {
   id: number
-  producerId: number
+  profileId: number
   audienceId: number
   _all: number
 }
@@ -59,31 +59,31 @@ export type ProducerAudienceCountAggregateOutputType = {
 
 export type ProducerAudienceAvgAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   audienceId?: true
 }
 
 export type ProducerAudienceSumAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   audienceId?: true
 }
 
 export type ProducerAudienceMinAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   audienceId?: true
 }
 
 export type ProducerAudienceMaxAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   audienceId?: true
 }
 
 export type ProducerAudienceCountAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   audienceId?: true
   _all?: true
 }
@@ -176,7 +176,7 @@ export type ProducerAudienceGroupByArgs<ExtArgs extends runtime.Types.Extensions
 
 export type ProducerAudienceGroupByOutputType = {
   id: number
-  producerId: number
+  profileId: number
   audienceId: number
   _count: ProducerAudienceCountAggregateOutputType | null
   _avg: ProducerAudienceAvgAggregateOutputType | null
@@ -205,35 +205,35 @@ export type ProducerAudienceWhereInput = {
   OR?: Prisma.ProducerAudienceWhereInput[]
   NOT?: Prisma.ProducerAudienceWhereInput | Prisma.ProducerAudienceWhereInput[]
   id?: Prisma.IntFilter<"ProducerAudience"> | number
-  producerId?: Prisma.IntFilter<"ProducerAudience"> | number
+  profileId?: Prisma.IntFilter<"ProducerAudience"> | number
   audienceId?: Prisma.IntFilter<"ProducerAudience"> | number
-  producer?: Prisma.XOR<Prisma.ProducerScalarRelationFilter, Prisma.ProducerWhereInput>
+  profile?: Prisma.XOR<Prisma.ProducerProfileScalarRelationFilter, Prisma.ProducerProfileWhereInput>
   audience?: Prisma.XOR<Prisma.AudienceOptionScalarRelationFilter, Prisma.AudienceOptionWhereInput>
 }
 
 export type ProducerAudienceOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   audienceId?: Prisma.SortOrder
-  producer?: Prisma.ProducerOrderByWithRelationInput
+  profile?: Prisma.ProducerProfileOrderByWithRelationInput
   audience?: Prisma.AudienceOptionOrderByWithRelationInput
 }
 
 export type ProducerAudienceWhereUniqueInput = Prisma.AtLeast<{
   id?: number
-  producerId_audienceId?: Prisma.ProducerAudienceProducerIdAudienceIdCompoundUniqueInput
+  profileId_audienceId?: Prisma.ProducerAudienceProfileIdAudienceIdCompoundUniqueInput
   AND?: Prisma.ProducerAudienceWhereInput | Prisma.ProducerAudienceWhereInput[]
   OR?: Prisma.ProducerAudienceWhereInput[]
   NOT?: Prisma.ProducerAudienceWhereInput | Prisma.ProducerAudienceWhereInput[]
-  producerId?: Prisma.IntFilter<"ProducerAudience"> | number
+  profileId?: Prisma.IntFilter<"ProducerAudience"> | number
   audienceId?: Prisma.IntFilter<"ProducerAudience"> | number
-  producer?: Prisma.XOR<Prisma.ProducerScalarRelationFilter, Prisma.ProducerWhereInput>
+  profile?: Prisma.XOR<Prisma.ProducerProfileScalarRelationFilter, Prisma.ProducerProfileWhereInput>
   audience?: Prisma.XOR<Prisma.AudienceOptionScalarRelationFilter, Prisma.AudienceOptionWhereInput>
-}, "id" | "producerId_audienceId">
+}, "id" | "profileId_audienceId">
 
 export type ProducerAudienceOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   audienceId?: Prisma.SortOrder
   _count?: Prisma.ProducerAudienceCountOrderByAggregateInput
   _avg?: Prisma.ProducerAudienceAvgOrderByAggregateInput
@@ -247,35 +247,35 @@ export type ProducerAudienceScalarWhereWithAggregatesInput = {
   OR?: Prisma.ProducerAudienceScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ProducerAudienceScalarWhereWithAggregatesInput | Prisma.ProducerAudienceScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"ProducerAudience"> | number
-  producerId?: Prisma.IntWithAggregatesFilter<"ProducerAudience"> | number
+  profileId?: Prisma.IntWithAggregatesFilter<"ProducerAudience"> | number
   audienceId?: Prisma.IntWithAggregatesFilter<"ProducerAudience"> | number
 }
 
 export type ProducerAudienceCreateInput = {
-  producer: Prisma.ProducerCreateNestedOneWithoutAudiencesInput
+  profile: Prisma.ProducerProfileCreateNestedOneWithoutAudienceInput
   audience: Prisma.AudienceOptionCreateNestedOneWithoutProducersInput
 }
 
 export type ProducerAudienceUncheckedCreateInput = {
   id?: number
-  producerId: number
+  profileId: number
   audienceId: number
 }
 
 export type ProducerAudienceUpdateInput = {
-  producer?: Prisma.ProducerUpdateOneRequiredWithoutAudiencesNestedInput
+  profile?: Prisma.ProducerProfileUpdateOneRequiredWithoutAudienceNestedInput
   audience?: Prisma.AudienceOptionUpdateOneRequiredWithoutProducersNestedInput
 }
 
 export type ProducerAudienceUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  producerId?: Prisma.IntFieldUpdateOperationsInput | number
+  profileId?: Prisma.IntFieldUpdateOperationsInput | number
   audienceId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ProducerAudienceCreateManyInput = {
   id?: number
-  producerId: number
+  profileId: number
   audienceId: number
 }
 
@@ -285,7 +285,7 @@ export type ProducerAudienceUpdateManyMutationInput = {
 
 export type ProducerAudienceUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  producerId?: Prisma.IntFieldUpdateOperationsInput | number
+  profileId?: Prisma.IntFieldUpdateOperationsInput | number
   audienceId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
@@ -299,39 +299,81 @@ export type ProducerAudienceOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type ProducerAudienceProducerIdAudienceIdCompoundUniqueInput = {
-  producerId: number
+export type ProducerAudienceProfileIdAudienceIdCompoundUniqueInput = {
+  profileId: number
   audienceId: number
 }
 
 export type ProducerAudienceCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   audienceId?: Prisma.SortOrder
 }
 
 export type ProducerAudienceAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   audienceId?: Prisma.SortOrder
 }
 
 export type ProducerAudienceMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   audienceId?: Prisma.SortOrder
 }
 
 export type ProducerAudienceMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   audienceId?: Prisma.SortOrder
 }
 
 export type ProducerAudienceSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   audienceId?: Prisma.SortOrder
+}
+
+export type ProducerAudienceCreateNestedManyWithoutProfileInput = {
+  create?: Prisma.XOR<Prisma.ProducerAudienceCreateWithoutProfileInput, Prisma.ProducerAudienceUncheckedCreateWithoutProfileInput> | Prisma.ProducerAudienceCreateWithoutProfileInput[] | Prisma.ProducerAudienceUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.ProducerAudienceCreateOrConnectWithoutProfileInput | Prisma.ProducerAudienceCreateOrConnectWithoutProfileInput[]
+  createMany?: Prisma.ProducerAudienceCreateManyProfileInputEnvelope
+  connect?: Prisma.ProducerAudienceWhereUniqueInput | Prisma.ProducerAudienceWhereUniqueInput[]
+}
+
+export type ProducerAudienceUncheckedCreateNestedManyWithoutProfileInput = {
+  create?: Prisma.XOR<Prisma.ProducerAudienceCreateWithoutProfileInput, Prisma.ProducerAudienceUncheckedCreateWithoutProfileInput> | Prisma.ProducerAudienceCreateWithoutProfileInput[] | Prisma.ProducerAudienceUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.ProducerAudienceCreateOrConnectWithoutProfileInput | Prisma.ProducerAudienceCreateOrConnectWithoutProfileInput[]
+  createMany?: Prisma.ProducerAudienceCreateManyProfileInputEnvelope
+  connect?: Prisma.ProducerAudienceWhereUniqueInput | Prisma.ProducerAudienceWhereUniqueInput[]
+}
+
+export type ProducerAudienceUpdateManyWithoutProfileNestedInput = {
+  create?: Prisma.XOR<Prisma.ProducerAudienceCreateWithoutProfileInput, Prisma.ProducerAudienceUncheckedCreateWithoutProfileInput> | Prisma.ProducerAudienceCreateWithoutProfileInput[] | Prisma.ProducerAudienceUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.ProducerAudienceCreateOrConnectWithoutProfileInput | Prisma.ProducerAudienceCreateOrConnectWithoutProfileInput[]
+  upsert?: Prisma.ProducerAudienceUpsertWithWhereUniqueWithoutProfileInput | Prisma.ProducerAudienceUpsertWithWhereUniqueWithoutProfileInput[]
+  createMany?: Prisma.ProducerAudienceCreateManyProfileInputEnvelope
+  set?: Prisma.ProducerAudienceWhereUniqueInput | Prisma.ProducerAudienceWhereUniqueInput[]
+  disconnect?: Prisma.ProducerAudienceWhereUniqueInput | Prisma.ProducerAudienceWhereUniqueInput[]
+  delete?: Prisma.ProducerAudienceWhereUniqueInput | Prisma.ProducerAudienceWhereUniqueInput[]
+  connect?: Prisma.ProducerAudienceWhereUniqueInput | Prisma.ProducerAudienceWhereUniqueInput[]
+  update?: Prisma.ProducerAudienceUpdateWithWhereUniqueWithoutProfileInput | Prisma.ProducerAudienceUpdateWithWhereUniqueWithoutProfileInput[]
+  updateMany?: Prisma.ProducerAudienceUpdateManyWithWhereWithoutProfileInput | Prisma.ProducerAudienceUpdateManyWithWhereWithoutProfileInput[]
+  deleteMany?: Prisma.ProducerAudienceScalarWhereInput | Prisma.ProducerAudienceScalarWhereInput[]
+}
+
+export type ProducerAudienceUncheckedUpdateManyWithoutProfileNestedInput = {
+  create?: Prisma.XOR<Prisma.ProducerAudienceCreateWithoutProfileInput, Prisma.ProducerAudienceUncheckedCreateWithoutProfileInput> | Prisma.ProducerAudienceCreateWithoutProfileInput[] | Prisma.ProducerAudienceUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.ProducerAudienceCreateOrConnectWithoutProfileInput | Prisma.ProducerAudienceCreateOrConnectWithoutProfileInput[]
+  upsert?: Prisma.ProducerAudienceUpsertWithWhereUniqueWithoutProfileInput | Prisma.ProducerAudienceUpsertWithWhereUniqueWithoutProfileInput[]
+  createMany?: Prisma.ProducerAudienceCreateManyProfileInputEnvelope
+  set?: Prisma.ProducerAudienceWhereUniqueInput | Prisma.ProducerAudienceWhereUniqueInput[]
+  disconnect?: Prisma.ProducerAudienceWhereUniqueInput | Prisma.ProducerAudienceWhereUniqueInput[]
+  delete?: Prisma.ProducerAudienceWhereUniqueInput | Prisma.ProducerAudienceWhereUniqueInput[]
+  connect?: Prisma.ProducerAudienceWhereUniqueInput | Prisma.ProducerAudienceWhereUniqueInput[]
+  update?: Prisma.ProducerAudienceUpdateWithWhereUniqueWithoutProfileInput | Prisma.ProducerAudienceUpdateWithWhereUniqueWithoutProfileInput[]
+  updateMany?: Prisma.ProducerAudienceUpdateManyWithWhereWithoutProfileInput | Prisma.ProducerAudienceUpdateManyWithWhereWithoutProfileInput[]
+  deleteMany?: Prisma.ProducerAudienceScalarWhereInput | Prisma.ProducerAudienceScalarWhereInput[]
 }
 
 export type ProducerAudienceCreateNestedManyWithoutAudienceInput = {
@@ -376,55 +418,57 @@ export type ProducerAudienceUncheckedUpdateManyWithoutAudienceNestedInput = {
   deleteMany?: Prisma.ProducerAudienceScalarWhereInput | Prisma.ProducerAudienceScalarWhereInput[]
 }
 
-export type ProducerAudienceCreateNestedManyWithoutProducerInput = {
-  create?: Prisma.XOR<Prisma.ProducerAudienceCreateWithoutProducerInput, Prisma.ProducerAudienceUncheckedCreateWithoutProducerInput> | Prisma.ProducerAudienceCreateWithoutProducerInput[] | Prisma.ProducerAudienceUncheckedCreateWithoutProducerInput[]
-  connectOrCreate?: Prisma.ProducerAudienceCreateOrConnectWithoutProducerInput | Prisma.ProducerAudienceCreateOrConnectWithoutProducerInput[]
-  createMany?: Prisma.ProducerAudienceCreateManyProducerInputEnvelope
-  connect?: Prisma.ProducerAudienceWhereUniqueInput | Prisma.ProducerAudienceWhereUniqueInput[]
+export type ProducerAudienceCreateWithoutProfileInput = {
+  audience: Prisma.AudienceOptionCreateNestedOneWithoutProducersInput
 }
 
-export type ProducerAudienceUncheckedCreateNestedManyWithoutProducerInput = {
-  create?: Prisma.XOR<Prisma.ProducerAudienceCreateWithoutProducerInput, Prisma.ProducerAudienceUncheckedCreateWithoutProducerInput> | Prisma.ProducerAudienceCreateWithoutProducerInput[] | Prisma.ProducerAudienceUncheckedCreateWithoutProducerInput[]
-  connectOrCreate?: Prisma.ProducerAudienceCreateOrConnectWithoutProducerInput | Prisma.ProducerAudienceCreateOrConnectWithoutProducerInput[]
-  createMany?: Prisma.ProducerAudienceCreateManyProducerInputEnvelope
-  connect?: Prisma.ProducerAudienceWhereUniqueInput | Prisma.ProducerAudienceWhereUniqueInput[]
+export type ProducerAudienceUncheckedCreateWithoutProfileInput = {
+  id?: number
+  audienceId: number
 }
 
-export type ProducerAudienceUpdateManyWithoutProducerNestedInput = {
-  create?: Prisma.XOR<Prisma.ProducerAudienceCreateWithoutProducerInput, Prisma.ProducerAudienceUncheckedCreateWithoutProducerInput> | Prisma.ProducerAudienceCreateWithoutProducerInput[] | Prisma.ProducerAudienceUncheckedCreateWithoutProducerInput[]
-  connectOrCreate?: Prisma.ProducerAudienceCreateOrConnectWithoutProducerInput | Prisma.ProducerAudienceCreateOrConnectWithoutProducerInput[]
-  upsert?: Prisma.ProducerAudienceUpsertWithWhereUniqueWithoutProducerInput | Prisma.ProducerAudienceUpsertWithWhereUniqueWithoutProducerInput[]
-  createMany?: Prisma.ProducerAudienceCreateManyProducerInputEnvelope
-  set?: Prisma.ProducerAudienceWhereUniqueInput | Prisma.ProducerAudienceWhereUniqueInput[]
-  disconnect?: Prisma.ProducerAudienceWhereUniqueInput | Prisma.ProducerAudienceWhereUniqueInput[]
-  delete?: Prisma.ProducerAudienceWhereUniqueInput | Prisma.ProducerAudienceWhereUniqueInput[]
-  connect?: Prisma.ProducerAudienceWhereUniqueInput | Prisma.ProducerAudienceWhereUniqueInput[]
-  update?: Prisma.ProducerAudienceUpdateWithWhereUniqueWithoutProducerInput | Prisma.ProducerAudienceUpdateWithWhereUniqueWithoutProducerInput[]
-  updateMany?: Prisma.ProducerAudienceUpdateManyWithWhereWithoutProducerInput | Prisma.ProducerAudienceUpdateManyWithWhereWithoutProducerInput[]
-  deleteMany?: Prisma.ProducerAudienceScalarWhereInput | Prisma.ProducerAudienceScalarWhereInput[]
+export type ProducerAudienceCreateOrConnectWithoutProfileInput = {
+  where: Prisma.ProducerAudienceWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProducerAudienceCreateWithoutProfileInput, Prisma.ProducerAudienceUncheckedCreateWithoutProfileInput>
 }
 
-export type ProducerAudienceUncheckedUpdateManyWithoutProducerNestedInput = {
-  create?: Prisma.XOR<Prisma.ProducerAudienceCreateWithoutProducerInput, Prisma.ProducerAudienceUncheckedCreateWithoutProducerInput> | Prisma.ProducerAudienceCreateWithoutProducerInput[] | Prisma.ProducerAudienceUncheckedCreateWithoutProducerInput[]
-  connectOrCreate?: Prisma.ProducerAudienceCreateOrConnectWithoutProducerInput | Prisma.ProducerAudienceCreateOrConnectWithoutProducerInput[]
-  upsert?: Prisma.ProducerAudienceUpsertWithWhereUniqueWithoutProducerInput | Prisma.ProducerAudienceUpsertWithWhereUniqueWithoutProducerInput[]
-  createMany?: Prisma.ProducerAudienceCreateManyProducerInputEnvelope
-  set?: Prisma.ProducerAudienceWhereUniqueInput | Prisma.ProducerAudienceWhereUniqueInput[]
-  disconnect?: Prisma.ProducerAudienceWhereUniqueInput | Prisma.ProducerAudienceWhereUniqueInput[]
-  delete?: Prisma.ProducerAudienceWhereUniqueInput | Prisma.ProducerAudienceWhereUniqueInput[]
-  connect?: Prisma.ProducerAudienceWhereUniqueInput | Prisma.ProducerAudienceWhereUniqueInput[]
-  update?: Prisma.ProducerAudienceUpdateWithWhereUniqueWithoutProducerInput | Prisma.ProducerAudienceUpdateWithWhereUniqueWithoutProducerInput[]
-  updateMany?: Prisma.ProducerAudienceUpdateManyWithWhereWithoutProducerInput | Prisma.ProducerAudienceUpdateManyWithWhereWithoutProducerInput[]
-  deleteMany?: Prisma.ProducerAudienceScalarWhereInput | Prisma.ProducerAudienceScalarWhereInput[]
+export type ProducerAudienceCreateManyProfileInputEnvelope = {
+  data: Prisma.ProducerAudienceCreateManyProfileInput | Prisma.ProducerAudienceCreateManyProfileInput[]
+  skipDuplicates?: boolean
+}
+
+export type ProducerAudienceUpsertWithWhereUniqueWithoutProfileInput = {
+  where: Prisma.ProducerAudienceWhereUniqueInput
+  update: Prisma.XOR<Prisma.ProducerAudienceUpdateWithoutProfileInput, Prisma.ProducerAudienceUncheckedUpdateWithoutProfileInput>
+  create: Prisma.XOR<Prisma.ProducerAudienceCreateWithoutProfileInput, Prisma.ProducerAudienceUncheckedCreateWithoutProfileInput>
+}
+
+export type ProducerAudienceUpdateWithWhereUniqueWithoutProfileInput = {
+  where: Prisma.ProducerAudienceWhereUniqueInput
+  data: Prisma.XOR<Prisma.ProducerAudienceUpdateWithoutProfileInput, Prisma.ProducerAudienceUncheckedUpdateWithoutProfileInput>
+}
+
+export type ProducerAudienceUpdateManyWithWhereWithoutProfileInput = {
+  where: Prisma.ProducerAudienceScalarWhereInput
+  data: Prisma.XOR<Prisma.ProducerAudienceUpdateManyMutationInput, Prisma.ProducerAudienceUncheckedUpdateManyWithoutProfileInput>
+}
+
+export type ProducerAudienceScalarWhereInput = {
+  AND?: Prisma.ProducerAudienceScalarWhereInput | Prisma.ProducerAudienceScalarWhereInput[]
+  OR?: Prisma.ProducerAudienceScalarWhereInput[]
+  NOT?: Prisma.ProducerAudienceScalarWhereInput | Prisma.ProducerAudienceScalarWhereInput[]
+  id?: Prisma.IntFilter<"ProducerAudience"> | number
+  profileId?: Prisma.IntFilter<"ProducerAudience"> | number
+  audienceId?: Prisma.IntFilter<"ProducerAudience"> | number
 }
 
 export type ProducerAudienceCreateWithoutAudienceInput = {
-  producer: Prisma.ProducerCreateNestedOneWithoutAudiencesInput
+  profile: Prisma.ProducerProfileCreateNestedOneWithoutAudienceInput
 }
 
 export type ProducerAudienceUncheckedCreateWithoutAudienceInput = {
   id?: number
-  producerId: number
+  profileId: number
 }
 
 export type ProducerAudienceCreateOrConnectWithoutAudienceInput = {
@@ -453,95 +497,51 @@ export type ProducerAudienceUpdateManyWithWhereWithoutAudienceInput = {
   data: Prisma.XOR<Prisma.ProducerAudienceUpdateManyMutationInput, Prisma.ProducerAudienceUncheckedUpdateManyWithoutAudienceInput>
 }
 
-export type ProducerAudienceScalarWhereInput = {
-  AND?: Prisma.ProducerAudienceScalarWhereInput | Prisma.ProducerAudienceScalarWhereInput[]
-  OR?: Prisma.ProducerAudienceScalarWhereInput[]
-  NOT?: Prisma.ProducerAudienceScalarWhereInput | Prisma.ProducerAudienceScalarWhereInput[]
-  id?: Prisma.IntFilter<"ProducerAudience"> | number
-  producerId?: Prisma.IntFilter<"ProducerAudience"> | number
-  audienceId?: Prisma.IntFilter<"ProducerAudience"> | number
-}
-
-export type ProducerAudienceCreateWithoutProducerInput = {
-  audience: Prisma.AudienceOptionCreateNestedOneWithoutProducersInput
-}
-
-export type ProducerAudienceUncheckedCreateWithoutProducerInput = {
+export type ProducerAudienceCreateManyProfileInput = {
   id?: number
   audienceId: number
 }
 
-export type ProducerAudienceCreateOrConnectWithoutProducerInput = {
-  where: Prisma.ProducerAudienceWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProducerAudienceCreateWithoutProducerInput, Prisma.ProducerAudienceUncheckedCreateWithoutProducerInput>
+export type ProducerAudienceUpdateWithoutProfileInput = {
+  audience?: Prisma.AudienceOptionUpdateOneRequiredWithoutProducersNestedInput
 }
 
-export type ProducerAudienceCreateManyProducerInputEnvelope = {
-  data: Prisma.ProducerAudienceCreateManyProducerInput | Prisma.ProducerAudienceCreateManyProducerInput[]
-  skipDuplicates?: boolean
+export type ProducerAudienceUncheckedUpdateWithoutProfileInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  audienceId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
-export type ProducerAudienceUpsertWithWhereUniqueWithoutProducerInput = {
-  where: Prisma.ProducerAudienceWhereUniqueInput
-  update: Prisma.XOR<Prisma.ProducerAudienceUpdateWithoutProducerInput, Prisma.ProducerAudienceUncheckedUpdateWithoutProducerInput>
-  create: Prisma.XOR<Prisma.ProducerAudienceCreateWithoutProducerInput, Prisma.ProducerAudienceUncheckedCreateWithoutProducerInput>
-}
-
-export type ProducerAudienceUpdateWithWhereUniqueWithoutProducerInput = {
-  where: Prisma.ProducerAudienceWhereUniqueInput
-  data: Prisma.XOR<Prisma.ProducerAudienceUpdateWithoutProducerInput, Prisma.ProducerAudienceUncheckedUpdateWithoutProducerInput>
-}
-
-export type ProducerAudienceUpdateManyWithWhereWithoutProducerInput = {
-  where: Prisma.ProducerAudienceScalarWhereInput
-  data: Prisma.XOR<Prisma.ProducerAudienceUpdateManyMutationInput, Prisma.ProducerAudienceUncheckedUpdateManyWithoutProducerInput>
+export type ProducerAudienceUncheckedUpdateManyWithoutProfileInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  audienceId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ProducerAudienceCreateManyAudienceInput = {
   id?: number
-  producerId: number
+  profileId: number
 }
 
 export type ProducerAudienceUpdateWithoutAudienceInput = {
-  producer?: Prisma.ProducerUpdateOneRequiredWithoutAudiencesNestedInput
+  profile?: Prisma.ProducerProfileUpdateOneRequiredWithoutAudienceNestedInput
 }
 
 export type ProducerAudienceUncheckedUpdateWithoutAudienceInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  producerId?: Prisma.IntFieldUpdateOperationsInput | number
+  profileId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ProducerAudienceUncheckedUpdateManyWithoutAudienceInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  producerId?: Prisma.IntFieldUpdateOperationsInput | number
-}
-
-export type ProducerAudienceCreateManyProducerInput = {
-  id?: number
-  audienceId: number
-}
-
-export type ProducerAudienceUpdateWithoutProducerInput = {
-  audience?: Prisma.AudienceOptionUpdateOneRequiredWithoutProducersNestedInput
-}
-
-export type ProducerAudienceUncheckedUpdateWithoutProducerInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  audienceId?: Prisma.IntFieldUpdateOperationsInput | number
-}
-
-export type ProducerAudienceUncheckedUpdateManyWithoutProducerInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  audienceId?: Prisma.IntFieldUpdateOperationsInput | number
+  profileId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 
 
 export type ProducerAudienceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  producerId?: boolean
+  profileId?: boolean
   audienceId?: boolean
-  producer?: boolean | Prisma.ProducerDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.ProducerProfileDefaultArgs<ExtArgs>
   audience?: boolean | Prisma.AudienceOptionDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["producerAudience"]>
 
@@ -549,25 +549,25 @@ export type ProducerAudienceSelect<ExtArgs extends runtime.Types.Extensions.Inte
 
 export type ProducerAudienceSelectScalar = {
   id?: boolean
-  producerId?: boolean
+  profileId?: boolean
   audienceId?: boolean
 }
 
-export type ProducerAudienceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "producerId" | "audienceId", ExtArgs["result"]["producerAudience"]>
+export type ProducerAudienceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "profileId" | "audienceId", ExtArgs["result"]["producerAudience"]>
 export type ProducerAudienceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  producer?: boolean | Prisma.ProducerDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.ProducerProfileDefaultArgs<ExtArgs>
   audience?: boolean | Prisma.AudienceOptionDefaultArgs<ExtArgs>
 }
 
 export type $ProducerAudiencePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ProducerAudience"
   objects: {
-    producer: Prisma.$ProducerPayload<ExtArgs>
+    profile: Prisma.$ProducerProfilePayload<ExtArgs>
     audience: Prisma.$AudienceOptionPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
-    producerId: number
+    profileId: number
     audienceId: number
   }, ExtArgs["result"]["producerAudience"]>
   composites: {}
@@ -909,7 +909,7 @@ readonly fields: ProducerAudienceFieldRefs;
  */
 export interface Prisma__ProducerAudienceClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  producer<T extends Prisma.ProducerDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProducerDefaultArgs<ExtArgs>>): Prisma.Prisma__ProducerClient<runtime.Types.Result.GetResult<Prisma.$ProducerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  profile<T extends Prisma.ProducerProfileDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProducerProfileDefaultArgs<ExtArgs>>): Prisma.Prisma__ProducerProfileClient<runtime.Types.Result.GetResult<Prisma.$ProducerProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   audience<T extends Prisma.AudienceOptionDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AudienceOptionDefaultArgs<ExtArgs>>): Prisma.Prisma__AudienceOptionClient<runtime.Types.Result.GetResult<Prisma.$AudienceOptionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -941,7 +941,7 @@ export interface Prisma__ProducerAudienceClient<T, Null = never, ExtArgs extends
  */
 export interface ProducerAudienceFieldRefs {
   readonly id: Prisma.FieldRef<"ProducerAudience", 'Int'>
-  readonly producerId: Prisma.FieldRef<"ProducerAudience", 'Int'>
+  readonly profileId: Prisma.FieldRef<"ProducerAudience", 'Int'>
   readonly audienceId: Prisma.FieldRef<"ProducerAudience", 'Int'>
 }
     

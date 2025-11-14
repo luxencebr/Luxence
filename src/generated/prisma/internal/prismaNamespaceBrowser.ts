@@ -51,23 +51,26 @@ export const ModelName = {
   UserPreference: 'UserPreference',
   Locality: 'Locality',
   User: 'User',
-  Appearance: 'Appearance',
-  Price: 'Price',
+  Review: 'Review',
+  Producer: 'Producer',
+  ProducerProfile: 'ProducerProfile',
   ProducerLocal: 'ProducerLocal',
   AmenityOption: 'AmenityOption',
   LocalAmenity: 'LocalAmenity',
-  AudienceOption: 'AudienceOption',
-  ProducerAudience: 'ProducerAudience',
-  LocationOption: 'LocationOption',
-  ProducerLocations: 'ProducerLocations',
+  AppearanceOption: 'AppearanceOption',
+  ProducerAppearance: 'ProducerAppearance',
+  PriceOption: 'PriceOption',
+  ProducerPrice: 'ProducerPrice',
   ServiceOption: 'ServiceOption',
   ProducerService: 'ProducerService',
   FetishOption: 'FetishOption',
   ProducerFetish: 'ProducerFetish',
+  AudienceOption: 'AudienceOption',
+  ProducerAudience: 'ProducerAudience',
+  LocationOption: 'LocationOption',
+  ProducerLocations: 'ProducerLocations',
   PaymentOption: 'PaymentOption',
-  ProducerPayment: 'ProducerPayment',
-  Review: 'Review',
-  Producer: 'Producer'
+  ProducerPayment: 'ProducerPayment'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -122,36 +125,53 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
-export const AppearanceScalarFieldEnum = {
+export const ReviewScalarFieldEnum = {
   id: 'id',
-  producerId: 'producerId',
-  height: 'height',
-  mannequin: 'mannequin',
-  feet: 'feet',
-  ethnicity: 'ethnicity',
-  hairColor: 'hairColor',
-  eyesColor: 'eyesColor',
-  tattoos: 'tattoos',
-  piercings: 'piercings',
-  silicone: 'silicone'
+  userId: 'userId',
+  profileId: 'profileId',
+  rating: 'rating',
+  comment: 'comment',
+  createdAt: 'createdAt'
 } as const
 
-export type AppearanceScalarFieldEnum = (typeof AppearanceScalarFieldEnum)[keyof typeof AppearanceScalarFieldEnum]
+export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
 
 
-export const PriceScalarFieldEnum = {
+export const ProducerScalarFieldEnum = {
   id: 'id',
-  producerId: 'producerId',
-  duration: 'duration',
-  price: 'price'
+  userId: 'userId',
+  signature: 'signature',
+  isVerified: 'isVerified',
+  verificationStatus: 'verificationStatus',
+  birthday: 'birthday',
+  nationality: 'nationality',
+  document: 'document',
+  phone: 'phone',
+  documentFrontPhoto: 'documentFrontPhoto',
+  documentBackPhoto: 'documentBackPhoto',
+  selfieWithDocument: 'selfieWithDocument'
 } as const
 
-export type PriceScalarFieldEnum = (typeof PriceScalarFieldEnum)[keyof typeof PriceScalarFieldEnum]
+export type ProducerScalarFieldEnum = (typeof ProducerScalarFieldEnum)[keyof typeof ProducerScalarFieldEnum]
+
+
+export const ProducerProfileScalarFieldEnum = {
+  id: 'id',
+  producerId: 'producerId',
+  slogan: 'slogan',
+  description: 'description',
+  scholarity: 'scholarity',
+  languages: 'languages',
+  hasLocal: 'hasLocal',
+  views: 'views'
+} as const
+
+export type ProducerProfileScalarFieldEnum = (typeof ProducerProfileScalarFieldEnum)[keyof typeof ProducerProfileScalarFieldEnum]
 
 
 export const ProducerLocalScalarFieldEnum = {
   id: 'id',
-  producerId: 'producerId',
+  profileId: 'profileId',
   country: 'country',
   state: 'state',
   city: 'city',
@@ -182,40 +202,48 @@ export const LocalAmenityScalarFieldEnum = {
 export type LocalAmenityScalarFieldEnum = (typeof LocalAmenityScalarFieldEnum)[keyof typeof LocalAmenityScalarFieldEnum]
 
 
-export const AudienceOptionScalarFieldEnum = {
+export const AppearanceOptionScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  label: 'label',
+  type: 'type'
+} as const
+
+export type AppearanceOptionScalarFieldEnum = (typeof AppearanceOptionScalarFieldEnum)[keyof typeof AppearanceOptionScalarFieldEnum]
+
+
+export const ProducerAppearanceScalarFieldEnum = {
+  id: 'id',
+  profileId: 'profileId',
+  appearanceId: 'appearanceId',
+  height: 'height',
+  mannequin: 'mannequin',
+  feet: 'feet',
+  tattoos: 'tattoos',
+  piercings: 'piercings',
+  silicone: 'silicone'
+} as const
+
+export type ProducerAppearanceScalarFieldEnum = (typeof ProducerAppearanceScalarFieldEnum)[keyof typeof ProducerAppearanceScalarFieldEnum]
+
+
+export const PriceOptionScalarFieldEnum = {
   id: 'id',
   name: 'name',
   label: 'label'
 } as const
 
-export type AudienceOptionScalarFieldEnum = (typeof AudienceOptionScalarFieldEnum)[keyof typeof AudienceOptionScalarFieldEnum]
+export type PriceOptionScalarFieldEnum = (typeof PriceOptionScalarFieldEnum)[keyof typeof PriceOptionScalarFieldEnum]
 
 
-export const ProducerAudienceScalarFieldEnum = {
+export const ProducerPriceScalarFieldEnum = {
   id: 'id',
-  producerId: 'producerId',
-  audienceId: 'audienceId'
+  profileId: 'profileId',
+  priceId: 'priceId',
+  value: 'value'
 } as const
 
-export type ProducerAudienceScalarFieldEnum = (typeof ProducerAudienceScalarFieldEnum)[keyof typeof ProducerAudienceScalarFieldEnum]
-
-
-export const LocationOptionScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  label: 'label'
-} as const
-
-export type LocationOptionScalarFieldEnum = (typeof LocationOptionScalarFieldEnum)[keyof typeof LocationOptionScalarFieldEnum]
-
-
-export const ProducerLocationsScalarFieldEnum = {
-  id: 'id',
-  producerId: 'producerId',
-  locationId: 'locationId'
-} as const
-
-export type ProducerLocationsScalarFieldEnum = (typeof ProducerLocationsScalarFieldEnum)[keyof typeof ProducerLocationsScalarFieldEnum]
+export type ProducerPriceScalarFieldEnum = (typeof ProducerPriceScalarFieldEnum)[keyof typeof ProducerPriceScalarFieldEnum]
 
 
 export const ServiceOptionScalarFieldEnum = {
@@ -229,7 +257,7 @@ export type ServiceOptionScalarFieldEnum = (typeof ServiceOptionScalarFieldEnum)
 
 export const ProducerServiceScalarFieldEnum = {
   id: 'id',
-  producerId: 'producerId',
+  profileId: 'profileId',
   serviceId: 'serviceId'
 } as const
 
@@ -247,11 +275,47 @@ export type FetishOptionScalarFieldEnum = (typeof FetishOptionScalarFieldEnum)[k
 
 export const ProducerFetishScalarFieldEnum = {
   id: 'id',
-  producerId: 'producerId',
+  profileId: 'profileId',
   fetishId: 'fetishId'
 } as const
 
 export type ProducerFetishScalarFieldEnum = (typeof ProducerFetishScalarFieldEnum)[keyof typeof ProducerFetishScalarFieldEnum]
+
+
+export const AudienceOptionScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  label: 'label'
+} as const
+
+export type AudienceOptionScalarFieldEnum = (typeof AudienceOptionScalarFieldEnum)[keyof typeof AudienceOptionScalarFieldEnum]
+
+
+export const ProducerAudienceScalarFieldEnum = {
+  id: 'id',
+  profileId: 'profileId',
+  audienceId: 'audienceId'
+} as const
+
+export type ProducerAudienceScalarFieldEnum = (typeof ProducerAudienceScalarFieldEnum)[keyof typeof ProducerAudienceScalarFieldEnum]
+
+
+export const LocationOptionScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  label: 'label'
+} as const
+
+export type LocationOptionScalarFieldEnum = (typeof LocationOptionScalarFieldEnum)[keyof typeof LocationOptionScalarFieldEnum]
+
+
+export const ProducerLocationsScalarFieldEnum = {
+  id: 'id',
+  profileId: 'profileId',
+  locationId: 'locationId'
+} as const
+
+export type ProducerLocationsScalarFieldEnum = (typeof ProducerLocationsScalarFieldEnum)[keyof typeof ProducerLocationsScalarFieldEnum]
 
 
 export const PaymentOptionScalarFieldEnum = {
@@ -265,44 +329,11 @@ export type PaymentOptionScalarFieldEnum = (typeof PaymentOptionScalarFieldEnum)
 
 export const ProducerPaymentScalarFieldEnum = {
   id: 'id',
-  producerId: 'producerId',
+  profileId: 'profileId',
   paymentId: 'paymentId'
 } as const
 
 export type ProducerPaymentScalarFieldEnum = (typeof ProducerPaymentScalarFieldEnum)[keyof typeof ProducerPaymentScalarFieldEnum]
-
-
-export const ReviewScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  producerId: 'producerId',
-  rating: 'rating',
-  comment: 'comment',
-  createdAt: 'createdAt'
-} as const
-
-export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
-
-
-export const ProducerScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  verified: 'verified',
-  signature: 'signature',
-  views: 'views',
-  age: 'age',
-  nationality: 'nationality',
-  scholarity: 'scholarity',
-  languages: 'languages',
-  slogan: 'slogan',
-  description: 'description',
-  phone: 'phone',
-  instagram: 'instagram',
-  telegram: 'telegram',
-  hasLocal: 'hasLocal'
-} as const
-
-export type ProducerScalarFieldEnum = (typeof ProducerScalarFieldEnum)[keyof typeof ProducerScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -348,6 +379,52 @@ export const UserOrderByRelevanceFieldEnum = {
 export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
 
 
+export const ReviewOrderByRelevanceFieldEnum = {
+  id: 'id',
+  comment: 'comment'
+} as const
+
+export type ReviewOrderByRelevanceFieldEnum = (typeof ReviewOrderByRelevanceFieldEnum)[keyof typeof ReviewOrderByRelevanceFieldEnum]
+
+
+export const ProducerOrderByRelevanceFieldEnum = {
+  nationality: 'nationality',
+  document: 'document',
+  phone: 'phone',
+  documentFrontPhoto: 'documentFrontPhoto',
+  documentBackPhoto: 'documentBackPhoto',
+  selfieWithDocument: 'selfieWithDocument'
+} as const
+
+export type ProducerOrderByRelevanceFieldEnum = (typeof ProducerOrderByRelevanceFieldEnum)[keyof typeof ProducerOrderByRelevanceFieldEnum]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
+
+
+export const QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+} as const
+
+export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const ProducerProfileOrderByRelevanceFieldEnum = {
+  slogan: 'slogan',
+  description: 'description',
+  scholarity: 'scholarity'
+} as const
+
+export type ProducerProfileOrderByRelevanceFieldEnum = (typeof ProducerProfileOrderByRelevanceFieldEnum)[keyof typeof ProducerProfileOrderByRelevanceFieldEnum]
+
+
 export const ProducerLocalOrderByRelevanceFieldEnum = {
   country: 'country',
   state: 'state',
@@ -369,20 +446,21 @@ export const AmenityOptionOrderByRelevanceFieldEnum = {
 export type AmenityOptionOrderByRelevanceFieldEnum = (typeof AmenityOptionOrderByRelevanceFieldEnum)[keyof typeof AmenityOptionOrderByRelevanceFieldEnum]
 
 
-export const AudienceOptionOrderByRelevanceFieldEnum = {
+export const AppearanceOptionOrderByRelevanceFieldEnum = {
+  name: 'name',
+  label: 'label',
+  type: 'type'
+} as const
+
+export type AppearanceOptionOrderByRelevanceFieldEnum = (typeof AppearanceOptionOrderByRelevanceFieldEnum)[keyof typeof AppearanceOptionOrderByRelevanceFieldEnum]
+
+
+export const PriceOptionOrderByRelevanceFieldEnum = {
   name: 'name',
   label: 'label'
 } as const
 
-export type AudienceOptionOrderByRelevanceFieldEnum = (typeof AudienceOptionOrderByRelevanceFieldEnum)[keyof typeof AudienceOptionOrderByRelevanceFieldEnum]
-
-
-export const LocationOptionOrderByRelevanceFieldEnum = {
-  name: 'name',
-  label: 'label'
-} as const
-
-export type LocationOptionOrderByRelevanceFieldEnum = (typeof LocationOptionOrderByRelevanceFieldEnum)[keyof typeof LocationOptionOrderByRelevanceFieldEnum]
+export type PriceOptionOrderByRelevanceFieldEnum = (typeof PriceOptionOrderByRelevanceFieldEnum)[keyof typeof PriceOptionOrderByRelevanceFieldEnum]
 
 
 export const ServiceOptionOrderByRelevanceFieldEnum = {
@@ -401,48 +479,26 @@ export const FetishOptionOrderByRelevanceFieldEnum = {
 export type FetishOptionOrderByRelevanceFieldEnum = (typeof FetishOptionOrderByRelevanceFieldEnum)[keyof typeof FetishOptionOrderByRelevanceFieldEnum]
 
 
+export const AudienceOptionOrderByRelevanceFieldEnum = {
+  name: 'name',
+  label: 'label'
+} as const
+
+export type AudienceOptionOrderByRelevanceFieldEnum = (typeof AudienceOptionOrderByRelevanceFieldEnum)[keyof typeof AudienceOptionOrderByRelevanceFieldEnum]
+
+
+export const LocationOptionOrderByRelevanceFieldEnum = {
+  name: 'name',
+  label: 'label'
+} as const
+
+export type LocationOptionOrderByRelevanceFieldEnum = (typeof LocationOptionOrderByRelevanceFieldEnum)[keyof typeof LocationOptionOrderByRelevanceFieldEnum]
+
+
 export const PaymentOptionOrderByRelevanceFieldEnum = {
   name: 'name',
   label: 'label'
 } as const
 
 export type PaymentOptionOrderByRelevanceFieldEnum = (typeof PaymentOptionOrderByRelevanceFieldEnum)[keyof typeof PaymentOptionOrderByRelevanceFieldEnum]
-
-
-export const ReviewOrderByRelevanceFieldEnum = {
-  id: 'id',
-  comment: 'comment'
-} as const
-
-export type ReviewOrderByRelevanceFieldEnum = (typeof ReviewOrderByRelevanceFieldEnum)[keyof typeof ReviewOrderByRelevanceFieldEnum]
-
-
-export const JsonNullValueFilter = {
-  DbNull: DbNull,
-  JsonNull: JsonNull,
-  AnyNull: AnyNull
-} as const
-
-export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
-
-
-export const QueryMode = {
-  default: 'default',
-  insensitive: 'insensitive'
-} as const
-
-export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
-
-
-export const ProducerOrderByRelevanceFieldEnum = {
-  nationality: 'nationality',
-  scholarity: 'scholarity',
-  slogan: 'slogan',
-  description: 'description',
-  phone: 'phone',
-  instagram: 'instagram',
-  telegram: 'telegram'
-} as const
-
-export type ProducerOrderByRelevanceFieldEnum = (typeof ProducerOrderByRelevanceFieldEnum)[keyof typeof ProducerOrderByRelevanceFieldEnum]
 

@@ -27,31 +27,31 @@ export type AggregateProducerService = {
 
 export type ProducerServiceAvgAggregateOutputType = {
   id: number | null
-  producerId: number | null
+  profileId: number | null
   serviceId: number | null
 }
 
 export type ProducerServiceSumAggregateOutputType = {
   id: number | null
-  producerId: number | null
+  profileId: number | null
   serviceId: number | null
 }
 
 export type ProducerServiceMinAggregateOutputType = {
   id: number | null
-  producerId: number | null
+  profileId: number | null
   serviceId: number | null
 }
 
 export type ProducerServiceMaxAggregateOutputType = {
   id: number | null
-  producerId: number | null
+  profileId: number | null
   serviceId: number | null
 }
 
 export type ProducerServiceCountAggregateOutputType = {
   id: number
-  producerId: number
+  profileId: number
   serviceId: number
   _all: number
 }
@@ -59,31 +59,31 @@ export type ProducerServiceCountAggregateOutputType = {
 
 export type ProducerServiceAvgAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   serviceId?: true
 }
 
 export type ProducerServiceSumAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   serviceId?: true
 }
 
 export type ProducerServiceMinAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   serviceId?: true
 }
 
 export type ProducerServiceMaxAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   serviceId?: true
 }
 
 export type ProducerServiceCountAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   serviceId?: true
   _all?: true
 }
@@ -176,7 +176,7 @@ export type ProducerServiceGroupByArgs<ExtArgs extends runtime.Types.Extensions.
 
 export type ProducerServiceGroupByOutputType = {
   id: number
-  producerId: number
+  profileId: number
   serviceId: number
   _count: ProducerServiceCountAggregateOutputType | null
   _avg: ProducerServiceAvgAggregateOutputType | null
@@ -205,35 +205,35 @@ export type ProducerServiceWhereInput = {
   OR?: Prisma.ProducerServiceWhereInput[]
   NOT?: Prisma.ProducerServiceWhereInput | Prisma.ProducerServiceWhereInput[]
   id?: Prisma.IntFilter<"ProducerService"> | number
-  producerId?: Prisma.IntFilter<"ProducerService"> | number
+  profileId?: Prisma.IntFilter<"ProducerService"> | number
   serviceId?: Prisma.IntFilter<"ProducerService"> | number
-  producer?: Prisma.XOR<Prisma.ProducerScalarRelationFilter, Prisma.ProducerWhereInput>
+  profile?: Prisma.XOR<Prisma.ProducerProfileScalarRelationFilter, Prisma.ProducerProfileWhereInput>
   service?: Prisma.XOR<Prisma.ServiceOptionScalarRelationFilter, Prisma.ServiceOptionWhereInput>
 }
 
 export type ProducerServiceOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   serviceId?: Prisma.SortOrder
-  producer?: Prisma.ProducerOrderByWithRelationInput
+  profile?: Prisma.ProducerProfileOrderByWithRelationInput
   service?: Prisma.ServiceOptionOrderByWithRelationInput
 }
 
 export type ProducerServiceWhereUniqueInput = Prisma.AtLeast<{
   id?: number
-  producerId_serviceId?: Prisma.ProducerServiceProducerIdServiceIdCompoundUniqueInput
+  profileId_serviceId?: Prisma.ProducerServiceProfileIdServiceIdCompoundUniqueInput
   AND?: Prisma.ProducerServiceWhereInput | Prisma.ProducerServiceWhereInput[]
   OR?: Prisma.ProducerServiceWhereInput[]
   NOT?: Prisma.ProducerServiceWhereInput | Prisma.ProducerServiceWhereInput[]
-  producerId?: Prisma.IntFilter<"ProducerService"> | number
+  profileId?: Prisma.IntFilter<"ProducerService"> | number
   serviceId?: Prisma.IntFilter<"ProducerService"> | number
-  producer?: Prisma.XOR<Prisma.ProducerScalarRelationFilter, Prisma.ProducerWhereInput>
+  profile?: Prisma.XOR<Prisma.ProducerProfileScalarRelationFilter, Prisma.ProducerProfileWhereInput>
   service?: Prisma.XOR<Prisma.ServiceOptionScalarRelationFilter, Prisma.ServiceOptionWhereInput>
-}, "id" | "producerId_serviceId">
+}, "id" | "profileId_serviceId">
 
 export type ProducerServiceOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   serviceId?: Prisma.SortOrder
   _count?: Prisma.ProducerServiceCountOrderByAggregateInput
   _avg?: Prisma.ProducerServiceAvgOrderByAggregateInput
@@ -247,35 +247,35 @@ export type ProducerServiceScalarWhereWithAggregatesInput = {
   OR?: Prisma.ProducerServiceScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ProducerServiceScalarWhereWithAggregatesInput | Prisma.ProducerServiceScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"ProducerService"> | number
-  producerId?: Prisma.IntWithAggregatesFilter<"ProducerService"> | number
+  profileId?: Prisma.IntWithAggregatesFilter<"ProducerService"> | number
   serviceId?: Prisma.IntWithAggregatesFilter<"ProducerService"> | number
 }
 
 export type ProducerServiceCreateInput = {
-  producer: Prisma.ProducerCreateNestedOneWithoutServicesInput
+  profile: Prisma.ProducerProfileCreateNestedOneWithoutServicesInput
   service: Prisma.ServiceOptionCreateNestedOneWithoutProducersInput
 }
 
 export type ProducerServiceUncheckedCreateInput = {
   id?: number
-  producerId: number
+  profileId: number
   serviceId: number
 }
 
 export type ProducerServiceUpdateInput = {
-  producer?: Prisma.ProducerUpdateOneRequiredWithoutServicesNestedInput
+  profile?: Prisma.ProducerProfileUpdateOneRequiredWithoutServicesNestedInput
   service?: Prisma.ServiceOptionUpdateOneRequiredWithoutProducersNestedInput
 }
 
 export type ProducerServiceUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  producerId?: Prisma.IntFieldUpdateOperationsInput | number
+  profileId?: Prisma.IntFieldUpdateOperationsInput | number
   serviceId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ProducerServiceCreateManyInput = {
   id?: number
-  producerId: number
+  profileId: number
   serviceId: number
 }
 
@@ -285,7 +285,7 @@ export type ProducerServiceUpdateManyMutationInput = {
 
 export type ProducerServiceUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  producerId?: Prisma.IntFieldUpdateOperationsInput | number
+  profileId?: Prisma.IntFieldUpdateOperationsInput | number
   serviceId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
@@ -299,39 +299,81 @@ export type ProducerServiceOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type ProducerServiceProducerIdServiceIdCompoundUniqueInput = {
-  producerId: number
+export type ProducerServiceProfileIdServiceIdCompoundUniqueInput = {
+  profileId: number
   serviceId: number
 }
 
 export type ProducerServiceCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   serviceId?: Prisma.SortOrder
 }
 
 export type ProducerServiceAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   serviceId?: Prisma.SortOrder
 }
 
 export type ProducerServiceMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   serviceId?: Prisma.SortOrder
 }
 
 export type ProducerServiceMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   serviceId?: Prisma.SortOrder
 }
 
 export type ProducerServiceSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   serviceId?: Prisma.SortOrder
+}
+
+export type ProducerServiceCreateNestedManyWithoutProfileInput = {
+  create?: Prisma.XOR<Prisma.ProducerServiceCreateWithoutProfileInput, Prisma.ProducerServiceUncheckedCreateWithoutProfileInput> | Prisma.ProducerServiceCreateWithoutProfileInput[] | Prisma.ProducerServiceUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.ProducerServiceCreateOrConnectWithoutProfileInput | Prisma.ProducerServiceCreateOrConnectWithoutProfileInput[]
+  createMany?: Prisma.ProducerServiceCreateManyProfileInputEnvelope
+  connect?: Prisma.ProducerServiceWhereUniqueInput | Prisma.ProducerServiceWhereUniqueInput[]
+}
+
+export type ProducerServiceUncheckedCreateNestedManyWithoutProfileInput = {
+  create?: Prisma.XOR<Prisma.ProducerServiceCreateWithoutProfileInput, Prisma.ProducerServiceUncheckedCreateWithoutProfileInput> | Prisma.ProducerServiceCreateWithoutProfileInput[] | Prisma.ProducerServiceUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.ProducerServiceCreateOrConnectWithoutProfileInput | Prisma.ProducerServiceCreateOrConnectWithoutProfileInput[]
+  createMany?: Prisma.ProducerServiceCreateManyProfileInputEnvelope
+  connect?: Prisma.ProducerServiceWhereUniqueInput | Prisma.ProducerServiceWhereUniqueInput[]
+}
+
+export type ProducerServiceUpdateManyWithoutProfileNestedInput = {
+  create?: Prisma.XOR<Prisma.ProducerServiceCreateWithoutProfileInput, Prisma.ProducerServiceUncheckedCreateWithoutProfileInput> | Prisma.ProducerServiceCreateWithoutProfileInput[] | Prisma.ProducerServiceUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.ProducerServiceCreateOrConnectWithoutProfileInput | Prisma.ProducerServiceCreateOrConnectWithoutProfileInput[]
+  upsert?: Prisma.ProducerServiceUpsertWithWhereUniqueWithoutProfileInput | Prisma.ProducerServiceUpsertWithWhereUniqueWithoutProfileInput[]
+  createMany?: Prisma.ProducerServiceCreateManyProfileInputEnvelope
+  set?: Prisma.ProducerServiceWhereUniqueInput | Prisma.ProducerServiceWhereUniqueInput[]
+  disconnect?: Prisma.ProducerServiceWhereUniqueInput | Prisma.ProducerServiceWhereUniqueInput[]
+  delete?: Prisma.ProducerServiceWhereUniqueInput | Prisma.ProducerServiceWhereUniqueInput[]
+  connect?: Prisma.ProducerServiceWhereUniqueInput | Prisma.ProducerServiceWhereUniqueInput[]
+  update?: Prisma.ProducerServiceUpdateWithWhereUniqueWithoutProfileInput | Prisma.ProducerServiceUpdateWithWhereUniqueWithoutProfileInput[]
+  updateMany?: Prisma.ProducerServiceUpdateManyWithWhereWithoutProfileInput | Prisma.ProducerServiceUpdateManyWithWhereWithoutProfileInput[]
+  deleteMany?: Prisma.ProducerServiceScalarWhereInput | Prisma.ProducerServiceScalarWhereInput[]
+}
+
+export type ProducerServiceUncheckedUpdateManyWithoutProfileNestedInput = {
+  create?: Prisma.XOR<Prisma.ProducerServiceCreateWithoutProfileInput, Prisma.ProducerServiceUncheckedCreateWithoutProfileInput> | Prisma.ProducerServiceCreateWithoutProfileInput[] | Prisma.ProducerServiceUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.ProducerServiceCreateOrConnectWithoutProfileInput | Prisma.ProducerServiceCreateOrConnectWithoutProfileInput[]
+  upsert?: Prisma.ProducerServiceUpsertWithWhereUniqueWithoutProfileInput | Prisma.ProducerServiceUpsertWithWhereUniqueWithoutProfileInput[]
+  createMany?: Prisma.ProducerServiceCreateManyProfileInputEnvelope
+  set?: Prisma.ProducerServiceWhereUniqueInput | Prisma.ProducerServiceWhereUniqueInput[]
+  disconnect?: Prisma.ProducerServiceWhereUniqueInput | Prisma.ProducerServiceWhereUniqueInput[]
+  delete?: Prisma.ProducerServiceWhereUniqueInput | Prisma.ProducerServiceWhereUniqueInput[]
+  connect?: Prisma.ProducerServiceWhereUniqueInput | Prisma.ProducerServiceWhereUniqueInput[]
+  update?: Prisma.ProducerServiceUpdateWithWhereUniqueWithoutProfileInput | Prisma.ProducerServiceUpdateWithWhereUniqueWithoutProfileInput[]
+  updateMany?: Prisma.ProducerServiceUpdateManyWithWhereWithoutProfileInput | Prisma.ProducerServiceUpdateManyWithWhereWithoutProfileInput[]
+  deleteMany?: Prisma.ProducerServiceScalarWhereInput | Prisma.ProducerServiceScalarWhereInput[]
 }
 
 export type ProducerServiceCreateNestedManyWithoutServiceInput = {
@@ -376,55 +418,57 @@ export type ProducerServiceUncheckedUpdateManyWithoutServiceNestedInput = {
   deleteMany?: Prisma.ProducerServiceScalarWhereInput | Prisma.ProducerServiceScalarWhereInput[]
 }
 
-export type ProducerServiceCreateNestedManyWithoutProducerInput = {
-  create?: Prisma.XOR<Prisma.ProducerServiceCreateWithoutProducerInput, Prisma.ProducerServiceUncheckedCreateWithoutProducerInput> | Prisma.ProducerServiceCreateWithoutProducerInput[] | Prisma.ProducerServiceUncheckedCreateWithoutProducerInput[]
-  connectOrCreate?: Prisma.ProducerServiceCreateOrConnectWithoutProducerInput | Prisma.ProducerServiceCreateOrConnectWithoutProducerInput[]
-  createMany?: Prisma.ProducerServiceCreateManyProducerInputEnvelope
-  connect?: Prisma.ProducerServiceWhereUniqueInput | Prisma.ProducerServiceWhereUniqueInput[]
+export type ProducerServiceCreateWithoutProfileInput = {
+  service: Prisma.ServiceOptionCreateNestedOneWithoutProducersInput
 }
 
-export type ProducerServiceUncheckedCreateNestedManyWithoutProducerInput = {
-  create?: Prisma.XOR<Prisma.ProducerServiceCreateWithoutProducerInput, Prisma.ProducerServiceUncheckedCreateWithoutProducerInput> | Prisma.ProducerServiceCreateWithoutProducerInput[] | Prisma.ProducerServiceUncheckedCreateWithoutProducerInput[]
-  connectOrCreate?: Prisma.ProducerServiceCreateOrConnectWithoutProducerInput | Prisma.ProducerServiceCreateOrConnectWithoutProducerInput[]
-  createMany?: Prisma.ProducerServiceCreateManyProducerInputEnvelope
-  connect?: Prisma.ProducerServiceWhereUniqueInput | Prisma.ProducerServiceWhereUniqueInput[]
+export type ProducerServiceUncheckedCreateWithoutProfileInput = {
+  id?: number
+  serviceId: number
 }
 
-export type ProducerServiceUpdateManyWithoutProducerNestedInput = {
-  create?: Prisma.XOR<Prisma.ProducerServiceCreateWithoutProducerInput, Prisma.ProducerServiceUncheckedCreateWithoutProducerInput> | Prisma.ProducerServiceCreateWithoutProducerInput[] | Prisma.ProducerServiceUncheckedCreateWithoutProducerInput[]
-  connectOrCreate?: Prisma.ProducerServiceCreateOrConnectWithoutProducerInput | Prisma.ProducerServiceCreateOrConnectWithoutProducerInput[]
-  upsert?: Prisma.ProducerServiceUpsertWithWhereUniqueWithoutProducerInput | Prisma.ProducerServiceUpsertWithWhereUniqueWithoutProducerInput[]
-  createMany?: Prisma.ProducerServiceCreateManyProducerInputEnvelope
-  set?: Prisma.ProducerServiceWhereUniqueInput | Prisma.ProducerServiceWhereUniqueInput[]
-  disconnect?: Prisma.ProducerServiceWhereUniqueInput | Prisma.ProducerServiceWhereUniqueInput[]
-  delete?: Prisma.ProducerServiceWhereUniqueInput | Prisma.ProducerServiceWhereUniqueInput[]
-  connect?: Prisma.ProducerServiceWhereUniqueInput | Prisma.ProducerServiceWhereUniqueInput[]
-  update?: Prisma.ProducerServiceUpdateWithWhereUniqueWithoutProducerInput | Prisma.ProducerServiceUpdateWithWhereUniqueWithoutProducerInput[]
-  updateMany?: Prisma.ProducerServiceUpdateManyWithWhereWithoutProducerInput | Prisma.ProducerServiceUpdateManyWithWhereWithoutProducerInput[]
-  deleteMany?: Prisma.ProducerServiceScalarWhereInput | Prisma.ProducerServiceScalarWhereInput[]
+export type ProducerServiceCreateOrConnectWithoutProfileInput = {
+  where: Prisma.ProducerServiceWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProducerServiceCreateWithoutProfileInput, Prisma.ProducerServiceUncheckedCreateWithoutProfileInput>
 }
 
-export type ProducerServiceUncheckedUpdateManyWithoutProducerNestedInput = {
-  create?: Prisma.XOR<Prisma.ProducerServiceCreateWithoutProducerInput, Prisma.ProducerServiceUncheckedCreateWithoutProducerInput> | Prisma.ProducerServiceCreateWithoutProducerInput[] | Prisma.ProducerServiceUncheckedCreateWithoutProducerInput[]
-  connectOrCreate?: Prisma.ProducerServiceCreateOrConnectWithoutProducerInput | Prisma.ProducerServiceCreateOrConnectWithoutProducerInput[]
-  upsert?: Prisma.ProducerServiceUpsertWithWhereUniqueWithoutProducerInput | Prisma.ProducerServiceUpsertWithWhereUniqueWithoutProducerInput[]
-  createMany?: Prisma.ProducerServiceCreateManyProducerInputEnvelope
-  set?: Prisma.ProducerServiceWhereUniqueInput | Prisma.ProducerServiceWhereUniqueInput[]
-  disconnect?: Prisma.ProducerServiceWhereUniqueInput | Prisma.ProducerServiceWhereUniqueInput[]
-  delete?: Prisma.ProducerServiceWhereUniqueInput | Prisma.ProducerServiceWhereUniqueInput[]
-  connect?: Prisma.ProducerServiceWhereUniqueInput | Prisma.ProducerServiceWhereUniqueInput[]
-  update?: Prisma.ProducerServiceUpdateWithWhereUniqueWithoutProducerInput | Prisma.ProducerServiceUpdateWithWhereUniqueWithoutProducerInput[]
-  updateMany?: Prisma.ProducerServiceUpdateManyWithWhereWithoutProducerInput | Prisma.ProducerServiceUpdateManyWithWhereWithoutProducerInput[]
-  deleteMany?: Prisma.ProducerServiceScalarWhereInput | Prisma.ProducerServiceScalarWhereInput[]
+export type ProducerServiceCreateManyProfileInputEnvelope = {
+  data: Prisma.ProducerServiceCreateManyProfileInput | Prisma.ProducerServiceCreateManyProfileInput[]
+  skipDuplicates?: boolean
+}
+
+export type ProducerServiceUpsertWithWhereUniqueWithoutProfileInput = {
+  where: Prisma.ProducerServiceWhereUniqueInput
+  update: Prisma.XOR<Prisma.ProducerServiceUpdateWithoutProfileInput, Prisma.ProducerServiceUncheckedUpdateWithoutProfileInput>
+  create: Prisma.XOR<Prisma.ProducerServiceCreateWithoutProfileInput, Prisma.ProducerServiceUncheckedCreateWithoutProfileInput>
+}
+
+export type ProducerServiceUpdateWithWhereUniqueWithoutProfileInput = {
+  where: Prisma.ProducerServiceWhereUniqueInput
+  data: Prisma.XOR<Prisma.ProducerServiceUpdateWithoutProfileInput, Prisma.ProducerServiceUncheckedUpdateWithoutProfileInput>
+}
+
+export type ProducerServiceUpdateManyWithWhereWithoutProfileInput = {
+  where: Prisma.ProducerServiceScalarWhereInput
+  data: Prisma.XOR<Prisma.ProducerServiceUpdateManyMutationInput, Prisma.ProducerServiceUncheckedUpdateManyWithoutProfileInput>
+}
+
+export type ProducerServiceScalarWhereInput = {
+  AND?: Prisma.ProducerServiceScalarWhereInput | Prisma.ProducerServiceScalarWhereInput[]
+  OR?: Prisma.ProducerServiceScalarWhereInput[]
+  NOT?: Prisma.ProducerServiceScalarWhereInput | Prisma.ProducerServiceScalarWhereInput[]
+  id?: Prisma.IntFilter<"ProducerService"> | number
+  profileId?: Prisma.IntFilter<"ProducerService"> | number
+  serviceId?: Prisma.IntFilter<"ProducerService"> | number
 }
 
 export type ProducerServiceCreateWithoutServiceInput = {
-  producer: Prisma.ProducerCreateNestedOneWithoutServicesInput
+  profile: Prisma.ProducerProfileCreateNestedOneWithoutServicesInput
 }
 
 export type ProducerServiceUncheckedCreateWithoutServiceInput = {
   id?: number
-  producerId: number
+  profileId: number
 }
 
 export type ProducerServiceCreateOrConnectWithoutServiceInput = {
@@ -453,95 +497,51 @@ export type ProducerServiceUpdateManyWithWhereWithoutServiceInput = {
   data: Prisma.XOR<Prisma.ProducerServiceUpdateManyMutationInput, Prisma.ProducerServiceUncheckedUpdateManyWithoutServiceInput>
 }
 
-export type ProducerServiceScalarWhereInput = {
-  AND?: Prisma.ProducerServiceScalarWhereInput | Prisma.ProducerServiceScalarWhereInput[]
-  OR?: Prisma.ProducerServiceScalarWhereInput[]
-  NOT?: Prisma.ProducerServiceScalarWhereInput | Prisma.ProducerServiceScalarWhereInput[]
-  id?: Prisma.IntFilter<"ProducerService"> | number
-  producerId?: Prisma.IntFilter<"ProducerService"> | number
-  serviceId?: Prisma.IntFilter<"ProducerService"> | number
-}
-
-export type ProducerServiceCreateWithoutProducerInput = {
-  service: Prisma.ServiceOptionCreateNestedOneWithoutProducersInput
-}
-
-export type ProducerServiceUncheckedCreateWithoutProducerInput = {
+export type ProducerServiceCreateManyProfileInput = {
   id?: number
   serviceId: number
 }
 
-export type ProducerServiceCreateOrConnectWithoutProducerInput = {
-  where: Prisma.ProducerServiceWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProducerServiceCreateWithoutProducerInput, Prisma.ProducerServiceUncheckedCreateWithoutProducerInput>
+export type ProducerServiceUpdateWithoutProfileInput = {
+  service?: Prisma.ServiceOptionUpdateOneRequiredWithoutProducersNestedInput
 }
 
-export type ProducerServiceCreateManyProducerInputEnvelope = {
-  data: Prisma.ProducerServiceCreateManyProducerInput | Prisma.ProducerServiceCreateManyProducerInput[]
-  skipDuplicates?: boolean
+export type ProducerServiceUncheckedUpdateWithoutProfileInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  serviceId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
-export type ProducerServiceUpsertWithWhereUniqueWithoutProducerInput = {
-  where: Prisma.ProducerServiceWhereUniqueInput
-  update: Prisma.XOR<Prisma.ProducerServiceUpdateWithoutProducerInput, Prisma.ProducerServiceUncheckedUpdateWithoutProducerInput>
-  create: Prisma.XOR<Prisma.ProducerServiceCreateWithoutProducerInput, Prisma.ProducerServiceUncheckedCreateWithoutProducerInput>
-}
-
-export type ProducerServiceUpdateWithWhereUniqueWithoutProducerInput = {
-  where: Prisma.ProducerServiceWhereUniqueInput
-  data: Prisma.XOR<Prisma.ProducerServiceUpdateWithoutProducerInput, Prisma.ProducerServiceUncheckedUpdateWithoutProducerInput>
-}
-
-export type ProducerServiceUpdateManyWithWhereWithoutProducerInput = {
-  where: Prisma.ProducerServiceScalarWhereInput
-  data: Prisma.XOR<Prisma.ProducerServiceUpdateManyMutationInput, Prisma.ProducerServiceUncheckedUpdateManyWithoutProducerInput>
+export type ProducerServiceUncheckedUpdateManyWithoutProfileInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  serviceId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ProducerServiceCreateManyServiceInput = {
   id?: number
-  producerId: number
+  profileId: number
 }
 
 export type ProducerServiceUpdateWithoutServiceInput = {
-  producer?: Prisma.ProducerUpdateOneRequiredWithoutServicesNestedInput
+  profile?: Prisma.ProducerProfileUpdateOneRequiredWithoutServicesNestedInput
 }
 
 export type ProducerServiceUncheckedUpdateWithoutServiceInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  producerId?: Prisma.IntFieldUpdateOperationsInput | number
+  profileId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ProducerServiceUncheckedUpdateManyWithoutServiceInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  producerId?: Prisma.IntFieldUpdateOperationsInput | number
-}
-
-export type ProducerServiceCreateManyProducerInput = {
-  id?: number
-  serviceId: number
-}
-
-export type ProducerServiceUpdateWithoutProducerInput = {
-  service?: Prisma.ServiceOptionUpdateOneRequiredWithoutProducersNestedInput
-}
-
-export type ProducerServiceUncheckedUpdateWithoutProducerInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  serviceId?: Prisma.IntFieldUpdateOperationsInput | number
-}
-
-export type ProducerServiceUncheckedUpdateManyWithoutProducerInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  serviceId?: Prisma.IntFieldUpdateOperationsInput | number
+  profileId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 
 
 export type ProducerServiceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  producerId?: boolean
+  profileId?: boolean
   serviceId?: boolean
-  producer?: boolean | Prisma.ProducerDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.ProducerProfileDefaultArgs<ExtArgs>
   service?: boolean | Prisma.ServiceOptionDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["producerService"]>
 
@@ -549,25 +549,25 @@ export type ProducerServiceSelect<ExtArgs extends runtime.Types.Extensions.Inter
 
 export type ProducerServiceSelectScalar = {
   id?: boolean
-  producerId?: boolean
+  profileId?: boolean
   serviceId?: boolean
 }
 
-export type ProducerServiceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "producerId" | "serviceId", ExtArgs["result"]["producerService"]>
+export type ProducerServiceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "profileId" | "serviceId", ExtArgs["result"]["producerService"]>
 export type ProducerServiceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  producer?: boolean | Prisma.ProducerDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.ProducerProfileDefaultArgs<ExtArgs>
   service?: boolean | Prisma.ServiceOptionDefaultArgs<ExtArgs>
 }
 
 export type $ProducerServicePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ProducerService"
   objects: {
-    producer: Prisma.$ProducerPayload<ExtArgs>
+    profile: Prisma.$ProducerProfilePayload<ExtArgs>
     service: Prisma.$ServiceOptionPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
-    producerId: number
+    profileId: number
     serviceId: number
   }, ExtArgs["result"]["producerService"]>
   composites: {}
@@ -909,7 +909,7 @@ readonly fields: ProducerServiceFieldRefs;
  */
 export interface Prisma__ProducerServiceClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  producer<T extends Prisma.ProducerDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProducerDefaultArgs<ExtArgs>>): Prisma.Prisma__ProducerClient<runtime.Types.Result.GetResult<Prisma.$ProducerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  profile<T extends Prisma.ProducerProfileDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProducerProfileDefaultArgs<ExtArgs>>): Prisma.Prisma__ProducerProfileClient<runtime.Types.Result.GetResult<Prisma.$ProducerProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   service<T extends Prisma.ServiceOptionDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ServiceOptionDefaultArgs<ExtArgs>>): Prisma.Prisma__ServiceOptionClient<runtime.Types.Result.GetResult<Prisma.$ServiceOptionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -941,7 +941,7 @@ export interface Prisma__ProducerServiceClient<T, Null = never, ExtArgs extends 
  */
 export interface ProducerServiceFieldRefs {
   readonly id: Prisma.FieldRef<"ProducerService", 'Int'>
-  readonly producerId: Prisma.FieldRef<"ProducerService", 'Int'>
+  readonly profileId: Prisma.FieldRef<"ProducerService", 'Int'>
   readonly serviceId: Prisma.FieldRef<"ProducerService", 'Int'>
 }
     

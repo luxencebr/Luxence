@@ -48,12 +48,18 @@
   color: var(--contrast-complementary-color);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
+}
+
+.infoList p {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
 
 .thumbnail {
-  width: 64px;
-  height: 64px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+
   object-fit: cover;
   border-radius: 8px;
   margin-left: 0.5rem;

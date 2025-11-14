@@ -27,31 +27,31 @@ export type AggregateProducerPayment = {
 
 export type ProducerPaymentAvgAggregateOutputType = {
   id: number | null
-  producerId: number | null
+  profileId: number | null
   paymentId: number | null
 }
 
 export type ProducerPaymentSumAggregateOutputType = {
   id: number | null
-  producerId: number | null
+  profileId: number | null
   paymentId: number | null
 }
 
 export type ProducerPaymentMinAggregateOutputType = {
   id: number | null
-  producerId: number | null
+  profileId: number | null
   paymentId: number | null
 }
 
 export type ProducerPaymentMaxAggregateOutputType = {
   id: number | null
-  producerId: number | null
+  profileId: number | null
   paymentId: number | null
 }
 
 export type ProducerPaymentCountAggregateOutputType = {
   id: number
-  producerId: number
+  profileId: number
   paymentId: number
   _all: number
 }
@@ -59,31 +59,31 @@ export type ProducerPaymentCountAggregateOutputType = {
 
 export type ProducerPaymentAvgAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   paymentId?: true
 }
 
 export type ProducerPaymentSumAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   paymentId?: true
 }
 
 export type ProducerPaymentMinAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   paymentId?: true
 }
 
 export type ProducerPaymentMaxAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   paymentId?: true
 }
 
 export type ProducerPaymentCountAggregateInputType = {
   id?: true
-  producerId?: true
+  profileId?: true
   paymentId?: true
   _all?: true
 }
@@ -176,7 +176,7 @@ export type ProducerPaymentGroupByArgs<ExtArgs extends runtime.Types.Extensions.
 
 export type ProducerPaymentGroupByOutputType = {
   id: number
-  producerId: number
+  profileId: number
   paymentId: number
   _count: ProducerPaymentCountAggregateOutputType | null
   _avg: ProducerPaymentAvgAggregateOutputType | null
@@ -205,35 +205,35 @@ export type ProducerPaymentWhereInput = {
   OR?: Prisma.ProducerPaymentWhereInput[]
   NOT?: Prisma.ProducerPaymentWhereInput | Prisma.ProducerPaymentWhereInput[]
   id?: Prisma.IntFilter<"ProducerPayment"> | number
-  producerId?: Prisma.IntFilter<"ProducerPayment"> | number
+  profileId?: Prisma.IntFilter<"ProducerPayment"> | number
   paymentId?: Prisma.IntFilter<"ProducerPayment"> | number
-  producer?: Prisma.XOR<Prisma.ProducerScalarRelationFilter, Prisma.ProducerWhereInput>
+  profile?: Prisma.XOR<Prisma.ProducerProfileScalarRelationFilter, Prisma.ProducerProfileWhereInput>
   payment?: Prisma.XOR<Prisma.PaymentOptionScalarRelationFilter, Prisma.PaymentOptionWhereInput>
 }
 
 export type ProducerPaymentOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   paymentId?: Prisma.SortOrder
-  producer?: Prisma.ProducerOrderByWithRelationInput
+  profile?: Prisma.ProducerProfileOrderByWithRelationInput
   payment?: Prisma.PaymentOptionOrderByWithRelationInput
 }
 
 export type ProducerPaymentWhereUniqueInput = Prisma.AtLeast<{
   id?: number
-  producerId_paymentId?: Prisma.ProducerPaymentProducerIdPaymentIdCompoundUniqueInput
+  profileId_paymentId?: Prisma.ProducerPaymentProfileIdPaymentIdCompoundUniqueInput
   AND?: Prisma.ProducerPaymentWhereInput | Prisma.ProducerPaymentWhereInput[]
   OR?: Prisma.ProducerPaymentWhereInput[]
   NOT?: Prisma.ProducerPaymentWhereInput | Prisma.ProducerPaymentWhereInput[]
-  producerId?: Prisma.IntFilter<"ProducerPayment"> | number
+  profileId?: Prisma.IntFilter<"ProducerPayment"> | number
   paymentId?: Prisma.IntFilter<"ProducerPayment"> | number
-  producer?: Prisma.XOR<Prisma.ProducerScalarRelationFilter, Prisma.ProducerWhereInput>
+  profile?: Prisma.XOR<Prisma.ProducerProfileScalarRelationFilter, Prisma.ProducerProfileWhereInput>
   payment?: Prisma.XOR<Prisma.PaymentOptionScalarRelationFilter, Prisma.PaymentOptionWhereInput>
-}, "id" | "producerId_paymentId">
+}, "id" | "profileId_paymentId">
 
 export type ProducerPaymentOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   paymentId?: Prisma.SortOrder
   _count?: Prisma.ProducerPaymentCountOrderByAggregateInput
   _avg?: Prisma.ProducerPaymentAvgOrderByAggregateInput
@@ -247,35 +247,35 @@ export type ProducerPaymentScalarWhereWithAggregatesInput = {
   OR?: Prisma.ProducerPaymentScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ProducerPaymentScalarWhereWithAggregatesInput | Prisma.ProducerPaymentScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"ProducerPayment"> | number
-  producerId?: Prisma.IntWithAggregatesFilter<"ProducerPayment"> | number
+  profileId?: Prisma.IntWithAggregatesFilter<"ProducerPayment"> | number
   paymentId?: Prisma.IntWithAggregatesFilter<"ProducerPayment"> | number
 }
 
 export type ProducerPaymentCreateInput = {
-  producer: Prisma.ProducerCreateNestedOneWithoutPaymentsInput
+  profile: Prisma.ProducerProfileCreateNestedOneWithoutPaymentsInput
   payment: Prisma.PaymentOptionCreateNestedOneWithoutProducersInput
 }
 
 export type ProducerPaymentUncheckedCreateInput = {
   id?: number
-  producerId: number
+  profileId: number
   paymentId: number
 }
 
 export type ProducerPaymentUpdateInput = {
-  producer?: Prisma.ProducerUpdateOneRequiredWithoutPaymentsNestedInput
+  profile?: Prisma.ProducerProfileUpdateOneRequiredWithoutPaymentsNestedInput
   payment?: Prisma.PaymentOptionUpdateOneRequiredWithoutProducersNestedInput
 }
 
 export type ProducerPaymentUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  producerId?: Prisma.IntFieldUpdateOperationsInput | number
+  profileId?: Prisma.IntFieldUpdateOperationsInput | number
   paymentId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ProducerPaymentCreateManyInput = {
   id?: number
-  producerId: number
+  profileId: number
   paymentId: number
 }
 
@@ -285,7 +285,7 @@ export type ProducerPaymentUpdateManyMutationInput = {
 
 export type ProducerPaymentUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  producerId?: Prisma.IntFieldUpdateOperationsInput | number
+  profileId?: Prisma.IntFieldUpdateOperationsInput | number
   paymentId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
@@ -299,39 +299,81 @@ export type ProducerPaymentOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type ProducerPaymentProducerIdPaymentIdCompoundUniqueInput = {
-  producerId: number
+export type ProducerPaymentProfileIdPaymentIdCompoundUniqueInput = {
+  profileId: number
   paymentId: number
 }
 
 export type ProducerPaymentCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   paymentId?: Prisma.SortOrder
 }
 
 export type ProducerPaymentAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   paymentId?: Prisma.SortOrder
 }
 
 export type ProducerPaymentMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   paymentId?: Prisma.SortOrder
 }
 
 export type ProducerPaymentMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   paymentId?: Prisma.SortOrder
 }
 
 export type ProducerPaymentSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  producerId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   paymentId?: Prisma.SortOrder
+}
+
+export type ProducerPaymentCreateNestedManyWithoutProfileInput = {
+  create?: Prisma.XOR<Prisma.ProducerPaymentCreateWithoutProfileInput, Prisma.ProducerPaymentUncheckedCreateWithoutProfileInput> | Prisma.ProducerPaymentCreateWithoutProfileInput[] | Prisma.ProducerPaymentUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.ProducerPaymentCreateOrConnectWithoutProfileInput | Prisma.ProducerPaymentCreateOrConnectWithoutProfileInput[]
+  createMany?: Prisma.ProducerPaymentCreateManyProfileInputEnvelope
+  connect?: Prisma.ProducerPaymentWhereUniqueInput | Prisma.ProducerPaymentWhereUniqueInput[]
+}
+
+export type ProducerPaymentUncheckedCreateNestedManyWithoutProfileInput = {
+  create?: Prisma.XOR<Prisma.ProducerPaymentCreateWithoutProfileInput, Prisma.ProducerPaymentUncheckedCreateWithoutProfileInput> | Prisma.ProducerPaymentCreateWithoutProfileInput[] | Prisma.ProducerPaymentUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.ProducerPaymentCreateOrConnectWithoutProfileInput | Prisma.ProducerPaymentCreateOrConnectWithoutProfileInput[]
+  createMany?: Prisma.ProducerPaymentCreateManyProfileInputEnvelope
+  connect?: Prisma.ProducerPaymentWhereUniqueInput | Prisma.ProducerPaymentWhereUniqueInput[]
+}
+
+export type ProducerPaymentUpdateManyWithoutProfileNestedInput = {
+  create?: Prisma.XOR<Prisma.ProducerPaymentCreateWithoutProfileInput, Prisma.ProducerPaymentUncheckedCreateWithoutProfileInput> | Prisma.ProducerPaymentCreateWithoutProfileInput[] | Prisma.ProducerPaymentUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.ProducerPaymentCreateOrConnectWithoutProfileInput | Prisma.ProducerPaymentCreateOrConnectWithoutProfileInput[]
+  upsert?: Prisma.ProducerPaymentUpsertWithWhereUniqueWithoutProfileInput | Prisma.ProducerPaymentUpsertWithWhereUniqueWithoutProfileInput[]
+  createMany?: Prisma.ProducerPaymentCreateManyProfileInputEnvelope
+  set?: Prisma.ProducerPaymentWhereUniqueInput | Prisma.ProducerPaymentWhereUniqueInput[]
+  disconnect?: Prisma.ProducerPaymentWhereUniqueInput | Prisma.ProducerPaymentWhereUniqueInput[]
+  delete?: Prisma.ProducerPaymentWhereUniqueInput | Prisma.ProducerPaymentWhereUniqueInput[]
+  connect?: Prisma.ProducerPaymentWhereUniqueInput | Prisma.ProducerPaymentWhereUniqueInput[]
+  update?: Prisma.ProducerPaymentUpdateWithWhereUniqueWithoutProfileInput | Prisma.ProducerPaymentUpdateWithWhereUniqueWithoutProfileInput[]
+  updateMany?: Prisma.ProducerPaymentUpdateManyWithWhereWithoutProfileInput | Prisma.ProducerPaymentUpdateManyWithWhereWithoutProfileInput[]
+  deleteMany?: Prisma.ProducerPaymentScalarWhereInput | Prisma.ProducerPaymentScalarWhereInput[]
+}
+
+export type ProducerPaymentUncheckedUpdateManyWithoutProfileNestedInput = {
+  create?: Prisma.XOR<Prisma.ProducerPaymentCreateWithoutProfileInput, Prisma.ProducerPaymentUncheckedCreateWithoutProfileInput> | Prisma.ProducerPaymentCreateWithoutProfileInput[] | Prisma.ProducerPaymentUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.ProducerPaymentCreateOrConnectWithoutProfileInput | Prisma.ProducerPaymentCreateOrConnectWithoutProfileInput[]
+  upsert?: Prisma.ProducerPaymentUpsertWithWhereUniqueWithoutProfileInput | Prisma.ProducerPaymentUpsertWithWhereUniqueWithoutProfileInput[]
+  createMany?: Prisma.ProducerPaymentCreateManyProfileInputEnvelope
+  set?: Prisma.ProducerPaymentWhereUniqueInput | Prisma.ProducerPaymentWhereUniqueInput[]
+  disconnect?: Prisma.ProducerPaymentWhereUniqueInput | Prisma.ProducerPaymentWhereUniqueInput[]
+  delete?: Prisma.ProducerPaymentWhereUniqueInput | Prisma.ProducerPaymentWhereUniqueInput[]
+  connect?: Prisma.ProducerPaymentWhereUniqueInput | Prisma.ProducerPaymentWhereUniqueInput[]
+  update?: Prisma.ProducerPaymentUpdateWithWhereUniqueWithoutProfileInput | Prisma.ProducerPaymentUpdateWithWhereUniqueWithoutProfileInput[]
+  updateMany?: Prisma.ProducerPaymentUpdateManyWithWhereWithoutProfileInput | Prisma.ProducerPaymentUpdateManyWithWhereWithoutProfileInput[]
+  deleteMany?: Prisma.ProducerPaymentScalarWhereInput | Prisma.ProducerPaymentScalarWhereInput[]
 }
 
 export type ProducerPaymentCreateNestedManyWithoutPaymentInput = {
@@ -376,55 +418,57 @@ export type ProducerPaymentUncheckedUpdateManyWithoutPaymentNestedInput = {
   deleteMany?: Prisma.ProducerPaymentScalarWhereInput | Prisma.ProducerPaymentScalarWhereInput[]
 }
 
-export type ProducerPaymentCreateNestedManyWithoutProducerInput = {
-  create?: Prisma.XOR<Prisma.ProducerPaymentCreateWithoutProducerInput, Prisma.ProducerPaymentUncheckedCreateWithoutProducerInput> | Prisma.ProducerPaymentCreateWithoutProducerInput[] | Prisma.ProducerPaymentUncheckedCreateWithoutProducerInput[]
-  connectOrCreate?: Prisma.ProducerPaymentCreateOrConnectWithoutProducerInput | Prisma.ProducerPaymentCreateOrConnectWithoutProducerInput[]
-  createMany?: Prisma.ProducerPaymentCreateManyProducerInputEnvelope
-  connect?: Prisma.ProducerPaymentWhereUniqueInput | Prisma.ProducerPaymentWhereUniqueInput[]
+export type ProducerPaymentCreateWithoutProfileInput = {
+  payment: Prisma.PaymentOptionCreateNestedOneWithoutProducersInput
 }
 
-export type ProducerPaymentUncheckedCreateNestedManyWithoutProducerInput = {
-  create?: Prisma.XOR<Prisma.ProducerPaymentCreateWithoutProducerInput, Prisma.ProducerPaymentUncheckedCreateWithoutProducerInput> | Prisma.ProducerPaymentCreateWithoutProducerInput[] | Prisma.ProducerPaymentUncheckedCreateWithoutProducerInput[]
-  connectOrCreate?: Prisma.ProducerPaymentCreateOrConnectWithoutProducerInput | Prisma.ProducerPaymentCreateOrConnectWithoutProducerInput[]
-  createMany?: Prisma.ProducerPaymentCreateManyProducerInputEnvelope
-  connect?: Prisma.ProducerPaymentWhereUniqueInput | Prisma.ProducerPaymentWhereUniqueInput[]
+export type ProducerPaymentUncheckedCreateWithoutProfileInput = {
+  id?: number
+  paymentId: number
 }
 
-export type ProducerPaymentUpdateManyWithoutProducerNestedInput = {
-  create?: Prisma.XOR<Prisma.ProducerPaymentCreateWithoutProducerInput, Prisma.ProducerPaymentUncheckedCreateWithoutProducerInput> | Prisma.ProducerPaymentCreateWithoutProducerInput[] | Prisma.ProducerPaymentUncheckedCreateWithoutProducerInput[]
-  connectOrCreate?: Prisma.ProducerPaymentCreateOrConnectWithoutProducerInput | Prisma.ProducerPaymentCreateOrConnectWithoutProducerInput[]
-  upsert?: Prisma.ProducerPaymentUpsertWithWhereUniqueWithoutProducerInput | Prisma.ProducerPaymentUpsertWithWhereUniqueWithoutProducerInput[]
-  createMany?: Prisma.ProducerPaymentCreateManyProducerInputEnvelope
-  set?: Prisma.ProducerPaymentWhereUniqueInput | Prisma.ProducerPaymentWhereUniqueInput[]
-  disconnect?: Prisma.ProducerPaymentWhereUniqueInput | Prisma.ProducerPaymentWhereUniqueInput[]
-  delete?: Prisma.ProducerPaymentWhereUniqueInput | Prisma.ProducerPaymentWhereUniqueInput[]
-  connect?: Prisma.ProducerPaymentWhereUniqueInput | Prisma.ProducerPaymentWhereUniqueInput[]
-  update?: Prisma.ProducerPaymentUpdateWithWhereUniqueWithoutProducerInput | Prisma.ProducerPaymentUpdateWithWhereUniqueWithoutProducerInput[]
-  updateMany?: Prisma.ProducerPaymentUpdateManyWithWhereWithoutProducerInput | Prisma.ProducerPaymentUpdateManyWithWhereWithoutProducerInput[]
-  deleteMany?: Prisma.ProducerPaymentScalarWhereInput | Prisma.ProducerPaymentScalarWhereInput[]
+export type ProducerPaymentCreateOrConnectWithoutProfileInput = {
+  where: Prisma.ProducerPaymentWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProducerPaymentCreateWithoutProfileInput, Prisma.ProducerPaymentUncheckedCreateWithoutProfileInput>
 }
 
-export type ProducerPaymentUncheckedUpdateManyWithoutProducerNestedInput = {
-  create?: Prisma.XOR<Prisma.ProducerPaymentCreateWithoutProducerInput, Prisma.ProducerPaymentUncheckedCreateWithoutProducerInput> | Prisma.ProducerPaymentCreateWithoutProducerInput[] | Prisma.ProducerPaymentUncheckedCreateWithoutProducerInput[]
-  connectOrCreate?: Prisma.ProducerPaymentCreateOrConnectWithoutProducerInput | Prisma.ProducerPaymentCreateOrConnectWithoutProducerInput[]
-  upsert?: Prisma.ProducerPaymentUpsertWithWhereUniqueWithoutProducerInput | Prisma.ProducerPaymentUpsertWithWhereUniqueWithoutProducerInput[]
-  createMany?: Prisma.ProducerPaymentCreateManyProducerInputEnvelope
-  set?: Prisma.ProducerPaymentWhereUniqueInput | Prisma.ProducerPaymentWhereUniqueInput[]
-  disconnect?: Prisma.ProducerPaymentWhereUniqueInput | Prisma.ProducerPaymentWhereUniqueInput[]
-  delete?: Prisma.ProducerPaymentWhereUniqueInput | Prisma.ProducerPaymentWhereUniqueInput[]
-  connect?: Prisma.ProducerPaymentWhereUniqueInput | Prisma.ProducerPaymentWhereUniqueInput[]
-  update?: Prisma.ProducerPaymentUpdateWithWhereUniqueWithoutProducerInput | Prisma.ProducerPaymentUpdateWithWhereUniqueWithoutProducerInput[]
-  updateMany?: Prisma.ProducerPaymentUpdateManyWithWhereWithoutProducerInput | Prisma.ProducerPaymentUpdateManyWithWhereWithoutProducerInput[]
-  deleteMany?: Prisma.ProducerPaymentScalarWhereInput | Prisma.ProducerPaymentScalarWhereInput[]
+export type ProducerPaymentCreateManyProfileInputEnvelope = {
+  data: Prisma.ProducerPaymentCreateManyProfileInput | Prisma.ProducerPaymentCreateManyProfileInput[]
+  skipDuplicates?: boolean
+}
+
+export type ProducerPaymentUpsertWithWhereUniqueWithoutProfileInput = {
+  where: Prisma.ProducerPaymentWhereUniqueInput
+  update: Prisma.XOR<Prisma.ProducerPaymentUpdateWithoutProfileInput, Prisma.ProducerPaymentUncheckedUpdateWithoutProfileInput>
+  create: Prisma.XOR<Prisma.ProducerPaymentCreateWithoutProfileInput, Prisma.ProducerPaymentUncheckedCreateWithoutProfileInput>
+}
+
+export type ProducerPaymentUpdateWithWhereUniqueWithoutProfileInput = {
+  where: Prisma.ProducerPaymentWhereUniqueInput
+  data: Prisma.XOR<Prisma.ProducerPaymentUpdateWithoutProfileInput, Prisma.ProducerPaymentUncheckedUpdateWithoutProfileInput>
+}
+
+export type ProducerPaymentUpdateManyWithWhereWithoutProfileInput = {
+  where: Prisma.ProducerPaymentScalarWhereInput
+  data: Prisma.XOR<Prisma.ProducerPaymentUpdateManyMutationInput, Prisma.ProducerPaymentUncheckedUpdateManyWithoutProfileInput>
+}
+
+export type ProducerPaymentScalarWhereInput = {
+  AND?: Prisma.ProducerPaymentScalarWhereInput | Prisma.ProducerPaymentScalarWhereInput[]
+  OR?: Prisma.ProducerPaymentScalarWhereInput[]
+  NOT?: Prisma.ProducerPaymentScalarWhereInput | Prisma.ProducerPaymentScalarWhereInput[]
+  id?: Prisma.IntFilter<"ProducerPayment"> | number
+  profileId?: Prisma.IntFilter<"ProducerPayment"> | number
+  paymentId?: Prisma.IntFilter<"ProducerPayment"> | number
 }
 
 export type ProducerPaymentCreateWithoutPaymentInput = {
-  producer: Prisma.ProducerCreateNestedOneWithoutPaymentsInput
+  profile: Prisma.ProducerProfileCreateNestedOneWithoutPaymentsInput
 }
 
 export type ProducerPaymentUncheckedCreateWithoutPaymentInput = {
   id?: number
-  producerId: number
+  profileId: number
 }
 
 export type ProducerPaymentCreateOrConnectWithoutPaymentInput = {
@@ -453,95 +497,51 @@ export type ProducerPaymentUpdateManyWithWhereWithoutPaymentInput = {
   data: Prisma.XOR<Prisma.ProducerPaymentUpdateManyMutationInput, Prisma.ProducerPaymentUncheckedUpdateManyWithoutPaymentInput>
 }
 
-export type ProducerPaymentScalarWhereInput = {
-  AND?: Prisma.ProducerPaymentScalarWhereInput | Prisma.ProducerPaymentScalarWhereInput[]
-  OR?: Prisma.ProducerPaymentScalarWhereInput[]
-  NOT?: Prisma.ProducerPaymentScalarWhereInput | Prisma.ProducerPaymentScalarWhereInput[]
-  id?: Prisma.IntFilter<"ProducerPayment"> | number
-  producerId?: Prisma.IntFilter<"ProducerPayment"> | number
-  paymentId?: Prisma.IntFilter<"ProducerPayment"> | number
-}
-
-export type ProducerPaymentCreateWithoutProducerInput = {
-  payment: Prisma.PaymentOptionCreateNestedOneWithoutProducersInput
-}
-
-export type ProducerPaymentUncheckedCreateWithoutProducerInput = {
+export type ProducerPaymentCreateManyProfileInput = {
   id?: number
   paymentId: number
 }
 
-export type ProducerPaymentCreateOrConnectWithoutProducerInput = {
-  where: Prisma.ProducerPaymentWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProducerPaymentCreateWithoutProducerInput, Prisma.ProducerPaymentUncheckedCreateWithoutProducerInput>
+export type ProducerPaymentUpdateWithoutProfileInput = {
+  payment?: Prisma.PaymentOptionUpdateOneRequiredWithoutProducersNestedInput
 }
 
-export type ProducerPaymentCreateManyProducerInputEnvelope = {
-  data: Prisma.ProducerPaymentCreateManyProducerInput | Prisma.ProducerPaymentCreateManyProducerInput[]
-  skipDuplicates?: boolean
+export type ProducerPaymentUncheckedUpdateWithoutProfileInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
-export type ProducerPaymentUpsertWithWhereUniqueWithoutProducerInput = {
-  where: Prisma.ProducerPaymentWhereUniqueInput
-  update: Prisma.XOR<Prisma.ProducerPaymentUpdateWithoutProducerInput, Prisma.ProducerPaymentUncheckedUpdateWithoutProducerInput>
-  create: Prisma.XOR<Prisma.ProducerPaymentCreateWithoutProducerInput, Prisma.ProducerPaymentUncheckedCreateWithoutProducerInput>
-}
-
-export type ProducerPaymentUpdateWithWhereUniqueWithoutProducerInput = {
-  where: Prisma.ProducerPaymentWhereUniqueInput
-  data: Prisma.XOR<Prisma.ProducerPaymentUpdateWithoutProducerInput, Prisma.ProducerPaymentUncheckedUpdateWithoutProducerInput>
-}
-
-export type ProducerPaymentUpdateManyWithWhereWithoutProducerInput = {
-  where: Prisma.ProducerPaymentScalarWhereInput
-  data: Prisma.XOR<Prisma.ProducerPaymentUpdateManyMutationInput, Prisma.ProducerPaymentUncheckedUpdateManyWithoutProducerInput>
+export type ProducerPaymentUncheckedUpdateManyWithoutProfileInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ProducerPaymentCreateManyPaymentInput = {
   id?: number
-  producerId: number
+  profileId: number
 }
 
 export type ProducerPaymentUpdateWithoutPaymentInput = {
-  producer?: Prisma.ProducerUpdateOneRequiredWithoutPaymentsNestedInput
+  profile?: Prisma.ProducerProfileUpdateOneRequiredWithoutPaymentsNestedInput
 }
 
 export type ProducerPaymentUncheckedUpdateWithoutPaymentInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  producerId?: Prisma.IntFieldUpdateOperationsInput | number
+  profileId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ProducerPaymentUncheckedUpdateManyWithoutPaymentInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  producerId?: Prisma.IntFieldUpdateOperationsInput | number
-}
-
-export type ProducerPaymentCreateManyProducerInput = {
-  id?: number
-  paymentId: number
-}
-
-export type ProducerPaymentUpdateWithoutProducerInput = {
-  payment?: Prisma.PaymentOptionUpdateOneRequiredWithoutProducersNestedInput
-}
-
-export type ProducerPaymentUncheckedUpdateWithoutProducerInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  paymentId?: Prisma.IntFieldUpdateOperationsInput | number
-}
-
-export type ProducerPaymentUncheckedUpdateManyWithoutProducerInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  paymentId?: Prisma.IntFieldUpdateOperationsInput | number
+  profileId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 
 
 export type ProducerPaymentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  producerId?: boolean
+  profileId?: boolean
   paymentId?: boolean
-  producer?: boolean | Prisma.ProducerDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.ProducerProfileDefaultArgs<ExtArgs>
   payment?: boolean | Prisma.PaymentOptionDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["producerPayment"]>
 
@@ -549,25 +549,25 @@ export type ProducerPaymentSelect<ExtArgs extends runtime.Types.Extensions.Inter
 
 export type ProducerPaymentSelectScalar = {
   id?: boolean
-  producerId?: boolean
+  profileId?: boolean
   paymentId?: boolean
 }
 
-export type ProducerPaymentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "producerId" | "paymentId", ExtArgs["result"]["producerPayment"]>
+export type ProducerPaymentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "profileId" | "paymentId", ExtArgs["result"]["producerPayment"]>
 export type ProducerPaymentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  producer?: boolean | Prisma.ProducerDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.ProducerProfileDefaultArgs<ExtArgs>
   payment?: boolean | Prisma.PaymentOptionDefaultArgs<ExtArgs>
 }
 
 export type $ProducerPaymentPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ProducerPayment"
   objects: {
-    producer: Prisma.$ProducerPayload<ExtArgs>
+    profile: Prisma.$ProducerProfilePayload<ExtArgs>
     payment: Prisma.$PaymentOptionPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
-    producerId: number
+    profileId: number
     paymentId: number
   }, ExtArgs["result"]["producerPayment"]>
   composites: {}
@@ -909,7 +909,7 @@ readonly fields: ProducerPaymentFieldRefs;
  */
 export interface Prisma__ProducerPaymentClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  producer<T extends Prisma.ProducerDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProducerDefaultArgs<ExtArgs>>): Prisma.Prisma__ProducerClient<runtime.Types.Result.GetResult<Prisma.$ProducerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  profile<T extends Prisma.ProducerProfileDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProducerProfileDefaultArgs<ExtArgs>>): Prisma.Prisma__ProducerProfileClient<runtime.Types.Result.GetResult<Prisma.$ProducerProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   payment<T extends Prisma.PaymentOptionDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PaymentOptionDefaultArgs<ExtArgs>>): Prisma.Prisma__PaymentOptionClient<runtime.Types.Result.GetResult<Prisma.$PaymentOptionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -941,7 +941,7 @@ export interface Prisma__ProducerPaymentClient<T, Null = never, ExtArgs extends 
  */
 export interface ProducerPaymentFieldRefs {
   readonly id: Prisma.FieldRef<"ProducerPayment", 'Int'>
-  readonly producerId: Prisma.FieldRef<"ProducerPayment", 'Int'>
+  readonly profileId: Prisma.FieldRef<"ProducerPayment", 'Int'>
   readonly paymentId: Prisma.FieldRef<"ProducerPayment", 'Int'>
 }
     

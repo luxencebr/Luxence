@@ -67,14 +67,18 @@ export default function SignupPage() {
                 setSuccess,
                 setIsLoading,
                 role: role as "CLIENT" | "ADVERTISER",
-              })) as { ok: boolean; role?: "CLIENT" | "ADVERTISER" };
+              })) as {
+                ok: boolean;
+                role?: "CLIENT" | "ADVERTISER";
+                userId?: string;
+              };
 
               if (result.ok) {
                 setIsOpen(false);
                 setSuccess("");
                 setErrors({});
                 if (result.role === "ADVERTISER") {
-                  router.push("/advertiser");
+                  router.push(`/advertiser?uid=${result.userId}`);
                 }
               }
             }}

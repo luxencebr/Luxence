@@ -39,6 +39,8 @@ export default async function register(
     return { ok: false };
   }
 
+  console.log("Enviando para API:", { ...data, role });
+
   try {
     setIsLoading?.(true);
 
@@ -57,13 +59,18 @@ export default async function register(
 
     setSuccess?.("Cadastro realizado com sucesso!");
 
+    // Faz login automático
     await signIn("credentials", {
       redirect: false,
       email: data.email,
       password: data.password,
     });
 
-    return { ok: true, role };
+    return {
+      ok: true,
+      role,
+      userId: result.user.id, // ⬅ AQUI!
+    };
   } catch (err) {
     console.error("Erro ao registrar:", err);
     setErrors({ general: "Erro inesperado. Tente novamente." });

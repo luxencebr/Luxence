@@ -51,7 +51,6 @@
 
 .card {
   background: var(--background-complementary-color);
-  height: 320px;
   border-radius: 12px;
   box-shadow: 0 0 16px rgba(0, 0, 0, 0.25);
   padding: 48px;

@@ -21,14 +21,24 @@ export default function StepNavigation({
 }: StepNavigationProps) {
   const handleNextClick = () => {
     if (currentStep === totalSteps) {
-      onSubmit();
+      if (canProceed()) {
+        onSubmit();
+      }
     } else {
-      onNext();
+      if (canProceed()) {
+        onNext();
+      }
     }
   };
 
   return (
     <div className={styles.container}>
+      {!canProceed() && (
+        <p style={{ color: "orange", margin: 0 }}>
+          ⚠ Preencha corretamente as informações
+        </p>
+      )}
+
       {/* Botão Voltar (só aparece se não for o primeiro step) */}
       {currentStep > 1 && (
         <button
@@ -40,6 +50,7 @@ export default function StepNavigation({
       )}
 
       {/* Botão Próximo / Finalizar */}
+
       <button
         onClick={handleNextClick}
         className={`${styles.button} ${styles.buttonNext}`}

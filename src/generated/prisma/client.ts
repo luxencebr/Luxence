@@ -63,15 +63,20 @@ export type Locality = Prisma.LocalityModel
  */
 export type User = Prisma.UserModel
 /**
- * Model Appearance
+ * Model Review
  * 
  */
-export type Appearance = Prisma.AppearanceModel
+export type Review = Prisma.ReviewModel
 /**
- * Model Price
+ * Model Producer
  * 
  */
-export type Price = Prisma.PriceModel
+export type Producer = Prisma.ProducerModel
+/**
+ * Model ProducerProfile
+ * 
+ */
+export type ProducerProfile = Prisma.ProducerProfileModel
 /**
  * Model ProducerLocal
  * 
@@ -88,25 +93,25 @@ export type AmenityOption = Prisma.AmenityOptionModel
  */
 export type LocalAmenity = Prisma.LocalAmenityModel
 /**
- * Model AudienceOption
+ * Model AppearanceOption
  * 
  */
-export type AudienceOption = Prisma.AudienceOptionModel
+export type AppearanceOption = Prisma.AppearanceOptionModel
 /**
- * Model ProducerAudience
+ * Model ProducerAppearance
  * 
  */
-export type ProducerAudience = Prisma.ProducerAudienceModel
+export type ProducerAppearance = Prisma.ProducerAppearanceModel
 /**
- * Model LocationOption
+ * Model PriceOption
  * 
  */
-export type LocationOption = Prisma.LocationOptionModel
+export type PriceOption = Prisma.PriceOptionModel
 /**
- * Model ProducerLocations
+ * Model ProducerPrice
  * 
  */
-export type ProducerLocations = Prisma.ProducerLocationsModel
+export type ProducerPrice = Prisma.ProducerPriceModel
 /**
  * Model ServiceOption
  * 
@@ -128,6 +133,26 @@ export type FetishOption = Prisma.FetishOptionModel
  */
 export type ProducerFetish = Prisma.ProducerFetishModel
 /**
+ * Model AudienceOption
+ * 
+ */
+export type AudienceOption = Prisma.AudienceOptionModel
+/**
+ * Model ProducerAudience
+ * 
+ */
+export type ProducerAudience = Prisma.ProducerAudienceModel
+/**
+ * Model LocationOption
+ * 
+ */
+export type LocationOption = Prisma.LocationOptionModel
+/**
+ * Model ProducerLocations
+ * 
+ */
+export type ProducerLocations = Prisma.ProducerLocationsModel
+/**
  * Model PaymentOption
  * 
  */
@@ -137,13 +162,3 @@ export type PaymentOption = Prisma.PaymentOptionModel
  * 
  */
 export type ProducerPayment = Prisma.ProducerPaymentModel
-/**
- * Model Review
- * 
- */
-export type Review = Prisma.ReviewModel
-/**
- * Model Producer
- * 
- */
-export type Producer = Prisma.ProducerModel
