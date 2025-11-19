@@ -4,7 +4,6 @@ import * as React from "react";
 import { useEffect } from "react";
 
 import type { Producer } from "@/types/Producer";
-import allProducers from "@/data/producers";
 
 import Slider from "@/components/Slider/Slider";
 import ProductInfo from "@/components/ProductInfo/ProductInfo";
@@ -23,10 +22,25 @@ interface ProductPageProps {
 
 export default function ProductPage({ params }: ProductPageProps) {
   const { id } = React.use(params);
+  const [producer, setProducer] = React.useState<Producer | null>(null);
+  const [loading, setLoading] = React.useState(true);
 
-  const producer: Producer | undefined = allProducers.find(
-    (p) => p.id.toString() === id
-  );
+  useEffect(() => {
+    const fetchProducer = async () => {
+      try {
+        const response = await fetch(`/api/producers/${id}`);
+        if (!response.ok) throw new Error("Perfil não encontrado");
+        const data = await response.json();
+        setProducer(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducer();
+  }, [id]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -45,21 +59,39 @@ export default function ProductPage({ params }: ProductPageProps) {
     }
   }, []);
 
+  if (loading) {
+    return <p>Carregando...</p>;
+  }
+
   if (!producer) {
     return <p>Produto não encontrado</p>;
   }
 
-  const slides = producer.profile.images.map((src, index) => ({
-    id: index,
-    src,
-    alt: `${producer.profile.name} - imagem ${index + 1}`,
-  }));
+  const slides = Array.isArray(producer.profile.images)
+    ? producer.profile.images.map((img, index) => ({
+        id: index,
+        src: img.url,
+        alt: `${img.name} - imagem ${index + 1}`,
+      }))
+    : [];
+
+  console.log("PERFIL DA PÁGINA", producer);
 
   return (
     <div className={styles.productPage}>
       <div className={styles.layout}>
         <section className={styles.productShowcase}>
-          <Slider slides={slides} className={styles.productSlider} />
+          <div className={styles.sliderContainer}>
+            {slides.length > 0 ? (
+              <Slider slides={slides} className={styles.slider} />
+            ) : (
+              <label className={styles.imagesInput}>
+                Adicione Imagens ao seu Perfil{" "}
+                <span>E alcance mais usuários</span>
+                <input type="file" className={styles.hidden} />
+              </label>
+            )}
+          </div>
           <ProductInfo producer={producer} />
         </section>
 
@@ -72,24 +104,29 @@ export default function ProductPage({ params }: ProductPageProps) {
               <span className={styles.icon}>
                 <IoFlag />
               </span>
-              {producer.profile.nationality}
+              {producer.nationality}
             </div>
 
             <div className={styles.topic}>
               <span className={styles.icon}>
                 <IoLanguage />
               </span>
-              {producer.profile.languages.map((language, index) => (
-                <span key={index} className={styles.languageTag}>
-                  {language.name} - {language.level}
-                </span>
-              ))}{" "}
+              {Array.isArray(producer.profile.languages) &&
+              producer.profile.languages.length > 0 ? (
+                producer.profile.languages.map((language, index) => (
+                  <span key={index} className={styles.languageTag}>
+                    {language.name} - {language.level}
+                  </span>
+                ))
+              ) : (
+                <span className={styles.languageTag}>Não informado</span>
+              )}
             </div>
             <div className={styles.topic}>
               <span className={styles.icon}>
                 <IoSchool />
               </span>
-              {producer.profile.scholarity.level}
+              {producer.profile.scholarity}
             </div>
           </div>
         </section>

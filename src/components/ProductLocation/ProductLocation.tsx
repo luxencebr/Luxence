@@ -5,13 +5,16 @@ import { HiLocationMarker } from "react-icons/hi";
 import { FaLocationArrow } from "react-icons/fa6";
 import { TbHomeCheck } from "react-icons/tb";
 
-import type { Producer } from "../../types/Producer";
+import type { Producer } from "@/types/Producer";
 
 interface ProductLocationProps {
   producer: Producer;
 }
 
 function ProductLocation({ producer }: ProductLocationProps) {
+  const local = producer.profile.local;
+  const userLocality = producer.profile.producer?.user?.locality;
+
   return (
     <section id="location" className={styles.productLocation}>
       <div className={styles.layout}>
@@ -24,7 +27,7 @@ function ProductLocation({ producer }: ProductLocationProps) {
           </h2>
         </div>
         <div className={styles.content}>
-          {producer.locality.hasLocal && (
+          {local && (
             <div className={`${styles.column} ${styles.conditional}`}>
               <div className={styles.line}>
                 <h3 className={styles.columnTitle}>
@@ -34,35 +37,15 @@ function ProductLocation({ producer }: ProductLocationProps) {
                   Minha Localidade
                 </h3>
                 <p className={styles.address}>
-                  {producer.locality.local.neighborhood},{" "}
-                  {producer.locality.local.city} -{" "}
-                  {producer.locality.local.state}
+                  {local.neighborhood}, {local.city} - {local.state}
                 </p>
               </div>
               <div className={styles.line}>
                 <h3 className={styles.columnTitle}>Comodidades do Local</h3>
                 <p>
                   {(() => {
-                    const amenitiesList = Object.entries(
-                      producer.locality.local.amenities
-                    )
-                      .filter(([_, value]) => value)
-                      .map(([key]) => {
-                        switch (key) {
-                          case "wifi":
-                            return "Wi-Fi";
-                          case "airconditioning":
-                            return "Ar-condicionado";
-                          case "shower":
-                            return "Chuveiro";
-                          case "condom":
-                            return "Preservativo";
-                          case "parking":
-                            return "Estacionamento";
-                          default:
-                            return null;
-                        }
-                      })
+                    const amenitiesList = local.amenities
+                      .map((amenity) => amenity.amenity.label)
                       .filter(Boolean);
 
                     if (amenitiesList.length === 0)
@@ -90,8 +73,8 @@ function ProductLocation({ producer }: ProductLocationProps) {
               </h3>
 
               <p className={styles.address}>
-                {producer.locality.neighborhood} - {producer.locality.city},{" "}
-                {producer.locality.state}
+                {userLocality?.zone} - {userLocality?.city},{" "}
+                {userLocality?.state}
               </p>
             </div>
             <div className={styles.line}>
@@ -99,28 +82,14 @@ function ProductLocation({ producer }: ProductLocationProps) {
 
               <p className={styles.address}>
                 {(() => {
-                  const locationsList = Object.entries(
-                    producer.locality.locations
-                  )
-                    .filter(([_, value]) => value)
-                    .map(([key]) => {
-                      switch (key) {
-                        case "athome":
-                          return "A Domicilio";
-                        case "hotels":
-                          return "Hotéis";
-                        case "motels":
-                          return "Motéis";
-                        case "events":
-                          return "Eventos";
-                        default:
-                          return null;
-                      }
-                    })
-                    .filter(Boolean);
+                  const locationsList = producer.profile.locations?.length
+                    ? producer.profile.locations
+                        .map((loc) => loc.location.label)
+                        .filter(Boolean)
+                    : ["Não Informado"];
 
                   if (locationsList.length === 0)
-                    return "Nenhuma comodidade informada.";
+                    return "Nenhuma localidade informada.";
 
                   if (locationsList.length === 1) return locationsList[0];
 

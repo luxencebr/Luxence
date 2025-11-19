@@ -127,6 +127,7 @@ model ProducerProfile {
 
   slogan      String
   description String
+  images      Json
 
   scholarity  String
   languages   Json  
@@ -222,7 +223,7 @@ model ProducerPrice {
   profile    ProducerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
   option     PriceOption     @relation(fields: [priceId], references: [id])
   
-  value      Float           // o preço definido pelo produtor
+  value      Float           
   @@unique([profileId, priceId])
 }
 

@@ -4,15 +4,14 @@ import { useState } from "react";
 import styles from "./ProductReviews.module.css";
 import { FaHeart } from "react-icons/fa6";
 
-import type { Producer } from "../../types/Producer";
-import type { ProducerReview } from "../../types/ProducerReview";
+import type { Producer } from "@/types/Producer";
 
 interface ProductReviewsProps {
   producer: Producer;
 }
 
 function ProductReviews({ producer }: ProductReviewsProps) {
-  const reviews = producer.reviews || [];
+  const reviews = producer.profile.reviews || [];
   const hasReviews = reviews.length > 0;
 
   const rating = hasReviews
@@ -43,12 +42,12 @@ function ProductReviews({ producer }: ProductReviewsProps) {
 
         <ul className={styles.reviewsList}>
           {hasReviews ? (
-            visibleReviews.map((review: ProducerReview) => (
+            visibleReviews.map((review) => (
               <li key={review.id} className={styles.reviewItem}>
                 <div className={styles.reviewItemLayout}>
                   <div className={styles.reviewInfo}>
                     <p className={styles.reviewerName}>
-                      {review.userName || `Cliente ${review.userId.slice(-4)}`}
+                      {review.user.name || `Cliente ${review.userId}`}
                     </p>
                     <span className={styles.rate}>({review.rating} / 5)</span>
                   </div>
@@ -79,7 +78,6 @@ function ProductReviews({ producer }: ProductReviewsProps) {
       <div className={`${styles.layout} ${styles.user}`}>
         <div className={styles.userReview}>
           <div className={styles.producerCall}>
-            <img src={producer.profile.images[1]} alt="" />
             <p>O que achou do nosso encontro, amor?</p>
           </div>
           <textarea

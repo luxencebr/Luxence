@@ -23,9 +23,42 @@
   gap: 16px;
 }
 
-.productSlider {
+.sliderContainer {
+  background: var(--background-complementary-color);
   height: calc(90vh - 32px);
   aspect-ratio: 4 / 3;
+  border-radius: 8px;
+
+  display: flex;
+}
+
+.slider {
+  height: 100%;
+  width: 100%;
+}
+
+.imagesInput {
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--contrast-color);
+  font-size: 16px;
+
+  cursor: pointer;
+}
+
+.imagesInput span {
+  color: var(--contrast-complementary-color);
+  font-size: 12px;
+}
+
+.hidden {
+  display: none;
 }
 
 @media (max-width: 768px) {

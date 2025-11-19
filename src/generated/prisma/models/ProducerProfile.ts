@@ -62,6 +62,7 @@ export type ProducerProfileCountAggregateOutputType = {
   producerId: number
   slogan: number
   description: number
+  images: number
   scholarity: number
   languages: number
   hasLocal: number
@@ -107,6 +108,7 @@ export type ProducerProfileCountAggregateInputType = {
   producerId?: true
   slogan?: true
   description?: true
+  images?: true
   scholarity?: true
   languages?: true
   hasLocal?: true
@@ -205,6 +207,7 @@ export type ProducerProfileGroupByOutputType = {
   producerId: number
   slogan: string
   description: string
+  images: runtime.JsonValue
   scholarity: string
   languages: runtime.JsonValue
   hasLocal: boolean
@@ -239,6 +242,7 @@ export type ProducerProfileWhereInput = {
   producerId?: Prisma.IntFilter<"ProducerProfile"> | number
   slogan?: Prisma.StringFilter<"ProducerProfile"> | string
   description?: Prisma.StringFilter<"ProducerProfile"> | string
+  images?: Prisma.JsonFilter<"ProducerProfile">
   scholarity?: Prisma.StringFilter<"ProducerProfile"> | string
   languages?: Prisma.JsonFilter<"ProducerProfile">
   hasLocal?: Prisma.BoolFilter<"ProducerProfile"> | boolean
@@ -260,6 +264,7 @@ export type ProducerProfileOrderByWithRelationInput = {
   producerId?: Prisma.SortOrder
   slogan?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  images?: Prisma.SortOrder
   scholarity?: Prisma.SortOrder
   languages?: Prisma.SortOrder
   hasLocal?: Prisma.SortOrder
@@ -285,6 +290,7 @@ export type ProducerProfileWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ProducerProfileWhereInput | Prisma.ProducerProfileWhereInput[]
   slogan?: Prisma.StringFilter<"ProducerProfile"> | string
   description?: Prisma.StringFilter<"ProducerProfile"> | string
+  images?: Prisma.JsonFilter<"ProducerProfile">
   scholarity?: Prisma.StringFilter<"ProducerProfile"> | string
   languages?: Prisma.JsonFilter<"ProducerProfile">
   hasLocal?: Prisma.BoolFilter<"ProducerProfile"> | boolean
@@ -306,6 +312,7 @@ export type ProducerProfileOrderByWithAggregationInput = {
   producerId?: Prisma.SortOrder
   slogan?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  images?: Prisma.SortOrder
   scholarity?: Prisma.SortOrder
   languages?: Prisma.SortOrder
   hasLocal?: Prisma.SortOrder
@@ -325,6 +332,7 @@ export type ProducerProfileScalarWhereWithAggregatesInput = {
   producerId?: Prisma.IntWithAggregatesFilter<"ProducerProfile"> | number
   slogan?: Prisma.StringWithAggregatesFilter<"ProducerProfile"> | string
   description?: Prisma.StringWithAggregatesFilter<"ProducerProfile"> | string
+  images?: Prisma.JsonWithAggregatesFilter<"ProducerProfile">
   scholarity?: Prisma.StringWithAggregatesFilter<"ProducerProfile"> | string
   languages?: Prisma.JsonWithAggregatesFilter<"ProducerProfile">
   hasLocal?: Prisma.BoolWithAggregatesFilter<"ProducerProfile"> | boolean
@@ -334,6 +342,7 @@ export type ProducerProfileScalarWhereWithAggregatesInput = {
 export type ProducerProfileCreateInput = {
   slogan: string
   description: string
+  images: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity: string
   languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: boolean
@@ -355,6 +364,7 @@ export type ProducerProfileUncheckedCreateInput = {
   producerId: number
   slogan: string
   description: string
+  images: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity: string
   languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: boolean
@@ -373,6 +383,7 @@ export type ProducerProfileUncheckedCreateInput = {
 export type ProducerProfileUpdateInput = {
   slogan?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity?: Prisma.StringFieldUpdateOperationsInput | string
   languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -394,6 +405,7 @@ export type ProducerProfileUncheckedUpdateInput = {
   producerId?: Prisma.IntFieldUpdateOperationsInput | number
   slogan?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity?: Prisma.StringFieldUpdateOperationsInput | string
   languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -414,6 +426,7 @@ export type ProducerProfileCreateManyInput = {
   producerId: number
   slogan: string
   description: string
+  images: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity: string
   languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: boolean
@@ -423,6 +436,7 @@ export type ProducerProfileCreateManyInput = {
 export type ProducerProfileUpdateManyMutationInput = {
   slogan?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity?: Prisma.StringFieldUpdateOperationsInput | string
   languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -434,6 +448,7 @@ export type ProducerProfileUncheckedUpdateManyInput = {
   producerId?: Prisma.IntFieldUpdateOperationsInput | number
   slogan?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity?: Prisma.StringFieldUpdateOperationsInput | string
   languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -461,6 +476,7 @@ export type ProducerProfileCountOrderByAggregateInput = {
   producerId?: Prisma.SortOrder
   slogan?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  images?: Prisma.SortOrder
   scholarity?: Prisma.SortOrder
   languages?: Prisma.SortOrder
   hasLocal?: Prisma.SortOrder
@@ -660,6 +676,7 @@ export type ProducerProfileUpdateOneRequiredWithoutPaymentsNestedInput = {
 export type ProducerProfileCreateWithoutReviewsInput = {
   slogan: string
   description: string
+  images: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity: string
   languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: boolean
@@ -680,6 +697,7 @@ export type ProducerProfileUncheckedCreateWithoutReviewsInput = {
   producerId: number
   slogan: string
   description: string
+  images: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity: string
   languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: boolean
@@ -713,6 +731,7 @@ export type ProducerProfileUpdateToOneWithWhereWithoutReviewsInput = {
 export type ProducerProfileUpdateWithoutReviewsInput = {
   slogan?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity?: Prisma.StringFieldUpdateOperationsInput | string
   languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -733,6 +752,7 @@ export type ProducerProfileUncheckedUpdateWithoutReviewsInput = {
   producerId?: Prisma.IntFieldUpdateOperationsInput | number
   slogan?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity?: Prisma.StringFieldUpdateOperationsInput | string
   languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -750,6 +770,7 @@ export type ProducerProfileUncheckedUpdateWithoutReviewsInput = {
 export type ProducerProfileCreateWithoutProducerInput = {
   slogan: string
   description: string
+  images: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity: string
   languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: boolean
@@ -769,6 +790,7 @@ export type ProducerProfileUncheckedCreateWithoutProducerInput = {
   id?: number
   slogan: string
   description: string
+  images: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity: string
   languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: boolean
@@ -803,6 +825,7 @@ export type ProducerProfileUpdateToOneWithWhereWithoutProducerInput = {
 export type ProducerProfileUpdateWithoutProducerInput = {
   slogan?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity?: Prisma.StringFieldUpdateOperationsInput | string
   languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -822,6 +845,7 @@ export type ProducerProfileUncheckedUpdateWithoutProducerInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   slogan?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity?: Prisma.StringFieldUpdateOperationsInput | string
   languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -840,6 +864,7 @@ export type ProducerProfileUncheckedUpdateWithoutProducerInput = {
 export type ProducerProfileCreateWithoutLocalInput = {
   slogan: string
   description: string
+  images: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity: string
   languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: boolean
@@ -860,6 +885,7 @@ export type ProducerProfileUncheckedCreateWithoutLocalInput = {
   producerId: number
   slogan: string
   description: string
+  images: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity: string
   languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: boolean
@@ -893,6 +919,7 @@ export type ProducerProfileUpdateToOneWithWhereWithoutLocalInput = {
 export type ProducerProfileUpdateWithoutLocalInput = {
   slogan?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity?: Prisma.StringFieldUpdateOperationsInput | string
   languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -913,6 +940,7 @@ export type ProducerProfileUncheckedUpdateWithoutLocalInput = {
   producerId?: Prisma.IntFieldUpdateOperationsInput | number
   slogan?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity?: Prisma.StringFieldUpdateOperationsInput | string
   languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -930,6 +958,7 @@ export type ProducerProfileUncheckedUpdateWithoutLocalInput = {
 export type ProducerProfileCreateWithoutAppearanceInput = {
   slogan: string
   description: string
+  images: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity: string
   languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: boolean
@@ -950,6 +979,7 @@ export type ProducerProfileUncheckedCreateWithoutAppearanceInput = {
   producerId: number
   slogan: string
   description: string
+  images: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity: string
   languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: boolean
@@ -983,6 +1013,7 @@ export type ProducerProfileUpdateToOneWithWhereWithoutAppearanceInput = {
 export type ProducerProfileUpdateWithoutAppearanceInput = {
   slogan?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity?: Prisma.StringFieldUpdateOperationsInput | string
   languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1003,6 +1034,7 @@ export type ProducerProfileUncheckedUpdateWithoutAppearanceInput = {
   producerId?: Prisma.IntFieldUpdateOperationsInput | number
   slogan?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity?: Prisma.StringFieldUpdateOperationsInput | string
   languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1020,6 +1052,7 @@ export type ProducerProfileUncheckedUpdateWithoutAppearanceInput = {
 export type ProducerProfileCreateWithoutPricesInput = {
   slogan: string
   description: string
+  images: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity: string
   languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: boolean
@@ -1040,6 +1073,7 @@ export type ProducerProfileUncheckedCreateWithoutPricesInput = {
   producerId: number
   slogan: string
   description: string
+  images: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity: string
   languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: boolean
@@ -1073,6 +1107,7 @@ export type ProducerProfileUpdateToOneWithWhereWithoutPricesInput = {
 export type ProducerProfileUpdateWithoutPricesInput = {
   slogan?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity?: Prisma.StringFieldUpdateOperationsInput | string
   languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1093,6 +1128,7 @@ export type ProducerProfileUncheckedUpdateWithoutPricesInput = {
   producerId?: Prisma.IntFieldUpdateOperationsInput | number
   slogan?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity?: Prisma.StringFieldUpdateOperationsInput | string
   languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1110,6 +1146,7 @@ export type ProducerProfileUncheckedUpdateWithoutPricesInput = {
 export type ProducerProfileCreateWithoutServicesInput = {
   slogan: string
   description: string
+  images: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity: string
   languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: boolean
@@ -1130,6 +1167,7 @@ export type ProducerProfileUncheckedCreateWithoutServicesInput = {
   producerId: number
   slogan: string
   description: string
+  images: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity: string
   languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: boolean
@@ -1163,6 +1201,7 @@ export type ProducerProfileUpdateToOneWithWhereWithoutServicesInput = {
 export type ProducerProfileUpdateWithoutServicesInput = {
   slogan?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity?: Prisma.StringFieldUpdateOperationsInput | string
   languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1183,6 +1222,7 @@ export type ProducerProfileUncheckedUpdateWithoutServicesInput = {
   producerId?: Prisma.IntFieldUpdateOperationsInput | number
   slogan?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity?: Prisma.StringFieldUpdateOperationsInput | string
   languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1200,6 +1240,7 @@ export type ProducerProfileUncheckedUpdateWithoutServicesInput = {
 export type ProducerProfileCreateWithoutFetichesInput = {
   slogan: string
   description: string
+  images: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity: string
   languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: boolean
@@ -1220,6 +1261,7 @@ export type ProducerProfileUncheckedCreateWithoutFetichesInput = {
   producerId: number
   slogan: string
   description: string
+  images: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity: string
   languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: boolean
@@ -1253,6 +1295,7 @@ export type ProducerProfileUpdateToOneWithWhereWithoutFetichesInput = {
 export type ProducerProfileUpdateWithoutFetichesInput = {
   slogan?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity?: Prisma.StringFieldUpdateOperationsInput | string
   languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1273,6 +1316,7 @@ export type ProducerProfileUncheckedUpdateWithoutFetichesInput = {
   producerId?: Prisma.IntFieldUpdateOperationsInput | number
   slogan?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity?: Prisma.StringFieldUpdateOperationsInput | string
   languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1290,6 +1334,7 @@ export type ProducerProfileUncheckedUpdateWithoutFetichesInput = {
 export type ProducerProfileCreateWithoutAudienceInput = {
   slogan: string
   description: string
+  images: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity: string
   languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: boolean
@@ -1310,6 +1355,7 @@ export type ProducerProfileUncheckedCreateWithoutAudienceInput = {
   producerId: number
   slogan: string
   description: string
+  images: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity: string
   languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: boolean
@@ -1343,6 +1389,7 @@ export type ProducerProfileUpdateToOneWithWhereWithoutAudienceInput = {
 export type ProducerProfileUpdateWithoutAudienceInput = {
   slogan?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity?: Prisma.StringFieldUpdateOperationsInput | string
   languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1363,6 +1410,7 @@ export type ProducerProfileUncheckedUpdateWithoutAudienceInput = {
   producerId?: Prisma.IntFieldUpdateOperationsInput | number
   slogan?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity?: Prisma.StringFieldUpdateOperationsInput | string
   languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1380,6 +1428,7 @@ export type ProducerProfileUncheckedUpdateWithoutAudienceInput = {
 export type ProducerProfileCreateWithoutLocationsInput = {
   slogan: string
   description: string
+  images: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity: string
   languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: boolean
@@ -1400,6 +1449,7 @@ export type ProducerProfileUncheckedCreateWithoutLocationsInput = {
   producerId: number
   slogan: string
   description: string
+  images: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity: string
   languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: boolean
@@ -1433,6 +1483,7 @@ export type ProducerProfileUpdateToOneWithWhereWithoutLocationsInput = {
 export type ProducerProfileUpdateWithoutLocationsInput = {
   slogan?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity?: Prisma.StringFieldUpdateOperationsInput | string
   languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1453,6 +1504,7 @@ export type ProducerProfileUncheckedUpdateWithoutLocationsInput = {
   producerId?: Prisma.IntFieldUpdateOperationsInput | number
   slogan?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity?: Prisma.StringFieldUpdateOperationsInput | string
   languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1470,6 +1522,7 @@ export type ProducerProfileUncheckedUpdateWithoutLocationsInput = {
 export type ProducerProfileCreateWithoutPaymentsInput = {
   slogan: string
   description: string
+  images: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity: string
   languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: boolean
@@ -1490,6 +1543,7 @@ export type ProducerProfileUncheckedCreateWithoutPaymentsInput = {
   producerId: number
   slogan: string
   description: string
+  images: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity: string
   languages: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: boolean
@@ -1523,6 +1577,7 @@ export type ProducerProfileUpdateToOneWithWhereWithoutPaymentsInput = {
 export type ProducerProfileUpdateWithoutPaymentsInput = {
   slogan?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity?: Prisma.StringFieldUpdateOperationsInput | string
   languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1543,6 +1598,7 @@ export type ProducerProfileUncheckedUpdateWithoutPaymentsInput = {
   producerId?: Prisma.IntFieldUpdateOperationsInput | number
   slogan?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  images?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scholarity?: Prisma.StringFieldUpdateOperationsInput | string
   languages?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   hasLocal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1656,6 +1712,7 @@ export type ProducerProfileSelect<ExtArgs extends runtime.Types.Extensions.Inter
   producerId?: boolean
   slogan?: boolean
   description?: boolean
+  images?: boolean
   scholarity?: boolean
   languages?: boolean
   hasLocal?: boolean
@@ -1680,13 +1737,14 @@ export type ProducerProfileSelectScalar = {
   producerId?: boolean
   slogan?: boolean
   description?: boolean
+  images?: boolean
   scholarity?: boolean
   languages?: boolean
   hasLocal?: boolean
   views?: boolean
 }
 
-export type ProducerProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "producerId" | "slogan" | "description" | "scholarity" | "languages" | "hasLocal" | "views", ExtArgs["result"]["producerProfile"]>
+export type ProducerProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "producerId" | "slogan" | "description" | "images" | "scholarity" | "languages" | "hasLocal" | "views", ExtArgs["result"]["producerProfile"]>
 export type ProducerProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   producer?: boolean | Prisma.ProducerDefaultArgs<ExtArgs>
   local?: boolean | Prisma.ProducerProfile$localArgs<ExtArgs>
@@ -1720,6 +1778,7 @@ export type $ProducerProfilePayload<ExtArgs extends runtime.Types.Extensions.Int
     producerId: number
     slogan: string
     description: string
+    images: runtime.JsonValue
     scholarity: string
     languages: runtime.JsonValue
     hasLocal: boolean
@@ -2107,6 +2166,7 @@ export interface ProducerProfileFieldRefs {
   readonly producerId: Prisma.FieldRef<"ProducerProfile", 'Int'>
   readonly slogan: Prisma.FieldRef<"ProducerProfile", 'String'>
   readonly description: Prisma.FieldRef<"ProducerProfile", 'String'>
+  readonly images: Prisma.FieldRef<"ProducerProfile", 'Json'>
   readonly scholarity: Prisma.FieldRef<"ProducerProfile", 'String'>
   readonly languages: Prisma.FieldRef<"ProducerProfile", 'Json'>
   readonly hasLocal: Prisma.FieldRef<"ProducerProfile", 'Boolean'>

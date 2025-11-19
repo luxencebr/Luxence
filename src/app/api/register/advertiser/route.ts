@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/utils/prisma"; // seu caminho correto
+import { prisma } from "@/utils/prisma";
 
 export async function POST(req: Request) {
   try {
@@ -29,11 +29,25 @@ export async function POST(req: Request) {
         user: {
           connect: { id: Number(data.userId) },
         },
+        // Create empty profile to ensure data consistency
+        profile: {
+          create: {
+            slogan: "",
+            description: "",
+            images: [],
+            scholarity: "",
+            languages: [],
+          },
+        },
+      },
+      include: {
+        profile: true,
       },
     });
 
     return NextResponse.json({ producer }, { status: 201 });
   } catch (error: any) {
+    console.error("[v0] Registration error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

@@ -12,14 +12,16 @@ import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 import { FaWhatsapp, FaInstagram, FaTelegram } from "react-icons/fa6";
 
-import type { Producer } from "../../types/Producer";
+import type { Producer } from "@/types/Producer";
 import ScrollTo from "@/utils/ScrollTo";
 
-interface ProductInfosProps {
+interface ProductInfoProps {
   producer: Producer;
 }
 
-function ProductInfo({ producer }: ProductInfosProps) {
+function ProductInfo({ producer }: ProductInfoProps) {
+  console.log("producer:", producer);
+
   const contentRef = useRef<HTMLDivElement | null>(null);
   const [atBottom, setAtBottom] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -71,36 +73,36 @@ function ProductInfo({ producer }: ProductInfosProps) {
     }
   };
 
-  const reviews = producer.reviews || [];
+  const reviews = producer.profile.reviews || [];
   const hasReviews = reviews.length > 0;
 
   const rating = hasReviews
     ? reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length
     : 0;
 
+  const price = producer.profile.prices?.[1]?.value;
+
   return (
     <div className={styles.productInfos}>
       <div className={styles.contactsOptions}>
         <div className={styles.contactsLayout}>
-          {producer.contact.phone && (
+          <a
+            href={`https://wa.me/${producer.phone}`}
+            className={`${styles.contactButton} ${styles.whatsapp}`}
+          >
+            <FaWhatsapp />
+          </a>
+          {producer.profile.telegram && (
             <a
-              href={`https://wa.me/${producer.contact.phone}`}
-              className={`${styles.contactButton} ${styles.whatsapp}`}
-            >
-              <FaWhatsapp />
-            </a>
-          )}
-          {producer.contact.telegram && (
-            <a
-              href={`https://t.me/${producer.contact.telegram}`}
+              href={`https://t.me/${producer.profile.telegram}`}
               className={`${styles.contactButton} ${styles.telegram}`}
             >
-              <FaTelegram />{" "}
+              <FaTelegram />
             </a>
           )}
-          {producer.contact.instagram && (
+          {producer.profile.instagram && (
             <a
-              href={`https://www.instagram.com/${producer.contact.instagram}`}
+              href={`https://www.instagram.com/${producer.profile.instagram}`}
               className={`${styles.contactButton} ${styles.instagram}`}
             >
               <FaInstagram />
@@ -118,7 +120,7 @@ function ProductInfo({ producer }: ProductInfosProps) {
         <div className={styles.content}>
           <div className={styles.productHeader}>
             <div className={styles.productHighlight}>
-              <h1 className={styles.productName}>{producer.profile.name}</h1>
+              <h1 className={styles.productName}>{producer.user.name}</h1>
               <p className={styles.productSlogan}>{producer.profile.slogan}</p>
             </div>
             <button
@@ -131,7 +133,7 @@ function ProductInfo({ producer }: ProductInfosProps) {
                   ? rating.toFixed(1)
                   : "N/D"}
               </span>
-              {producer.reviews?.length} Avaliações
+              {reviews.length} Avaliações
             </button>
           </div>
 
@@ -151,11 +153,7 @@ function ProductInfo({ producer }: ProductInfosProps) {
               </div>
               <div className={styles.cardContent}>
                 A partir de:
-                <span>
-                  {producer.prices?.[0]
-                    ? `R$ ${producer.prices[0].price} - ${producer.prices[0].duration}`
-                    : "Consultar"}
-                </span>
+                <span>{price ? `R$ ${price}` : "Consultar"}</span>
               </div>
             </button>
             <button
@@ -173,13 +171,14 @@ function ProductInfo({ producer }: ProductInfosProps) {
               </div>
               <div className={styles.cardContent}>
                 <h3 className={styles.neighborhood}>
-                  {producer.locality.neighborhood}
+                  {producer.user.locality?.neighborhoods}
                 </h3>
                 <span className={styles.localExtra}>
-                  {producer.locality.city} - {producer.locality.state}
+                  {producer.user.locality?.city} -{" "}
+                  {producer.user.locality?.state}
                 </span>
                 <span className={styles.hasLocal}>
-                  {producer.locality.hasLocal ? (
+                  {producer.profile.local ? (
                     <>
                       <span>
                         <TbHomeCheck />
@@ -230,11 +229,23 @@ function ProductInfo({ producer }: ProductInfosProps) {
         >
           <h2>Especificações</h2>
           <ul className={styles.specifiesList}>
-            {Object.entries(producer.appearance).map(([key, value]) => (
-              <li key={key} className={styles.specify}>
-                <strong>{key}:</strong> {value}
-              </li>
-            ))}
+            {Array.isArray(producer.profile.appearance) &&
+            producer.profile.appearance.length > 0 ? (
+              producer.profile.appearance.map((item) => (
+                <li key={item.id} className={styles.specify}>
+                  <strong>{item.appearance.label}:</strong>{" "}
+                  {item.height ||
+                    item.mannequin ||
+                    item.feet ||
+                    (item.tattoos ? "Sim" : "Não") ||
+                    (item.piercings ? "Sim" : "Não") ||
+                    (item.silicone ? "Sim" : "Não") ||
+                    "N/A"}
+                </li>
+              ))
+            ) : (
+              <span className={styles.languageTag}>Não informado</span>
+            )}
           </ul>
           <div className={styles.extraContent}>
             <a href=""></a>

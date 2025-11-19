@@ -2059,6 +2059,7 @@ export const ProducerProfileScalarFieldEnum = {
   producerId: 'producerId',
   slogan: 'slogan',
   description: 'description',
+  images: 'images',
   scholarity: 'scholarity',
   languages: 'languages',
   hasLocal: 'hasLocal',
