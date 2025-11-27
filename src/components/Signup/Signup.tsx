@@ -1,5 +1,7 @@
 "use client";
 
+import type React from "react";
+
 import { useRouter } from "next/navigation";
 
 import { useEffect, useState, useRef } from "react";
@@ -36,9 +38,43 @@ export default function SignupPage() {
       setSuccess("");
       setIsLoading(false);
       setShowPassword(false);
+      setRole(null);
       formRef.current?.reset();
     }
   }, [isOpen]);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!role) return;
+
+    const result = (await register(e, {
+      setErrors,
+      setSuccess,
+      setIsLoading,
+      role: role,
+    })) as {
+      ok: boolean;
+      role?: "CLIENT" | "ADVERTISER";
+      userId?: string;
+      loginSuccess?: boolean;
+    };
+
+    // O setSuccess já foi chamado dentro do register, então a animação já está visível
+    if (result.ok) {
+      setTimeout(() => {
+        setIsOpen(false);
+
+        if (result.loginSuccess) {
+          if (result.role === "ADVERTISER") {
+            router.push(`/advertiser?uid=${result.userId}`);
+          } else {
+            router.refresh();
+          }
+        }
+      }, 800);
+    }
+  };
 
   return (
     <Popup
@@ -48,7 +84,29 @@ export default function SignupPage() {
       isOpen={isOpen}
       onOpenChange={setIsOpen}
     >
-      {!success && (
+      {success ? (
+        <div className={styles.successContainer}>
+          <svg
+            className={styles.checkmark}
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 52 52"
+          >
+            <circle
+              className={styles.checkmarkCircle}
+              cx="26"
+              cy="26"
+              r="25"
+              fill="none"
+            />
+            <path
+              className={styles.checkmarkCheck}
+              fill="none"
+              d="M14 27l7 7 16-16"
+            />
+          </svg>
+          <p>{success}</p>
+        </div>
+      ) : (
         <div className={styles.formContent}>
           <div className={styles.formHeader}>
             <h1>Cadastre-se</h1>
@@ -61,27 +119,8 @@ export default function SignupPage() {
           </div>
 
           <form
-            onSubmit={async (e) => {
-              const result = (await register(e, {
-                setErrors,
-                setSuccess,
-                setIsLoading,
-                role: role as "CLIENT" | "ADVERTISER",
-              })) as {
-                ok: boolean;
-                role?: "CLIENT" | "ADVERTISER";
-                userId?: string;
-              };
-
-              if (result.ok) {
-                setIsOpen(false);
-                setSuccess("");
-                setErrors({});
-                if (result.role === "ADVERTISER") {
-                  router.push(`/advertiser?uid=${result.userId}`);
-                }
-              }
-            }}
+            ref={formRef}
+            onSubmit={handleSubmit}
             className={`${styles.form} ${
               isFormDisabled ? styles.disabled : ""
             }`}
@@ -283,29 +322,6 @@ export default function SignupPage() {
               </button>
             </div>
           </form>
-        </div>
-      )}
-      {success && (
-        <div className={styles.successContainer}>
-          <svg
-            className={styles.checkmark}
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 52 52"
-          >
-            <circle
-              className={styles.checkmarkCircle}
-              cx="26"
-              cy="26"
-              r="25"
-              fill="none"
-            />
-            <path
-              className={styles.checkmarkCheck}
-              fill="none"
-              d="M14 27l7 7 16-16"
-            />
-          </svg>
-          <p>{success}</p>
         </div>
       )}
       <div className={styles.errors}>

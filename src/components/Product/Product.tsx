@@ -9,6 +9,7 @@ import { TbHomeCheck, TbHomeX } from "react-icons/tb";
 import { FaHeart } from "react-icons/fa6";
 
 import ValueDropdown from "../ValuesDropdown/ValuesDropdown";
+import { formatUserName } from "@/utils/formatName";
 
 import type { Producer } from "@/types/Producer";
 
@@ -17,7 +18,35 @@ interface ProductProps {
   variant?: "row" | "highlight" | undefined;
 }
 
+function calculateAge(birthday: Date | string): number {
+  const today = new Date();
+  const birthDate = new Date(birthday);
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < birthDate.getDate())
+  ) {
+    age--;
+  }
+  return age;
+}
+
 function Product({ producer, variant }: ProductProps) {
+  const name = producer.user?.name || "";
+  const age = calculateAge(producer.birthday);
+  const city = producer.user?.locality?.city || "";
+  const neighborhood = producer.user?.locality?.neighborhood || "";
+  const slogan = producer.profile?.slogan || "";
+  const hasLocal = producer.profile?.hasLocal || false;
+  const images = producer.profile?.images || [];
+  const reviews = producer.profile?.reviews || [];
+
+  const firstImage =
+    typeof images[0] === "string"
+      ? images[0]
+      : (images[0] as any)?.url || "/abstract-profile.png";
+
   return (
     <li
       className={`${styles.product} 
@@ -27,26 +56,26 @@ function Product({ producer, variant }: ProductProps) {
       <Link href={`/product/${producer.id}`} className={styles.productLink}>
         <img
           className={styles.producerImage}
-          src={producer.profile.images[0]}
-          alt=""
+          src={firstImage || "/placeholder.svg"}
+          alt={`Foto de ${name}`}
         />
 
         <div className={styles.itemInfo}>
           <div className={styles.infoHeader}>
-            <h3 className={styles.producerName}>{producer.profile.name}</h3>
+            <h3 className={styles.producerName}>{formatUserName(name)}</h3>
             <span
               className={`${styles.productLoc} ${
                 variant === undefined ? styles.hidden : ""
               }`}
             >
-              {producer.locality.city}
+              {city}
             </span>
             <span
               className={`${styles.productSlogan} ${
                 variant !== undefined ? styles.hidden : ""
               }`}
             >
-              {producer.profile.slogan}
+              {slogan}
             </span>
           </div>
 
@@ -59,19 +88,21 @@ function Product({ producer, variant }: ProductProps) {
               <span>
                 <FaHeart />
               </span>
-              {producer.reviews?.length} Avaliações
+              {reviews.length} Avaliações
             </span>
 
-            <ValueDropdown producer={producer} />
+            {producer.profile?.prices && producer.profile.prices.length > 0 && (
+              <ValueDropdown producer={producer} />
+            )}
 
             <span className={styles.defaultInfo}>
               <span>
                 <BiIdCard />
               </span>
-              {producer.profile.age} anos
+              {age} anos
             </span>
             <span className={styles.defaultInfo}>
-              {producer.locality.hasLocal ? (
+              {hasLocal ? (
                 <>
                   <span>
                     <TbHomeCheck />
@@ -91,7 +122,8 @@ function Product({ producer, variant }: ProductProps) {
               <span>
                 <GrLocation />
               </span>
-              {producer.locality.city}, {producer.locality.neighborhood}
+              {city}
+              {neighborhood ? `, ${neighborhood}` : ""}
             </span>
           </div>
         </div>

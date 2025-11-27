@@ -31,10 +31,18 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(
-      { message: "Usuário criado com sucesso!", user },
+      {
+        message: "Usuário criado com sucesso!",
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+      },
       { status: 201 }
     );
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Erro /api/register:", err);
     return NextResponse.json(
       { error: "Erro interno no servidor." },

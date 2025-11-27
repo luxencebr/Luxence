@@ -2,6 +2,7 @@ import { prisma } from "@/utils/prisma";
 import { compareSync } from "bcryptjs";
 
 type User = {
+  id: number; // Adicionado id ao tipo de retorno
   email: string;
   password?: string;
   name: string;
@@ -21,6 +22,7 @@ export default async function connector(
 
   if (passwordMatches) {
     return {
+      id: user.id, // Retornando o id do usuário
       email: user.email,
       name: user.name,
     };

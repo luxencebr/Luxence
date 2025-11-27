@@ -1,3 +1,4 @@
+import type React from "react";
 import { validator, type RegisterFormData } from "./validator";
 import { signIn } from "next-auth/react";
 
@@ -18,8 +19,6 @@ export default async function register(
     role: "CLIENT" | "ADVERTISER";
   }
 ) {
-  event.preventDefault();
-
   const formData = new FormData(event.currentTarget);
 
   const data: RegisterFormData = {
@@ -39,8 +38,6 @@ export default async function register(
     return { ok: false };
   }
 
-  console.log("Enviando para API:", { ...data, role });
-
   try {
     setIsLoading?.(true);
 
@@ -54,28 +51,39 @@ export default async function register(
 
     if (!res.ok) {
       setErrors({ general: result.error || "Erro ao cadastrar." });
+      setIsLoading?.(false);
       return { ok: false };
     }
 
     setSuccess?.("Cadastro realizado com sucesso!");
 
-    // Faz login automático
-    await signIn("credentials", {
+    const signInResult = await signIn("credentials", {
       redirect: false,
       email: data.email,
       password: data.password,
     });
 
+    if (signInResult?.error) {
+      // Cadastro OK mas login falhou
+      setSuccess?.("Cadastro realizado! Faça login para continuar.");
+      return {
+        ok: true,
+        role,
+        userId: result.user.id,
+        loginSuccess: false,
+      };
+    }
+
     return {
       ok: true,
       role,
-      userId: result.user.id, // ⬅ AQUI!
+      userId: result.user.id,
+      loginSuccess: true,
     };
   } catch (err) {
     console.error("Erro ao registrar:", err);
     setErrors({ general: "Erro inesperado. Tente novamente." });
-    return { ok: false };
-  } finally {
     setIsLoading?.(false);
+    return { ok: false };
   }
 }

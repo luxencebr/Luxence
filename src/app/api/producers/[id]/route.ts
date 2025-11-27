@@ -1,5 +1,5 @@
 import { prisma } from "@/utils/prisma";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
@@ -7,7 +7,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const producerId = parseInt(id, 10);
+    const producerId = Number.parseInt(id, 10);
 
     if (isNaN(producerId)) {
       return NextResponse.json({ error: "ID inválido" }, { status: 400 });
@@ -22,6 +22,7 @@ export async function GET(
             name: true,
             email: true,
             gender: true,
+            locality: true,
           },
         },
         profile: {
@@ -33,22 +34,22 @@ export async function GET(
               include: { option: true },
             },
             services: {
-              include: { service: true },
+              include: { option: true },
             },
             fetiches: {
-              include: { fetish: true },
+              include: { option: true },
             },
             audience: {
-              include: { audience: true },
+              include: { option: true },
             },
             locations: {
-              include: { location: true },
+              include: { option: true },
             },
             payments: {
-              include: { payment: true },
+              include: { option: true },
             },
             local: {
-              include: { amenities: { include: { amenity: true } } },
+              include: { amenities: { include: { option: true } } },
             },
             reviews: {
               include: {

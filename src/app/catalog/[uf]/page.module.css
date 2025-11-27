@@ -122,3 +122,18 @@
 .orderMenu button:hover {
   opacity: 0.75;
 }
+
+/* Adicionando estilos para estados de loading e erro */
+.loadingState,
+.errorState {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  color: var(--contrast-color);
+  font-size: 18px;
+}
+
+.errorState {
+  color: #ff6b6b;
+}

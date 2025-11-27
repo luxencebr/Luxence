@@ -1,7 +1,7 @@
 .productInfos {
   background: var(--background-complementary-color);
-  flex: 1;
-  min-width: 0;
+  flex: 1 0 auto;
+
   height: calc(90vh - 32px);
 
   overflow: hidden;
@@ -125,38 +125,112 @@
   gap: 8px;
 }
 
-.productSlogan {
-  color: var(--contrast-complementary-color);
+.productName {
+  font-size: 20px;
+  text-wrap: nowrap;
+}
+
+.slogan {
   font-size: 12px;
-  font-style: italic;
 
   white-space: normal;
   word-break: break-word;
   overflow-wrap: break-word;
+  cursor: default;
 }
 
-.productReviews {
-  background: transparent;
+.productSlogan {
+  max-width: 192px;
 
-  border: none;
+  color: var(--contrast-complementary-color);
+  font-style: italic;
+  text-align: justify;
+  hyphens: auto;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
 
+.sloganPlaceholder {
   display: flex;
-  flex-flow: column nowrap;
   align-items: center;
-
-  color: var(--contrast-color);
-  font-size: 12px;
-  text-wrap: nowrap;
+  gap: 4px;
 
   cursor: pointer;
 }
 
-.productReviews span {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.sloganPlaceholder:hover {
+  color: var(--primary-complementary-color);
+}
 
+/* Slogan editing styles */
+.sloganEdit {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 4px;
+}
+
+.sloganInput {
+  background: var(--background-color);
+  flex: 1;
+  padding: 4px;
+
+  outline: none;
+  border: none;
+  border-radius: 4px;
+
+  color: var(--contrast-color);
+  font-size: 12px;
+  font-family: inherit;
+  width: 100%;
+}
+
+.sloganActions {
+  display: flex;
+  gap: 4px;
+}
+
+.sloganSaveBtn,
+.sloganCancelBtn {
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.sloganSaveBtn {
+  background: var(--primary-color);
+  color: var(--background-color);
+}
+
+.sloganCancelBtn {
+  background: var(--background-color);
+  color: var(--contrast-color);
+  border: 1px solid var(--contrast-complementary-color);
+}
+
+.sloganSaveBtn:hover,
+.sloganCancelBtn:hover {
+  opacity: 0.8;
+}
+
+.sloganEditIcon {
+  margin-left: 4px;
+  font-size: 10px;
+  opacity: 0.5;
+}
+
+.productSlogan:hover .sloganEditIcon {
+  opacity: 1;
   color: var(--primary-color);
+}
+
+.verified {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+
   font-size: 24px;
 }
 
@@ -186,6 +260,7 @@
   gap: 8px;
 
   color: var(--contrast-color);
+  font-family: Quicksand, sans-serif;
   text-decoration: none;
 
   cursor: pointer;
@@ -222,6 +297,29 @@
   flex-flow: column nowrap;
 
   text-align: left;
+}
+
+.cardContent p {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.cardContent p span {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.cardContent p span span {
+  font-size: 12px;
+  font-weight: normal;
+}
+
+.cardContent p i {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  font-style: normal;
 }
 
 .hasLocal {
@@ -297,6 +395,7 @@
 @media (max-width: 768px) {
   .productInfos {
     height: auto;
+    width: 100%;
     overflow: visible;
   }
 
@@ -320,5 +419,34 @@
 
   .productSpecifies.hidden {
     display: none;
+  }
+}
+
+.sloganInputWrapper {
+  width: 100%;
+
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+
+  position: relative;
+}
+
+.loader {
+  width: 16px;
+  height: 16px;
+
+  border: 3px solid var(--contrast-color);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }

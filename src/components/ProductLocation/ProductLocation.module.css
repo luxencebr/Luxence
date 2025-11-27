@@ -5,6 +5,8 @@
 }
 
 .layout {
+  padding: 16px;
+
   display: flex;
   flex-flow: column nowrap;
   gap: 16px;
@@ -53,6 +55,21 @@
   align-items: start;
 }
 
+.hasLocal {
+  opacity: 0.5;
+  width: 100%;
+
+  cursor: pointer;
+}
+
+.hasLocal input {
+  display: none;
+}
+
+.hasLocal:has(input:checked) {
+  opacity: 1;
+}
+
 .column.conditional::before {
   content: "";
   position: absolute;
@@ -79,16 +96,109 @@
 
 .line {
   flex: 1;
-  font-size: 16px;
+  margin: 0 8px;
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 4px;
 }
 
 .line p {
   margin: 0;
   color: var(--contrast-complementary-color);
+  font-size: 12px;
+}
+
+.line label {
+  display: flex;
+  flex-flow: column nowrap;
+
+  color: var(--contrast-complementary-color);
+  font-size: 12px;
+}
+
+.line input[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.line label input {
+  background: var(--background-complementary-color);
+  padding: 6px 8px;
+
+  border: none;
+  border-radius: 4px;
+
+  color: var(--contrast-color);
+}
+
+.checkboxItem {
+  opacity: 0.5;
+
+  cursor: pointer;
+}
+
+.checkboxItem input {
+  display: none;
+}
+
+.checkboxItem:has(input:checked) {
+  opacity: 1;
 }
 
 @media (max-width: 768px) {
   .line {
     font-size: 14px;
   }
+}
+
+.editActions {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 8px;
+}
+
+.editBtn,
+.saveBtn,
+.cancelBtn {
+  background: transparent;
+  padding: 8px;
+
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 0 2px black;
+
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+.editBtn {
+  opacity: 0.75;
+  background: transparent;
+  box-shadow: 0 0 0 1px var(--primary-color);
+
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  color: var(--primary-color);
+}
+
+.saveBtn {
+  background: var(--primary-color);
+  color: var(--background-color);
+}
+
+.cancelBtn {
+  background: var(--background-color);
+  color: var(--contrast-color);
+}
+
+.editActions button:hover {
+  opacity: 0.75;
+}
+
+.editBtn:hover {
+  opacity: 1;
 }

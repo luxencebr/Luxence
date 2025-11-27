@@ -2,29 +2,25 @@
 
 import { useRef, useEffect, useState, useMemo, use } from "react";
 import styles from "./page.module.css";
-import { IoFilterOutline } from "react-icons/io5";
 
 import FilterPopup from "@/components/FilterPopup/FilterPopup";
 import ProductsCatalog from "@/components/ProductsCatalog/ProductsCatalog";
-
-import type { Producer } from "@/types/Producer";
-import allProducers from "@/data/producers";
 import Dropdown from "@/components/ui/Dropdown/Dropdown";
 
 interface CatalogProps {
   params: Promise<{ uf: string }>;
 }
 
-function getUniqueGenders(producers: Producer[]) {
+function getUniqueGenders(producers: any[]) {
   const genders = new Set(
     producers
-      .map((p) => p.profile.gender)
+      .map((p) => p.profile?.gender)
       .filter((g): g is NonNullable<typeof g> => g !== undefined)
   );
   return Array.from(genders);
 }
 
-function getUniqueFilters(producers: Producer[]) {
+function getUniqueFilters(producers: any[]) {
   const filters: Record<string, Record<string, any>> = {
     Perfil: {},
     Aparência: {},
@@ -36,7 +32,7 @@ function getUniqueFilters(producers: Producer[]) {
 
   const nationalitySet = new Set<string>();
   producers.forEach((p) => {
-    if (p.profile.nationality) nationalitySet.add(p.profile.nationality);
+    if (p.nationality) nationalitySet.add(p.nationality);
   });
   if (nationalitySet.size > 0) {
     filters["Perfil"]["profile.nationality"] = Array.from(nationalitySet);
@@ -45,7 +41,11 @@ function getUniqueFilters(producers: Producer[]) {
 
   const languageSet = new Set<string>();
   producers.forEach((p) => {
-    p.profile.languages?.forEach((lang) => languageSet.add(lang.name));
+    const languages = p.profile?.languages || [];
+    languages.forEach((lang: any) => {
+      if (typeof lang === "string") languageSet.add(lang);
+      else if (lang?.name) languageSet.add(lang.name);
+    });
   });
   if (languageSet.size > 0) {
     filters["Perfil"]["profile.languages"] = Array.from(languageSet);
@@ -54,8 +54,11 @@ function getUniqueFilters(producers: Producer[]) {
 
   const scholaritySet = new Set<string>();
   producers.forEach((p) => {
-    if (p.profile.scholarity?.level)
-      scholaritySet.add(p.profile.scholarity.level);
+    const scholarity = p.profile?.scholarity;
+    if (scholarity) {
+      if (typeof scholarity === "string") scholaritySet.add(scholarity);
+      else if (scholarity?.level) scholaritySet.add(scholarity.level);
+    }
   });
   if (scholaritySet.size > 0) {
     filters["Perfil"]["profile.scholarity"] = Array.from(scholaritySet);
@@ -114,7 +117,7 @@ function getUniqueFilters(producers: Producer[]) {
   producers.forEach((p) => {
     const serviceOptions = ["mans", "women", "couple", "group"];
     serviceOptions.forEach((s) => {
-      if (p.services && p.services[s as keyof Producer["services"]]) {
+      if (p.services && p.services[s as keyof typeof p.services]) {
         if (!filters["Serviços"][servicePath.Atende])
           filters["Serviços"][servicePath.Atende] = [];
         if (!filters["Serviços"][servicePath.Atende].includes(s))
@@ -122,7 +125,7 @@ function getUniqueFilters(producers: Producer[]) {
       }
     });
 
-    if (p.services.offered) {
+    if (p.services?.offered) {
       const offeredOptions = Object.entries(p.services.offered).filter(
         ([k, v]) => k !== "fetishes" && v
       );
@@ -150,7 +153,6 @@ function getUniqueFilters(producers: Producer[]) {
   pathLabelMap[servicePath.Oferece] = "Oferece";
   pathLabelMap[servicePath.Fetiches] = "Fetiches";
 
-  // Chaves de Preço
   const pricePath: Record<string, string> = {
     Preço: "prices.price",
     Tempo: "prices.duration",
@@ -160,7 +162,7 @@ function getUniqueFilters(producers: Producer[]) {
   const priceLabels = new Set<string>();
   producers.forEach((p) => {
     if (p.prices) {
-      p.prices.forEach((pr) => {
+      p.prices.forEach((pr: any) => {
         if (typeof pr.price === "number") priceValues.push(pr.price);
         if (pr.duration) priceLabels.add(pr.duration);
       });
@@ -186,23 +188,42 @@ export default function Catalog({ params }: CatalogProps) {
   const { uf } = use(params);
   const normalizedUf = uf.toUpperCase();
 
-  const producersByUf = useMemo(
-    () => allProducers.filter((p) => p.locality.state === normalizedUf),
-    [normalizedUf]
-  );
+  const [producers, setProducers] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const desiredGenderOrder = ["female", "male", "femaletrans"];
+  useEffect(() => {
+    async function fetchProducers() {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(`/api/catalog/${normalizedUf}`);
+        if (!response.ok) {
+          throw new Error("Erro ao buscar produtores");
+        }
+        const data = await response.json();
+        setProducers(data);
+      } catch (err) {
+        console.error("[v0] Erro ao buscar produtores:", err);
+        setError("Não foi possível carregar os produtores");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchProducers();
+  }, [normalizedUf]);
+
+  const desiredGenderOrder = ["female", "male", "femaletrans", "trans"];
 
   const genderFilters = useMemo(() => {
-    const rawGenderFilters = getUniqueGenders(producersByUf);
+    const rawGenderFilters = getUniqueGenders(producers);
     return rawGenderFilters.sort(
       (a, b) => desiredGenderOrder.indexOf(a) - desiredGenderOrder.indexOf(b)
     );
-  }, [producersByUf]);
+  }, [producers]);
 
-  const [selectedGender, setSelectedGender] = useState<
-    "male" | "female" | "femaletrans" | null
-  >("female");
+  const [selectedGender, setSelectedGender] = useState<string | null>("female");
 
   function genderDisplayName(gender: string) {
     switch (gender) {
@@ -211,6 +232,7 @@ export default function Catalog({ params }: CatalogProps) {
       case "male":
         return "Homens";
       case "femaletrans":
+      case "trans":
         return "Trans";
       default:
         return gender;
@@ -241,10 +263,16 @@ export default function Catalog({ params }: CatalogProps) {
   );
 
   const filteredProducers = useMemo(() => {
-    let filtered = [...producersByUf];
+    let filtered = [...producers];
 
     if (selectedGender) {
-      filtered = filtered.filter((p) => p.profile.gender === selectedGender);
+      filtered = filtered.filter((p) => {
+        const gender = p.profile?.gender?.toLowerCase();
+        if (selectedGender === "trans") {
+          return gender === "trans" || gender === "femaletrans";
+        }
+        return gender === selectedGender;
+      });
     }
 
     Object.entries(selectedFilters).forEach(([path, value]) => {
@@ -252,15 +280,19 @@ export default function Catalog({ params }: CatalogProps) {
 
       filtered = filtered.filter((producer) => {
         if (path === "profile.nationality") {
-          return value.includes(producer.profile.nationality);
+          return value.includes(producer.nationality);
         }
         if (path === "profile.languages") {
-          return producer.profile.languages?.some((lang) =>
-            value.includes(lang.name)
-          );
+          const languages = producer.profile?.languages || [];
+          return languages.some((lang: any) => {
+            if (typeof lang === "string") return value.includes(lang);
+            return value.includes(lang?.name);
+          });
         }
         if (path === "profile.scholarity") {
-          return value.includes(producer.profile.scholarity?.level);
+          const scholarity = producer.profile?.scholarity;
+          if (typeof scholarity === "string") return value.includes(scholarity);
+          return value.includes(scholarity?.level);
         }
 
         if (path.startsWith("appearance.")) {
@@ -287,22 +319,22 @@ export default function Catalog({ params }: CatalogProps) {
         if (path === "services.Atende") {
           return value.some(
             (option: string) =>
-              producer.services?.[option as keyof Producer["services"]]
+              producer.services?.[option as keyof typeof producer.services]
           );
         }
         if (path === "services.Oferece") {
           return value.every(
             (option: string) =>
-              producer.services.offered?.[
-                option as keyof Producer["services"]["offered"]
+              producer.services?.offered?.[
+                option as keyof typeof producer.services.offered
               ]
           );
         }
         if (path === "services.Fetiches") {
           return value.every(
             (option: string) =>
-              producer.services.offered?.fetishes?.[
-                option as keyof Producer["services"]["offered"]["fetishes"]
+              producer.services?.offered?.fetishes?.[
+                option as keyof typeof producer.services.offered.fetishes
               ]
           );
         }
@@ -310,7 +342,7 @@ export default function Catalog({ params }: CatalogProps) {
         if (path === "prices.price") {
           if (typeof value === "object" && "min" in value && "max" in value) {
             return producer.prices?.some(
-              (pr) =>
+              (pr: any) =>
                 typeof pr.price === "number" &&
                 pr.price >= value.min &&
                 pr.price <= value.max
@@ -319,7 +351,9 @@ export default function Catalog({ params }: CatalogProps) {
           return false;
         }
         if (path === "prices.duration") {
-          return producer.prices?.some((pr) => value.includes(pr.duration));
+          return producer.prices?.some((pr: any) =>
+            value.includes(pr.duration)
+          );
         }
 
         return false;
@@ -327,7 +361,7 @@ export default function Catalog({ params }: CatalogProps) {
     });
 
     return filtered;
-  }, [producersByUf, selectedGender, selectedFilters]);
+  }, [producers, selectedGender, selectedFilters]);
 
   function applyFilters(newFilters: Record<string, any>) {
     setSelectedFilters(newFilters);
@@ -359,12 +393,14 @@ export default function Catalog({ params }: CatalogProps) {
 
     switch (sortOption) {
       case "name":
-        sorted.sort((a, b) => a.profile.name.localeCompare(b.profile.name));
+        sorted.sort((a, b) =>
+          (a.profile?.name || "").localeCompare(b.profile?.name || "")
+        );
         break;
 
       case "price":
         sorted.sort(
-          (a, b) => (a.prices?.[1]?.price || 0) - (b.prices?.[1]?.price || 0)
+          (a, b) => (a.prices?.[0]?.price || 0) - (b.prices?.[0]?.price || 0)
         );
         break;
 
@@ -372,13 +408,17 @@ export default function Catalog({ params }: CatalogProps) {
         sorted.sort((a, b) => {
           const avgA =
             a.reviews && a.reviews.length
-              ? a.reviews.reduce((sum, r) => sum + (r.rating || 0), 0) /
-                a.reviews.length
+              ? a.reviews.reduce(
+                  (sum: number, r: any) => sum + (r.rating || 0),
+                  0
+                ) / a.reviews.length
               : null;
           const avgB =
             b.reviews && b.reviews.length
-              ? b.reviews.reduce((sum, r) => sum + (r.rating || 0), 0) /
-                b.reviews.length
+              ? b.reviews.reduce(
+                  (sum: number, r: any) => sum + (r.rating || 0),
+                  0
+                ) / b.reviews.length
               : null;
 
           if (avgA !== null && avgB !== null) {
@@ -401,11 +441,41 @@ export default function Catalog({ params }: CatalogProps) {
 
   const { filters: availableFilters, pathLabelMap } = useMemo(() => {
     const baseList = selectedGender
-      ? producersByUf.filter((p) => p.profile.gender === selectedGender)
-      : producersByUf;
+      ? producers.filter((p) => {
+          const gender = p.profile?.gender?.toLowerCase();
+          if (selectedGender === "trans") {
+            return gender === "trans" || gender === "femaletrans";
+          }
+          return gender === selectedGender;
+        })
+      : producers;
 
     return getUniqueFilters(baseList);
-  }, [producersByUf, selectedGender]);
+  }, [producers, selectedGender]);
+
+  if (isLoading) {
+    return (
+      <div className={styles.catalogPage}>
+        <div className={styles.layout}>
+          <div className={styles.loadingState}>
+            <p>Carregando produtores...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.catalogPage}>
+        <div className={styles.layout}>
+          <div className={styles.errorState}>
+            <p>{error}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.catalogPage}>
@@ -450,7 +520,7 @@ export default function Catalog({ params }: CatalogProps) {
             currentSelectedFilters={selectedFilters}
             onApplyFilters={applyFilters}
             onClearAllFilters={clearAllFilters}
-            producers={producersByUf}
+            producers={producers}
           />
           <Dropdown
             trigger={<span>{getSortLabel(sortOption)}</span>}

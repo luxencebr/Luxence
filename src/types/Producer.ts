@@ -1,3 +1,5 @@
+// Tipos padronizados para Producer e relacionados
+
 export interface User {
   id: number;
   email: string;
@@ -5,7 +7,6 @@ export interface User {
   name: string;
   gender: "MALE" | "FEMALE" | "TRANS";
   locality: Locality | null;
-
   createdAt: Date;
   updatedAt: Date;
 }
@@ -49,7 +50,7 @@ export interface ProducerProfile {
   services: ProducerService[];
   fetiches: ProducerFetish[];
   audience: ProducerAudience[];
-  locations: ProducerLocations[];
+  locations: ProducerLocation[];
   payments: ProducerPayment[];
   reviews: Review[];
 }
@@ -61,12 +62,19 @@ export interface Locality {
   state: string;
   city: string;
   zone?: string;
-  neighborhoods?: string;
+  neighborhood?: string;
+}
+
+export interface Option {
+  id: number;
+  name: string;
+  label: string;
 }
 
 export interface ProducerLocal {
   id: number;
   profileId: number;
+  cep: string;
   country: string;
   state: string;
   city: string;
@@ -78,16 +86,17 @@ export interface ProducerLocal {
 }
 
 export interface LocalAmenity {
-  id: number;
-  localId: number;
+  id?: number;
+  localId?: number;
   amenityId: number;
-  amenity: AmenityOption;
+  option: Option;
 }
 
-export interface AmenityOption {
-  id: number;
-  name: string;
-  label: string;
+export interface ProducerLocation {
+  id?: number;
+  profileId?: number;
+  locationId: number;
+  option: Option;
 }
 
 export interface ProducerAppearance {
@@ -103,90 +112,45 @@ export interface ProducerAppearance {
   appearance: AppearanceOption;
 }
 
-export interface AppearanceOption {
-  id: number;
-  name: string;
-  label: string;
+export interface AppearanceOption extends Option {
   type: string;
 }
 
 export interface ProducerPrice {
-  id: number;
-  profileId: number;
+  id?: number;
+  profileId?: number;
   priceId: number;
   value: number;
-  option: PriceOption;
-}
-
-export interface PriceOption {
-  id: number;
-  name: string;
-  label: string;
+  option: Option;
 }
 
 export interface ProducerService {
   id: number;
   profileId: number;
   serviceId: number;
-  service: ServiceOption;
-}
-
-export interface ServiceOption {
-  id: number;
-  name: string;
-  label: string;
+  status: string;
+  option: Option;
 }
 
 export interface ProducerFetish {
   id: number;
   profileId: number;
   fetishId: number;
-  fetish: FetishOption;
-}
-
-export interface FetishOption {
-  id: number;
-  name: string;
-  label: string;
+  option: Option;
 }
 
 export interface ProducerAudience {
   id: number;
   profileId: number;
   audienceId: number;
-  audience: AudienceOption;
-}
-
-export interface AudienceOption {
-  id: number;
-  name: string;
-  label: string;
-}
-
-export interface ProducerLocations {
-  id: number;
-  profileId: number;
-  locationId: number;
-  location: LocationOption;
-}
-
-export interface LocationOption {
-  id: number;
-  name: string;
-  label: string;
+  option: Option;
 }
 
 export interface ProducerPayment {
-  id: number;
-  profileId: number;
+  id?: number;
+  profileId?: number;
   paymentId: number;
-  payment: PaymentOption;
-}
-
-export interface PaymentOption {
-  id: number;
-  name: string;
-  label: string;
+  option: Option;
 }
 
 export interface Review {

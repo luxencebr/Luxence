@@ -2,25 +2,26 @@
 
 import * as React from "react";
 import { useEffect } from "react";
+import { useSession } from "next-auth/react";
 
 import type { Producer } from "@/types/Producer";
 
-import Slider from "@/components/Slider/Slider";
-import ProductInfo from "@/components/ProductInfo/ProductInfo";
+import ProductShowcase from "@/components/ProductShowcase/ProductShowcase";
+import ProductAbout from "@/components/ProductAbout/ProductAbout";
 import ProductServices from "@/components/ProductServices/ProductServices";
 import ProductValues from "@/components/ProductValues/ProductValues";
 import ProductLocation from "@/components/ProductLocation/ProductLocation";
 import ProductReviews from "@/components/ProductReviews/ProductReviews";
 
 import styles from "./page.module.css";
-import { IoSchool } from "react-icons/io5";
-import { IoLanguage, IoFlag } from "react-icons/io5";
 
 interface ProductPageProps {
   params: Promise<{ id: string }>;
 }
 
 export default function ProductPage({ params }: ProductPageProps) {
+  const { data: session } = useSession();
+
   const { id } = React.use(params);
   const [producer, setProducer] = React.useState<Producer | null>(null);
   const [loading, setLoading] = React.useState(true);
@@ -43,8 +44,6 @@ export default function ProductPage({ params }: ProductPageProps) {
   }, [id]);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
     const hash = window.location.hash;
     if (!hash) return;
 
@@ -59,81 +58,26 @@ export default function ProductPage({ params }: ProductPageProps) {
     }
   }, []);
 
-  if (loading) {
-    return <p>Carregando...</p>;
+  if (loading || !producer) {
+    return (
+      <div className={styles.loadingContainer}>
+        <img src="/ExenceLogo.svg" alt="" style={{ height: 128 }} />
+        {loading && <p>Carregando Perfil</p>}
+        {!loading && !producer && <p>Produto não encontrado</p>}
+      </div>
+    );
   }
 
-  if (!producer) {
-    return <p>Produto não encontrado</p>;
-  }
-
-  const slides = Array.isArray(producer.profile.images)
-    ? producer.profile.images.map((img, index) => ({
-        id: index,
-        src: img.url,
-        alt: `${img.name} - imagem ${index + 1}`,
-      }))
-    : [];
-
-  console.log("PERFIL DA PÁGINA", producer);
+  const canEdit = Number(session?.user?.id) === producer.user.id;
 
   return (
     <div className={styles.productPage}>
       <div className={styles.layout}>
-        <section className={styles.productShowcase}>
-          <div className={styles.sliderContainer}>
-            {slides.length > 0 ? (
-              <Slider slides={slides} className={styles.slider} />
-            ) : (
-              <label className={styles.imagesInput}>
-                Adicione Imagens ao seu Perfil{" "}
-                <span>E alcance mais usuários</span>
-                <input type="file" className={styles.hidden} />
-              </label>
-            )}
-          </div>
-          <ProductInfo producer={producer} />
-        </section>
-
-        <section className={styles.producerHistory}>
-          <h2>Sobre Mim</h2>
-          <p>&quot;{producer.profile.description}&quot;</p>
-
-          <div className={styles.topics}>
-            <div className={styles.topic}>
-              <span className={styles.icon}>
-                <IoFlag />
-              </span>
-              {producer.nationality}
-            </div>
-
-            <div className={styles.topic}>
-              <span className={styles.icon}>
-                <IoLanguage />
-              </span>
-              {Array.isArray(producer.profile.languages) &&
-              producer.profile.languages.length > 0 ? (
-                producer.profile.languages.map((language, index) => (
-                  <span key={index} className={styles.languageTag}>
-                    {language.name} - {language.level}
-                  </span>
-                ))
-              ) : (
-                <span className={styles.languageTag}>Não informado</span>
-              )}
-            </div>
-            <div className={styles.topic}>
-              <span className={styles.icon}>
-                <IoSchool />
-              </span>
-              {producer.profile.scholarity}
-            </div>
-          </div>
-        </section>
-
-        <ProductServices producer={producer} />
-        <ProductValues producer={producer} />
-        <ProductLocation producer={producer} />
+        <ProductShowcase producer={producer} canEdit={canEdit} />
+        <ProductAbout producer={producer} canEdit={canEdit} />
+        <ProductServices producer={producer} canEdit={canEdit} />
+        <ProductValues producer={producer} canEdit={canEdit} />
+        <ProductLocation producer={producer} canEdit={canEdit} />
         <ProductReviews producer={producer} />
       </div>
     </div>

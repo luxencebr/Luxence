@@ -1,0 +1,54 @@
+.producerHistory {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  gap: 16px;
+
+  color: var(--contrast-color);
+}
+
+.producerHistory h2,
+.producerHistory p {
+  margin: 0;
+
+  text-align: center;
+}
+
+.producerHistory p {
+  color: var(--contrast-complementary-color);
+  font-style: italic;
+}
+
+.topics {
+  width: 100%;
+
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-around;
+}
+
+.topic {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon {
+  background: var(--contrast-color);
+  aspect-ratio: 1 / 1;
+  padding: 8px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--background-color);
+  font-size: 32px;
+}

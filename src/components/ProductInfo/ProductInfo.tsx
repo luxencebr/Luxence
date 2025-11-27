@@ -3,7 +3,6 @@
 import { useRef, useState, useEffect } from "react";
 import styles from "./ProductInfo.module.css";
 
-import { IoEyeOutline } from "react-icons/io5";
 import { TbCoinFilled } from "react-icons/tb";
 import { HiLocationMarker } from "react-icons/hi";
 import { TbHomeCheck, TbHomeX } from "react-icons/tb";
@@ -11,17 +10,36 @@ import { FaHeart } from "react-icons/fa6";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 import { FaWhatsapp, FaInstagram, FaTelegram } from "react-icons/fa6";
+import { GoShieldCheck, GoShield, GoShieldX } from "react-icons/go";
+import { HiOutlinePencil } from "react-icons/hi2";
 
 import type { Producer } from "@/types/Producer";
 import ScrollTo from "@/utils/ScrollTo";
+import { formatUserName } from "@/utils/formatName";
 
 interface ProductInfoProps {
   producer: Producer;
+  canEdit: boolean;
+  isEditingSlogan?: boolean;
+  slogan?: string;
+  setSlogan?: (value: string) => void;
+  onEditSlogan?: () => void;
+  onSaveSlogan?: () => void;
+  onCancelSlogan?: () => void;
+  isSavingSlogan?: boolean;
 }
 
-function ProductInfo({ producer }: ProductInfoProps) {
-  console.log("producer:", producer);
-
+function ProductInfo({
+  producer,
+  canEdit,
+  isEditingSlogan,
+  slogan,
+  setSlogan,
+  onEditSlogan,
+  onSaveSlogan,
+  onCancelSlogan,
+  isSavingSlogan,
+}: ProductInfoProps) {
   const contentRef = useRef<HTMLDivElement | null>(null);
   const [atBottom, setAtBottom] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -80,7 +98,17 @@ function ProductInfo({ producer }: ProductInfoProps) {
     ? reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length
     : 0;
 
-  const price = producer.profile.prices?.[1]?.value;
+  const price = producer.profile.prices?.[0];
+
+  const displaySlogan = slogan !== undefined ? slogan : producer.profile.slogan;
+
+  const sloganInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (isEditingSlogan) {
+      sloganInputRef.current?.focus();
+    }
+  }, [isEditingSlogan]);
 
   return (
     <div className={styles.productInfos}>
@@ -120,24 +148,101 @@ function ProductInfo({ producer }: ProductInfoProps) {
         <div className={styles.content}>
           <div className={styles.productHeader}>
             <div className={styles.productHighlight}>
-              <h1 className={styles.productName}>{producer.user.name}</h1>
-              <p className={styles.productSlogan}>{producer.profile.slogan}</p>
+              <h1 className={styles.productName}>
+                {formatUserName(producer.user.name)}
+              </h1>
+              <div className={styles.slogan}>
+                {isEditingSlogan ? (
+                  <div className={styles.sloganEdit}>
+                    <div className={styles.sloganInputWrapper}>
+                      <input
+                        ref={sloganInputRef}
+                        type="text"
+                        value={displaySlogan || ""}
+                        onChange={(e) => setSlogan?.(e.target.value)}
+                        placeholder="Digite seu slogan..."
+                        className={styles.sloganInput}
+                        disabled={isSavingSlogan}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            !isSavingSlogan && onSaveSlogan?.();
+                          }
+                          if (e.key === "Escape") {
+                            e.preventDefault();
+                            onCancelSlogan?.();
+                          }
+                        }}
+                      />
+
+                      {isSavingSlogan && <div className={styles.loader}></div>}
+                    </div>
+                  </div>
+                ) : displaySlogan ? (
+                  <p
+                    className={styles.productSlogan}
+                    onClick={canEdit ? onEditSlogan : undefined}
+                    style={canEdit ? { cursor: "pointer" } : undefined}
+                  >
+                    {displaySlogan}
+                    {canEdit && (
+                      <HiOutlinePencil className={styles.sloganEditIcon} />
+                    )}
+                  </p>
+                ) : (
+                  <p
+                    className={styles.sloganPlaceholder}
+                    onClick={canEdit ? onEditSlogan : undefined}
+                  >
+                    Adicione um Slogan <HiOutlinePencil />
+                  </p>
+                )}
+              </div>
             </div>
-            <button
-              onClick={() => ScrollTo("reviews", { center: true })}
-              className={styles.productReviews}
-            >
-              <span>
-                <FaHeart />
-                {typeof rating === "number" && !isNaN(rating)
-                  ? rating.toFixed(1)
-                  : "N/D"}
-              </span>
-              {reviews.length} Avaliações
-            </button>
+            {producer.verificationStatus === "GREEN" && (
+              <div className={styles.verified} style={{ color: "green" }}>
+                <GoShieldCheck />
+              </div>
+            )}
+            {producer.verificationStatus === "YELLOW" && (
+              <div className={styles.verified} style={{ color: "yellow" }}>
+                <GoShield />
+              </div>
+            )}
+            {producer.verificationStatus === "RED" && (
+              <div className={styles.verified} style={{ color: "red" }}>
+                <GoShieldX />
+              </div>
+            )}
           </div>
 
           <div className={styles.expandableContent}>
+            <button
+              className={styles.infoCard}
+              onClick={() => ScrollTo("reviews", { center: true })}
+            >
+              <div className={styles.cardHeader}>
+                <h2>
+                  <span>
+                    <FaHeart />
+                  </span>
+                  Avaliações
+                </h2>
+                <IoIosArrowDown />
+              </div>
+              <div className={styles.cardContent}>
+                {producer.profile.reviews.length > 0 ? (
+                  <p>
+                    {producer.profile.reviews.length} -{" "}
+                    {typeof rating === "number" && !isNaN(rating)
+                      ? rating.toFixed(1)
+                      : "N/D"}
+                  </p>
+                ) : (
+                  <p>Ainda não há avaliações</p>
+                )}
+              </div>
+            </button>
             <button
               className={styles.infoCard}
               onClick={() => ScrollTo("values", { center: true })}
@@ -152,8 +257,17 @@ function ProductInfo({ producer }: ProductInfoProps) {
                 <IoIosArrowDown />
               </div>
               <div className={styles.cardContent}>
-                A partir de:
-                <span>{price ? `R$ ${price}` : "Consultar"}</span>
+                {price ? (
+                  <p>
+                    A partir de:
+                    <span>
+                      {price && `R$ ${price.value}`},00{" "}
+                      <span>{price.option.label}</span>
+                    </span>
+                  </p>
+                ) : (
+                  <p>Informe seus valores</p>
+                )}
               </div>
             </button>
             <button
@@ -170,30 +284,26 @@ function ProductInfo({ producer }: ProductInfoProps) {
                 <IoIosArrowDown />
               </div>
               <div className={styles.cardContent}>
-                <h3 className={styles.neighborhood}>
-                  {producer.user.locality?.neighborhoods}
-                </h3>
-                <span className={styles.localExtra}>
-                  {producer.user.locality?.city} -{" "}
-                  {producer.user.locality?.state}
-                </span>
-                <span className={styles.hasLocal}>
-                  {producer.profile.local ? (
-                    <>
-                      <span>
-                        <TbHomeCheck />
-                      </span>
-                      com local
-                    </>
-                  ) : (
-                    <>
-                      <span>
-                        <TbHomeX />
-                      </span>
-                      sem local
-                    </>
-                  )}
-                </span>
+                {producer.user.locality ? (
+                  <p>
+                    <span className={styles.neighborhood}>
+                      {producer.user.locality?.neighborhood}
+                    </span>
+                    {producer.user.locality?.city} -{" "}
+                    {producer.user.locality?.state}
+                    {producer.profile.local ? (
+                      <i>
+                        <TbHomeCheck /> com local
+                      </i>
+                    ) : (
+                      <i>
+                        <TbHomeX /> sem local
+                      </i>
+                    )}
+                  </p>
+                ) : (
+                  <p>Informe sua localização</p>
+                )}
               </div>
             </button>
           </div>

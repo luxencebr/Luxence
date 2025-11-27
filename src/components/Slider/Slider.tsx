@@ -1,17 +1,32 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import styles from "./Slider.module.css";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
+import { FaXmark, FaPlus } from "react-icons/fa6";
 
 import type { Slide } from "@/data/sliderData";
 
 interface HighlightSliderProps {
   slides: Slide[];
   className?: string;
+  canEdit?: boolean;
+  onDeleteImage?: (index: number) => void;
+  onAddImage?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+
+  isUploading?: boolean;
+  isDeleting?: number | null;
 }
 
-function HighlightSlider({ slides, className }: HighlightSliderProps) {
+function HighlightSlider({
+  slides,
+  className,
+  canEdit = false,
+  onDeleteImage,
+  onAddImage,
+  isUploading = false,
+  isDeleting = null,
+}: HighlightSliderProps) {
   const isProductPage = className?.includes("productSlider");
 
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -34,11 +49,13 @@ function HighlightSlider({ slides, className }: HighlightSliderProps) {
     setCurrentSlide(index);
   };
 
-  useEffect(() => {
-    if (isDragging) return;
-    const interval = setInterval(goToNextSlide, slideInterval);
-    return () => clearInterval(interval);
-  }, [goToNextSlide, isDragging]);
+  if (!isProductPage) {
+    useEffect(() => {
+      if (isDragging) return;
+      const interval = setInterval(goToNextSlide, slideInterval);
+      return () => clearInterval(interval);
+    }, [goToNextSlide, isDragging]);
+  }
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStartX(e.touches[0].clientX);
@@ -100,15 +117,35 @@ function HighlightSlider({ slides, className }: HighlightSliderProps) {
         <div className={styles.indicators}>
           {slides.map((slide, index) =>
             isProductPage ? (
-              <img
-                key={index}
-                src={slide.src}
-                alt={slide.alt}
-                className={`${styles.thumbnail} ${
-                  index === currentSlide ? styles.active : ""
-                }`}
-                onClick={() => goToSlide(index)}
-              />
+              <div className={styles.thumbnailWrapper} key={index}>
+                <img
+                  src={slide.src}
+                  alt={slide.alt}
+                  className={`${styles.thumbnail} ${
+                    index === currentSlide ? styles.active : ""
+                  }`}
+                  onClick={() => goToSlide(index)}
+                />
+                {canEdit && (
+                  <button
+                    className={`${styles.removeBtn} ${
+                      isDeleting === index ? styles.loading : ""
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDeleteImage?.(index);
+                    }}
+                    disabled={isDeleting === index}
+                    title="Remover imagem"
+                  >
+                    {isDeleting === index ? (
+                      <span className={styles.spinnerMini}></span>
+                    ) : (
+                      <FaXmark />
+                    )}
+                  </button>
+                )}
+              </div>
             ) : (
               <input
                 key={index}
@@ -119,6 +156,25 @@ function HighlightSlider({ slides, className }: HighlightSliderProps) {
               />
             )
           )}
+          <input
+            id="addImageInput"
+            type="file"
+            accept="image/*"
+            onChange={onAddImage}
+            className={styles.hiddenInput}
+            style={{ display: "none" }}
+          />
+
+          <label
+            htmlFor="addImageInput"
+            className={`${styles.addBtn} ${isUploading ? styles.loading : ""}`}
+          >
+            {isUploading ? (
+              <span className={styles.spinner}></span>
+            ) : (
+              <FaPlus />
+            )}
+          </label>
         </div>
       </div>
     </section>

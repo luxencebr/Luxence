@@ -1,13 +1,9 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-3.0.x"]
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -41,13 +37,12 @@ model UserPreference {
 model Locality {
   id          Int     @id @default(autoincrement())
   userId      Int     @unique
-  user        User    @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   country     String
   state       String
   city        String
-  zone        String?
-  neighborhoods String?  
+  neighborhood String?  
 }
 
 model User {
@@ -139,8 +134,8 @@ model ProducerProfile {
   prices      ProducerPrice[]
   services    ProducerService[]
   fetiches    ProducerFetish[]
-  audience   ProducerAudience[]
-  locations    ProducerLocations[]
+  audience    ProducerAudience[]
+  locations   ProducerLocation[]
   payments    ProducerPayment[]
 
   views       Int       @default(0)
@@ -154,6 +149,7 @@ model ProducerLocal {
   profileId  Int        @unique
   profile    ProducerProfile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
+  cep         String
   country     String
   state       String
   city        String
@@ -166,7 +162,7 @@ model ProducerLocal {
 }
 
 model AmenityOption {
-  id        Int @id @default(autoincrement())
+  id        Int @id 
   name      String @unique
   label     String
 
@@ -177,14 +173,14 @@ model LocalAmenity {
   id          Int @id @default(autoincrement())
   localId     Int
   amenityId   Int
-  local       ProducerLocal @relation(fields: [localId], references: [id])
-  amenity     AmenityOption @relation(fields: [amenityId], references: [id])
+  local ProducerLocal @relation(fields: [localId], references: [id], onDelete: Cascade)
+  option      AmenityOption @relation(fields: [amenityId], references: [id])
 
   @@unique([localId, amenityId])
 }
 
 model AppearanceOption {
-  id     Int     @id @default(autoincrement())
+  id     Int     @id 
   name   String  @unique
   label  String
   type   String 
@@ -210,10 +206,10 @@ model ProducerAppearance {
 }
 
 model PriceOption {
-  id       Int     @id @default(autoincrement())
+  id       Int     @id
   name     String  @unique
   label    String
-  producers ProducerPrice[]
+  prices   ProducerPrice[]
 }
 
 model ProducerPrice {
@@ -227,92 +223,93 @@ model ProducerPrice {
   @@unique([profileId, priceId])
 }
 
+model PaymentOption {
+  id        Int              @id
+  name      String           @unique
+  label     String
+
+  payments  ProducerPayment[]
+}
+
+model ProducerPayment {
+  id          Int           @id @default(autoincrement())
+  profileId   Int
+  paymentId   Int
+  profile     ProducerProfile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  option      PaymentOption @relation(fields: [paymentId], references: [id])
+
+  @@unique([profileId, paymentId])
+}
+
 model ServiceOption {
-  id        Int              @id @default(autoincrement())
+  id        Int              @id
   name      String           @unique
   label     String
   
-  producers ProducerService[]
+  services  ProducerService[]
 }
 
 model ProducerService {
   id          Int           @id @default(autoincrement())
-  profileId  Int
+  profileId   Int
   serviceId   Int
-  profile    ProducerProfile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  service     ServiceOption @relation(fields: [serviceId], references: [id])
+  status      String @default("neutral")
+  profile     ProducerProfile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  option      ServiceOption @relation(fields: [serviceId], references: [id])
 
   @@unique([profileId, serviceId])
 }
 
 model FetishOption {
-  id        Int              @id @default(autoincrement())
+  id        Int              @id
   name      String           @unique
   label     String
 
-  producers ProducerFetish[]
+  fetiches  ProducerFetish[]
 }
 
 model ProducerFetish {
   id          Int           @id @default(autoincrement())
-  profileId  Int
+  profileId   Int
   fetishId    Int
-  profile    ProducerProfile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  fetish      FetishOption  @relation(fields: [fetishId], references: [id])
+  profile     ProducerProfile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  option      FetishOption  @relation(fields: [fetishId], references: [id])
 
   @@unique([profileId, fetishId])
 }
 
 model AudienceOption {
-  id        Int               @id @default(autoincrement())
+  id        Int               @id
   name      String            @unique
   label     String
 
-  producers ProducerAudience[]
+  audiences ProducerAudience[]
 }
 
 model ProducerAudience {
   id          Int             @id @default(autoincrement())
-  profileId  Int        
+  profileId   Int        
   audienceId  Int
-  profile    ProducerProfile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  audience    AudienceOption  @relation(fields: [audienceId], references: [id])
+  profile     ProducerProfile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  option      AudienceOption  @relation(fields: [audienceId], references: [id])
 
   @@unique([profileId, audienceId])
 }
 
 model LocationOption {
-  id        Int @id @default(autoincrement())
+  id        Int @id
   name      String @unique
   label     String
 
-  localities ProducerLocations[]
+  locations ProducerLocation[]
 }
 
-model ProducerLocations {
+model ProducerLocation {
   id           Int @id @default(autoincrement())
-  profileId  Int        
+  profileId    Int        
   locationId   Int
-  profile    ProducerProfile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  location     LocationOption   @relation(fields: [locationId], references: [id])
+  profile      ProducerProfile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  option       LocationOption   @relation(fields: [locationId], references: [id])
 
   @@unique([profileId, locationId])
-}
-
-model PaymentOption {
-  id        Int              @id @default(autoincrement())
-  name      String           @unique
-  label     String
-
-  producers ProducerPayment[]
-}
-
-model ProducerPayment {
-  id          Int           @id @default(autoincrement())
-  profileId  Int
-  paymentId   Int
-  profile    ProducerProfile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  payment     PaymentOption @relation(fields: [paymentId], references: [id])
-
-  @@unique([profileId, paymentId])
 }
