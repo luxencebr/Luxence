@@ -1,3 +1,5 @@
+"use-client";
+
 import styles from "./step-indicator.module.css";
 
 interface StepIndicatorProps {
