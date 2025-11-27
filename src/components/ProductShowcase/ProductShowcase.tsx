@@ -36,7 +36,7 @@ export default function ProductShowcase({
     Array.isArray(producer.profile.images)
       ? producer.profile.images.map((img, index) => ({
           id: index,
-          url: img.url,
+          url: img.level,
           name: img.name,
         }))
       : []
