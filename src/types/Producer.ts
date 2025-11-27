@@ -47,6 +47,9 @@ export interface ProducerProfile {
   hasLocal: boolean;
   views: number;
 
+  telegram?: string;
+  instagram?: string;
+
   producer: Producer;
   local: ProducerLocal | null;
   appearance: ProducerAppearance[];
