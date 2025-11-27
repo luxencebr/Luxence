@@ -1,5 +1,9 @@
-function updateField(path: string, value: any) {
-  setEditableProducer((prev) => {
+export function updateField(
+  setEditableProducer: React.Dispatch<React.SetStateAction<any>>,
+  path: string,
+  value: any
+) {
+  setEditableProducer((prev: any) => {
     const copy = structuredClone(prev);
     const segments = path.split(".");
     let current = copy;
