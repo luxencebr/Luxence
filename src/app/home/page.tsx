@@ -11,7 +11,7 @@ import ProductsRow from "@/components/ProductRow/ProductRow";
 export default function HomePage() {
   const topProducers = allProducers.slice(0, 10);
   const newProducers = [...allProducers].sort((a, b) =>
-    b.metadata.createdAt.localeCompare(a.metadata.createdAt)
+    b.user.createdAt.toISOString().localeCompare(a.user.createdAt.toISOString())
   );
 
   return (
