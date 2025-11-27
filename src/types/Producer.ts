@@ -16,6 +16,10 @@ export interface Producer {
   userId: number;
   user: User;
 
+  metadata: {
+    createdAt: string;
+  };
+
   signature: "COPPER" | "SILVER" | "GOLD" | "DIAMOND";
   verificationStatus: "YELLOW" | "GREEN" | "RED";
   isVerified: boolean;
