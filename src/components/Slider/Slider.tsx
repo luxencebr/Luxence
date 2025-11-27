@@ -5,7 +5,11 @@ import styles from "./Slider.module.css";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 import { FaXmark, FaPlus } from "react-icons/fa6";
 
-import type { Slide } from "@/data/sliderData";
+export interface Slide {
+  id: number | string;
+  src: string;
+  alt: string;
+}
 
 interface HighlightSliderProps {
   slides: Slide[];
