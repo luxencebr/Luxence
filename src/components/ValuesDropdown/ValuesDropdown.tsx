@@ -10,18 +10,18 @@ interface ValueDropdownProps {
 }
 
 export default function ValueDropdown({ producer }: ValueDropdownProps) {
-  const values = producer.prices || [];
+  const values = producer.profile.prices || [];
 
   function ValueTrigger() {
     return (
       <div className={styles.triggerText}>
         <span>A partir de</span>
         <div>
-          {values[0].price.toLocaleString("pt-BR", {
+          {values[0].value.toLocaleString("pt-BR", {
             style: "currency",
             currency: "BRL",
           })}{" "}
-          <span>- {values[0].duration}</span>
+          <span>- {values[0].option.label}</span>
         </div>
       </div>
     );
@@ -35,9 +35,9 @@ export default function ValueDropdown({ producer }: ValueDropdownProps) {
     >
       {values.map((item, idx) => (
         <dl key={idx} className={styles.valueItem}>
-          <dt>{item.duration}</dt>
+          <dt>{item.option.label}</dt>
           <dd>
-            {item.price.toLocaleString("pt-BR", {
+            {item.value.toLocaleString("pt-BR", {
               style: "currency",
               currency: "BRL",
             })}
