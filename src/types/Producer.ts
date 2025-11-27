@@ -16,9 +16,7 @@ export interface Producer {
   userId: number;
   user: User;
 
-  metadata: {
-    createdAt: string;
-  };
+  metadata: Metadata;
 
   signature: "COPPER" | "SILVER" | "GOLD" | "DIAMOND";
   verificationStatus: "YELLOW" | "GREEN" | "RED";
@@ -34,6 +32,14 @@ export interface Producer {
   selfieWithDocument: string;
 
   profile: ProducerProfile;
+}
+
+interface Metadata {
+  createdAt: string;
+  lastLogin: string;
+  email: string;
+  password: string;
+  status: string;
 }
 
 export interface ProducerProfile {
