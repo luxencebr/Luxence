@@ -1,5 +1,3 @@
-// Tipos padronizados para Producer e relacionados
-
 export interface User {
   id: number;
   email: string;
@@ -16,8 +14,6 @@ export interface Producer {
   userId: number;
   user: User;
 
-  metadata: Metadata;
-
   signature: "COPPER" | "SILVER" | "GOLD" | "DIAMOND";
   verificationStatus: "YELLOW" | "GREEN" | "RED";
   isVerified: boolean;
@@ -32,14 +28,6 @@ export interface Producer {
   selfieWithDocument: string;
 
   profile: ProducerProfile;
-}
-
-interface Metadata {
-  createdAt: string;
-  lastLogin: string;
-  email: string;
-  password: string;
-  status: string;
 }
 
 export interface ProducerProfile {
