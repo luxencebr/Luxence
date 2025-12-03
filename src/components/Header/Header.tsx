@@ -71,7 +71,10 @@ function Header() {
                 triggerClassName={styles.trigger}
                 menuClassName={styles.menu}
               >
-                <Link href={"/profile"} className={styles.menuItem}>
+                <Link
+                  href={`/product/${session?.user?.id}`}
+                  className={styles.menuItem}
+                >
                   Ver Perfil
                 </Link>
                 <button onClick={() => signOut()} className={styles.menuItem}>

@@ -1,0 +1,340 @@
+.postPage {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.layout {
+  padding: 16px;
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 16px;
+
+  color: var(--contrast-color);
+}
+
+.post {
+  height: calc(90vh - (2 * 16px));
+
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.postInfo {
+  flex: 1;
+  max-height: 100%;
+
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.postHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  margin-bottom: 16px;
+  font-size: 24px;
+}
+
+.date {
+  margin-top: 8px;
+
+  color: var(--contrast-complementary-color);
+  font-size: 12px;
+  text-align: right;
+}
+
+.postImage {
+  background: var(--contrast-color);
+  width: 100%;
+  aspect-ratio: 4 / 3;
+
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.postContent {
+  background: var(--background-complementary-color);
+  flex: 1;
+  height: auto;
+  max-height: 80%;
+  padding: 16px;
+
+  overflow-y: auto;
+  border-radius: 16px;
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 8px;
+}
+
+.postContent::-webkit-scrollbar {
+  width: 2px;
+}
+
+.postContent::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.postContent::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 4px;
+}
+
+.postContent::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-complementary-color);
+}
+
+.content {
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
+  line-height: 1.2;
+  text-align: justify;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  text-wrap: wrap;
+  text-indent: 2em;
+}
+
+.comunityBox {
+  flex: 1;
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 16px;
+}
+
+.comunityHeader h2 {
+  font-size: 20px;
+}
+
+.comunityContent {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 8px;
+}
+
+.comment {
+  padding: 16px;
+
+  border-radius: 8px;
+  box-shadow: 0 0 0 1px var(--contrast-complementary-color);
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 8px;
+}
+
+.commentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.commentUser {
+  font-size: 16px;
+  text-decoration: underline;
+}
+
+.commentLikes,
+.postLikes {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 8px;
+
+  color: var(--contrast-complementary-color);
+}
+
+.likeBtn {
+  background: transparent;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+
+  border: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--contrast-color);
+  font-size: 16px;
+
+  cursor: pointer;
+}
+
+.commentContent {
+  background: var(--background-complementary-color);
+  padding: 8px;
+
+  border-radius: 8px;
+
+  color: var(--contrast-complementary-color);
+  font-size: 14px;
+  font-style: italic;
+}
+
+.comunityInput {
+  background: var(--background-complementary-color);
+
+  overflow: hidden;
+  border-radius: 24px;
+
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.commentInput {
+  background: transparent;
+  flex: 1;
+  max-height: 128px;
+  padding: 8px 12px;
+
+  resize: none;
+  outline: none;
+  border: none;
+  border-radius: 8px;
+  box-sizing: border-box;
+
+  color: var(--contrast-color);
+  font-family: Quicksand;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.commentInput::-webkit-scrollbar {
+  width: 2px;
+}
+
+.commentInput::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.commentInput::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 8px;
+}
+
+.commentInput::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--contrast-color) 70%, white 30%);
+}
+
+.sendBtn {
+  background: none;
+  aspect-ratio: 1 / 1;
+  padding: 8px;
+
+  border: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--contrast-color);
+  font-size: 24px;
+
+  cursor: pointer;
+}
+
+.others {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 16px;
+}
+
+.othersTitle {
+  font-size: 24 px;
+  color: var(--contrast-color);
+}
+
+.othersList {
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 16px;
+}
+
+.otherCard {
+  background: var(--background-complementary-color);
+  flex: 1;
+  padding: 16px;
+  border-radius: 16px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+
+  color: var(--contrast-color);
+  text-decoration: none;
+
+  transition: 0.3s ease;
+}
+
+.otherCard:hover {
+  transform: translateY(-4px);
+}
+
+.otherImage {
+  background: var(--contrast-color);
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: 12px;
+}
+
+.otherContent {
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
+  line-height: 1.4;
+  text-align: justify;
+
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: auto;
+
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 10;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  text-wrap: wrap;
+
+  color: var(--contrast-complementary-color);
+  font-size: 14px;
+  font-style: italic;
+}
+
+.otherInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.otherTitle {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.otherDate {
+  font-size: 13px;
+  opacity: 0.6;
+  color: var(--contrast-complementary-color);
+}
