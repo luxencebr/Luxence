@@ -1,5 +1,6 @@
 "use client";
 
+import { use } from "react";
 import { notFound } from "next/navigation";
 import { posts } from "@/data/posts";
 import styles from "./page.module.css";
@@ -7,13 +8,12 @@ import { IoSend } from "react-icons/io5";
 import { FaRegHeart, FaHeart } from "react-icons/fa6";
 
 interface PostPageProps {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
 }
 
 export default function PostPage({ params }: PostPageProps) {
-  const postId = params.id;
+  const { id } = use(params);
+  const postId = id;
   const post = posts.find((p) => p.id === postId);
 
   if (!post) return notFound();

@@ -28,6 +28,7 @@
   width: 100%;
 
   display: flex;
+  align-items: start;
   gap: 16px;
 }
 
@@ -71,9 +72,27 @@
 }
 
 .benefits {
-  margin: 16px 0;
+  padding: 0;
+  margin: 16px 12px;
+
+  list-style: none;
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 8px;
 
   font-size: 14px;
+}
+
+.benefit {
+  padding: 8px 16px;
+
+  border-radius: 12px;
+  box-shadow: 0 0 0 1px var(--contrast-complementary-color);
+
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .signatureCard button {
@@ -87,4 +106,8 @@
   color: var(--background-color);
 
   cursor: pointer;
+}
+
+.deny {
+  opacity: 0.6;
 }

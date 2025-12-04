@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import styles from "./ProductServices.module.css";
-import { FaCheck, FaXmark } from "react-icons/fa6";
+import { FaCheck, FaXmark, FaMinus } from "react-icons/fa6";
 import { HiOutlinePencil } from "react-icons/hi2";
-import { FaMinus } from "react-icons/fa6";
 
 import type { Producer } from "@/types/Producer";
 
