@@ -6,6 +6,7 @@ type User = {
   email: string;
   password?: string;
   name: string;
+  role: string;
 };
 
 export default async function connector(
@@ -25,6 +26,7 @@ export default async function connector(
       id: user.id, // Retornando o id do usuário
       email: user.email,
       name: user.name,
+      role: user.role,
     };
   }
 

@@ -7,6 +7,7 @@ import { HiLocationMarker } from "react-icons/hi";
 import { FaLocationArrow } from "react-icons/fa6";
 import { TbHomeCheck } from "react-icons/tb";
 import { HiOutlinePencil } from "react-icons/hi2";
+import Dropdown from "../ui/Dropdown/Dropdown";
 
 import type { Producer } from "@/types/Producer";
 
@@ -269,42 +270,48 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
                         />
                       </label>
 
-                      <label htmlFor="">
-                        Rua:
-                        <input
-                          type="text"
-                          placeholder="Rua"
-                          value={local.street}
-                          disabled={true}
-                          onChange={(e) =>
-                            setLocal({ ...local, street: e.target.value })
-                          }
-                        />
-                      </label>
+                      <div className={styles.ocult}>
+                        <p>
+                          As seguintes informações são <strong>PRIVADAS</strong>{" "}
+                          e apenas você e a <span>Luence</span> têm acesso
+                        </p>
+                        <label htmlFor="">
+                          Rua:
+                          <input
+                            type="text"
+                            placeholder="Rua"
+                            value={local.street}
+                            disabled={true}
+                            onChange={(e) =>
+                              setLocal({ ...local, street: e.target.value })
+                            }
+                          />
+                        </label>
 
-                      <label htmlFor="">
-                        Número:
-                        <input
-                          type="text"
-                          placeholder="Número"
-                          value={local.number}
-                          onChange={(e) =>
-                            setLocal({ ...local, number: e.target.value })
-                          }
-                        />
-                      </label>
+                        <label htmlFor="">
+                          Número:
+                          <input
+                            type="text"
+                            placeholder="Número"
+                            value={local.number}
+                            onChange={(e) =>
+                              setLocal({ ...local, number: e.target.value })
+                            }
+                          />
+                        </label>
 
-                      <label htmlFor="">
-                        Complemento:
-                        <input
-                          type="text"
-                          placeholder="Complemento"
-                          value={local.complement || ""}
-                          onChange={(e) =>
-                            setLocal({ ...local, complement: e.target.value })
-                          }
-                        />
-                      </label>
+                        <label htmlFor="">
+                          Complemento:
+                          <input
+                            type="text"
+                            placeholder="Complemento"
+                            value={local.complement || ""}
+                            onChange={(e) =>
+                              setLocal({ ...local, complement: e.target.value })
+                            }
+                          />
+                        </label>
+                      </div>
                     </div>
 
                     <div className={styles.line}>
@@ -490,6 +497,13 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
                   })}
                 </>
               )}
+            </div>
+
+            <div className={styles.line}>
+              <h2>Bairros que Atendo</h2>
+              <Dropdown trigger={<>Selecione um Bairro</>}>
+                <></>
+              </Dropdown>
             </div>
           </div>
         </div>

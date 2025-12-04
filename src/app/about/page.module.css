@@ -10,7 +10,6 @@
 
 .title {
   font-size: 32px;
-  text-align: center;
   color: var(--contrast-color);
 }
 
@@ -106,4 +105,141 @@
 }
 
 @media (max-width: 768px) {
+}
+
+.newPost {
+  background: transparent;
+  height: 64px;
+  padding: 16px;
+
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 0 0 1px var(--contrast-complementary-color);
+
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+
+  color: var(--contrast-color);
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.newPost span {
+  aspect-ratio: 1 / 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 24px;
+}
+
+.newPost:hover {
+  background: var(--background-complementary-color);
+
+  box-shadow: 0 0 0 1px var(--primary-color);
+
+  color: var(--primary-color);
+}
+
+.postsList {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 16px;
+
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.listItem {
+  height: 64px;
+  padding: 16px;
+
+  border-radius: 8px;
+
+  display: flex;
+
+  transition: 0.2s ease;
+}
+
+.listItem:hover {
+  background: var(--background-complementary-color);
+}
+
+.itemLink {
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+
+  color: var(--contrast-color);
+  text-decoration: none;
+}
+
+.itemContent {
+  height: 100%;
+
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.itemImage {
+  height: 100%;
+  aspect-ratio: 4 / 3;
+
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.itemInfo {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.itemTitle {
+  font-size: 16px;
+}
+
+.itemDate {
+  font-size: 12px;
+  color: var(--contrast-complementary-color);
+  margin-bottom: 4px;
+}
+
+.optBtn {
+  background: transparent;
+  aspect-ratio: 1 / 1;
+  padding: 8px;
+
+  border: none;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--contrast-complementary-color);
+  font-size: 20px;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.optBtn:hover {
+  background: var(--background-color);
+
+  color: var(--primary-color);
 }

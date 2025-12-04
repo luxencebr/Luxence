@@ -202,3 +202,20 @@
 .editBtn:hover {
   opacity: 1;
 }
+
+.ocult {
+  border-radius: 8px;
+  box-shadow: 0 0 0 1px var(--contrast-complementary-color);
+  padding: 8px;
+}
+
+.ocult p {
+  margin-bottom: 8px;
+  hyphens: auto;
+  overflow-wrap: break-word;
+  text-align: justify;
+}
+
+.ocult p span {
+  text-wrap: nowrap;
+}
