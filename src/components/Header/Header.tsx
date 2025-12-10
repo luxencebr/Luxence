@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -16,6 +17,11 @@ import LogIn from "@/components/LogIn/LogIn";
 
 function Header() {
   const { data: session } = useSession();
+
+  const pathname = usePathname();
+
+  const isActive = (route: string) =>
+    pathname === route || pathname.startsWith(route + "/");
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -34,17 +40,38 @@ function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.layout}>
-        <div className={styles.left}>
+        <nav className={styles.left}>
           <Link href="/">
             <img src="/ExenceLogo.svg" alt="Logo" className={styles.logo} />
           </Link>
 
-          <LocationSelector />
-
-          <Link href="/home" className={styles.news}>
-            Novidades
+          <Link
+            href="/home"
+            className={`${styles.navBtn} ${
+              isActive("/home") ? styles.active : ""
+            }`}
+          >
+            Início
           </Link>
-        </div>
+
+          <Link
+            href="/catalog"
+            className={`${styles.navBtn} ${
+              isActive("/catalog") ? styles.active : ""
+            }`}
+          >
+            Catálogo
+          </Link>
+
+          <Link
+            href="/about"
+            className={`${styles.navBtn} ${
+              isActive("/about") ? styles.active : ""
+            }`}
+          >
+            Sobre
+          </Link>
+        </nav>
         <div className={styles.headerButtons}>
           {session ? (
             <>

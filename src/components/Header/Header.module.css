@@ -36,26 +36,26 @@
   cursor: pointer;
 }
 
-.news {
-  background: var(--primary-color);
-  padding: 8px;
+.navBtn {
+  opacity: 0.75;
+  padding: 4px;
 
-  border-radius: 4px;
-
-  color: var(--background-color);
+  color: var(--contrast-color);
   font-size: 16px;
   text-decoration: none;
 
-  animation: blink-bg 1s infinite;
+  transition: 0.2s ease;
 }
 
-@keyframes blink-bg {
-  0% {
-    background: var(--primary-color);
-  }
-  100% {
-    background: var(--contrast-color);
-  }
+.navBtn:hover {
+  opacity: 1;
+}
+
+.active {
+  color: var(--primary-color);
+  font-weight: 600;
+  opacity: 1;
+  border-bottom: 1px solid var(--primary-color);
 }
 
 .headerButtons {
