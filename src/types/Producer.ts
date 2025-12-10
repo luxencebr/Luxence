@@ -38,6 +38,7 @@ export interface ProducerProfile {
   images: Array<{ name: string; url: string }>;
   scholarity: string;
   languages: Array<{ name: string; level: string }>;
+  workingHours: Array<{ days: string; hours: string }>;
   hasLocal: boolean;
   views: number;
 

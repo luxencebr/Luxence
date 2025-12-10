@@ -40,7 +40,7 @@ export default function Plans() {
   const plans: Plan[] = [
     {
       id: 1,
-      title: "Bronze",
+      title: "Prata",
       price: "R$ 99,90/mês",
       description: "Ideal para quem está começando.",
       benefits: {
@@ -56,7 +56,7 @@ export default function Plans() {
     },
     {
       id: 2,
-      title: "Prata",
+      title: "Ouro",
       price: "R$ 149,90/mês",
       description: "Perfeito para quem quer crescer.",
       benefits: {
@@ -72,7 +72,7 @@ export default function Plans() {
     },
     {
       id: 3,
-      title: "Ouro",
+      title: "Diamante",
       price: "R$ 199,90/mês",
       description: "O melhor para quem quer se destacar.",
       benefits: {
