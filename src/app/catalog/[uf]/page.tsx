@@ -458,6 +458,14 @@ export default function Catalog({ params }: CatalogProps) {
       <div className={styles.catalogPage}>
         <div className={styles.layout}>
           <div className={styles.loadingState}>
+            <img
+              src="/ExenceLogo.svg"
+              alt=""
+              style={{
+                height: "128px",
+                aspectRatio: "1 / 1",
+              }}
+            />
             <p>Carregando produtores...</p>
           </div>
         </div>

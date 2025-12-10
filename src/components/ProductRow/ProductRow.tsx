@@ -59,11 +59,10 @@ function ProductRow({
 
   maxItems = maxItems ?? (highlight ? 10 : 29);
 
-  const producersToShow =
-    producers.length > maxItems ? producers.slice(0, maxItems) : producers;
-  const hasMore = producers.length > maxItems;
+  const producersToShow = maxItems ? producers.slice(0, maxItems) : producers;
 
-  const totalItems = producersToShow.length + (hasMore ? 1 : 0);
+  const totalItems = producersToShow.length;
+
   const totalPages =
     itemsPerPage > 0 ? Math.ceil(totalItems / itemsPerPage) : 0;
 
@@ -88,9 +87,10 @@ function ProductRow({
     [itemsPerPage]
   );
 
-  const prevPage = () => setPageIndex((prev) => Math.max(prev - 1, 0));
-  const nextPage = () =>
-    setPageIndex((prev) => Math.min(prev + 1, totalPages - 1));
+  const prevPage = () =>
+    setPageIndex((prev) => (prev - 1 + totalPages) % totalPages);
+
+  const nextPage = () => setPageIndex((prev) => (prev + 1) % totalPages);
 
   useEffect(() => {
     if (itemsPerPage > 0) {
@@ -119,12 +119,6 @@ function ProductRow({
             variant={highlight ? "highlight" : "row"}
           />
         ))}
-
-        {hasMore && (
-          <li className={styles.catalogItem}>
-            <ViewMoreItem />
-          </li>
-        )}
       </ul>
 
       <RowControls

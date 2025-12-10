@@ -18,19 +18,11 @@ function HorizontalControls({
 }: HorizontalControlsProps) {
   return (
     <div className={styles.controls}>
-      <button
-        className={styles.scrollButtonLeft}
-        onClick={prevPage}
-        disabled={pageIndex === 0}
-      >
+      <button className={styles.scrollButtonLeft} onClick={prevPage}>
         <IoChevronBackOutline />
       </button>
 
-      <button
-        className={styles.scrollButtonRight}
-        onClick={nextPage}
-        disabled={pageIndex === totalPages - 1}
-      >
+      <button className={styles.scrollButtonRight} onClick={nextPage}>
         <IoChevronForwardOutline />
       </button>
     </div>

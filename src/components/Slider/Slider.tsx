@@ -160,25 +160,31 @@ function HighlightSlider({
               />
             )
           )}
-          <input
-            id="addImageInput"
-            type="file"
-            accept="image/*"
-            onChange={onAddImage}
-            className={styles.hiddenInput}
-            style={{ display: "none" }}
-          />
+          {canEdit && (
+            <>
+              <input
+                id="addImageInput"
+                type="file"
+                accept="image/*"
+                onChange={onAddImage}
+                className={styles.hiddenInput}
+                style={{ display: "none" }}
+              />
 
-          <label
-            htmlFor="addImageInput"
-            className={`${styles.addBtn} ${isUploading ? styles.loading : ""}`}
-          >
-            {isUploading ? (
-              <span className={styles.spinner}></span>
-            ) : (
-              <FaPlus />
-            )}
-          </label>
+              <label
+                htmlFor="addImageInput"
+                className={`${styles.addBtn} ${
+                  isUploading ? styles.loading : ""
+                }`}
+              >
+                {isUploading ? (
+                  <span className={styles.spinner}></span>
+                ) : (
+                  <FaPlus />
+                )}
+              </label>
+            </>
+          )}
         </div>
       </div>
     </section>

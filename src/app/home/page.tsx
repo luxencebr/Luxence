@@ -67,18 +67,44 @@ export default function HomePage() {
   }, []);
 
   if (isLoading) {
-    return <p className={styles.loading}>Carregando...</p>;
+    return (
+      <main className={styles.homePage}>
+        <div className={styles.layout}>
+          <div className={styles.loadingState}>
+            <img
+              src="/ExenceLogo.svg"
+              alt=""
+              style={{
+                height: "128px",
+                aspectRatio: "1 / 1",
+              }}
+            />
+            <p>Carregando produtores...</p>
+          </div>
+        </div>
+      </main>
+    );
   }
 
   if (error) {
-    return <p className={styles.error}>{error}</p>;
+    return (
+      <main className={styles.homePage}>
+        <div className={styles.layout}>
+          <div className={styles.errorState}>
+            <p>{error}</p>
+          </div>
+        </div>
+      </main>
+    );
   }
 
   return (
-    <>
-      <Slider slides={sliderData} className={styles.homeSlider} />
-      <ProductsRow producers={newProducers} title="Novidades" />
-      <ProductsRow producers={topProducers} title="Top Exence" highlight />
-    </>
+    <main className={styles.homePage}>
+      <div className={styles.layout}>
+        <Slider slides={sliderData} className={styles.homeSlider} />
+        <ProductsRow producers={newProducers} title="Novidades" />
+        <ProductsRow producers={topProducers} title="Top Exence" highlight />
+      </div>
+    </main>
   );
 }

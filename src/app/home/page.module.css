@@ -4,3 +4,20 @@
   aspect-ratio: 21 / 9;
   margin: 16px;
 }
+
+.loadingState,
+.errorState {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh;
+  color: var(--contrast-color);
+  font-size: 18px;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+}
+
+.errorState {
+  color: #ff6b6b;
+}
