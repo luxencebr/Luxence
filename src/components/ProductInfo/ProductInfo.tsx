@@ -307,59 +307,6 @@ function ProductInfo({
               </div>
             </button>
           </div>
-
-          <button className={styles.seeMoreButton} onClick={handleSeeMore}>
-            {isMobile ? (
-              isExpanded ? (
-                <>
-                  <IoIosArrowUp /> Ver menos
-                </>
-              ) : (
-                <>
-                  <IoIosArrowDown /> Ver mais
-                </>
-              )
-            ) : atBottom ? (
-              <>
-                <IoIosArrowUp /> Voltar ao topo
-              </>
-            ) : (
-              <>
-                <IoIosArrowDown /> Veja mais
-              </>
-            )}
-          </button>
-        </div>
-
-        <div
-          id="anchor"
-          className={`${styles.productSpecifies} ${
-            isMobile && !isExpanded ? styles.hidden : ""
-          }`}
-        >
-          <h2>Especificações</h2>
-          <ul className={styles.specifiesList}>
-            {Array.isArray(producer.profile.appearance) &&
-            producer.profile.appearance.length > 0 ? (
-              producer.profile.appearance.map((item) => (
-                <li key={item.id} className={styles.specify}>
-                  <strong>{item.appearance.label}:</strong>{" "}
-                  {item.height ||
-                    item.mannequin ||
-                    item.feet ||
-                    (item.tattoos ? "Sim" : "Não") ||
-                    (item.piercings ? "Sim" : "Não") ||
-                    (item.silicone ? "Sim" : "Não") ||
-                    "N/A"}
-                </li>
-              ))
-            ) : (
-              <span className={styles.languageTag}>Não informado</span>
-            )}
-          </ul>
-          <div className={styles.extraContent}>
-            <a href=""></a>
-          </div>
         </div>
       </div>
     </div>

@@ -14,6 +14,7 @@ interface ProductServicesProps {
 
 function ProductServices({ producer, canEdit }: ProductServicesProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const SERVICE_OPTIONS = [
     { id: 1, name: "acompanhante", label: "Acompanhante" },
@@ -56,21 +57,38 @@ function ProductServices({ producer, canEdit }: ProductServicesProps) {
   };
 
   async function handleSave() {
-    const toSave = services.map((s) => ({
-      serviceId: s.id,
-      status: s.status,
-    }));
+    if (isSaving) return; // evita requisições duplicadas
 
-    await fetch("/api/profile/services", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        profileId: producer.profile.id,
-        services: toSave,
-      }),
-    });
+    setIsSaving(true);
 
-    setIsEditing(false);
+    try {
+      const toSave = services.map((s) => ({
+        serviceId: s.id,
+        status: s.status,
+      }));
+
+      const res = await fetch("/api/profile/services", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          profileId: producer.profile.id,
+          services: toSave,
+        }),
+      });
+
+      if (!res.ok) {
+        console.error("Erro ao salvar serviços");
+        return;
+      }
+
+      // Se tudo OK, sai do modo edição
+      setIsEditing(false);
+    } catch (err) {
+      console.error("Erro inesperado:", err);
+    } finally {
+      // sempre encerra o loading
+      setIsSaving(false);
+    }
   }
 
   return (
@@ -86,10 +104,19 @@ function ProductServices({ producer, canEdit }: ProductServicesProps) {
               </button>
             ) : (
               <div className={styles.editActions}>
-                <button className={styles.saveBtn} onClick={handleSave}>
-                  Salvar
+                <button
+                  className={styles.saveBtn}
+                  onClick={handleSave}
+                  disabled={isSaving}
+                >
+                  {isSaving ? "Salvando..." : "Salvar"}
                 </button>
-                <button className={styles.cancelBtn} onClick={handleCancel}>
+
+                <button
+                  className={styles.cancelBtn}
+                  onClick={handleCancel}
+                  disabled={isSaving}
+                >
                   Cancelar
                 </button>
               </div>
@@ -97,100 +124,105 @@ function ProductServices({ producer, canEdit }: ProductServicesProps) {
           ) : null}
         </div>
 
-        {/* VISUALIZAÇÃO */}
-        {!isEditing && (
-          <ul className={styles.servicesList}>
-            {services.map((s) => (
-              <li key={s.id}>
-                {s.label}
-
-                {s.status === "yes" && (
-                  <span className={`${styles.green} ${styles.status}`}>
-                    <FaCheck />
-                  </span>
-                )}
-
-                {s.status === "no" && (
-                  <span className={`${styles.red} ${styles.status}`}>
-                    <FaXmark />
-                  </span>
-                )}
-
-                {s.status === "neutral" && (
-                  <span className={`${styles.neutral} ${styles.status}`}>
-                    <FaMinus />
-                  </span>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-
-        {/* MODO DE EDIÇÃO — AGORA COM RADIO INPUTS */}
-        {isEditing && (
-          <div className={styles.servicesList}>
-            {services.map((s) => (
-              <div key={s.id} className={styles.serviceItem}>
-                <span className={styles.label}>{s.label}</span>
-
-                <div className={styles.radioGroup}>
-                  {/* YES */}
-                  <label className={styles.radioOption}>
-                    <input
-                      type="radio"
-                      name={`service-${s.id}`}
-                      value="yes"
-                      checked={s.status === "yes"}
-                      onChange={() =>
-                        setServices(
-                          services.map((sv) =>
-                            sv.id === s.id ? { ...sv, status: "yes" } : sv
-                          )
-                        )
-                      }
-                    />
-                    <FaCheck className={styles.green} />
-                  </label>
-
-                  {/* NEUTRAL */}
-                  <label className={styles.radioOption}>
-                    <input
-                      type="radio"
-                      name={`service-${s.id}`}
-                      value="neutral"
-                      checked={s.status === "neutral"}
-                      onChange={() =>
-                        setServices(
-                          services.map((sv) =>
-                            sv.id === s.id ? { ...sv, status: "neutral" } : sv
-                          )
-                        )
-                      }
-                    />
-                    <FaMinus className={styles.neutral} />
-                  </label>
-
-                  {/* NO */}
-                  <label className={styles.radioOption}>
-                    <input
-                      type="radio"
-                      name={`service-${s.id}`}
-                      value="no"
-                      checked={s.status === "no"}
-                      onChange={() =>
-                        setServices(
-                          services.map((sv) =>
-                            sv.id === s.id ? { ...sv, status: "no" } : sv
-                          )
-                        )
-                      }
-                    />
-                    <FaXmark className={styles.red} />
-                  </label>
-                </div>
-              </div>
-            ))}
+        {isSaving ? (
+          <div className={styles.saving}>
+            <span className={styles.spinner}></span>
           </div>
+        ) : (
+          <>
+            {!isEditing && (
+              <ul className={styles.servicesList}>
+                {services.map((s) => (
+                  <li key={s.id}>
+                    {s.label}
+
+                    {s.status === "yes" && (
+                      <span className={`${styles.green} ${styles.status}`}>
+                        <FaCheck />
+                      </span>
+                    )}
+
+                    {s.status === "no" && (
+                      <span className={`${styles.red} ${styles.status}`}>
+                        <FaXmark />
+                      </span>
+                    )}
+
+                    {s.status === "neutral" && (
+                      <span className={`${styles.neutral} ${styles.status}`}>
+                        <FaMinus />
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {isEditing && (
+              <div className={styles.servicesList}>
+                {services.map((s) => (
+                  <div key={s.id} className={styles.serviceItem}>
+                    <span className={styles.label}>{s.label}</span>
+
+                    <div className={styles.radioGroup}>
+                      <label className={styles.radioOption}>
+                        <input
+                          type="radio"
+                          name={`service-${s.id}`}
+                          value="yes"
+                          checked={s.status === "yes"}
+                          onChange={() =>
+                            setServices(
+                              services.map((sv) =>
+                                sv.id === s.id ? { ...sv, status: "yes" } : sv
+                              )
+                            )
+                          }
+                        />
+                        <FaCheck className={styles.green} />
+                      </label>
+
+                      <label className={styles.radioOption}>
+                        <input
+                          type="radio"
+                          name={`service-${s.id}`}
+                          value="neutral"
+                          checked={s.status === "neutral"}
+                          onChange={() =>
+                            setServices(
+                              services.map((sv) =>
+                                sv.id === s.id
+                                  ? { ...sv, status: "neutral" }
+                                  : sv
+                              )
+                            )
+                          }
+                        />
+                        <FaMinus className={styles.neutral} />
+                      </label>
+
+                      <label className={styles.radioOption}>
+                        <input
+                          type="radio"
+                          name={`service-${s.id}`}
+                          value="no"
+                          checked={s.status === "no"}
+                          onChange={() =>
+                            setServices(
+                              services.map((sv) =>
+                                sv.id === s.id ? { ...sv, status: "no" } : sv
+                              )
+                            )
+                          }
+                        />
+                        <FaXmark className={styles.red} />
+                      </label>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
     </section>

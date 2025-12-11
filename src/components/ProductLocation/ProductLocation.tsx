@@ -62,16 +62,9 @@ interface ProductLocationProps {
   canEdit: boolean;
 }
 
-function formatText(text: string) {
-  return text
-    .trim()
-    .split(/\s+/)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(" ");
-}
-
 function ProductLocation({ producer, canEdit }: ProductLocationProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   //----- Locality -----
 
@@ -267,7 +260,11 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
   };
 
   const handleSave = async () => {
+    if (isSaving) return; // evita requisição dupla
+
     try {
+      setIsSaving(true); // ativa loading
+
       const locationsPayload = locations.map((loc) => ({
         locationId: loc.option.id,
         option: {
@@ -297,13 +294,15 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
           local,
           amenities: amenitiesPayload,
           locations: locationsPayload,
-          neighborhoods: neighborhoodsServed, // Array de strings: ["Barra Da Tijuca","Cordovil","Recreio"]
+          neighborhoods: neighborhoodsServed,
         }),
       });
 
       setIsEditing(false);
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsSaving(false); // finaliza loading SEMPRE
     }
   };
 
@@ -325,10 +324,19 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
               </button>
             ) : (
               <div className={styles.editActions}>
-                <button className={styles.saveBtn} onClick={handleSave}>
-                  Salvar
+                <button
+                  className={styles.saveBtn}
+                  onClick={handleSave}
+                  disabled={isSaving}
+                >
+                  {isSaving ? "Salvando..." : "Salvar"}
                 </button>
-                <button className={styles.cancelBtn} onClick={handleCancel}>
+
+                <button
+                  className={styles.cancelBtn}
+                  onClick={handleCancel}
+                  disabled={isSaving}
+                >
                   Cancelar
                 </button>
               </div>
@@ -336,358 +344,368 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
           ) : null}
         </div>
 
-        <div className={styles.content}>
-          <div className={`${styles.column} ${styles.conditional}`}>
-            {isEditing ? (
-              <>
-                <label htmlFor="hasLocal" className={styles.hasLocal}>
-                  <input
-                    type="checkbox"
-                    id="hasLocal"
-                    checked={hasLocal}
-                    onChange={(e) => setHasLocal(e.target.checked)}
-                  />
-                  Possui Local?
-                </label>
+        {isSaving ? (
+          <div className={styles.saving}>
+            <span className={styles.spinner}></span>
+          </div>
+        ) : (
+          <div className={styles.content}>
+            <div className={`${styles.column} ${styles.conditional}`}>
+              {isEditing ? (
+                <>
+                  <label htmlFor="hasLocal" className={styles.hasLocal}>
+                    <input
+                      type="checkbox"
+                      id="hasLocal"
+                      checked={hasLocal}
+                      onChange={(e) => setHasLocal(e.target.checked)}
+                    />
+                    Possui Local?
+                  </label>
 
-                {hasLocal && (
-                  <>
-                    <div className={styles.line}>
-                      <label htmlFor="">
-                        CEP:
-                        <input
-                          type="text"
-                          placeholder="CEP"
-                          value={local.cep}
-                          onChange={(e) => {
-                            const cep = e.target.value;
-                            setLocal({ ...local, cep });
-                            fetchCEP(cep);
-                          }}
-                        />
-                      </label>
-
-                      <label htmlFor="">
-                        Estado
-                        <input
-                          type="text"
-                          placeholder="Estado"
-                          value={local.state}
-                          disabled={true}
-                          onChange={(e) =>
-                            setLocal({ ...local, state: e.target.value })
-                          }
-                        />
-                      </label>
-
-                      <label htmlFor="">
-                        Cidade:
-                        <input
-                          type="text"
-                          placeholder="Cidade"
-                          value={local.city}
-                          disabled={true}
-                          onChange={(e) =>
-                            setLocal({ ...local, city: e.target.value })
-                          }
-                        />
-                      </label>
-
-                      <label htmlFor="">
-                        Bairro:
-                        <input
-                          type="text"
-                          placeholder="Bairro"
-                          value={local.neighborhood}
-                          disabled={true}
-                          onChange={(e) =>
-                            setLocal({
-                              ...local,
-                              neighborhood: e.target.value,
-                            })
-                          }
-                        />
-                      </label>
-
-                      <div className={styles.ocult}>
-                        <p>
-                          As seguintes informações são <strong>PRIVADAS</strong>{" "}
-                          e apenas você e a <span>Luence</span> têm acesso
-                        </p>
+                  {hasLocal && (
+                    <>
+                      <div className={styles.line}>
                         <label htmlFor="">
-                          Rua:
+                          CEP:
                           <input
                             type="text"
-                            placeholder="Rua"
-                            value={local.street}
+                            placeholder="CEP"
+                            value={local.cep}
+                            onChange={(e) => {
+                              const cep = e.target.value;
+                              setLocal({ ...local, cep });
+                              fetchCEP(cep);
+                            }}
+                          />
+                        </label>
+
+                        <label htmlFor="">
+                          Estado
+                          <input
+                            type="text"
+                            placeholder="Estado"
+                            value={local.state}
                             disabled={true}
                             onChange={(e) =>
-                              setLocal({ ...local, street: e.target.value })
+                              setLocal({ ...local, state: e.target.value })
                             }
                           />
                         </label>
 
                         <label htmlFor="">
-                          Número:
+                          Cidade:
                           <input
                             type="text"
-                            placeholder="Número"
-                            value={local.number}
+                            placeholder="Cidade"
+                            value={local.city}
+                            disabled={true}
                             onChange={(e) =>
-                              setLocal({ ...local, number: e.target.value })
+                              setLocal({ ...local, city: e.target.value })
                             }
                           />
                         </label>
 
                         <label htmlFor="">
-                          Complemento:
+                          Bairro:
                           <input
                             type="text"
-                            placeholder="Complemento"
-                            value={local.complement || ""}
+                            placeholder="Bairro"
+                            value={local.neighborhood}
+                            disabled={true}
                             onChange={(e) =>
-                              setLocal({ ...local, complement: e.target.value })
+                              setLocal({
+                                ...local,
+                                neighborhood: e.target.value,
+                              })
                             }
                           />
                         </label>
+
+                        <div className={styles.ocult}>
+                          <p>
+                            As seguintes informações são{" "}
+                            <strong>PRIVADAS</strong> e apenas você e a{" "}
+                            <span>Luence</span> têm acesso
+                          </p>
+                          <label htmlFor="">
+                            Rua:
+                            <input
+                              type="text"
+                              placeholder="Rua"
+                              value={local.street}
+                              disabled={true}
+                              onChange={(e) =>
+                                setLocal({ ...local, street: e.target.value })
+                              }
+                            />
+                          </label>
+
+                          <label htmlFor="">
+                            Número:
+                            <input
+                              type="text"
+                              placeholder="Número"
+                              value={local.number}
+                              onChange={(e) =>
+                                setLocal({ ...local, number: e.target.value })
+                              }
+                            />
+                          </label>
+
+                          <label htmlFor="">
+                            Complemento:
+                            <input
+                              type="text"
+                              placeholder="Complemento"
+                              value={local.complement || ""}
+                              onChange={(e) =>
+                                setLocal({
+                                  ...local,
+                                  complement: e.target.value,
+                                })
+                              }
+                            />
+                          </label>
+                        </div>
                       </div>
+
+                      <div className={styles.line}>
+                        <h3 className={styles.columnTitle}>Comodidades</h3>
+                        {AMENITIES_OPTIONS.map((opt) => {
+                          const exists = amenities.some(
+                            (a) => a.option.label === opt.label
+                          );
+
+                          return (
+                            <label key={opt.id} className={styles.checkboxItem}>
+                              <input
+                                type="checkbox"
+                                checked={exists}
+                                onChange={(e) => {
+                                  if (e.target.checked) {
+                                    setAmenities([
+                                      ...amenities,
+                                      {
+                                        amenityId: opt.id,
+                                        option: {
+                                          id: opt.id,
+                                          name: opt.name,
+                                          label: opt.label,
+                                        },
+                                      },
+                                    ]);
+                                  } else {
+                                    setAmenities(
+                                      amenities.filter(
+                                        (a) => a.option.id !== opt.id
+                                      )
+                                    );
+                                  }
+                                }}
+                              />
+                              {opt.id}. {opt.label}
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </>
+                  )}
+                </>
+              ) : (
+                hasLocal && (
+                  <>
+                    <div className={styles.line}>
+                      <h3 className={styles.columnTitle}>
+                        <span>
+                          <TbHomeCheck />
+                        </span>
+                        Minha Localidade
+                      </h3>
+
+                      <p className={styles.address}>
+                        {local.neighborhood}, {local.city} - {local.state}
+                      </p>
                     </div>
 
                     <div className={styles.line}>
                       <h3 className={styles.columnTitle}>Comodidades</h3>
-                      {AMENITIES_OPTIONS.map((opt) => {
-                        const exists = amenities.some(
-                          (a) => a.option.label === opt.label
-                        );
-
-                        return (
-                          <label key={opt.id} className={styles.checkboxItem}>
-                            <input
-                              type="checkbox"
-                              checked={exists}
-                              onChange={(e) => {
-                                if (e.target.checked) {
-                                  setAmenities([
-                                    ...amenities,
-                                    {
-                                      amenityId: opt.id,
-                                      option: {
-                                        id: opt.id,
-                                        name: opt.name,
-                                        label: opt.label,
-                                      },
-                                    },
-                                  ]);
-                                } else {
-                                  setAmenities(
-                                    amenities.filter(
-                                      (a) => a.option.id !== opt.id
-                                    )
-                                  );
-                                }
-                              }}
-                            />
-                            {opt.id}. {opt.label}
-                          </label>
-                        );
-                      })}
+                      <p>
+                        {amenities.length === 0
+                          ? "Nenhuma informada."
+                          : amenities.map((a) => a.option.label).join(", ")}
+                      </p>
                     </div>
                   </>
-                )}
-              </>
-            ) : (
-              hasLocal && (
-                <>
-                  <div className={styles.line}>
-                    <h3 className={styles.columnTitle}>
-                      <span>
-                        <TbHomeCheck />
-                      </span>
-                      Minha Localidade
-                    </h3>
+                )
+              )}
+            </div>
 
-                    <p className={styles.address}>
-                      {local.neighborhood}, {local.city} - {local.state}
-                    </p>
-                  </div>
+            <div className={styles.column}>
+              <div className={styles.line}>
+                <h3 className={styles.columnTitle}>
+                  <span>
+                    <FaLocationArrow />
+                  </span>
+                  Minha Localização
+                </h3>
 
-                  <div className={styles.line}>
-                    <h3 className={styles.columnTitle}>Comodidades</h3>
-                    <p>
-                      {amenities.length === 0
-                        ? "Nenhuma informada."
-                        : amenities.map((a) => a.option.label).join(", ")}
-                    </p>
-                  </div>
-                </>
-              )
-            )}
-          </div>
-
-          <div className={styles.column}>
-            <div className={styles.line}>
-              <h3 className={styles.columnTitle}>
-                <span>
-                  <FaLocationArrow />
-                </span>
-                Minha Localização
-              </h3>
-
-              {!isEditing ? (
-                <p className={styles.address}>
-                  {userLocality?.neighborhood} - {userLocality?.city},{" "}
-                  {userLocality?.state}
-                </p>
-              ) : (
-                <div className={styles.editGroup}>
-                  <label>
-                    Estado:
-                    <Dropdown
-                      trigger={selectedState || "Selecione um Estado"}
-                      triggerClassName={styles.trigger}
-                      menuClassName={styles.menu}
-                    >
-                      {states.map((st) => (
-                        <button
-                          key={st.id}
-                          onClick={() => handleStateChange(st.sigla)}
-                          className="dropdown-item"
-                        >
-                          {st.nome} - {st.sigla}
-                        </button>
-                      ))}
-                    </Dropdown>
-                  </label>
-
-                  {selectedState && (
+                {!isEditing ? (
+                  <p className={styles.address}>
+                    {userLocality?.neighborhood} - {userLocality?.city},{" "}
+                    {userLocality?.state}
+                  </p>
+                ) : (
+                  <div className={styles.editGroup}>
                     <label>
-                      Cidade:
+                      Estado:
                       <Dropdown
-                        trigger={selectedCity || "Selecione uma Cidade"}
+                        trigger={selectedState || "Selecione um Estado"}
                         triggerClassName={styles.trigger}
                         menuClassName={styles.menu}
                       >
-                        {cities.map((c) => (
+                        {states.map((st) => (
                           <button
-                            key={c.id}
-                            onClick={() => handleCityChange(c.nome)}
+                            key={st.id}
+                            onClick={() => handleStateChange(st.sigla)}
                             className="dropdown-item"
                           >
-                            {c.nome}
+                            {st.nome} - {st.sigla}
                           </button>
                         ))}
                       </Dropdown>
                     </label>
-                  )}
 
-                  {selectedCity && (
-                    <label>
-                      Bairro:
-                      <input
-                        type="text"
-                        placeholder="Digite o bairro"
-                        value={selectedNeighborhood}
-                        onChange={(e) =>
-                          handleNeighborhoodChange(e.target.value)
-                        }
-                      />
-                    </label>
-                  )}
-                </div>
-              )}
-            </div>
+                    {selectedState && (
+                      <label>
+                        Cidade:
+                        <Dropdown
+                          trigger={selectedCity || "Selecione uma Cidade"}
+                          triggerClassName={styles.trigger}
+                          menuClassName={styles.menu}
+                        >
+                          {cities.map((c) => (
+                            <button
+                              key={c.id}
+                              onClick={() => handleCityChange(c.nome)}
+                              className="dropdown-item"
+                            >
+                              {c.nome}
+                            </button>
+                          ))}
+                        </Dropdown>
+                      </label>
+                    )}
 
-            <div className={styles.line}>
-              <h3 className={styles.columnTitle}>Locais que Atendo</h3>
-
-              {!isEditing ? (
-                <p className={styles.address}>
-                  {locations.length === 0
-                    ? "Não Informado"
-                    : locations.map((loc) => loc.option.label).join(", ")}
-                </p>
-              ) : (
-                <>
-                  {LOCATIONS_OPTIONS.map((opt) => {
-                    const exists = locations.some(
-                      (l) => l.option.label === opt.label
-                    );
-
-                    return (
-                      <label key={opt.id} className={styles.checkboxItem}>
+                    {selectedCity && (
+                      <label>
+                        Bairro:
                         <input
-                          type="checkbox"
-                          checked={exists}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setLocations([
-                                ...locations,
-                                {
-                                  locationId: opt.id,
-                                  option: {
-                                    id: opt.id,
-                                    name: opt.name,
-                                    label: opt.label,
+                          type="text"
+                          placeholder="Digite o bairro"
+                          value={selectedNeighborhood}
+                          onChange={(e) =>
+                            handleNeighborhoodChange(e.target.value)
+                          }
+                        />
+                      </label>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div className={styles.line}>
+                <h3 className={styles.columnTitle}>Locais que Atendo</h3>
+
+                {!isEditing ? (
+                  <p className={styles.address}>
+                    {locations.length === 0
+                      ? "Não Informado"
+                      : locations.map((loc) => loc.option.label).join(", ")}
+                  </p>
+                ) : (
+                  <>
+                    {LOCATIONS_OPTIONS.map((opt) => {
+                      const exists = locations.some(
+                        (l) => l.option.label === opt.label
+                      );
+
+                      return (
+                        <label key={opt.id} className={styles.checkboxItem}>
+                          <input
+                            type="checkbox"
+                            checked={exists}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setLocations([
+                                  ...locations,
+                                  {
+                                    locationId: opt.id,
+                                    option: {
+                                      id: opt.id,
+                                      name: opt.name,
+                                      label: opt.label,
+                                    },
                                   },
-                                },
-                              ]);
-                            } else {
-                              setLocations(
-                                locations.filter(
-                                  (l) => l.option.label !== opt.label
-                                )
-                              );
-                            }
+                                ]);
+                              } else {
+                                setLocations(
+                                  locations.filter(
+                                    (l) => l.option.label !== opt.label
+                                  )
+                                );
+                              }
+                            }}
+                          />
+                          {opt.id}. {opt.label}
+                        </label>
+                      );
+                    })}
+                  </>
+                )}
+              </div>
+
+              <div className={styles.line}>
+                <h3 className={styles.columnTitle}>Bairros que Atendo</h3>
+                {!isEditing ? (
+                  <p className={styles.address}>
+                    {neighborhoodsServed.length === 0
+                      ? "Nenhum bairro informado."
+                      : formatNeighborhoodList(neighborhoodsServed)}
+                  </p>
+                ) : (
+                  <>
+                    <label>
+                      Adicionar Bairro
+                      <div className={styles.addNeighborhood}>
+                        <input
+                          type="text"
+                          placeholder="Digite um bairro"
+                          value={newNeighborhood}
+                          onChange={(e) => setNewNeighborhood(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") addNeighborhood();
                           }}
                         />
-                        {opt.id}. {opt.label}
-                      </label>
-                    );
-                  })}
-                </>
-              )}
-            </div>
-
-            <div className={styles.line}>
-              <h3 className={styles.columnTitle}>Bairros que Atendo</h3>
-              {!isEditing ? (
-                <p className={styles.address}>
-                  {neighborhoodsServed.length === 0
-                    ? "Nenhum bairro informado."
-                    : formatNeighborhoodList(neighborhoodsServed)}
-                </p>
-              ) : (
-                <>
-                  <label>
-                    Adicionar Bairro
-                    <div className={styles.addNeighborhood}>
-                      <input
-                        type="text"
-                        placeholder="Digite um bairro"
-                        value={newNeighborhood}
-                        onChange={(e) => setNewNeighborhood(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") addNeighborhood();
-                        }}
-                      />
-                      <button type="button" onClick={addNeighborhood}>
-                        <FaPlus />
-                      </button>
-                    </div>
-                  </label>
-                  {neighborhoodsServed.length > 0 && (
-                    <p className={styles.neighborhoodsList}>
-                      {formatNeighborhoodListEditable(
-                        neighborhoodsServed,
-                        removeNeighborhood
-                      )}
-                    </p>
-                  )}
-                </>
-              )}
+                        <button type="button" onClick={addNeighborhood}>
+                          <FaPlus />
+                        </button>
+                      </div>
+                    </label>
+                    {neighborhoodsServed.length > 0 && (
+                      <p className={styles.neighborhoodsList}>
+                        {formatNeighborhoodListEditable(
+                          neighborhoodsServed,
+                          removeNeighborhood
+                        )}
+                      </p>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

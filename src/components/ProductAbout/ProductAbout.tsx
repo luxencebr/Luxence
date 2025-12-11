@@ -37,6 +37,7 @@ interface OtherLanguage {
 
 export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [backup, setBackup] = useState<{
     bio: string;
@@ -63,8 +64,10 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
   };
 
   const handleSave = async () => {
+    setIsSaving(true);
+
     const payload = {
-      profileId: producer.profile.id, // <- agora enviamos o ID correto
+      profileId: producer.profile.id, // ID correto
       bio,
       languages: getAllLanguages(), // retorna array [{ name, level }]
     };
@@ -80,12 +83,14 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
         throw new Error("Erro ao salvar dados");
       }
 
-      // tudo certo
+      // Sucesso: limpa backup e fecha edição
       setBackup(null);
       setIsEditing(false);
     } catch (err) {
-      console.error(err);
-      alert("Erro ao salvar.");
+      console.error("Erro ao salvar:", err);
+      alert("Ocorreu um erro ao salvar as informações. Tente novamente.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -171,10 +176,19 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
             </button>
           ) : (
             <div className={styles.editActions}>
-              <button className={styles.saveBtn} onClick={handleSave}>
-                Salvar
+              <button
+                className={styles.saveBtn}
+                onClick={handleSave}
+                disabled={isSaving}
+              >
+                {isSaving ? "Salvando..." : "Salvar"}
               </button>
-              <button className={styles.cancelBtn} onClick={handleCancel}>
+
+              <button
+                className={styles.cancelBtn}
+                onClick={handleCancel}
+                disabled={isSaving}
+              >
                 Cancelar
               </button>
             </div>
@@ -182,259 +196,272 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
         ) : null}
       </div>
 
-      <div className={styles.grid}>
-        <div className={styles.card}>
-          <div className={styles.cardHeader}>
-            <Book className={styles.icon} />
-            <h3 className={styles.cardTitle}>Biografia</h3>
-          </div>
-
-          {!isEditing ? (
-            <div className={styles.bioContainer}>
-              {bio ? (
-                <>
-                  {expanded ? (
-                    <div className={styles.bio}>{renderParagraphs(bio)}</div>
-                  ) : (
-                    <div className={styles.bio}>
-                      {renderParagraphs(previewText)}
-                    </div>
-                  )}
-
-                  {bio.length > MAX_LENGTH && (
-                    <button
-                      className={styles.readMoreButton}
-                      onClick={() => setExpanded(!expanded)}
-                    >
-                      {expanded ? "Ler menos" : "Ler mais"}
-                    </button>
-                  )}
-                </>
-              ) : (
-                <>
-                  {canEdit ? (
-                    <p>Adicione uma biografia e aproxime-se de seu público!</p>
-                  ) : (
-                    <p style={{ opacity: "0.5" }}>Não há biografia</p>
-                  )}
-                </>
-              )}
-            </div>
-          ) : (
-            <textarea
-              className={styles.textarea}
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
-              placeholder="Conte um pouco sobre você..."
-              rows={5}
-            />
-          )}
+      {isSaving ? (
+        <div className={styles.saving}>
+          <span className={styles.spinner}></span>
         </div>
+      ) : (
+        <div className={styles.grid}>
+          <div className={styles.card}>
+            <div className={styles.cardHeader}>
+              <Book className={styles.icon} />
+              <h3 className={styles.cardTitle}>Biografia</h3>
+            </div>
 
-        <div className={styles.card}>
-          <div className={styles.cardHeader}>
-            <Languages className={styles.icon} />
-            <h3 className={styles.cardTitle}>Idiomas</h3>
+            {!isEditing ? (
+              <div className={styles.bioContainer}>
+                {bio ? (
+                  <>
+                    {expanded ? (
+                      <div className={styles.bio}>{renderParagraphs(bio)}</div>
+                    ) : (
+                      <div className={styles.bio}>
+                        {renderParagraphs(previewText)}
+                      </div>
+                    )}
+
+                    {bio.length > MAX_LENGTH && (
+                      <button
+                        className={styles.readMoreButton}
+                        onClick={() => setExpanded(!expanded)}
+                      >
+                        {expanded ? "Ler menos" : "Ler mais"}
+                      </button>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    {canEdit ? (
+                      <p>
+                        Adicione uma biografia e aproxime-se de seu público!
+                      </p>
+                    ) : (
+                      <p style={{ opacity: "0.5" }}>Não há biografia</p>
+                    )}
+                  </>
+                )}
+              </div>
+            ) : (
+              <textarea
+                className={styles.textarea}
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                placeholder="Conte um pouco sobre você..."
+                rows={5}
+              />
+            )}
           </div>
 
-          {!isEditing ? (
-            <div className={styles.languagesList}>
-              {/* LISTAGEM QUANDO NÃO ESTÁ EDITANDO */}
-              <div className={styles.languagesList}>
-                {/* Idiomas fixos */}
-                {[
-                  { label: "Português", value: fixedLanguages.portugues },
-                  { label: "Inglês", value: fixedLanguages.ingles },
-                  { label: "Espanhol", value: fixedLanguages.espanhol },
-                ].map((lang, index) => (
-                  <div
-                    key={index}
-                    className={`${styles.languageItem} ${
-                      !lang.value ? styles.notSpeaking : ""
-                    }`}
-                  >
-                    {" "}
-                    <div className={styles.langDisplay}>
-                      <span className={styles.language}>{lang.label}</span>
-                      <span className={styles.level}>
-                        {lang.value || "Não falo"}
-                      </span>
-                    </div>
-                  </div>
-                ))}
+          <div className={styles.card}>
+            <div className={styles.cardHeader}>
+              <Languages className={styles.icon} />
+              <h3 className={styles.cardTitle}>Idiomas</h3>
+            </div>
 
-                {/* Outros idiomas */}
-                {otherLanguages.length > 0 &&
-                  otherLanguages.map((lang, index) => (
-                    <div key={`other-${index}`} className={styles.languageItem}>
+            {!isEditing ? (
+              <div className={styles.languagesList}>
+                {/* LISTAGEM QUANDO NÃO ESTÁ EDITANDO */}
+                <div className={styles.languagesList}>
+                  {/* Idiomas fixos */}
+                  {[
+                    { label: "Português", value: fixedLanguages.portugues },
+                    { label: "Inglês", value: fixedLanguages.ingles },
+                    { label: "Espanhol", value: fixedLanguages.espanhol },
+                  ].map((lang, index) => (
+                    <div
+                      key={index}
+                      className={`${styles.languageItem} ${
+                        !lang.value ? styles.notSpeaking : ""
+                      }`}
+                    >
+                      {" "}
                       <div className={styles.langDisplay}>
-                        <span className={styles.language}>{lang.name}</span>
-                        <span className={styles.level}>{lang.level}</span>
+                        <span className={styles.language}>{lang.label}</span>
+                        <span className={styles.level}>
+                          {lang.value || "Não falo"}
+                        </span>
                       </div>
                     </div>
                   ))}
+
+                  {/* Outros idiomas */}
+                  {otherLanguages.length > 0 &&
+                    otherLanguages.map((lang, index) => (
+                      <div
+                        key={`other-${index}`}
+                        className={styles.languageItem}
+                      >
+                        <div className={styles.langDisplay}>
+                          <span className={styles.language}>{lang.name}</span>
+                          <span className={styles.level}>{lang.level}</span>
+                        </div>
+                      </div>
+                    ))}
+                </div>
               </div>
-            </div>
-          ) : (
-            <>
-              <div className={styles.languagesList}>
-                {/* Português */}
-                <div className={styles.languageItem}>
-                  <div className={styles.langOpts}>
-                    <span
-                      className={`${styles.fixedLangName} ${
-                        !fixedLanguages.portugues ? styles.notSpeaking : ""
-                      }`}
-                    >
-                      Português
-                    </span>
-                    <span>
-                      <Dropdown
-                        trigger={fixedLanguages.portugues || "Não Falo"}
-                        triggerClassName={`${styles.trigger} ${
+            ) : (
+              <>
+                <div className={styles.languagesList}>
+                  {/* Português */}
+                  <div className={styles.languageItem}>
+                    <div className={styles.langOpts}>
+                      <span
+                        className={`${styles.fixedLangName} ${
                           !fixedLanguages.portugues ? styles.notSpeaking : ""
                         }`}
-                        menuClassName={styles.menu}
                       >
-                        {languagesLevels.map((lvl) => (
-                          <button
-                            key={lvl}
-                            className={styles.option}
-                            onClick={() =>
-                              setFixedLanguages((prev) => ({
-                                ...prev,
-                                portugues: lvl,
-                              }))
-                            }
-                          >
-                            {lvl}
-                          </button>
-                        ))}
-                      </Dropdown>
-                    </span>
-                  </div>
-                </div>
-
-                {/* Inglês */}
-                <div className={styles.languageItem}>
-                  <div className={styles.langOpts}>
-                    <span
-                      className={`${styles.fixedLangName} ${
-                        !fixedLanguages.portugues ? styles.notSpeaking : ""
-                      }`}
-                    >
-                      Inglês
-                    </span>
-                    <span>
-                      <Dropdown
-                        trigger={fixedLanguages.ingles || "Não Falo"}
-                        triggerClassName={`${styles.trigger} ${
-                          !fixedLanguages.ingles ? styles.notSpeaking : ""
-                        }`}
-                        menuClassName={styles.menu}
-                      >
-                        {languagesLevels.map((lvl) => (
-                          <button
-                            key={lvl}
-                            className={styles.option}
-                            onClick={() =>
-                              setFixedLanguages((prev) => ({
-                                ...prev,
-                                ingles: lvl,
-                              }))
-                            }
-                          >
-                            {lvl}
-                          </button>
-                        ))}
-                      </Dropdown>
-                    </span>
-                  </div>
-                </div>
-
-                {/* Espanhol */}
-                <div className={styles.languageItem}>
-                  <div className={styles.langOpts}>
-                    <span
-                      className={`${styles.fixedLangName} ${
-                        !fixedLanguages.portugues ? styles.notSpeaking : ""
-                      }`}
-                    >
-                      Espanhol
-                    </span>
-                    <span>
-                      <Dropdown
-                        trigger={fixedLanguages.espanhol || "Não Falo"}
-                        triggerClassName={`${styles.trigger} ${
-                          !fixedLanguages.espanhol ? styles.notSpeaking : ""
-                        }`}
-                        menuClassName={styles.menu}
-                      >
-                        {languagesLevels.map((lvl) => (
-                          <button
-                            key={lvl}
-                            className={styles.option}
-                            onClick={() =>
-                              setFixedLanguages((prev) => ({
-                                ...prev,
-                                espanhol: lvl,
-                              }))
-                            }
-                          >
-                            {lvl}
-                          </button>
-                        ))}
-                      </Dropdown>
-                    </span>
-                  </div>
-                </div>
-
-                {otherLanguages.map((lang, index) => (
-                  <div key={index} className={styles.languageItem}>
-                    <div className={styles.langOpts}>
-                      <input
-                        type="text"
-                        className={styles.langInput}
-                        placeholder="Outro idioma"
-                        value={lang.name}
-                        onChange={(e) =>
-                          updateOtherLanguageName(index, e.target.value)
-                        }
-                      />
-                      <Dropdown
-                        trigger={lang.level || "Nível"}
-                        triggerClassName={styles.trigger}
-                        menuClassName={styles.menu}
-                      >
-                        {languagesLevels.map((lvl) => (
-                          <button
-                            key={lvl}
-                            className={styles.option}
-                            onClick={() => updateOtherLanguageLevel(index, lvl)}
-                          >
-                            {lvl}
-                          </button>
-                        ))}
-                      </Dropdown>
+                        Português
+                      </span>
+                      <span>
+                        <Dropdown
+                          trigger={fixedLanguages.portugues || "Não Falo"}
+                          triggerClassName={`${styles.trigger} ${
+                            !fixedLanguages.portugues ? styles.notSpeaking : ""
+                          }`}
+                          menuClassName={styles.menu}
+                        >
+                          {languagesLevels.map((lvl) => (
+                            <button
+                              key={lvl}
+                              className={styles.option}
+                              onClick={() =>
+                                setFixedLanguages((prev) => ({
+                                  ...prev,
+                                  portugues: lvl,
+                                }))
+                              }
+                            >
+                              {lvl}
+                            </button>
+                          ))}
+                        </Dropdown>
+                      </span>
                     </div>
-                    <button
-                      className={`${styles.btn} ${styles.delete}`}
-                      onClick={() => removeOtherLanguage(index)}
-                    >
-                      <Trash size={16} />
-                    </button>
                   </div>
-                ))}
-              </div>
 
-              {/* ADICIONAR OUTRO IDIOMA */}
-              <button className={styles.addBtn} onClick={addOtherLanguage}>
-                <Plus size={16} /> Adicionar outro idioma
-              </button>
-            </>
-          )}
+                  {/* Inglês */}
+                  <div className={styles.languageItem}>
+                    <div className={styles.langOpts}>
+                      <span
+                        className={`${styles.fixedLangName} ${
+                          !fixedLanguages.portugues ? styles.notSpeaking : ""
+                        }`}
+                      >
+                        Inglês
+                      </span>
+                      <span>
+                        <Dropdown
+                          trigger={fixedLanguages.ingles || "Não Falo"}
+                          triggerClassName={`${styles.trigger} ${
+                            !fixedLanguages.ingles ? styles.notSpeaking : ""
+                          }`}
+                          menuClassName={styles.menu}
+                        >
+                          {languagesLevels.map((lvl) => (
+                            <button
+                              key={lvl}
+                              className={styles.option}
+                              onClick={() =>
+                                setFixedLanguages((prev) => ({
+                                  ...prev,
+                                  ingles: lvl,
+                                }))
+                              }
+                            >
+                              {lvl}
+                            </button>
+                          ))}
+                        </Dropdown>
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Espanhol */}
+                  <div className={styles.languageItem}>
+                    <div className={styles.langOpts}>
+                      <span
+                        className={`${styles.fixedLangName} ${
+                          !fixedLanguages.portugues ? styles.notSpeaking : ""
+                        }`}
+                      >
+                        Espanhol
+                      </span>
+                      <span>
+                        <Dropdown
+                          trigger={fixedLanguages.espanhol || "Não Falo"}
+                          triggerClassName={`${styles.trigger} ${
+                            !fixedLanguages.espanhol ? styles.notSpeaking : ""
+                          }`}
+                          menuClassName={styles.menu}
+                        >
+                          {languagesLevels.map((lvl) => (
+                            <button
+                              key={lvl}
+                              className={styles.option}
+                              onClick={() =>
+                                setFixedLanguages((prev) => ({
+                                  ...prev,
+                                  espanhol: lvl,
+                                }))
+                              }
+                            >
+                              {lvl}
+                            </button>
+                          ))}
+                        </Dropdown>
+                      </span>
+                    </div>
+                  </div>
+
+                  {otherLanguages.map((lang, index) => (
+                    <div key={index} className={styles.languageItem}>
+                      <div className={styles.langOpts}>
+                        <input
+                          type="text"
+                          className={styles.langInput}
+                          placeholder="Outro idioma"
+                          value={lang.name}
+                          onChange={(e) =>
+                            updateOtherLanguageName(index, e.target.value)
+                          }
+                        />
+                        <Dropdown
+                          trigger={lang.level || "Nível"}
+                          triggerClassName={styles.trigger}
+                          menuClassName={styles.menu}
+                        >
+                          {languagesLevels.map((lvl) => (
+                            <button
+                              key={lvl}
+                              className={styles.option}
+                              onClick={() =>
+                                updateOtherLanguageLevel(index, lvl)
+                              }
+                            >
+                              {lvl}
+                            </button>
+                          ))}
+                        </Dropdown>
+                      </div>
+                      <button
+                        className={`${styles.btn} ${styles.delete}`}
+                        onClick={() => removeOtherLanguage(index)}
+                      >
+                        <Trash size={16} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                {/* ADICIONAR OUTRO IDIOMA */}
+                <button className={styles.addBtn} onClick={addOtherLanguage}>
+                  <Plus size={16} /> Adicionar outro idioma
+                </button>
+              </>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </section>
   );
 }
