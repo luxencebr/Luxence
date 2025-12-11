@@ -38,16 +38,55 @@ interface OtherLanguage {
 export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
   const [isEditing, setIsEditing] = useState(false);
 
+  const [backup, setBackup] = useState<{
+    bio: string;
+    fixed: FixedLanguages;
+    others: OtherLanguage[];
+  } | null>(null);
+
   const handleEdit = () => {
+    setBackup({
+      bio,
+      fixed: fixedLanguages,
+      others: otherLanguages,
+    });
     setIsEditing(true);
   };
 
   const handleCancel = () => {
+    if (backup) {
+      setBio(backup.bio);
+      setFixedLanguages(backup.fixed);
+      setOtherLanguages(backup.others);
+    }
     setIsEditing(false);
   };
 
   const handleSave = async () => {
-    setIsEditing(false);
+    const payload = {
+      profileId: producer.profile.id, // <- agora enviamos o ID correto
+      bio,
+      languages: getAllLanguages(), // retorna array [{ name, level }]
+    };
+
+    try {
+      const res = await fetch("/api/profile/about", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        throw new Error("Erro ao salvar dados");
+      }
+
+      // tudo certo
+      setBackup(null);
+      setIsEditing(false);
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao salvar.");
+    }
   };
 
   const [fixedLanguages, setFixedLanguages] = useState<FixedLanguages>({
@@ -241,16 +280,20 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
               <div className={styles.languagesList}>
                 {/* Português */}
                 <div className={styles.languageItem}>
-                  <div
-                    className={`${styles.langOpts} ${
-                      !fixedLanguages.portugues ? styles.notSpeaking : ""
-                    }`}
-                  >
-                    <span className={styles.fixedLangName}>Português</span>
+                  <div className={styles.langOpts}>
+                    <span
+                      className={`${styles.fixedLangName} ${
+                        !fixedLanguages.portugues ? styles.notSpeaking : ""
+                      }`}
+                    >
+                      Português
+                    </span>
                     <span>
                       <Dropdown
                         trigger={fixedLanguages.portugues || "Não Falo"}
-                        triggerClassName={styles.trigger}
+                        triggerClassName={`${styles.trigger} ${
+                          !fixedLanguages.portugues ? styles.notSpeaking : ""
+                        }`}
                         menuClassName={styles.menu}
                       >
                         {languagesLevels.map((lvl) => (
@@ -274,16 +317,20 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
 
                 {/* Inglês */}
                 <div className={styles.languageItem}>
-                  <div
-                    className={`${styles.langOpts} ${
-                      !fixedLanguages.ingles ? styles.notSpeaking : ""
-                    }`}
-                  >
-                    <span className={styles.fixedLangName}>Inglês</span>
+                  <div className={styles.langOpts}>
+                    <span
+                      className={`${styles.fixedLangName} ${
+                        !fixedLanguages.portugues ? styles.notSpeaking : ""
+                      }`}
+                    >
+                      Inglês
+                    </span>
                     <span>
                       <Dropdown
                         trigger={fixedLanguages.ingles || "Não Falo"}
-                        triggerClassName={styles.trigger}
+                        triggerClassName={`${styles.trigger} ${
+                          !fixedLanguages.ingles ? styles.notSpeaking : ""
+                        }`}
                         menuClassName={styles.menu}
                       >
                         {languagesLevels.map((lvl) => (
@@ -307,16 +354,20 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
 
                 {/* Espanhol */}
                 <div className={styles.languageItem}>
-                  <div
-                    className={`${styles.langOpts} ${
-                      !fixedLanguages.espanhol ? styles.notSpeaking : ""
-                    }`}
-                  >
-                    <span className={styles.fixedLangName}>Espanhol</span>
+                  <div className={styles.langOpts}>
+                    <span
+                      className={`${styles.fixedLangName} ${
+                        !fixedLanguages.portugues ? styles.notSpeaking : ""
+                      }`}
+                    >
+                      Espanhol
+                    </span>
                     <span>
                       <Dropdown
                         trigger={fixedLanguages.espanhol || "Não Falo"}
-                        triggerClassName={styles.trigger}
+                        triggerClassName={`${styles.trigger} ${
+                          !fixedLanguages.espanhol ? styles.notSpeaking : ""
+                        }`}
                         menuClassName={styles.menu}
                       >
                         {languagesLevels.map((lvl) => (

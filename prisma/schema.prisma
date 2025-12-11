@@ -123,7 +123,7 @@ model ProducerProfile {
   producer    Producer   @relation("ProducerProfileRelation", fields: [producerId], references: [id], onDelete: Cascade)
 
   slogan      String
-  description String
+  description String     @db.Text
   images      Json
 
   scholarity  String
