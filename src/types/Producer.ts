@@ -9,6 +9,16 @@ export interface User {
   updatedAt: Date;
 }
 
+export interface Locality {
+  id: number;
+  userId: number;
+  country: string;
+  state: string;
+  city: string;
+  zone?: string;
+  neighborhood?: string;
+}
+
 export interface Producer {
   id: number;
   userId: number;
@@ -47,7 +57,7 @@ export interface ProducerProfile {
 
   producer: Producer;
   local: ProducerLocal | null;
-  appearance: ProducerAppearance[];
+  appearance: ProducerAppearance;
   prices: ProducerPrice[];
   services: ProducerService[];
   fetiches: ProducerFetish[];
@@ -55,22 +65,6 @@ export interface ProducerProfile {
   locations: ProducerLocation[];
   payments: ProducerPayment[];
   reviews: Review[];
-}
-
-export interface Locality {
-  id: number;
-  userId: number;
-  country: string;
-  state: string;
-  city: string;
-  zone?: string;
-  neighborhood?: string;
-}
-
-export interface Option {
-  id: number;
-  name: string;
-  label: string;
 }
 
 export interface ProducerLocal {
@@ -87,10 +81,23 @@ export interface ProducerLocal {
   amenities: LocalAmenity[];
 }
 
+export interface Option {
+  id: number;
+  name: string;
+  label: string;
+}
+
 export interface LocalAmenity {
   id?: number;
   localId?: number;
   amenityId: number;
+  option: Option;
+}
+
+export interface ProducerAppearance {
+  id: number;
+  profileId: number;
+  appearanceId: number;
   option: Option;
 }
 
@@ -99,23 +106,6 @@ export interface ProducerLocation {
   profileId?: number;
   locationId: number;
   option: Option;
-}
-
-export interface ProducerAppearance {
-  id: number;
-  profileId: number;
-  appearanceId: number;
-  height?: number;
-  mannequin?: number;
-  feet?: number;
-  tattoos?: boolean;
-  piercings?: boolean;
-  silicone?: boolean;
-  appearance: AppearanceOption;
-}
-
-export interface AppearanceOption extends Option {
-  type: string;
 }
 
 export interface ProducerPrice {

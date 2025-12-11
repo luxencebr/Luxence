@@ -16,6 +16,7 @@ datasource db {
 enum ROLE {
   CLIENT
   ADVERTISER
+  ADMIN
 }
 
 enum GENDER {
@@ -62,6 +63,7 @@ model User {
   producer    Producer? @relation("UserProducer")
 
   reviews     Review[]
+  comments Comment[]
 }
 
 model Review {
@@ -312,4 +314,35 @@ model ProducerLocation {
   option       LocationOption   @relation(fields: [locationId], references: [id])
 
   @@unique([profileId, locationId])
+}
+
+model Post {
+  id          Int @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  publishedAt DateTime @default(now())
+  title       String
+  image       Json?
+  content     String
+
+  views       Int       @default(0)
+  likes       Int       @default(0)
+  comments    Comment[]
+
+  @@index([createdAt])
+}
+
+model Comment {
+  id          String   @id @default(cuid())
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int
+  post        Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId      Int
+
+  comment     String
+  likes       Int       @default(0)
+
+  createdAt   DateTime @default(now())
 }
