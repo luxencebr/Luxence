@@ -28,13 +28,15 @@ export default function Plans() {
 
     //----------------------------
 
-    { id: 5, name: "Respostas", type: "number" },
-    { id: 6, name: "Demosntração de Voz", type: "boolean" },
-    { id: 7, name: "Prioridade", type: "string" },
+    { id: 5, name: "Atualizações de Mídia", type: "number" },
+    { id: 6, name: "Atualizações de Perfil", type: "number" },
+    { id: 7, name: "Respostas", type: "number" },
+    { id: 8, name: "Demosntração de Voz", type: "boolean" },
+    { id: 9, name: "Prioridade", type: "string" },
 
     //----------------------------
 
-    { id: 8, name: "Perfil em destaque", type: "boolean" },
+    { id: 10, name: "Perfil em destaque", type: "boolean" },
   ];
 
   const plans: Plan[] = [
@@ -48,10 +50,12 @@ export default function Plans() {
         2: 2,
         3: 2,
         4: true,
-        5: 0,
-        6: false,
-        7: "",
+        5: 2,
+        6: 2,
+        7: 6,
         8: false,
+        9: "",
+        10: false,
       },
     },
     {
@@ -64,10 +68,12 @@ export default function Plans() {
         2: 4,
         3: 10,
         4: true,
-        5: 10,
-        6: true,
-        7: "Alta",
-        8: false,
+        5: 6,
+        6: 10,
+        7: 10,
+        8: true,
+        9: "Alta",
+        10: false,
       },
     },
     {
@@ -80,10 +86,12 @@ export default function Plans() {
         2: 10,
         3: Infinity, // Shorts ilimitados
         4: true,
-        5: Infinity,
-        6: true,
-        7: "Máxima",
+        5: 10,
+        6: Infinity,
+        7: Infinity,
         8: true,
+        9: "Máxima",
+        10: true,
       },
     },
   ];
@@ -100,7 +108,6 @@ export default function Plans() {
               </h2>
               <p className={styles.price}></p>
               <p className={styles.description}>{plan.description}</p>
-              <h3>Benefícios</h3>
               <ul className={styles.benefits}>
                 {benefitList.map((b) => {
                   const value = plan.benefits[b.id];
