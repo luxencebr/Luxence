@@ -17,6 +17,7 @@ import LogIn from "@/components/LogIn/LogIn";
 
 function Header() {
   const { data: session } = useSession();
+  console.log(session);
 
   const pathname = usePathname();
 
@@ -104,6 +105,15 @@ function Header() {
                 >
                   Ver Perfil
                 </Link>
+                {session.user.signature !== "COPPER" ? (
+                  <Link href={""} className={styles.menuItem}>
+                    Minha Assinatura
+                  </Link>
+                ) : (
+                  <Link href={"advertiser/plans"} className={styles.menuItem}>
+                    Assine Já!
+                  </Link>
+                )}
                 <button onClick={() => signOut()} className={styles.menuItem}>
                   Sair
                 </button>
