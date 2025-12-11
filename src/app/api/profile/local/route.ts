@@ -3,8 +3,15 @@ import { prisma } from "@/utils/prisma";
 
 export async function POST(req: Request) {
   try {
-    const { profileId, hasLocal, locality, local, locations, amenities } =
-      await req.json();
+    const {
+      profileId,
+      hasLocal,
+      locality,
+      local,
+      locations,
+      amenities,
+      neighborhoods,
+    } = await req.json();
 
     console.log(
       "📦 RECEBIDO DO FRONT:",
@@ -15,6 +22,7 @@ export async function POST(req: Request) {
         local,
         locations,
         amenities,
+        neighborhoods, // Log neighborhoods
       })
     );
 
@@ -68,11 +76,14 @@ export async function POST(req: Request) {
     }
 
     // ----------------------------
-    // 2) Atualiza hasLocal do profile
+    // 2) Atualiza hasLocal e neighborhoods do profile
     // ----------------------------
     await prisma.producerProfile.update({
       where: { id: profileId },
-      data: { hasLocal },
+      data: {
+        hasLocal,
+        neighborhoods: neighborhoods || [], // Save neighborhoods as JSON
+      },
     });
 
     // ----------------------------
@@ -88,7 +99,14 @@ export async function POST(req: Request) {
       const newLocal = await prisma.producerLocal.create({
         data: {
           profileId,
-          ...local,
+          cep: local.cep,
+          country: local.country,
+          state: local.state,
+          city: local.city,
+          neighborhood: local.neighborhood,
+          street: local.street,
+          number: local.number,
+          complement: local.complement,
         },
       });
 
@@ -151,6 +169,7 @@ export async function POST(req: Request) {
     // ----------------------------
     const formatted = {
       hasLocal: updated?.hasLocal,
+      neighborhoods: updated?.neighborhoods,
       locality: updated?.producer.user.locality,
       local: updated?.local
         ? {

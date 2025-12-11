@@ -26,7 +26,7 @@ CREATE TABLE `User` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `email` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
-    `role` ENUM('CLIENT', 'ADVERTISER') NOT NULL DEFAULT 'CLIENT',
+    `role` ENUM('CLIENT', 'ADVERTISER', 'ADMIN') NOT NULL DEFAULT 'CLIENT',
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
@@ -77,6 +77,7 @@ CREATE TABLE `ProducerProfile` (
     `scholarity` VARCHAR(191) NOT NULL,
     `languages` JSON NOT NULL,
     `hasLocal` BOOLEAN NOT NULL DEFAULT false,
+    `neighborhoods` JSON NOT NULL,
     `views` INTEGER NOT NULL DEFAULT 0,
 
     UNIQUE INDEX `ProducerProfile_producerId_key`(`producerId`),
@@ -269,6 +270,34 @@ CREATE TABLE `ProducerLocation` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- CreateTable
+CREATE TABLE `Post` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+    `publishedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `title` VARCHAR(191) NOT NULL,
+    `image` JSON NULL,
+    `content` VARCHAR(191) NOT NULL,
+    `views` INTEGER NOT NULL DEFAULT 0,
+    `likes` INTEGER NOT NULL DEFAULT 0,
+
+    INDEX `Post_createdAt_idx`(`createdAt`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Comment` (
+    `id` VARCHAR(191) NOT NULL,
+    `userId` INTEGER NOT NULL,
+    `postId` INTEGER NOT NULL,
+    `comment` VARCHAR(191) NOT NULL,
+    `likes` INTEGER NOT NULL DEFAULT 0,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 -- AddForeignKey
 ALTER TABLE `UserPreference` ADD CONSTRAINT `UserPreference_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -337,3 +366,9 @@ ALTER TABLE `ProducerLocation` ADD CONSTRAINT `ProducerLocation_profileId_fkey` 
 
 -- AddForeignKey
 ALTER TABLE `ProducerLocation` ADD CONSTRAINT `ProducerLocation_locationId_fkey` FOREIGN KEY (`locationId`) REFERENCES `LocationOption`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Comment` ADD CONSTRAINT `Comment_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Comment` ADD CONSTRAINT `Comment_postId_fkey` FOREIGN KEY (`postId`) REFERENCES `Post`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

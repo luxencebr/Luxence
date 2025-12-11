@@ -138,6 +138,7 @@ model ProducerProfile {
   fetiches    ProducerFetish[]
   audience    ProducerAudience[]
   locations   ProducerLocation[]
+  neighborhoods Json
   payments    ProducerPayment[]
 
   views       Int       @default(0)

@@ -63,6 +63,7 @@ export interface ProducerProfile {
   fetiches: ProducerFetish[];
   audience: ProducerAudience[];
   locations: ProducerLocation[];
+  neighborhoods: Array<{ name: string }>;
   payments: ProducerPayment[];
   reviews: Review[];
 }

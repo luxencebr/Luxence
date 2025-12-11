@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./ProductLocation.module.css";
+import { FaPlus } from "react-icons/fa6";
 
 import { HiLocationMarker } from "react-icons/hi";
 import { FaLocationArrow } from "react-icons/fa6";
@@ -11,9 +12,62 @@ import Dropdown from "../ui/Dropdown/Dropdown";
 
 import type { Producer } from "@/types/Producer";
 
+function formatNeighborhood(name: string) {
+  return name
+    .trim()
+    .split(/\s+/)
+    .map((part) =>
+      part
+        .split("-")
+        .map((sub) => sub.charAt(0).toUpperCase() + sub.slice(1).toLowerCase())
+        .join("-")
+    )
+    .join(" ");
+}
+
+function formatNeighborhoodList(list: string[]) {
+  if (list.length === 0) return "Nenhum bairro informado.";
+  if (list.length === 1) return list[0];
+  if (list.length === 2) return `${list[0]} e ${list[1]}`;
+
+  return `${list.slice(0, -1).join(", ")} e ${list[list.length - 1]}`;
+}
+
+function formatNeighborhoodListEditable(
+  list: string[],
+  onRemove: (n: string) => void
+) {
+  if (list.length === 0) return "Nenhum bairro informado.";
+
+  return list.map((item, index) => {
+    const isLast = index === list.length - 1;
+    const isSecondLast = index === list.length - 2;
+
+    return (
+      <span
+        key={item}
+        onClick={() => onRemove(item)}
+        style={{ cursor: "pointer" }}
+      >
+        {item}
+        {!isLast && !isSecondLast && ", "}
+        {isSecondLast && " e "}
+      </span>
+    );
+  });
+}
+
 interface ProductLocationProps {
   producer: Producer;
   canEdit: boolean;
+}
+
+function formatText(text: string) {
+  return text
+    .trim()
+    .split(/\s+/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
 }
 
 function ProductLocation({ producer, canEdit }: ProductLocationProps) {
@@ -108,6 +162,92 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
     }
   }
 
+  const [states, setStates] = useState<
+    { id: number; sigla: string; nome: string }[]
+  >([]);
+  const [cities, setCities] = useState<{ id: number; nome: string }[]>([]);
+
+  const [selectedState, setSelectedState] = useState(userLocality.state || "");
+  const [selectedCity, setSelectedCity] = useState(userLocality.city || "");
+  const [selectedNeighborhood, setSelectedNeighborhood] = useState(
+    userLocality.neighborhood || ""
+  );
+
+  const [neighborhoodsServed, setNeighborhoodsServed] = useState<string[]>(
+    Array.isArray(producer.profile.neighborhoods)
+      ? producer.profile.neighborhoods.map((n) =>
+          typeof n === "string" ? n : n.name
+        )
+      : []
+  );
+  const [newNeighborhood, setNewNeighborhood] = useState("");
+
+  // Função para adicionar um bairro
+  const addNeighborhood = () => {
+    const formatted = formatNeighborhood(newNeighborhood);
+    if (!formatted || neighborhoodsServed.includes(formatted)) return;
+
+    const updated = [...neighborhoodsServed, formatted].sort((a, b) =>
+      a.localeCompare(b)
+    );
+    setNeighborhoodsServed(updated);
+    setNewNeighborhood("");
+  };
+
+  // Função para remover um bairro
+  const removeNeighborhood = (name: string) => {
+    setNeighborhoodsServed(neighborhoodsServed.filter((n) => n !== name));
+  };
+
+  useEffect(() => {
+    fetch("https://servicodados.ibge.gov.br/api/v1/localidades/estados")
+      .then((res) => res.json())
+      .then((data) => {
+        const ordered = data.sort((a: any, b: any) =>
+          a.nome.localeCompare(b.nome)
+        );
+        setStates(ordered);
+      })
+      .catch((err) => console.error("Erro ao buscar estados IBGE:", err));
+  }, []);
+
+  useEffect(() => {
+    if (!selectedState) {
+      setCities([]);
+      return;
+    }
+
+    fetch(
+      `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${selectedState}/municipios`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        const ordered = data.sort((a: any, b: any) =>
+          a.nome.localeCompare(b.nome)
+        );
+        setCities(ordered);
+      })
+      .catch((err) => console.error("Erro ao buscar cidades IBGE:", err));
+  }, [selectedState]);
+
+  const handleStateChange = (state: string) => {
+    setSelectedState(state);
+    setSelectedCity("");
+    setSelectedNeighborhood("");
+    setUserLocality({ ...userLocality, state, city: "", neighborhood: "" });
+  };
+
+  const handleCityChange = (city: string) => {
+    setSelectedCity(city);
+    setSelectedNeighborhood("");
+    setUserLocality({ ...userLocality, city, neighborhood: "" });
+  };
+
+  const handleNeighborhoodChange = (neighborhood: string) => {
+    setSelectedNeighborhood(neighborhood);
+    setUserLocality({ ...userLocality, neighborhood });
+  };
+
   const handleEdit = () => {
     setOriginalLocal(local);
     setOriginalLocations(locations);
@@ -128,7 +268,6 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
 
   const handleSave = async () => {
     try {
-      // Formatar locations com option
       const locationsPayload = locations.map((loc) => ({
         locationId: loc.option.id,
         option: {
@@ -138,7 +277,6 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
         },
       }));
 
-      // Formatar amenities com option
       const amenitiesPayload = amenities.map((a) => ({
         amenityId: a.option.id,
         option: {
@@ -159,6 +297,7 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
           local,
           amenities: amenitiesPayload,
           locations: locationsPayload,
+          neighborhoods: neighborhoodsServed, // Array de strings: ["Barra Da Tijuca","Cordovil","Recreio"]
         }),
       });
 
@@ -401,49 +540,59 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
                 </p>
               ) : (
                 <div className={styles.editGroup}>
-                  {" "}
-                  <label htmlFor="">
+                  <label>
                     Estado:
-                    <input
-                      type="text"
-                      placeholder="Estado"
-                      value={userLocality?.state || ""}
-                      onChange={(e) =>
-                        setUserLocality({
-                          ...userLocality,
-                          state: e.target.value,
-                        })
-                      }
-                    />
+                    <Dropdown
+                      trigger={selectedState || "Selecione um Estado"}
+                      triggerClassName={styles.trigger}
+                      menuClassName={styles.menu}
+                    >
+                      {states.map((st) => (
+                        <button
+                          key={st.id}
+                          onClick={() => handleStateChange(st.sigla)}
+                          className="dropdown-item"
+                        >
+                          {st.nome} - {st.sigla}
+                        </button>
+                      ))}
+                    </Dropdown>
                   </label>
-                  <label htmlFor="">
-                    Cidade:
-                    <input
-                      type="text"
-                      placeholder="Cidade"
-                      value={userLocality?.city || ""}
-                      onChange={(e) =>
-                        setUserLocality({
-                          ...userLocality,
-                          city: e.target.value,
-                        })
-                      }
-                    />
-                  </label>
-                  <label htmlFor="">
-                    Bairro:
-                    <input
-                      type="text"
-                      placeholder="Bairro"
-                      value={userLocality?.neighborhood || ""}
-                      onChange={(e) =>
-                        setUserLocality({
-                          ...userLocality,
-                          neighborhood: e.target.value,
-                        })
-                      }
-                    />
-                  </label>
+
+                  {selectedState && (
+                    <label>
+                      Cidade:
+                      <Dropdown
+                        trigger={selectedCity || "Selecione uma Cidade"}
+                        triggerClassName={styles.trigger}
+                        menuClassName={styles.menu}
+                      >
+                        {cities.map((c) => (
+                          <button
+                            key={c.id}
+                            onClick={() => handleCityChange(c.nome)}
+                            className="dropdown-item"
+                          >
+                            {c.nome}
+                          </button>
+                        ))}
+                      </Dropdown>
+                    </label>
+                  )}
+
+                  {selectedCity && (
+                    <label>
+                      Bairro:
+                      <input
+                        type="text"
+                        placeholder="Digite o bairro"
+                        value={selectedNeighborhood}
+                        onChange={(e) =>
+                          handleNeighborhoodChange(e.target.value)
+                        }
+                      />
+                    </label>
+                  )}
                 </div>
               )}
             </div>
@@ -500,10 +649,42 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
             </div>
 
             <div className={styles.line}>
-              <h2>Bairros que Atendo</h2>
-              <Dropdown trigger={<>Selecione um Bairro</>}>
-                <></>
-              </Dropdown>
+              <h3 className={styles.columnTitle}>Bairros que Atendo</h3>
+              {!isEditing ? (
+                <p className={styles.address}>
+                  {neighborhoodsServed.length === 0
+                    ? "Nenhum bairro informado."
+                    : formatNeighborhoodList(neighborhoodsServed)}
+                </p>
+              ) : (
+                <>
+                  <label>
+                    Adicionar Bairro
+                    <div className={styles.addNeighborhood}>
+                      <input
+                        type="text"
+                        placeholder="Digite um bairro"
+                        value={newNeighborhood}
+                        onChange={(e) => setNewNeighborhood(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") addNeighborhood();
+                        }}
+                      />
+                      <button type="button" onClick={addNeighborhood}>
+                        <FaPlus />
+                      </button>
+                    </div>
+                  </label>
+                  {neighborhoodsServed.length > 0 && (
+                    <p className={styles.neighborhoodsList}>
+                      {formatNeighborhoodListEditable(
+                        neighborhoodsServed,
+                        removeNeighborhood
+                      )}
+                    </p>
+                  )}
+                </>
+              )}
             </div>
           </div>
         </div>

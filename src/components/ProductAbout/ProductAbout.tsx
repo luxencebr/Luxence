@@ -9,19 +9,14 @@ import type { Producer } from "@/types/Producer";
 import Dropdown from "../ui/Dropdown/Dropdown";
 
 import {
-  GraduationCap,
   Languages,
-  Clock,
-  Users,
   User,
   Ruler,
   Eye,
   Palette,
   Trash,
-  Pencil,
   Plus,
-  Check,
-  X,
+  Book,
 } from "lucide-react";
 
 interface ProductAboutProps {
@@ -43,27 +38,6 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
   const handleSave = async () => {
     setIsEditing(false);
   };
-
-  const selectedScholarity = producer.profile.scholarity;
-
-  const [scholarity, setScholarity] = useState(selectedScholarity);
-
-  const changeScholarity = (level: string) => {
-    setScholarity(level);
-    console.log("Selected scholarity:", level);
-  };
-
-  const scholarities = [
-    "Fundamental Incompleto",
-    "Fundamental Completo",
-    "Médio Incompleto",
-    "Médio Completo",
-    "Superior Incompleto",
-    "Superior Completo",
-    "Pós-graduação",
-    "Mestrado",
-    "Doutorado",
-  ];
 
   const initialLanguages = producer.profile.languages || [];
 
@@ -144,7 +118,7 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
       <div className={styles.grid}>
         <div className={styles.card}>
           <div className={styles.cardHeader}>
-            <User className={styles.icon} />
+            <Book className={styles.icon} />
             <h3 className={styles.cardTitle}>Biografia</h3>
           </div>
 
@@ -267,7 +241,6 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
           )}
         </div>
 
-        {/* Características Físicas */}
         <div className={`${styles.card} ${styles.cardWide}`}>
           <div className={styles.cardHeader}>
             <User className={styles.icon} />

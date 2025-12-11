@@ -124,12 +124,13 @@
 
 .line label input {
   background: var(--background-complementary-color);
-  padding: 6px 8px;
+  padding: 8px;
 
   border: none;
   border-radius: 4px;
 
   color: var(--contrast-color);
+  font-size: 14px;
 }
 
 .checkboxItem {
@@ -218,4 +219,103 @@
 
 .ocult p span {
   text-wrap: nowrap;
+}
+
+.trigger {
+  background: var(--background-complementary-color);
+  padding: 8px;
+
+  border-radius: 4px;
+
+  color: var(--contrast-color);
+  font-size: 14px;
+}
+
+.menu {
+  background: var(--background-complementary-color);
+  max-height: 96px;
+
+  overflow-y: auto;
+}
+
+.menu::-webkit-scrollbar {
+  width: 2px;
+}
+
+.menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.menu::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 5px;
+}
+
+.menu::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-complementary-color);
+}
+
+.menu button {
+  background: var(--background-color);
+  padding: 2px;
+
+  border: none;
+  border-radius: 4px;
+
+  color: var(--contrast-color);
+  font-family: Quicksand;
+
+  cursor: pointer;
+}
+
+.neighborhoodsList {
+  padding: 8px;
+
+  color: var(--contrast-color) !important;
+  font-size: 14px !important;
+}
+
+.neighborhoodsList span {
+  transition: 0.25s ease;
+}
+
+.neighborhoodsList span:hover {
+  color: var(--primary-color);
+}
+
+.addNeighborhood {
+  background: var(--background-complementary-color);
+
+  border-radius: 16px;
+
+  display: flex;
+}
+
+.addNeighborhood input {
+  background: transparent;
+  flex: 1;
+  padding: 8px;
+
+  border: none;
+
+  color: var(--contrast-color);
+  font-size: 14px;
+}
+
+.addNeighborhood button {
+  background: transparent;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+
+  border: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--contrast-color);
+  font-size: 16px;
+
+  cursor: pointer;
 }
