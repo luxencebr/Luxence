@@ -6,7 +6,7 @@ import styles from "./ProductAbout.module.css";
 import { HiOutlinePencil } from "react-icons/hi";
 
 import type { Producer } from "@/types/Producer";
-import Dropdown from "../ui/Dropdown/Dropdown";
+import Dropdown from "@/components/ui/Dropdown/Dropdown";
 
 import {
   Languages,
@@ -24,6 +24,17 @@ interface ProductAboutProps {
   canEdit: boolean;
 }
 
+interface FixedLanguages {
+  portugues: string;
+  ingles: string;
+  espanhol: string;
+}
+
+interface OtherLanguage {
+  name: string;
+  level: string;
+}
+
 export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
   const [isEditing, setIsEditing] = useState(false);
 
@@ -39,44 +50,61 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
     setIsEditing(false);
   };
 
-  const initialLanguages = producer.profile.languages || [];
+  const [fixedLanguages, setFixedLanguages] = useState<FixedLanguages>({
+    portugues:
+      producer.profile.languages?.find((l) => l.name === "Português")?.level ||
+      "",
+    ingles:
+      producer.profile.languages?.find((l) => l.name === "Inglês")?.level || "",
+    espanhol:
+      producer.profile.languages?.find((l) => l.name === "Espanhol")?.level ||
+      "",
+  });
 
-  const [languagesState, setLanguagesState] =
-    useState<{ name: string; level: string }[]>(initialLanguages);
+  const [otherLanguages, setOtherLanguages] = useState<OtherLanguage[]>(
+    producer.profile.languages?.filter(
+      (l) => !["Português", "Inglês", "Espanhol"].includes(l.name)
+    ) || []
+  );
 
-  const languages = [
-    "Alemão",
-    "Coreano",
-    "Espanhol",
-    "Inglês",
-    "Italiano",
-    "Japonês",
-    "Francês",
-    "Mandarim",
-    "Português",
-    "Russo",
-  ];
+  const languagesLevels = ["Básico", "Avançado", "Fluente", "Nativo"];
 
-  const languagesLevels = [
-    "Não Falo",
-    "Básico",
-    "Avançado",
-    "Fluente",
-    "Nativo",
-  ];
-
-  const addLanguage = () => {
-    const last = languagesState[languagesState.length - 1];
-
+  const addOtherLanguage = () => {
+    const last = otherLanguages[otherLanguages.length - 1];
     if (last && !last.name && !last.level) {
       return;
     }
-
-    setLanguagesState((prev) => [...prev, { name: "", level: "" }]);
+    setOtherLanguages((prev) => [...prev, { name: "", level: "" }]);
   };
 
-  const removeLanguage = (index: number) => {
-    setLanguagesState((prev) => prev.filter((_, i) => i !== index));
+  const removeOtherLanguage = (index: number) => {
+    setOtherLanguages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const updateOtherLanguageName = (index: number, name: string) => {
+    setOtherLanguages((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, name } : item))
+    );
+  };
+
+  const updateOtherLanguageLevel = (index: number, level: string) => {
+    setOtherLanguages((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, level } : item))
+    );
+  };
+
+  const getAllLanguages = () => {
+    const all: { name: string; level: string }[] = [];
+    if (fixedLanguages.portugues)
+      all.push({ name: "Português", level: fixedLanguages.portugues });
+    if (fixedLanguages.ingles)
+      all.push({ name: "Inglês", level: fixedLanguages.ingles });
+    if (fixedLanguages.espanhol)
+      all.push({ name: "Espanhol", level: fixedLanguages.espanhol });
+    otherLanguages.forEach((l) => {
+      if (l.name && l.level) all.push(l);
+    });
+    return all;
   };
 
   const [bio, setBio] = useState(producer.profile.description || "");
@@ -124,21 +152,33 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
 
           {!isEditing ? (
             <div className={styles.bioContainer}>
-              {expanded ? (
-                <div className={styles.bio}>{renderParagraphs(bio)}</div>
-              ) : (
-                <div className={styles.bio}>
-                  {renderParagraphs(previewText)}
-                </div>
-              )}
+              {bio ? (
+                <>
+                  {expanded ? (
+                    <div className={styles.bio}>{renderParagraphs(bio)}</div>
+                  ) : (
+                    <div className={styles.bio}>
+                      {renderParagraphs(previewText)}
+                    </div>
+                  )}
 
-              {bio && bio.length > MAX_LENGTH && (
-                <button
-                  className={styles.readMoreButton}
-                  onClick={() => setExpanded(!expanded)}
-                >
-                  {expanded ? "Ler menos" : "Ler mais"}
-                </button>
+                  {bio.length > MAX_LENGTH && (
+                    <button
+                      className={styles.readMoreButton}
+                      onClick={() => setExpanded(!expanded)}
+                    >
+                      {expanded ? "Ler menos" : "Ler mais"}
+                    </button>
+                  )}
+                </>
+              ) : (
+                <>
+                  {canEdit ? (
+                    <p>Adicione uma biografia e aproxime-se de seu público!</p>
+                  ) : (
+                    <p style={{ opacity: "0.5" }}>Não há biografia</p>
+                  )}
+                </>
               )}
             </div>
           ) : (
@@ -158,39 +198,158 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
             <h3 className={styles.cardTitle}>Idiomas</h3>
           </div>
 
-          {/* LISTA DE IDIOMAS */}
-          <div className={styles.languagesList}>
-            {languagesState.length === 0 && (
-              <p className={styles.emptyText}>Nenhum idioma adicionado.</p>
-            )}
+          {!isEditing ? (
+            <div className={styles.languagesList}>
+              {/* LISTAGEM QUANDO NÃO ESTÁ EDITANDO */}
+              <div className={styles.languagesList}>
+                {/* Idiomas fixos */}
+                {[
+                  { label: "Português", value: fixedLanguages.portugues },
+                  { label: "Inglês", value: fixedLanguages.ingles },
+                  { label: "Espanhol", value: fixedLanguages.espanhol },
+                ].map((lang, index) => (
+                  <div
+                    key={index}
+                    className={`${styles.languageItem} ${
+                      !lang.value ? styles.notSpeaking : ""
+                    }`}
+                  >
+                    {" "}
+                    <div className={styles.langDisplay}>
+                      <span className={styles.language}>{lang.label}</span>
+                      <span className={styles.level}>
+                        {lang.value || "Não falo"}
+                      </span>
+                    </div>
+                  </div>
+                ))}
 
-            {languagesState.map((lang, index) => (
-              <div key={index} className={styles.languageItem}>
-                {isEditing ? (
-                  <>
-                    <div className={styles.langOpts}>
+                {/* Outros idiomas */}
+                {otherLanguages.length > 0 &&
+                  otherLanguages.map((lang, index) => (
+                    <div key={`other-${index}`} className={styles.languageItem}>
+                      <div className={styles.langDisplay}>
+                        <span className={styles.language}>{lang.name}</span>
+                        <span className={styles.level}>{lang.level}</span>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className={styles.languagesList}>
+                {/* Português */}
+                <div className={styles.languageItem}>
+                  <div
+                    className={`${styles.langOpts} ${
+                      !fixedLanguages.portugues ? styles.notSpeaking : ""
+                    }`}
+                  >
+                    <span className={styles.fixedLangName}>Português</span>
+                    <span>
                       <Dropdown
-                        trigger={lang.name || "Idioma"}
+                        trigger={fixedLanguages.portugues || "Não Falo"}
                         triggerClassName={styles.trigger}
                         menuClassName={styles.menu}
                       >
-                        {languages.map((l) => (
+                        {languagesLevels.map((lvl) => (
                           <button
-                            key={l}
+                            key={lvl}
                             className={styles.option}
                             onClick={() =>
-                              setLanguagesState((prev) =>
-                                prev.map((item, i) =>
-                                  i === index ? { ...item, name: l } : item
-                                )
-                              )
+                              setFixedLanguages((prev) => ({
+                                ...prev,
+                                portugues: lvl,
+                              }))
                             }
                           >
-                            {l}
+                            {lvl}
                           </button>
                         ))}
                       </Dropdown>
+                    </span>
+                  </div>
+                </div>
 
+                {/* Inglês */}
+                <div className={styles.languageItem}>
+                  <div
+                    className={`${styles.langOpts} ${
+                      !fixedLanguages.ingles ? styles.notSpeaking : ""
+                    }`}
+                  >
+                    <span className={styles.fixedLangName}>Inglês</span>
+                    <span>
+                      <Dropdown
+                        trigger={fixedLanguages.ingles || "Não Falo"}
+                        triggerClassName={styles.trigger}
+                        menuClassName={styles.menu}
+                      >
+                        {languagesLevels.map((lvl) => (
+                          <button
+                            key={lvl}
+                            className={styles.option}
+                            onClick={() =>
+                              setFixedLanguages((prev) => ({
+                                ...prev,
+                                ingles: lvl,
+                              }))
+                            }
+                          >
+                            {lvl}
+                          </button>
+                        ))}
+                      </Dropdown>
+                    </span>
+                  </div>
+                </div>
+
+                {/* Espanhol */}
+                <div className={styles.languageItem}>
+                  <div
+                    className={`${styles.langOpts} ${
+                      !fixedLanguages.espanhol ? styles.notSpeaking : ""
+                    }`}
+                  >
+                    <span className={styles.fixedLangName}>Espanhol</span>
+                    <span>
+                      <Dropdown
+                        trigger={fixedLanguages.espanhol || "Não Falo"}
+                        triggerClassName={styles.trigger}
+                        menuClassName={styles.menu}
+                      >
+                        {languagesLevels.map((lvl) => (
+                          <button
+                            key={lvl}
+                            className={styles.option}
+                            onClick={() =>
+                              setFixedLanguages((prev) => ({
+                                ...prev,
+                                espanhol: lvl,
+                              }))
+                            }
+                          >
+                            {lvl}
+                          </button>
+                        ))}
+                      </Dropdown>
+                    </span>
+                  </div>
+                </div>
+
+                {otherLanguages.map((lang, index) => (
+                  <div key={index} className={styles.languageItem}>
+                    <div className={styles.langOpts}>
+                      <input
+                        type="text"
+                        className={styles.langInput}
+                        placeholder="Outro idioma"
+                        value={lang.name}
+                        onChange={(e) =>
+                          updateOtherLanguageName(index, e.target.value)
+                        }
+                      />
                       <Dropdown
                         trigger={lang.level || "Nível"}
                         triggerClassName={styles.trigger}
@@ -200,84 +359,29 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
                           <button
                             key={lvl}
                             className={styles.option}
-                            onClick={() =>
-                              setLanguagesState((prev) =>
-                                prev.map((item, i) =>
-                                  i === index ? { ...item, level: lvl } : item
-                                )
-                              )
-                            }
+                            onClick={() => updateOtherLanguageLevel(index, lvl)}
                           >
                             {lvl}
                           </button>
                         ))}
                       </Dropdown>
                     </div>
-
                     <button
                       className={`${styles.btn} ${styles.delete}`}
-                      onClick={() => removeLanguage(index)}
+                      onClick={() => removeOtherLanguage(index)}
                     >
                       <Trash size={16} />
                     </button>
-                  </>
-                ) : (
-                  <>
-                    <div className={styles.langDisplay}>
-                      <span className={styles.language}>{lang.name}</span>
-                      <span className={styles.level}>{lang.level}</span>
-                    </div>
-                  </>
-                )}
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          {/* ADICIONAR NOVO IDIOMA */}
-          {isEditing && (
-            <button className={styles.addBtn} onClick={addLanguage}>
-              <Plus size={16} /> Adicionar
-            </button>
+              {/* ADICIONAR OUTRO IDIOMA */}
+              <button className={styles.addBtn} onClick={addOtherLanguage}>
+                <Plus size={16} /> Adicionar outro idioma
+              </button>
+            </>
           )}
-        </div>
-
-        <div className={`${styles.card} ${styles.cardWide}`}>
-          <div className={styles.cardHeader}>
-            <User className={styles.icon} />
-            <h3 className={styles.cardTitle}>Características Físicas</h3>
-          </div>
-          <div className={styles.characteristicsGrid}>
-            <div className={styles.characteristicItem}>
-              <Ruler className={styles.smallIcon} />
-              <div>
-                <span className={styles.characteristicLabel}>Altura</span>
-              </div>
-            </div>
-            <div className={styles.characteristicItem}>
-              <User className={styles.smallIcon} />
-              <div>
-                <span className={styles.characteristicLabel}>Peso</span>
-              </div>
-            </div>
-            <div className={styles.characteristicItem}>
-              <Eye className={styles.smallIcon} />
-              <div>
-                <span className={styles.characteristicLabel}>Olhos</span>
-              </div>
-            </div>
-            <div className={styles.characteristicItem}>
-              <Palette className={styles.smallIcon} />
-              <div>
-                <span className={styles.characteristicLabel}>Cabelo</span>
-              </div>
-            </div>
-            <div className={styles.characteristicItem}>
-              <User className={styles.smallIcon} />
-              <div>
-                <span className={styles.characteristicLabel}>Biotipo</span>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </section>

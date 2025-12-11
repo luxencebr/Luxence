@@ -309,17 +309,12 @@
   background: var(--background-color);
 }
 
-.langOpts {
-  flex: 1;
-  display: flex;
-  gap: 8px;
-}
-
 .trigger {
   flex: 1;
   padding: 4px 8px;
 
-  border-radius: 4px;
+  border: 1px solid var(--contrast-complementary-color);
+  border-radius: 8px;
 }
 
 .actions {
@@ -389,12 +384,35 @@
   width: 100%;
   display: flex;
   flex-flow: row nowrap;
+  align-items: center;
   gap: 8px;
 }
 
 .langDisplay span {
   flex: 1;
   padding: 4px 8px;
+}
+
+.langOpts {
+  flex: 1;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.langOpts span {
+  flex: 1;
+}
+
+.langInput {
+  background: var(--background-color);
+  padding: 8px;
+
+  border: none;
+  border-radius: 8px;
+
+  color: var(--contrast-color);
 }
 
 .menu {
@@ -478,4 +496,8 @@
 
 .readMoreButton:hover {
   text-decoration: underline;
+}
+
+.notSpeaking {
+  opacity: 0.5;
 }
