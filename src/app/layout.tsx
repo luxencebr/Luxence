@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import "../styles/globals.css";
 import "../styles/variables.css";
 import "../styles/Fonts.css";
+import "leaflet/dist/leaflet.css";
 
 import StartPopup from "@/components/StartPopup/StartPopup";
 import Header from "@/components/Header/Header";

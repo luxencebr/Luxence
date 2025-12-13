@@ -71,6 +71,11 @@
 
 .productsOptions {
   display: flex;
+  justify-content: space-between;
+}
+
+.left {
+  display: flex;
   gap: 8px;
 }
 
@@ -139,4 +144,9 @@
 
 .errorState {
   color: #ff6b6b;
+}
+
+.left {
+  display: flex;
+  gap: 8px;
 }

@@ -17,6 +17,16 @@ import type { Producer } from "@/types/Producer";
 import ScrollTo from "@/utils/ScrollTo";
 import { formatUserName } from "@/utils/formatName";
 
+const formatWhatsAppNumber = (phone: string) => {
+  const onlyNumbers = phone.replace(/\D/g, "");
+
+  if (onlyNumbers.startsWith("55")) {
+    return onlyNumbers;
+  }
+
+  return `55${onlyNumbers}`;
+};
+
 interface ProductInfoProps {
   producer: Producer;
   canEdit: boolean;
@@ -110,13 +120,20 @@ function ProductInfo({
     }
   }, [isEditingSlogan]);
 
+  const whatsappMsg =
+    "Olá!+Vi+seu+perfil+na+Luxence!+Fiquei+interessado+em+seus+serviços,+vamos+conversar?";
+
   return (
     <div className={styles.productInfos}>
       <div className={styles.contactsOptions}>
         <div className={styles.contactsLayout}>
           <a
-            href={`https://wa.me/${producer.phone}`}
+            href={`https://wa.me/${formatWhatsAppNumber(
+              producer.phone
+            )}?text=${whatsappMsg}`}
             className={`${styles.contactButton} ${styles.whatsapp}`}
+            target="_blank"
+            rel="noopener noreferrer"
           >
             <FaWhatsapp />
           </a>
@@ -124,6 +141,8 @@ function ProductInfo({
             <a
               href={`https://t.me/${producer.profile.telegram}`}
               className={`${styles.contactButton} ${styles.telegram}`}
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <FaTelegram />
             </a>
@@ -132,6 +151,8 @@ function ProductInfo({
             <a
               href={`https://www.instagram.com/${producer.profile.instagram}`}
               className={`${styles.contactButton} ${styles.instagram}`}
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <FaInstagram />
             </a>

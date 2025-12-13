@@ -187,50 +187,52 @@ export default function FilterPopup({
             {currentMax} {path === "appearance.Altura" ? "m" : ""}
           </h3>
           <div className={styles.rangeContainer}>
-            <Range
-              step={STEP}
-              min={minAvailable}
-              max={maxAvailable}
-              values={values}
-              onChange={(newValues) =>
-                updateRange(path, newValues, minAvailable, maxAvailable)
-              }
-              renderTrack={({ props, children }) => (
-                <div
-                  onMouseDown={props.onMouseDown}
-                  onTouchStart={props.onTouchStart}
-                  className={styles.trackWrapper}
-                >
+            {minAvailable < maxAvailable && (
+              <Range
+                step={STEP}
+                min={minAvailable}
+                max={maxAvailable}
+                values={values}
+                onChange={(newValues) =>
+                  updateRange(path, newValues, minAvailable, maxAvailable)
+                }
+                renderTrack={({ props, children }) => (
                   <div
-                    ref={props.ref}
-                    className={styles.track}
-                    style={{
-                      background: getTrackBackground({
-                        values,
-                        colors: [
-                          "var(--contrast-color)",
-                          "var(--primary-color)",
-                          "var(--contrast-color)",
-                        ],
-                        min: minAvailable,
-                        max: maxAvailable,
-                      }),
-                    }}
+                    onMouseDown={props.onMouseDown}
+                    onTouchStart={props.onTouchStart}
+                    className={styles.trackWrapper}
                   >
-                    {children}
+                    <div
+                      ref={props.ref}
+                      className={styles.track}
+                      style={{
+                        background: getTrackBackground({
+                          values,
+                          colors: [
+                            "var(--contrast-color)",
+                            "var(--primary-color)",
+                            "var(--contrast-color)",
+                          ],
+                          min: minAvailable,
+                          max: maxAvailable,
+                        }),
+                      }}
+                    >
+                      {children}
+                    </div>
                   </div>
-                </div>
-              )}
-              renderThumb={({ props, index, isDragged }) => {
-                const { key, ...rest } = props;
+                )}
+                renderThumb={({ props, index, isDragged }) => {
+                  const { key, ...rest } = props;
 
-                return (
-                  <div key={key} {...rest} className={styles.thumb}>
-                    <div className={styles.thumbValue}>{values[index]}</div>
-                  </div>
-                );
-              }}
-            />
+                  return (
+                    <div key={key} {...rest} className={styles.thumb}>
+                      <div className={styles.thumbValue}>{values[index]}</div>
+                    </div>
+                  );
+                }}
+              />
+            )}
           </div>
         </div>
       );

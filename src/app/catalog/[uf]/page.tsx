@@ -6,6 +6,7 @@ import styles from "./page.module.css";
 import FilterPopup from "@/components/FilterPopup/FilterPopup";
 import ProductsCatalog from "@/components/ProductsCatalog/ProductsCatalog";
 import Dropdown from "@/components/ui/Dropdown/Dropdown";
+import LocalPopup from "@/components/LocalPopup/LocalPopup";
 
 interface CatalogProps {
   params: Promise<{ uf: string }>;
@@ -522,24 +523,29 @@ export default function Catalog({ params }: CatalogProps) {
           </p>
         </div>
         <div className={styles.productsOptions}>
-          <FilterPopup
-            filters={availableFilters}
-            pathLabelMap={pathLabelMap}
-            currentSelectedFilters={selectedFilters}
-            onApplyFilters={applyFilters}
-            onClearAllFilters={clearAllFilters}
-            producers={producers}
-          />
-          <Dropdown
-            trigger={<span>{getSortLabel(sortOption)}</span>}
-            containerClassName=""
-            triggerClassName={styles.orderTrigger}
-            menuClassName={styles.orderMenu}
-          >
-            <button onClick={() => setSortOption("name")}>Nome</button>
-            <button onClick={() => setSortOption("price")}>Preço</button>
-            <button onClick={() => setSortOption("rating")}>Avaliação</button>
-          </Dropdown>
+          <div className={styles.left}>
+            <FilterPopup
+              filters={availableFilters}
+              pathLabelMap={pathLabelMap}
+              currentSelectedFilters={selectedFilters}
+              onApplyFilters={applyFilters}
+              onClearAllFilters={clearAllFilters}
+              producers={producers}
+            />
+            <Dropdown
+              trigger={<span>{getSortLabel(sortOption)}</span>}
+              containerClassName=""
+              triggerClassName={styles.orderTrigger}
+              menuClassName={styles.orderMenu}
+            >
+              <button onClick={() => setSortOption("name")}>Nome</button>
+              <button onClick={() => setSortOption("price")}>Preço</button>
+              <button onClick={() => setSortOption("rating")}>Avaliação</button>
+            </Dropdown>
+          </div>
+          <div className={styles.right}>
+            <LocalPopup />
+          </div>
         </div>
         <ProductsCatalog producers={sortedProducers} />
       </div>
