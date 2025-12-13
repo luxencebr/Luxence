@@ -454,6 +454,88 @@ export default function Catalog({ params }: CatalogProps) {
     return getUniqueFilters(baseList);
   }, [producers, selectedGender]);
 
+  function getPopularFilterTags(
+    producers: any[],
+    pathLabelMap: Record<string, string>,
+    limit = 10
+  ) {
+    const tagMap = new Map<string, any>();
+
+    producers.forEach((p) => {
+      // Nacionalidade
+      if (p.nationality) {
+        const key = `profile.nationality:${p.nationality}`;
+        tagMap.set(key, {
+          path: "profile.nationality",
+          label: "Nacionalidade",
+          value: p.nationality,
+          count: (tagMap.get(key)?.count || 0) + 1,
+        });
+      }
+
+      // Línguas
+      p.profile?.languages?.forEach((lang: any) => {
+        const value = typeof lang === "string" ? lang : lang?.name;
+        if (!value) return;
+
+        const key = `profile.languages:${value}`;
+        tagMap.set(key, {
+          path: "profile.languages",
+          label: "Línguas",
+          value,
+          count: (tagMap.get(key)?.count || 0) + 1,
+        });
+      });
+
+      // Aparência simples
+      ["Etnia", "Cabelo", "Olhos"].forEach((attr) => {
+        const value = p.appearance?.[attr];
+        if (!value) return;
+
+        const path = `appearance.${attr}`;
+        const key = `${path}:${value}`;
+
+        tagMap.set(key, {
+          path,
+          label: attr,
+          value,
+          count: (tagMap.get(key)?.count || 0) + 1,
+        });
+      });
+
+      // Serviços - Atende
+      ["mans", "women", "couple", "group"].forEach((opt) => {
+        if (p.services?.[opt]) {
+          const key = `services.Atende:${opt}`;
+          tagMap.set(key, {
+            path: "services.Atende",
+            label: "Atende",
+            value: opt,
+            count: (tagMap.get(key)?.count || 0) + 1,
+          });
+        }
+      });
+    });
+
+    return Array.from(tagMap.values())
+      .sort((a, b) => b.count - a.count)
+      .slice(0, limit);
+  }
+
+  const popularTags = useMemo(() => {
+    const baseList = selectedGender
+      ? producers.filter((p) => {
+          const gender = p.profile?.gender?.toLowerCase();
+          if (selectedGender === "trans") {
+            return gender === "trans" || gender === "femaletrans";
+          }
+          return gender === selectedGender;
+        })
+      : producers;
+
+    return getPopularFilterTags(baseList, pathLabelMap, 8);
+  }, [producers, selectedGender, pathLabelMap]);
+
   if (isLoading) {
     return (
       <div className={styles.catalogPage}>
@@ -522,6 +604,34 @@ export default function Catalog({ params }: CatalogProps) {
             acompanhantes em <span className={styles.uf}>{uf}</span>
           </p>
         </div>
+        <div className={styles.tags}>
+          <h2>Populares: </h2>
+          {popularTags.map((tag) => {
+            const isActive = selectedFilters[tag.path]?.includes(tag.value);
+
+            return (
+              <button
+                key={`${tag.path}-${tag.value}`}
+                className={`${styles.tag} ${isActive ? styles.activeTag : ""}`}
+                onClick={() => {
+                  const currentValues = selectedFilters[tag.path] || [];
+
+                  applyFilters({
+                    ...selectedFilters,
+                    [tag.path]: isActive
+                      ? currentValues.filter((v: any) => v !== tag.value)
+                      : [...currentValues, tag.value],
+                  });
+                }}
+              >
+                <span className={styles.tagLabel}>
+                  {tag.label}: {tag.value}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
         <div className={styles.productsOptions}>
           <div className={styles.left}>
             <FilterPopup
