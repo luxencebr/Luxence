@@ -54,6 +54,9 @@ function ProductInfo({
   const [atBottom, setAtBottom] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [editingContact, setEditingContact] = useState<
+    "whatsapp" | "telegram" | "instagram" | null
+  >(null);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -120,46 +123,19 @@ function ProductInfo({
     }
   }, [isEditingSlogan]);
 
-  const whatsappMsg =
-    "Olá!+Vi+seu+perfil+na+Luxence!+Fiquei+interessado+em+seus+serviços,+vamos+conversar?";
+  const whatsappMsg = encodeURIComponent(
+    "Olá! Vi seu perfil na Luxence!\n\nFiquei interessado em seus serviços. Vamos conversar?"
+  );
+
+  const isContactActive = (type: "whatsapp" | "telegram" | "instagram") => {
+    if (type === "whatsapp") return Boolean(producer.phone);
+    if (type === "telegram") return Boolean(producer.profile.telegram);
+    if (type === "instagram") return Boolean(producer.profile.instagram);
+    return false;
+  };
 
   return (
     <div className={styles.productInfos}>
-      <div className={styles.contactsOptions}>
-        <div className={styles.contactsLayout}>
-          <a
-            href={`https://wa.me/${formatWhatsAppNumber(
-              producer.phone
-            )}?text=${whatsappMsg}`}
-            className={`${styles.contactButton} ${styles.whatsapp}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <FaWhatsapp />
-          </a>
-          {producer.profile.telegram && (
-            <a
-              href={`https://t.me/${producer.profile.telegram}`}
-              className={`${styles.contactButton} ${styles.telegram}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <FaTelegram />
-            </a>
-          )}
-          {producer.profile.instagram && (
-            <a
-              href={`https://www.instagram.com/${producer.profile.instagram}`}
-              className={`${styles.contactButton} ${styles.instagram}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <FaInstagram />
-            </a>
-          )}
-        </div>
-      </div>
-
       <div
         className={`${styles.layout} ${
           isMobile && isExpanded ? styles.expanded : ""
@@ -237,96 +213,175 @@ function ProductInfo({
             )}
           </div>
 
-          <div className={styles.expandableContent}>
-            <button
-              className={styles.infoCard}
-              onClick={() => ScrollTo("reviews", { center: true })}
-            >
-              <div className={styles.cardHeader}>
-                <h2>
+          <button
+            className={styles.infoCard}
+            onClick={() => ScrollTo("reviews", { center: true })}
+          >
+            <div className={styles.cardHeader}>
+              <h2>
+                <span>
+                  <FaHeart />
+                </span>
+                Avaliações
+              </h2>
+              <IoIosArrowDown />
+            </div>
+            <div className={styles.cardContent}>
+              {producer.profile.reviews.length > 0 ? (
+                <p>
+                  {producer.profile.reviews.length} -{" "}
+                  {typeof rating === "number" && !isNaN(rating)
+                    ? rating.toFixed(1)
+                    : "N/D"}
+                </p>
+              ) : (
+                <p>Ainda não há avaliações</p>
+              )}
+            </div>
+          </button>
+
+          <button
+            className={styles.infoCard}
+            onClick={() => ScrollTo("values", { center: true })}
+          >
+            <div className={styles.cardHeader}>
+              <h2>
+                <span>
+                  <TbCoinFilled />
+                </span>
+                Valores
+              </h2>
+              <IoIosArrowDown />
+            </div>
+            <div className={styles.cardContent}>
+              {price ? (
+                <p>
+                  A partir de:
                   <span>
-                    <FaHeart />
+                    {price && `R$ ${price.value}`},00{" "}
+                    <span>{price.option.label}</span>
                   </span>
-                  Avaliações
-                </h2>
-                <IoIosArrowDown />
-              </div>
-              <div className={styles.cardContent}>
-                {producer.profile.reviews.length > 0 ? (
-                  <p>
-                    {producer.profile.reviews.length} -{" "}
-                    {typeof rating === "number" && !isNaN(rating)
-                      ? rating.toFixed(1)
-                      : "N/D"}
-                  </p>
-                ) : (
-                  <p>Ainda não há avaliações</p>
-                )}
-              </div>
-            </button>
-            <button
-              className={styles.infoCard}
-              onClick={() => ScrollTo("values", { center: true })}
+                </p>
+              ) : (
+                <p>Informe seus valores</p>
+              )}
+            </div>
+          </button>
+
+          <button
+            className={styles.infoCard}
+            onClick={() => ScrollTo("location", { center: true })}
+          >
+            <div className={styles.cardHeader}>
+              <h2>
+                <span>
+                  <HiLocationMarker />
+                </span>
+                Localização
+              </h2>
+              <IoIosArrowDown />
+            </div>
+            <div className={styles.cardContent}>
+              {producer.user.locality ? (
+                <p>
+                  <span className={styles.neighborhood}>
+                    {producer.user.locality?.neighborhood}
+                  </span>
+                  {producer.user.locality?.city} -{" "}
+                  {producer.user.locality?.state}
+                  {producer.profile.local ? (
+                    <i>
+                      <TbHomeCheck /> com local
+                    </i>
+                  ) : (
+                    <i>
+                      <TbHomeX /> sem local
+                    </i>
+                  )}
+                </p>
+              ) : (
+                <p>Informe sua localização</p>
+              )}
+            </div>
+          </button>
+        </div>
+
+        <div className={styles.contactsOptions}>
+          <div className={styles.contactsLayout}>
+            <a
+              href={
+                !canEdit
+                  ? `https://wa.me/${formatWhatsAppNumber(
+                      producer.phone
+                    )}?text=${whatsappMsg}`
+                  : undefined
+              }
+              className={`${styles.contactButton} ${styles.whatsapp} ${
+                isContactActive("whatsapp") ? styles.active : ""
+              }`}
+              target={!canEdit ? "_blank" : undefined}
+              rel="noopener noreferrer"
+              onClick={(e) => {
+                if (canEdit) {
+                  e.preventDefault();
+                  setEditingContact("whatsapp");
+                }
+              }}
             >
-              <div className={styles.cardHeader}>
-                <h2>
-                  <span>
-                    <TbCoinFilled />
-                  </span>
-                  Valores
-                </h2>
-                <IoIosArrowDown />
-              </div>
-              <div className={styles.cardContent}>
-                {price ? (
-                  <p>
-                    A partir de:
-                    <span>
-                      {price && `R$ ${price.value}`},00{" "}
-                      <span>{price.option.label}</span>
-                    </span>
-                  </p>
-                ) : (
-                  <p>Informe seus valores</p>
-                )}
-              </div>
-            </button>
-            <button
-              className={styles.infoCard}
-              onClick={() => ScrollTo("location", { center: true })}
-            >
-              <div className={styles.cardHeader}>
-                <h2>
-                  <span>
-                    <HiLocationMarker />
-                  </span>
-                  Localização
-                </h2>
-                <IoIosArrowDown />
-              </div>
-              <div className={styles.cardContent}>
-                {producer.user.locality ? (
-                  <p>
-                    <span className={styles.neighborhood}>
-                      {producer.user.locality?.neighborhood}
-                    </span>
-                    {producer.user.locality?.city} -{" "}
-                    {producer.user.locality?.state}
-                    {producer.profile.local ? (
-                      <i>
-                        <TbHomeCheck /> com local
-                      </i>
-                    ) : (
-                      <i>
-                        <TbHomeX /> sem local
-                      </i>
-                    )}
-                  </p>
-                ) : (
-                  <p>Informe sua localização</p>
-                )}
-              </div>
-            </button>
+              <FaWhatsapp />
+            </a>
+
+            {producer.profile.telegram ||
+              (canEdit && (
+                <a
+                  href={
+                    !canEdit
+                      ? `https://t.me/${producer.profile.telegram}`
+                      : undefined
+                  }
+                  className={`${styles.contactButton} ${styles.telegram} ${
+                    isContactActive("telegram")
+                      ? styles.active
+                      : styles.disabled
+                  }`}
+                  target={!canEdit ? "_blank" : undefined}
+                  rel="noopener noreferrer"
+                  onClick={(e) => {
+                    if (canEdit) {
+                      e.preventDefault();
+                      setEditingContact("telegram");
+                    }
+                  }}
+                >
+                  <FaTelegram />
+                </a>
+              ))}
+
+            {producer.profile.instagram ||
+              (canEdit && (
+                <a
+                  href={
+                    !canEdit
+                      ? `https://www.instagram.com/${producer.profile.instagram}`
+                      : undefined
+                  }
+                  className={`${styles.contactButton} ${styles.instagram} ${
+                    isContactActive("instagram")
+                      ? styles.active
+                      : styles.disabled
+                  }`}
+                  target={!canEdit ? "_blank" : undefined}
+                  rel="noopener noreferrer"
+                  onClick={(e) => {
+                    if (canEdit) {
+                      e.preventDefault();
+                      setEditingContact("instagram");
+                    }
+                  }}
+                >
+                  <FaInstagram />
+                </a>
+              ))}
           </div>
         </div>
       </div>

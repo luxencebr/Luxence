@@ -96,7 +96,9 @@ export default function LocalPopup() {
           </button>
         </div>
 
-        <div className={styles.layout}>
+        <div className={styles.layout}>Em Breve</div>
+
+        {/* <div className={styles.layout}>
           {!hasLocation && (
             <div className={styles.locationRequest}>
               <p>Para isso precisamos da sua localização.</p>
@@ -146,7 +148,7 @@ export default function LocalPopup() {
               </div>
             </div>
           )}
-        </div>
+        </div> */}
       </>
     </Popup>
   );
