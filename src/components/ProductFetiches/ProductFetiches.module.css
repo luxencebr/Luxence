@@ -1,0 +1,231 @@
+.productServices {
+  width: 100%;
+  max-width: 960px;
+  margin: 16px auto;
+
+  position: relative;
+
+  color: var(--contrast-color);
+}
+
+.servicesList::before {
+  content: "";
+  background: var(--contrast-complementary-color);
+  height: 90%;
+  width: 1px;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-0.5px, -45%);
+}
+
+.layout {
+  padding: 16px;
+}
+
+.header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.content {
+  display: flex;
+}
+
+.column {
+  flex: 1;
+  padding: 16px;
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 8px;
+}
+
+.column h3 {
+}
+
+.servicesList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  color: var(--contrast-complementary-color);
+}
+
+.servicesList li,
+.serviceItem {
+  width: 80%;
+  padding: 16px 0;
+  margin: 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+
+  font-size: 20px;
+
+  border-bottom: 1px solid var(--contrast-complementary-color);
+}
+
+@media (max-width: 768px) {
+  .servicesList li {
+    font-size: 14px;
+  }
+}
+
+.servicesList li span {
+  display: flex;
+  align-items: center;
+}
+
+.status {
+  height: 24px;
+  aspect-ratio: 1 / 1;
+  font-size: 20px;
+  padding: 4px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status.green {
+  background: rgba(0, 128, 0, 0.25);
+}
+.status.red {
+  background: rgba(128, 0, 0, 0.25);
+}
+.status.neutral {
+  background: rgba(128, 128, 128, 0.25);
+}
+
+.green {
+  color: green;
+}
+
+.red {
+  color: red;
+}
+
+.editActions {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 8px;
+}
+
+.editBtn,
+.saveBtn,
+.cancelBtn {
+  background: transparent;
+  padding: 8px;
+
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 0 2px black;
+
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+.editBtn {
+  opacity: 0.75;
+  background: transparent;
+  box-shadow: 0 0 0 1px var(--primary-color);
+
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  color: var(--primary-color);
+}
+
+.saveBtn {
+  background: var(--primary-color);
+  color: var(--background-color);
+}
+
+.cancelBtn {
+  background: var(--background-color);
+  color: var(--contrast-color);
+}
+
+.editActions button:hover {
+  opacity: 0.75;
+}
+
+.editBtn:hover {
+  opacity: 1;
+}
+
+.radioOption {
+  opacity: 0.75;
+  background: var(--background-complementary-color);
+  aspect-ratio: 1 / 1;
+  padding: 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--contrast-color);
+  font-size: 16px;
+
+  cursor: pointer;
+}
+.radioOption:has(input:checked) {
+  opacity: 1;
+}
+
+.radioOption:has(input:checked):has(.green) {
+  background: rgba(0, 128, 0, 0.25);
+}
+.radioOption:has(input:checked):has(.red) {
+  background: rgba(128, 0, 0, 0.25);
+}
+.radioOption:has(input:checked):has(.neutral) {
+  background: rgba(128, 128, 128, 0.25);
+}
+
+.radioGroup {
+  display: flex;
+
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.radioOption input {
+  display: none;
+}
+
+.saving {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  height: 40px;
+  aspect-ratio: 1 / 1;
+  border: 4px solid var(--primary-color);
+  border-top-color: var(--contrast-color);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

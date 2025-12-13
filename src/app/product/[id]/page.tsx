@@ -9,6 +9,7 @@ import type { Producer } from "@/types/Producer";
 import ProductShowcase from "@/components/ProductShowcase/ProductShowcase";
 import ProductAbout from "@/components/ProductAbout/ProductAbout";
 import ProductServices from "@/components/ProductServices/ProductServices";
+import ProductFetiches from "@/components/ProductFetiches/ProductFetiches";
 import ProductValues from "@/components/ProductValues/ProductValues";
 import ProductLocation from "@/components/ProductLocation/ProductLocation";
 import ProductReviews from "@/components/ProductReviews/ProductReviews";
@@ -76,6 +77,7 @@ export default function ProductPage({ params }: ProductPageProps) {
         <ProductShowcase producer={producer} canEdit={canEdit} />
         <ProductAbout producer={producer} canEdit={canEdit} />
         <ProductServices producer={producer} canEdit={canEdit} />
+        <ProductFetiches producer={producer} canEdit={canEdit} />
         <ProductValues producer={producer} canEdit={canEdit} />
         <ProductLocation producer={producer} canEdit={canEdit} />
         <ProductReviews producer={producer} />

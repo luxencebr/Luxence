@@ -275,6 +275,7 @@ model ProducerFetish {
   id          Int           @id @default(autoincrement())
   profileId   Int
   fetishId    Int
+  status      String @default("neutral")
   profile     ProducerProfile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
   option      FetishOption  @relation(fields: [fetishId], references: [id])
 

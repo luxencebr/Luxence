@@ -41,6 +41,21 @@ const SERVICE_OPTIONS = [
   { id: 13, name: "penetracao_tripla", label: "Penetração Tripla" },
 ];
 
+const FETICHES_OPTIONS = [
+  { id: 1, name: "acessorios", label: "Acessórios" },
+  { id: 2, name: "fantasias", label: "Fantasias" },
+  { id: 3, name: "podolatria", label: "Podolatria" },
+  { id: 4, name: "quirofilia", label: "Quirofilia" },
+  { id: 5, name: "facefuck", label: "Facefuck" },
+  { id: 6, name: "voyer", label: "Voyer" },
+  { id: 7, name: "bondage", label: "Bondage" },
+  { id: 9, name: "dominação", label: "Dominação" },
+  { id: 10, name: "submissão", label: "Submissão" },
+  { id: 11, name: "sadomasoquismo", label: "Sadomasoquismo" },
+  { id: 12, name: "golden_shower", label: "Golden-Shower" },
+  { id: 13, name: "brown_shower", label: "Brown-Shower" },
+];
+
 const PRICE_OPTIONS = [
   { id: 0, name: "15_min", label: "15 Minutos" },
   { id: 1, name: "30_min", label: "30 Minutos" },
@@ -73,6 +88,12 @@ async function main() {
     skipDuplicates: true,
   });
   console.log("🌱 amenityOption OK");
+
+  await prisma.fetishOption.createMany({
+    data: FETICHES_OPTIONS,
+    skipDuplicates: true,
+  });
+  console.log("🌱 fetishOption OK");
 
   await prisma.serviceOption.createMany({
     data: SERVICE_OPTIONS,

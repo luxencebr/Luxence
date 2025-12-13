@@ -129,6 +129,7 @@ export interface ProducerFetish {
   id: number;
   profileId: number;
   fetishId: number;
+  status: string;
   option: Option;
 }
 
