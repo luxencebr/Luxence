@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import styles from "./ProductInfo.module.className";
+import styles from "./ProductInfo.module.css";
 
 import { TbCoinFilled } from "react-icons/tb";
 import { HiLocationMarker } from "react-icons/hi";
