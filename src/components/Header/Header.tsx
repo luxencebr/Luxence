@@ -9,7 +9,6 @@ import { IoIosClose, IoIosMenu } from "react-icons/io";
 import { IoPerson } from "react-icons/io5";
 
 import LanguagesPopup from "@/components/LanguagesPopup/LanguagesPopup";
-import LocationSelector from "@/components/LocationSelector/LocationSelector";
 import Dropdown from "@/components/ui/Dropdown/Dropdown";
 
 import SignUp from "@/components/Signup/Signup";

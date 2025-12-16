@@ -7,7 +7,7 @@ import { TbCoinFilled } from "react-icons/tb";
 import { HiLocationMarker } from "react-icons/hi";
 import { TbHomeCheck, TbHomeX } from "react-icons/tb";
 import { FaHeart } from "react-icons/fa6";
-import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { IoIosArrowDown } from "react-icons/io";
 
 import { FaWhatsapp, FaInstagram, FaTelegram } from "react-icons/fa6";
 import { GoShieldCheck, GoShield, GoShieldX } from "react-icons/go";
@@ -86,9 +86,9 @@ function ProductInfo({
     if (isMobile) {
       if (!isExpanded) {
         setIsExpanded(true);
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           ScrollTo("anchor", { center: true });
-        }, 50);
+        });
       } else {
         setIsExpanded(false);
       }

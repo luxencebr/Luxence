@@ -1,5 +1,7 @@
 "use client";
 
+import type React from "react";
+
 import { useState, useEffect, useCallback, useRef } from "react";
 import styles from "./Slider.module.css";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
@@ -41,6 +43,8 @@ function HighlightSlider({
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
 
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
   const goToNextSlide = useCallback(() => {
     setCurrentSlide((prevSlide) => (prevSlide + 1) % totalSlides);
   }, [totalSlides]);
@@ -53,13 +57,18 @@ function HighlightSlider({
     setCurrentSlide(index);
   };
 
-  if (!isProductPage) {
-    useEffect(() => {
-      if (isDragging) return;
-      const interval = setInterval(goToNextSlide, slideInterval);
-      return () => clearInterval(interval);
-    }, [goToNextSlide, isDragging]);
-  }
+  useEffect(() => {
+    if (isProductPage || isDragging) return;
+
+    intervalRef.current = setInterval(goToNextSlide, slideInterval);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [goToNextSlide, isDragging, isProductPage, slideInterval]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStartX(e.touches[0].clientX);
@@ -102,7 +111,7 @@ function HighlightSlider({
           {slides.map((slide) => (
             <img
               key={slide.id}
-              src={slide.src}
+              src={slide.src || "/placeholder.svg"}
               alt={slide.alt}
               className={styles.slideImage}
             />
@@ -123,7 +132,7 @@ function HighlightSlider({
             isProductPage ? (
               <div className={styles.thumbnailWrapper} key={index}>
                 <img
-                  src={slide.src}
+                  src={slide.src || "/placeholder.svg"}
                   alt={slide.alt}
                   className={`${styles.thumbnail} ${
                     index === currentSlide ? styles.active : ""
