@@ -41,9 +41,13 @@ export default function MonitoringDashboard() {
   const [dbStats, setDbStats] = useState<DbStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   const fetchData = async () => {
     try {
+      setIsRefreshing(true);
+
       const [memory, leak, db] = await Promise.all([
         fetch("/api/health/memory").then((r) => r.json()),
         fetch("/api/debug/memory-leak-check").then((r) => r.json()),
@@ -56,7 +60,9 @@ export default function MonitoringDashboard() {
     } catch (error) {
       console.error("Failed to fetch monitoring data:", error);
     } finally {
+      setIsRefreshing(false);
       setLoading(false);
+      setLastUpdated(new Date());
     }
   };
 
@@ -68,19 +74,6 @@ export default function MonitoringDashboard() {
       return () => clearInterval(interval);
     }
   }, [autoRefresh]);
-
-  const triggerGC = async () => {
-    try {
-      await fetch("/api/health/memory", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "gc" }),
-      });
-      fetchData();
-    } catch (error) {
-      console.error("Failed to trigger GC:", error);
-    }
-  };
 
   if (loading) {
     return (
@@ -108,6 +101,12 @@ export default function MonitoringDashboard() {
     <div className={styles.container}>
       <div className={styles.header}>
         <h1 className={styles.title}>Monitoring Dashboard</h1>
+        {lastUpdated && (
+          <span className={styles.lastUpdated}>
+            Atualizado às {lastUpdated.toLocaleTimeString()}
+          </span>
+        )}
+
         <div className={styles.actions}>
           <button
             className={`${styles.button} ${styles.buttonOutline}`}
@@ -118,14 +117,13 @@ export default function MonitoringDashboard() {
           <button
             className={`${styles.button} ${styles.buttonPrimary}`}
             onClick={fetchData}
+            disabled={isRefreshing}
           >
-            Atualizar Agora
-          </button>
-          <button
-            className={`${styles.button} ${styles.buttonDanger}`}
-            onClick={triggerGC}
-          >
-            Forçar GC
+            {isRefreshing ? (
+              <span className={styles.buttonSpinner}></span>
+            ) : (
+              "Atualizar Agora"
+            )}
           </button>
         </div>
       </div>
