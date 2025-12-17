@@ -12,25 +12,10 @@ import Dropdown from "@/components/ui/Dropdown/Dropdown";
 
 import SignUp from "@/components/Signup/Signup";
 import LogIn from "@/components/LogIn/LogIn";
-
-const useMockSession = () => {
-  // Retorne null para usuário não logado
-  // Ou descomente abaixo para testar com usuário logado:
-  return {
-    data: {
-      user: {
-        id: "1",
-        name: "João Silva",
-        email: "joao@example.com",
-        signature: "GOLD",
-      },
-    },
-  };
-  return { data: null };
-};
+import { useSession, signOut } from "next-auth/react";
 
 function Header() {
-  const { data: session } = useMockSession();
+  const { data: session } = useSession();
 
   const pathname = usePathname();
 
@@ -51,9 +36,8 @@ function Header() {
     };
   }, [isMenuOpen]);
 
-  const handleSignOut = () => {
-    // Adicione sua lógica de logout aqui
-    console.log("Sign out");
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: "/" });
   };
 
   return (

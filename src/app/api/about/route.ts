@@ -12,6 +12,14 @@ export async function GET(request: Request) {
 
     const [posts, total] = await Promise.all([
       prisma.post.findMany({
+        select: {
+          id: true,
+          title: true,
+          content: true,
+          createdAt: true,
+          updatedAt: true,
+          // Não incluímos 'image' aqui para evitar carregar base64 completo
+        },
         orderBy: {
           createdAt: "desc",
         },

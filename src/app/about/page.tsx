@@ -22,26 +22,26 @@ export default function AboutPage() {
       try {
         const res = await fetch("/api/about");
 
-        // 1. Verifica se a resposta HTTP foi OK
         if (!res.ok) {
           throw new Error(`Erro na API: ${res.status}`);
         }
 
         const data = await res.json();
 
-        // 2. Log para debug (aparecerá no console do navegador, F12)
         console.log("Dados recebidos da API:", data);
 
-        // 3. Verificação de segurança: É um array?
-        if (Array.isArray(data)) {
+        if (data.posts && Array.isArray(data.posts)) {
+          setPosts(data.posts);
+        } else if (Array.isArray(data)) {
+          // Fallback para formato antigo
           setPosts(data);
         } else {
           console.error("A API não retornou uma lista. Recebido:", data);
-          setPosts([]); // Garante que continue sendo um array vazio em caso de erro
+          setPosts([]);
         }
       } catch (err) {
         console.error("Erro ao buscar posts:", err);
-        setPosts([]); // Fallback para array vazio
+        setPosts([]);
       } finally {
         setLoading(false);
       }
@@ -49,7 +49,30 @@ export default function AboutPage() {
     fetchPosts();
   }, []);
 
-  if (loading) return <p>Carregando posts...</p>;
+  if (loading)
+    return (
+      <div
+        style={{
+          height: "100vh",
+          color: "var(--contrast-color)",
+          display: "flex",
+          flexFlow: "column nowrap",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "8px",
+        }}
+      >
+        <img
+          src="/ExenceLogo.svg"
+          alt=""
+          style={{
+            height: "128px",
+            aspectRatio: "1 / 1",
+          }}
+        />
+        <p>Carregando postagens...</p>
+      </div>
+    );
 
   return (
     <main className={styles.container}>
@@ -68,18 +91,6 @@ export default function AboutPage() {
                     className={styles.itemLink}
                   >
                     <div className={styles.itemContent}>
-                      {post.image && (
-                        <div className={styles.itemImage}>
-                          <img
-                            src={post.image?.[0].url ?? "/placeholder.svg"}
-                            alt={post.title
-                              .toLowerCase()
-                              .replace(/ /g, "-")
-                              .replace(/[^\w-]+/g, "")}
-                            className={styles.image}
-                          />
-                        </div>
-                      )}
                       <div className={styles.itemInfo}>
                         <h2 className={styles.itemTitle}>{post.title}</h2>
                         <small className={styles.itemDate}>
@@ -114,18 +125,6 @@ export default function AboutPage() {
                     href={`/about/post/${post.id}`}
                     className={styles.articleLink}
                   >
-                    {post.image && (
-                      <div className={styles.postImage}>
-                        <img
-                          src={post.image?.[0].url ?? "/placeholder.svg"}
-                          alt={post.title
-                            .toLowerCase()
-                            .replace(/ /g, "-")
-                            .replace(/[^\w-]+/g, "")}
-                          className={styles.image}
-                        />
-                      </div>
-                    )}
                     <h2>{post.title}</h2>
                     <p>{post.content}</p>
                     <small className={styles.date}>
