@@ -332,7 +332,7 @@ model Post {
   likes       Int       @default(0)
   comments    Comment[]
 
-  @@index([createdAt])
+  @@index([createdAt(sort: Desc)])
 }
 
 model Comment {
