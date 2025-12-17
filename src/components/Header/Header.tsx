@@ -1,7 +1,6 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useSession, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import styles from "./Header.module.css";
@@ -14,9 +13,24 @@ import Dropdown from "@/components/ui/Dropdown/Dropdown";
 import SignUp from "@/components/Signup/Signup";
 import LogIn from "@/components/LogIn/LogIn";
 
+const useMockSession = () => {
+  // Retorne null para usuário não logado
+  // Ou descomente abaixo para testar com usuário logado:
+  return {
+    data: {
+      user: {
+        id: "1",
+        name: "João Silva",
+        email: "joao@example.com",
+        signature: "GOLD",
+      },
+    },
+  };
+  return { data: null };
+};
+
 function Header() {
-  const { data: session } = useSession();
-  console.log(session);
+  const { data: session } = useMockSession();
 
   const pathname = usePathname();
 
@@ -36,6 +50,11 @@ function Header() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [isMenuOpen]);
+
+  const handleSignOut = () => {
+    // Adicione sua lógica de logout aqui
+    console.log("Sign out");
+  };
 
   return (
     <header className={styles.header}>
@@ -113,7 +132,7 @@ function Header() {
                     Assine Já!
                   </Link>
                 )}
-                <button onClick={() => signOut()} className={styles.menuItem}>
+                <button onClick={handleSignOut} className={styles.menuItem}>
                   Sair
                 </button>
               </Dropdown>
@@ -144,18 +163,96 @@ function Header() {
           }`}
         >
           <div className={styles.mobileMenuContent}>
-            <Link
-              href="/home"
-              className={styles.mobileNews}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Novidades
-            </Link>
+            <nav className={styles.mobileNav}>
+              <Link
+                href="/home"
+                className={`${styles.mobileNavBtn} ${
+                  isActive("/home") ? styles.active : ""
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Início
+              </Link>
 
-            <div className={styles.mobileAuthButtons}>
-              <SignUp />
-              <LogIn />
-            </div>
+              <Link
+                href="/catalog"
+                className={`${styles.mobileNavBtn} ${
+                  isActive("/catalog") ? styles.active : ""
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Catálogo
+              </Link>
+
+              <Link
+                href="/about"
+                className={`${styles.mobileNavBtn} ${
+                  isActive("/about") ? styles.active : ""
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Sobre
+              </Link>
+            </nav>
+
+            <div className={styles.mobileDivider}></div>
+
+            {session ? (
+              <div className={styles.mobileUserSection}>
+                <Link
+                  href={`/product/${session?.user?.id}`}
+                  className={styles.mobileUserInfo}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <span className={styles.mobileUserIcon}>
+                    <IoPerson />
+                  </span>
+                  <span className={styles.mobileUserName}>
+                    {(() => {
+                      if (!session.user?.name) return "Usuário";
+
+                      const parts = session.user.name.trim().split(/\s+/);
+                      if (parts.length === 1) return parts[0];
+
+                      const first = parts[0];
+                      const last = parts[parts.length - 1];
+                      return `${first} ${last}`;
+                    })()}
+                  </span>
+                </Link>
+                {session.user.signature !== "COPPER" ? (
+                  <Link
+                    href={""}
+                    className={styles.mobileMenuItem}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Minha Assinatura
+                  </Link>
+                ) : (
+                  <Link
+                    href={"advertiser/plans"}
+                    className={styles.mobileMenuItem}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Assine Já!
+                  </Link>
+                )}
+                <button
+                  onClick={() => {
+                    handleSignOut();
+                    setIsMenuOpen(false);
+                  }}
+                  className={styles.mobileMenuItem}
+                >
+                  Sair
+                </button>
+              </div>
+            ) : (
+              <div className={styles.mobileAuthButtons}>
+                <SignUp />
+                <LogIn />
+              </div>
+            )}
           </div>
         </div>
 

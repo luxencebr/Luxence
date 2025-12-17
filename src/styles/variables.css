@@ -7,4 +7,12 @@
 
   --primary-color: #ffd700;
   --primary-complementary-color: rgba(255, 215, 0, 0.75);
+
+  /* FONTES */
+
+  --fs-xs: clamp(0.7rem, 1.8vw, 0.85rem);
+  --fs-sm: clamp(0.85rem, 2.2vw, 1rem);
+  --fs-md: clamp(1rem, 2.6vw, 1.15rem);
+  --fs-lg: clamp(1.2rem, 3vw, 1.4rem);
+  --fs-xl: clamp(1.4rem, 3.5vw, 1.8rem);
 }
