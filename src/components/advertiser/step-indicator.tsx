@@ -22,7 +22,10 @@ export default function StepIndicator({
           const isCompleted = stepNumber < currentStep;
 
           return (
-            <div key={step} className={styles.step}>
+            <div
+              key={step}
+              className={`${styles.step} ${isActive ? styles.stepActive : ""}`}
+            >
               <div
                 className={`${styles.circle} ${
                   isCompleted
@@ -37,7 +40,7 @@ export default function StepIndicator({
 
               <div
                 className={`${styles.label} ${
-                  isActive || isCompleted ? styles.labelActive : ""
+                  isActive ? styles.labelActive : ""
                 }`}
               >
                 {step}

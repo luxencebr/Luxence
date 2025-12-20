@@ -1,6 +1,5 @@
 .container {
   flex: 1;
-  margin-bottom: 32px;
 }
 
 .steps {
@@ -9,6 +8,7 @@
   flex-flow: column nowrap;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
 }
 
 .step {
@@ -22,8 +22,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
 
   border-radius: 50%;
   font-weight: 600;
@@ -56,5 +56,32 @@
 }
 
 .labelActive {
+  flex: 1;
   color: var(--contrast-color);
+}
+
+@media (max-width: 768px) {
+  .steps {
+    flex-direction: row;
+  }
+  .step {
+    min-width: 40px;
+    flex: 0;
+    padding: 8px;
+
+    overflow: hidden;
+    border-radius: 8px;
+
+    transition: 1s ease;
+  }
+  .stepActive {
+    background: var(--background-complementary-color);
+    flex: 1;
+  }
+  .label {
+    display: none;
+  }
+  .labelActive {
+    display: block;
+  }
 }

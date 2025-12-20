@@ -34,7 +34,14 @@ export default function StepNavigation({
   return (
     <div className={styles.container}>
       {!canProceed() && (
-        <p style={{ color: "orange", margin: 0 }}>
+        <p
+          style={{
+            color: "orange",
+            margin: 0,
+            fontSize: "12px",
+            textWrap: "nowrap",
+          }}
+        >
           ⚠ Preencha corretamente as informações
         </p>
       )}

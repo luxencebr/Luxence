@@ -74,3 +74,42 @@
 .card::-webkit-scrollbar-track {
   background: transparent;
 }
+
+@media (max-width: 768px) {
+  .container {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .wrapper {
+    flex-direction: column;
+    max-width: 100%;
+  }
+
+  .side {
+    flex: none;
+    padding: 24px 16px;
+  }
+
+  .header h1 {
+    font-size: 20px;
+    white-space: normal;
+  }
+
+  .header p {
+    font-size: 14px;
+  }
+
+  .content {
+    padding: 0 16px;
+  }
+
+  .card {
+    padding: 20px;
+    border-radius: 8px;
+    max-height: none;
+    overflow: visible;
+    display: flex;
+  }
+}
