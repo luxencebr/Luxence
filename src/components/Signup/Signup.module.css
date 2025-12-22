@@ -37,6 +37,8 @@
 
 .formContent {
   background-color: var(--background-complementary-color);
+  min-width: 320px;
+
   padding: 16px;
 
   border-radius: 8px;
@@ -60,6 +62,37 @@
 
 .disabled button {
   cursor: not-allowed;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.prevStep {
+  background: var(--background-color);
+  aspect-ratio: 1 / 1;
+
+  border: none;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--contrast-color);
+  font-size: 16px;
+}
+
+.prevStep:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.exp {
+  font-size: 20px;
+  text-wrap: wrap;
 }
 
 .spinner {
@@ -175,6 +208,7 @@
 
 .form label input {
   background: var(--background-color);
+  flex: 1;
   padding: 8px 12px;
 
   border: none;
@@ -185,6 +219,7 @@
 }
 
 .passwordWrapper {
+  width: 100%;
   display: flex;
   flex-flow: row nowrap;
 }
@@ -266,6 +301,7 @@ input:-webkit-autofill:focus {
   font-size: 16px;
   font-family: Quicksand;
   font-weight: bold;
+  text-wrap: nowrap;
 
   cursor: pointer;
 }
@@ -298,4 +334,24 @@ input:-webkit-autofill:focus {
   hyphens: auto;
   word-wrap: break-word;
   overflow-wrap: break-word;
+}
+
+@media (max-width: 768px) {
+  .popup {
+    flex-flow: column-reverse;
+  }
+  .fieldsets {
+    display: flex;
+    flex-flow: column;
+  }
+  .fieldsets::before {
+    display: none;
+  }
+}
+
+.hidden {
+  display: none;
+}
+.visible {
+  display: block;
 }
