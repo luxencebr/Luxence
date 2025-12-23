@@ -3,10 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { uf: string } }
+  { params }: { params: Promise<{ uf: string }> }
 ) {
   try {
-    const uf = params.uf.toUpperCase();
+    const { uf } = await params;
+    const state = uf.toUpperCase();
 
     const producers = await prisma.producer.findMany({
       where: {
@@ -15,7 +16,7 @@ export async function GET(
         },
         user: {
           locality: {
-            state: uf,
+            state,
           },
         },
       },
