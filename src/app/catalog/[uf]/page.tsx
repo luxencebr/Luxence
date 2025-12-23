@@ -318,8 +318,14 @@ export default function CatalogPage() {
           })}
         </div>
 
-        <h1>
-          Acompanhantes em <strong>{uf}</strong>
+        <h1 className={styles.welcomeText}>
+          Encontre acompanhantes{" "}
+          <strong className={styles.gender}>
+            {selectedGender === "female" && "Mulheres"}
+            {selectedGender === "male" && "Homens"}
+            {selectedGender === "trans" && "Trans"}
+          </strong>{" "}
+          em <strong>{uf}</strong>
         </h1>
 
         <div className={styles.catalogOptions}>
