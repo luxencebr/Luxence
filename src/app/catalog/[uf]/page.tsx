@@ -290,10 +290,6 @@ export default function CatalogPage() {
   return (
     <div className={styles.catalogPage}>
       <header className={styles.header}>
-        <h1>
-          Acompanhantes em <strong>{uf}</strong>
-        </h1>
-
         <div className={styles.genderSelector} ref={selectorRef}>
           <div
             className={styles.highlight}
@@ -321,6 +317,10 @@ export default function CatalogPage() {
             );
           })}
         </div>
+
+        <h1>
+          Acompanhantes em <strong>{uf}</strong>
+        </h1>
 
         <div className={styles.catalogOptions}>
           <div className={styles.left}>

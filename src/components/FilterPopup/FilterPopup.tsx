@@ -4,6 +4,8 @@ import { Range } from "react-range";
 import { Producer } from "@/types/Producer";
 import Popup from "../ui/Popup/Popup";
 import styles from "./FilterPopup.module.css";
+import { CiFilter } from "react-icons/ci";
+import { IoCloseOutline } from "react-icons/io5";
 
 export interface ActiveFilters {
   ageRange?: {
@@ -178,7 +180,9 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
   }) {
     return (
       <section className={styles.section}>
-        <h4>{title}</h4>
+        <div className={styles.sectionHeader}>
+          <h4>{title}</h4>
+        </div>
 
         <div className={styles.options}>
           {options.map((opt) => (
@@ -192,7 +196,10 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
                 }
                 onChange={() => toggleArrayFilter(filterKey, opt.id)}
               />
-              <span>{opt.label}</span>
+
+              <span className={styles.checkmark} />
+
+              <span className={styles.label}>{opt.label}</span>
             </label>
           ))}
         </div>
@@ -241,40 +248,43 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
 
     return (
       <section className={styles.section}>
-        <h4>Idade</h4>
-
+        <div className={styles.sectionHeader}>
+          <h4>Idade (Anos)</h4>
+        </div>
         <div
           className={styles.range}
           onMouseDown={(e) => e.stopPropagation()}
           onTouchStart={(e) => e.stopPropagation()}
         >
-          <input
-            type="number"
-            value={inputMin}
-            onChange={(e) => setInputMin(e.target.value)}
-            onBlur={commitMin}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                commitMin();
-                e.currentTarget.blur();
-              }
-            }}
-          />
+          <div className={styles.inputs}>
+            <input
+              type="number"
+              value={inputMin}
+              onChange={(e) => setInputMin(e.target.value)}
+              onBlur={commitMin}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  commitMin();
+                  e.currentTarget.blur();
+                }
+              }}
+            />
 
-          <input
-            type="number"
-            value={inputMax}
-            onChange={(e) => setInputMax(e.target.value)}
-            onBlur={commitMax}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                commitMax();
-                e.currentTarget.blur();
-              }
-            }}
-          />
+            <input
+              type="number"
+              value={inputMax}
+              onChange={(e) => setInputMax(e.target.value)}
+              onBlur={commitMax}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  commitMax();
+                  e.currentTarget.blur();
+                }
+              }}
+            />
+          </div>
 
           <Range
             step={1}
@@ -302,7 +312,7 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
                   ...props.style,
                   height: "6px",
                   width: "100%",
-                  backgroundColor: "#ccc",
+                  backgroundColor: "var(--contrast-color)",
                 }}
               >
                 {children}
@@ -313,10 +323,10 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
                 {...props}
                 style={{
                   ...props.style,
-                  height: "24px",
-                  width: "24px",
+                  height: "16px",
+                  width: "16px",
                   borderRadius: "50%",
-                  backgroundColor: "#999",
+                  backgroundColor: "var(--primary-color)",
                 }}
               />
             )}
@@ -366,41 +376,44 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
 
     return (
       <section className={styles.section}>
-        <h4>Preço</h4>
-
+        <div className={styles.sectionHeader}>
+          <h4>Preço (R$)</h4>
+        </div>
         <div
           className={styles.range}
           onMouseDown={(e) => e.stopPropagation()}
           onTouchStart={(e) => e.stopPropagation()}
         >
-          <input
-            type="number"
-            value={inputMin}
-            onChange={(e) => setInputMin(e.target.value)}
-            onBlur={commitMin}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                commitMin();
-                e.currentTarget.blur();
-              }
-            }}
-          />
+          {" "}
+          <div className={styles.inputs}>
+            <input
+              type="number"
+              value={inputMin}
+              onChange={(e) => setInputMin(e.target.value)}
+              onBlur={commitMin}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  commitMin();
+                  e.currentTarget.blur();
+                }
+              }}
+            />
 
-          <input
-            type="number"
-            value={inputMax}
-            onChange={(e) => setInputMax(e.target.value)}
-            onBlur={commitMax}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                commitMax();
-                e.currentTarget.blur();
-              }
-            }}
-          />
-
+            <input
+              type="number"
+              value={inputMax}
+              onChange={(e) => setInputMax(e.target.value)}
+              onBlur={commitMax}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  commitMax();
+                  e.currentTarget.blur();
+                }
+              }}
+            />
+          </div>
           <Range
             step={50}
             min={min}
@@ -427,7 +440,7 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
                   ...props.style,
                   height: "6px",
                   width: "100%",
-                  backgroundColor: "#ccc",
+                  backgroundColor: "var(--contrast-color)",
                 }}
               >
                 {children}
@@ -438,10 +451,10 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
                 {...props}
                 style={{
                   ...props.style,
-                  height: "24px",
-                  width: "24px",
+                  height: "16px",
+                  width: "16px",
                   borderRadius: "50%",
-                  backgroundColor: "#999",
+                  backgroundColor: "var(--primary-color)",
                 }}
               />
             )}
@@ -453,15 +466,43 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
 
   return (
     <Popup
-      trigger={<>Filtros</>}
+      trigger={
+        <>
+          <span>
+            <CiFilter />
+          </span>
+          Filtros
+          {Object.values(filters).some((v) =>
+            Array.isArray(v) ? v.length > 0 : Boolean(v)
+          ) && (
+            <span className={styles.counter}>
+              {
+                Object.values(filters).filter((v) =>
+                  Array.isArray(v) ? v.length > 0 : Boolean(v)
+                ).length
+              }
+            </span>
+          )}
+        </>
+      }
       triggerClass={styles.trigger}
       popupClass={styles.popup}
       isOpen={isOpen}
       onOpenChange={setIsOpen}
     >
-      <div className={styles.content}>
+      <header className={styles.header}>
         <h3>Filtros</h3>
 
+        <button
+          type="button"
+          onClick={() => setIsOpen(false)}
+          className={styles.close}
+        >
+          <IoCloseOutline />
+        </button>
+      </header>
+
+      <div className={styles.content}>
         <AgeRange />
 
         <CheckboxList
@@ -507,30 +548,30 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
           options={options.payments}
           filterKey="payments"
         />
-
-        <div className={styles.footer}>
-          <button
-            className={styles.clear}
-            onClick={() => {
-              setFilters({});
-              onApply(filters);
-              setIsOpen(false);
-            }}
-          >
-            Limpar
-          </button>
-
-          <button
-            className={styles.apply}
-            onClick={() => {
-              onApply(filters);
-              setIsOpen(false);
-            }}
-          >
-            Aplicar filtros
-          </button>
-        </div>
       </div>
+
+      <footer className={styles.footer}>
+        <button
+          className={styles.clear}
+          onClick={() => {
+            setFilters({});
+            onApply(filters);
+            setIsOpen(false);
+          }}
+        >
+          Limpar
+        </button>
+
+        <button
+          className={styles.apply}
+          onClick={() => {
+            onApply(filters);
+            setIsOpen(false);
+          }}
+        >
+          Aplicar filtros
+        </button>
+      </footer>
     </Popup>
   );
 }
