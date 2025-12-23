@@ -238,3 +238,10 @@
   color: var(--background-color) !important;
   font-weight: bold !important;
 }
+
+@media (max-width: 768px) {
+  .popup {
+    height: auto;
+    width: 80%;
+  }
+}

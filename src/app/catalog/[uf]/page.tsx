@@ -289,63 +289,65 @@ export default function CatalogPage() {
 
   return (
     <div className={styles.catalogPage}>
-      <header className={styles.header}>
-        <div className={styles.genderSelector} ref={selectorRef}>
-          <div
-            className={styles.highlight}
-            style={{
-              width: highlightStyle.width,
-              transform: `translateX(${highlightStyle.left}px)`,
-            }}
-          />
-
-          {["female", "male", "trans"].map((gender) => {
-            const isSelected = selectedGender === gender;
-
-            return (
-              <button
-                key={gender}
-                className={`${styles.genderButton} ${
-                  isSelected ? styles.selected : ""
-                }`}
-                onClick={() => setSelectedGender(gender as any)}
-              >
-                {gender === "female" && "Mulheres"}
-                {gender === "male" && "Homens"}
-                {gender === "trans" && "Trans"}
-              </button>
-            );
-          })}
-        </div>
-
-        <h1 className={styles.welcomeText}>
-          Encontre acompanhantes{" "}
-          <strong className={styles.gender}>
-            {selectedGender === "female" && "Mulheres"}
-            {selectedGender === "male" && "Homens"}
-            {selectedGender === "trans" && "Trans"}
-          </strong>{" "}
-          em <strong>{uf}</strong>
-        </h1>
-
-        <div className={styles.catalogOptions}>
-          <div className={styles.left}>
-            <FilterPopup
-              producers={producersByGender}
-              onApply={setActiveFilters}
+      <div className={styles.layout}>
+        <header className={styles.header}>
+          <div className={styles.genderSelector} ref={selectorRef}>
+            <div
+              className={styles.highlight}
+              style={{
+                width: highlightStyle.width,
+                transform: `translateX(${highlightStyle.left}px)`,
+              }}
             />
-            {/* <SortDropdown /> */}
-          </div>
-          <div className={styles.right}>{/* <DistancePopup /> */}</div>
-        </div>
-      </header>
 
-      <ProductsCatalog
-        producers={visibleProducers.map((p) => ({
-          ...p,
-          age: calculateAge(p.birthday),
-        }))}
-      />
+            {["female", "male", "trans"].map((gender) => {
+              const isSelected = selectedGender === gender;
+
+              return (
+                <button
+                  key={gender}
+                  className={`${styles.genderButton} ${
+                    isSelected ? styles.selected : ""
+                  }`}
+                  onClick={() => setSelectedGender(gender as any)}
+                >
+                  {gender === "female" && "Mulheres"}
+                  {gender === "male" && "Homens"}
+                  {gender === "trans" && "Trans"}
+                </button>
+              );
+            })}
+          </div>
+
+          <h1 className={styles.welcomeText}>
+            Encontre acompanhantes{" "}
+            <strong className={styles.gender}>
+              {selectedGender === "female" && "Mulheres"}
+              {selectedGender === "male" && "Homens"}
+              {selectedGender === "trans" && "Trans"}
+            </strong>{" "}
+            em <strong>{uf}</strong>
+          </h1>
+
+          <div className={styles.catalogOptions}>
+            <div className={styles.left}>
+              <FilterPopup
+                producers={producersByGender}
+                onApply={setActiveFilters}
+              />
+              {/* <SortDropdown /> */}
+            </div>
+            <div className={styles.right}>{/* <DistancePopup /> */}</div>
+          </div>
+        </header>
+
+        <ProductsCatalog
+          producers={visibleProducers.map((p) => ({
+            ...p,
+            age: calculateAge(p.birthday),
+          }))}
+        />
+      </div>
     </div>
   );
 }
