@@ -4,6 +4,9 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import { useSession } from "next-auth/react";
 import styles from "./page.module.css";
 
+import FilterPopup from "@/components/FilterPopup/FilterPopup";
+// import SortDropdown from "@/components/SortDropdown/SortDropdown";
+// import DistancePopup from "@/components/DistancePopup/DistancePopup";
 import ProductsCatalog from "@/components/ProductsCatalog/ProductsCatalog";
 
 import { Producer } from "@/types/Producer";
@@ -65,13 +68,111 @@ function orderBySignature(items: Producer[]): Producer[] {
   );
 }
 
+import { ActiveFilters } from "@/components/FilterPopup/FilterPopup";
+
+export function applyFilters(producers: Producer[], filters: ActiveFilters) {
+  return producers.filter((p) => {
+    const profile = p.profile;
+    if (!profile) return false;
+
+    if (filters.ageRange) {
+      const age = calculateAge(p.birthday);
+
+      if (filters.ageRange.min !== undefined && age < filters.ageRange.min) {
+        return false;
+      }
+
+      if (filters.ageRange.max !== undefined && age > filters.ageRange.max) {
+        return false;
+      }
+    }
+
+    if (filters.nationality?.length) {
+      const nationalityKey = p.nationality.toLowerCase();
+      const nationalityId = nationalityKey.length;
+
+      if (!filters.nationality.includes(nationalityId)) {
+        return false;
+      }
+    }
+
+    if (filters.languages?.length) {
+      const producerLanguages =
+        p.profile.languages?.map((l) => l.name.toLowerCase().length) || [];
+
+      const hasMatch = producerLanguages.some((id) =>
+        filters.languages!.includes(id)
+      );
+
+      if (!hasMatch) return false;
+    }
+
+    // 🔹 Local
+    if (filters.hasLocal !== undefined) {
+      if (profile.hasLocal !== filters.hasLocal) return false;
+    }
+
+    // 🔹 Verificação
+    if (filters.verified && !p.isVerified) return false;
+
+    // 🔹 Serviços
+    if (filters.services?.length) {
+      const ids = profile.services
+        .filter((s) => s.status === "yes")
+        .map((s) => s.option.id);
+
+      if (!filters.services.some((id) => ids.includes(id))) {
+        return false;
+      }
+    }
+
+    // 🔹 Fetiches
+    if (filters.fetiches?.length) {
+      const ids = profile.fetiches
+        .filter((f) => f.status === "yes")
+        .map((f) => f.option.id);
+
+      if (!filters.fetiches.some((id) => ids.includes(id))) {
+        return false;
+      }
+    }
+
+    if (filters.durations?.length) {
+      producers = producers.filter((p) =>
+        p.profile?.prices?.some((price) =>
+          filters.durations!.includes(price.option.id)
+        )
+      );
+    }
+
+    // 🔹 Preço
+    if (filters.priceRange) {
+      const prices = profile.prices.map((p) => p.value);
+      if (
+        (filters.priceRange.min &&
+          Math.min(...prices) < filters.priceRange.min) ||
+        (filters.priceRange.max && Math.max(...prices) > filters.priceRange.max)
+      ) {
+        return false;
+      }
+    }
+
+    // 🔹 Pagamentos
+    if (filters.payments?.length) {
+      const ids = profile.payments.map((p) => p.option.id);
+      if (!filters.payments.some((id) => ids.includes(id))) return false;
+    }
+
+    return true;
+  });
+}
+
 interface CatalogProps {
   params: { uf: string };
 }
 
 export default function CatalogPage({ params }: CatalogProps) {
   const uf = params.uf.toUpperCase();
-
   const { data: session, status } = useSession();
 
   const [producers, setProducers] = useState<any[]>([]);
@@ -89,6 +190,8 @@ export default function CatalogPage({ params }: CatalogProps) {
   });
 
   const hasInitializedGender = useRef(false);
+
+  const [activeFilters, setActiveFilters] = useState<ActiveFilters>({});
 
   useEffect(() => {
     if (status !== "authenticated") return;
@@ -122,6 +225,12 @@ export default function CatalogPage({ params }: CatalogProps) {
     }
   }, [selectedGender, loading]);
 
+  const producersByGender = useMemo(() => {
+    return producers.filter((p) => {
+      return normalizeGender(p.user.gender) === selectedGender;
+    });
+  }, [producers, selectedGender]);
+
   // 🔹 Fetch simples
   useEffect(() => {
     async function fetchCatalog() {
@@ -143,13 +252,9 @@ export default function CatalogPage({ params }: CatalogProps) {
 
   // 🔹 Filtro simples por gênero (FRONT)
   const visibleProducers = useMemo(() => {
-    const filtered = producers.filter((p) => {
-      const gender = normalizeGender(p.user.gender);
-      return gender === selectedGender;
-    });
-
+    const filtered = applyFilters(producersByGender, activeFilters);
     return orderBySignature(filtered);
-  }, [producers, selectedGender]);
+  }, [producersByGender, activeFilters]);
 
   if (loading) {
     return (
@@ -216,6 +321,17 @@ export default function CatalogPage({ params }: CatalogProps) {
               </button>
             );
           })}
+        </div>
+
+        <div className={styles.catalogOptions}>
+          <div className={styles.left}>
+            <FilterPopup
+              producers={producersByGender}
+              onApply={setActiveFilters}
+            />
+            {/* <SortDropdown /> */}
+          </div>
+          <div className={styles.right}>{/* <DistancePopup /> */}</div>
         </div>
       </header>
 

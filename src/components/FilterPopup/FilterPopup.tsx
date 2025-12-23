@@ -1,348 +1,536 @@
-"use client";
+import { useMemo, useState } from "react";
+import { Range } from "react-range";
 
-import { useState, useEffect, useRef } from "react";
+import { Producer } from "@/types/Producer";
+import Popup from "../ui/Popup/Popup";
 import styles from "./FilterPopup.module.css";
-import { CiFilter } from "react-icons/ci";
-import { IoIosClose } from "react-icons/io";
 
-import Popup from "@/components/ui/Popup/Popup";
-import type { Producer } from "@/types/Producer";
+export interface ActiveFilters {
+  ageRange?: {
+    min?: number;
+    max?: number;
+  };
+  nationality?: number[];
 
-import { Range, getTrackBackground } from "react-range";
+  durations?: number[];
+  priceRange?: {
+    min?: number;
+    max?: number;
+  };
+  payments?: number[];
 
-const ATENDE_MAP: Record<string, string> = {
-  mans: "Homens",
-  women: "Mulheres",
-  couple: "Casal",
-  group: "Grupo",
-};
+  audience?: number[];
+  languages?: number[];
+  services?: number[];
+  fetiches?: number[];
 
-const OFERECE_MAP: Record<string, string> = {
-  Companion: "Acompanhante",
-  Trip: "Viagens",
-  OralSex: "Sexo Oral",
-  OralSexWithCondom: "Oral com Camisinha",
-  Kiss: "Beijo na Boca",
-  VaginalSex: "Sexo Vaginal",
-  VaginalSexWithCondom: "Vaginal com Camisinha",
-  Squirt: "Squirt",
-};
+  locations?: number[];
 
-const FETICHES_MAP: Record<string, string> = {
-  Costume: "Fantasia",
-  Striptease: "Striptease",
-  Bondage: "Bondage",
-  Chirophilia: "Chirophilia",
-  Podolatria: "Podolatria",
-  Voyer: "Voyeurismo",
-};
-
-interface FilterPopupProps {
-  filters: Record<string, Record<string, any>>;
-  pathLabelMap: Record<string, string>;
-  currentSelectedFilters: Record<string, any>;
-  onApplyFilters: (filters: Record<string, any>) => void;
-  onClearAllFilters: () => void;
-  producers?: Producer[];
+  hasLocal?: boolean;
+  verified?: boolean;
 }
 
-export default function FilterPopup({
-  filters,
-  pathLabelMap,
-  currentSelectedFilters,
-  onApplyFilters,
-  onClearAllFilters,
-  producers = [],
-}: FilterPopupProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [localFilters, setLocalFilters] = useState(currentSelectedFilters);
-  const [activeSection, setActiveSection] = useState<string | null>(null);
+function getAge(birthday: Date) {
+  const today = new Date();
+  const birth = new Date(birthday);
 
-  const contentRef = useRef<HTMLDivElement>(null);
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
 
-  useEffect(() => {
-    setLocalFilters(currentSelectedFilters);
-  }, [currentSelectedFilters, isOpen]);
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
 
-  useEffect(() => {
-    if (!isOpen || !contentRef.current) return;
+  return age;
+}
 
-    const sections = contentRef.current.querySelectorAll(
-      `.${styles.filterSection}`
-    );
+export function extractFilterOptions(producers: Producer[]) {
+  const services = new Map<number, any>();
+  const fetiches = new Map<number, any>();
+  const audiences = new Map<number, any>();
+  const locations = new Map<number, any>();
+  const payments = new Map<number, any>();
+  const durations = new Map<number, any>();
+  const nationalities = new Map<
+    number,
+    { id: number; label: string; value: string }
+  >();
+  const languages = new Map<
+    number,
+    { id: number; label: string; value: string }
+  >();
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const sectionId = entry.target.id;
-          if (entry.isIntersecting) {
-            setActiveSection(sectionId);
-          } else if (activeSection === sectionId && !entry.isIntersecting) {
-          }
+  let minPrice = Infinity;
+  let maxPrice = 0;
+
+  let minAge = Infinity;
+  let maxAge = 0;
+
+  producers.forEach((p) => {
+    const profile = p.profile;
+    if (!profile) return;
+
+    if (p.birthday) {
+      const age = getAge(p.birthday);
+      minAge = Math.min(minAge, age);
+      maxAge = Math.max(maxAge, age);
+    }
+
+    if (p.nationality) {
+      const key = p.nationality.toLowerCase();
+
+      if (!nationalities.has(key.length)) {
+        nationalities.set(key.length, {
+          id: key.length, // id estável (simples)
+          label: p.nationality, // exibido
+          value: key, // valor real
         });
-      },
-      {
-        root: contentRef.current,
-        rootMargin: "0px 0px -50% 0px",
-        threshold: 0,
       }
-    );
+    }
 
-    sections.forEach((section) => observer.observe(section));
+    profile.languages?.forEach((lang) => {
+      if (!lang.name) return;
 
-    return () => observer.disconnect();
-  }, [isOpen]);
+      const key = lang.name.toLowerCase();
+      const id = key.length;
 
-  const toggleOption = (path: string, option: string) => {
-    setLocalFilters((prev) => {
-      const prevOptions = prev[path] || [];
-      const alreadySelected = prevOptions.includes(option);
+      if (!languages.has(id)) {
+        languages.set(id, {
+          id,
+          label: lang.name,
+          value: key,
+        });
+      }
+    });
+
+    profile.services?.forEach((s) => {
+      if (s.status === "yes") {
+        services.set(s.option.id, s.option);
+      }
+    });
+
+    profile.fetiches?.forEach((f) => {
+      if (f.status === "yes") {
+        fetiches.set(f.option.id, f.option);
+      }
+    });
+
+    profile.audience?.forEach((a) => audiences.set(a.option.id, a.option));
+
+    profile.locations?.forEach((l) => locations.set(l.option.id, l.option));
+
+    profile.payments?.forEach((p) => payments.set(p.option.id, p.option));
+
+    profile.prices?.forEach((price) => {
+      minPrice = Math.min(minPrice, price.value);
+      maxPrice = Math.max(maxPrice, price.value);
+
+      durations.set(price.option.id, price.option);
+    });
+  });
+
+  return {
+    ageRange: minAge !== Infinity ? { min: minAge, max: maxAge } : null,
+    nationalities: Array.from(nationalities.values()),
+    services: Array.from(services.values()),
+    fetiches: Array.from(fetiches.values()),
+    audiences: Array.from(audiences.values()),
+    languages: Array.from(languages.values()),
+    locations: Array.from(locations.values()),
+    payments: Array.from(payments.values()),
+    durations: Array.from(durations.values()),
+    priceRange: minPrice !== Infinity ? { min: minPrice, max: maxPrice } : null,
+  };
+}
+
+interface FilterPopupProps {
+  producers: Producer[];
+  onApply: (filters: ActiveFilters) => void;
+}
+
+export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const options = useMemo(() => extractFilterOptions(producers), [producers]);
+
+  const [filters, setFilters] = useState<ActiveFilters>({});
+
+  function toggleArrayFilter(key: keyof ActiveFilters, id: number) {
+    setFilters((prev) => {
+      const current = (prev[key] as number[]) || [];
+      const exists = current.includes(id);
 
       return {
         ...prev,
-        [path]: alreadySelected
-          ? prevOptions.filter((o: string) => o !== option)
-          : [...prevOptions, option],
+        [key]: exists ? current.filter((v) => v !== id) : [...current, id],
       };
     });
-  };
+  }
 
-  const updateRange = (
-    path: string,
-    values: number[],
-    minAvailable: number,
-    maxAvailable: number
-  ) => {
-    const [newMin, newMax] = values;
+  function CheckboxList({
+    title,
+    options,
+    filterKey,
+  }: {
+    title: string;
+    options: { id: number; label: string }[];
+    filterKey: keyof ActiveFilters;
+  }) {
+    return (
+      <section className={styles.section}>
+        <h4>{title}</h4>
 
-    const finalMin = Math.max(newMin, minAvailable);
-    const finalMax = Math.min(newMax, maxAvailable);
-
-    setLocalFilters((prev) => ({
-      ...prev,
-      [path]: { min: finalMin, max: finalMax },
-    }));
-  };
-
-  const activeFiltersCount = Object.values(localFilters).reduce(
-    (sum, value) => {
-      if (Array.isArray(value)) return sum + value.length;
-      if (value?.min != null && value?.max != null) return sum + 1;
-      return sum;
-    },
-    0
-  );
-
-  const renderFilter = (path: string, value: any) => {
-    const displayLabel = pathLabelMap[path] || path;
-
-    const minAvailable = value.min;
-    const maxAvailable = value.max;
-
-    const currentMin = localFilters[path]?.min ?? minAvailable;
-    const currentMax = localFilters[path]?.max ?? maxAvailable;
-
-    const getTranslatedOption = (option: string) => {
-      if (path === "services.Atende") {
-        return ATENDE_MAP[option] || option;
-      }
-      if (path === "services.Oferece") {
-        return OFERECE_MAP[option] || option;
-      }
-      if (path === "services.Fetiches") {
-        return FETICHES_MAP[option] || option;
-      }
-      return option;
-    };
-
-    if (Array.isArray(value)) {
-      return (
-        <div className={styles.filterGroup} key={path}>
-          <h3 className={styles.filterLabel}>{displayLabel}</h3>
-          <div className={styles.filterOptions}>
-            {value.map((option: string) => (
-              <label key={option} className={styles.filterOption}>
-                <input
-                  type="checkbox"
-                  checked={localFilters[path]?.includes(option) || false}
-                  onChange={() => toggleOption(path, option)}
-                />
-                {getTranslatedOption(option)}
-              </label>
-            ))}
-          </div>
-        </div>
-      );
-    } else if (value?.min != null && value?.max != null) {
-      const values = [currentMin, currentMax];
-
-      const STEP = path === "appearance.Altura" ? 0.01 : 1;
-
-      return (
-        <div className={styles.filterGroup} key={path}>
-          <h3 className={styles.filterLabel}>
-            {displayLabel}: {path === "prices.price" ? "R$" : ""}
-            {currentMin} {path === "appearance.Altura" ? "m" : ""} -{" "}
-            {path === "prices.price" ? "R$" : ""}
-            {currentMax} {path === "appearance.Altura" ? "m" : ""}
-          </h3>
-          <div className={styles.rangeContainer}>
-            {minAvailable < maxAvailable && (
-              <Range
-                step={STEP}
-                min={minAvailable}
-                max={maxAvailable}
-                values={values}
-                onChange={(newValues) =>
-                  updateRange(path, newValues, minAvailable, maxAvailable)
+        <div className={styles.options}>
+          {options.map((opt) => (
+            <label key={opt.id} className={styles.checkbox}>
+              <input
+                type="checkbox"
+                checked={
+                  (filters[filterKey] as number[] | undefined)?.includes(
+                    opt.id
+                  ) || false
                 }
-                renderTrack={({ props, children }) => (
-                  <div
-                    onMouseDown={props.onMouseDown}
-                    onTouchStart={props.onTouchStart}
-                    className={styles.trackWrapper}
-                  >
-                    <div
-                      ref={props.ref}
-                      className={styles.track}
-                      style={{
-                        background: getTrackBackground({
-                          values,
-                          colors: [
-                            "var(--contrast-color)",
-                            "var(--primary-color)",
-                            "var(--contrast-color)",
-                          ],
-                          min: minAvailable,
-                          max: maxAvailable,
-                        }),
-                      }}
-                    >
-                      {children}
-                    </div>
-                  </div>
-                )}
-                renderThumb={({ props, index, isDragged }) => {
-                  const { key, ...rest } = props;
+                onChange={() => toggleArrayFilter(filterKey, opt.id)}
+              />
+              <span>{opt.label}</span>
+            </label>
+          ))}
+        </div>
+      </section>
+    );
+  }
 
-                  return (
-                    <div key={key} {...rest} className={styles.thumb}>
-                      <div className={styles.thumbValue}>{values[index]}</div>
-                    </div>
-                  );
+  function AgeRange() {
+    if (!options.ageRange) return null;
+
+    const { min, max } = options.ageRange;
+
+    const [values, setValues] = useState<[number, number]>([
+      filters.ageRange?.min ?? min,
+      filters.ageRange?.max ?? max,
+    ]);
+
+    const [inputMin, setInputMin] = useState(String(values[0]));
+    const [inputMax, setInputMax] = useState(String(values[1]));
+
+    function commitMin() {
+      const v = Number(inputMin);
+
+      if (isNaN(v)) {
+        setInputMin(String(values[0]));
+        return;
+      }
+
+      const clamped = Math.min(Math.max(v, min), values[1]);
+      setValues([clamped, values[1]]);
+      setInputMin(String(clamped));
+    }
+
+    function commitMax() {
+      const v = Number(inputMax);
+
+      if (isNaN(v)) {
+        setInputMax(String(values[1]));
+        return;
+      }
+
+      const clamped = Math.max(Math.min(v, max), values[0]);
+      setValues([values[0], clamped]);
+      setInputMax(String(clamped));
+    }
+
+    return (
+      <section className={styles.section}>
+        <h4>Idade</h4>
+
+        <div
+          className={styles.range}
+          onMouseDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+        >
+          <input
+            type="number"
+            value={inputMin}
+            onChange={(e) => setInputMin(e.target.value)}
+            onBlur={commitMin}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                commitMin();
+                e.currentTarget.blur();
+              }
+            }}
+          />
+
+          <input
+            type="number"
+            value={inputMax}
+            onChange={(e) => setInputMax(e.target.value)}
+            onBlur={commitMax}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                commitMax();
+                e.currentTarget.blur();
+              }
+            }}
+          />
+
+          <Range
+            step={1}
+            min={min}
+            max={max}
+            values={values}
+            onChange={(vals) => {
+              setValues(vals as [number, number]);
+              setInputMin(String(vals[0]));
+              setInputMax(String(vals[1]));
+            }}
+            onFinalChange={(vals) => {
+              setFilters((prev) => ({
+                ...prev,
+                ageRange: {
+                  min: vals[0],
+                  max: vals[1],
+                },
+              }));
+            }}
+            renderTrack={({ props, children }) => (
+              <div
+                {...props}
+                style={{
+                  ...props.style,
+                  height: "6px",
+                  width: "100%",
+                  backgroundColor: "#ccc",
+                }}
+              >
+                {children}
+              </div>
+            )}
+            renderThumb={({ props }) => (
+              <div
+                {...props}
+                style={{
+                  ...props.style,
+                  height: "24px",
+                  width: "24px",
+                  borderRadius: "50%",
+                  backgroundColor: "#999",
                 }}
               />
             )}
-          </div>
+          />
         </div>
-      );
+      </section>
+    );
+  }
+
+  function PriceRange() {
+    if (!options.priceRange) return null;
+
+    const { min, max } = options.priceRange;
+
+    const [values, setValues] = useState<[number, number]>([
+      filters.priceRange?.min ?? min,
+      filters.priceRange?.max ?? max,
+    ]);
+    const [inputMin, setInputMin] = useState(String(values[0]));
+    const [inputMax, setInputMax] = useState(String(values[1]));
+
+    function commitMin() {
+      const v = Number(inputMin);
+
+      if (isNaN(v)) {
+        setInputMin(String(values[0]));
+        return;
+      }
+
+      const clamped = Math.min(Math.max(v, min), values[1]);
+      setValues([clamped, values[1]]);
+      setInputMin(String(clamped));
     }
-    return null;
-  };
+
+    function commitMax() {
+      const v = Number(inputMax);
+
+      if (isNaN(v)) {
+        setInputMax(String(values[1]));
+        return;
+      }
+
+      const clamped = Math.max(Math.min(v, max), values[0]);
+      setValues([values[0], clamped]);
+      setInputMax(String(clamped));
+    }
+
+    return (
+      <section className={styles.section}>
+        <h4>Preço</h4>
+
+        <div
+          className={styles.range}
+          onMouseDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+        >
+          <input
+            type="number"
+            value={inputMin}
+            onChange={(e) => setInputMin(e.target.value)}
+            onBlur={commitMin}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                commitMin();
+                e.currentTarget.blur();
+              }
+            }}
+          />
+
+          <input
+            type="number"
+            value={inputMax}
+            onChange={(e) => setInputMax(e.target.value)}
+            onBlur={commitMax}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                commitMax();
+                e.currentTarget.blur();
+              }
+            }}
+          />
+
+          <Range
+            step={50}
+            min={min}
+            max={max}
+            values={values}
+            onChange={(vals) => {
+              setValues(vals as [number, number]);
+              setInputMin(String(vals[0]));
+              setInputMax(String(vals[1]));
+            }}
+            onFinalChange={(vals) => {
+              setFilters((prev) => ({
+                ...prev,
+                priceRange: {
+                  min: vals[0],
+                  max: vals[1],
+                },
+              }));
+            }}
+            renderTrack={({ props, children }) => (
+              <div
+                {...props}
+                style={{
+                  ...props.style,
+                  height: "6px",
+                  width: "100%",
+                  backgroundColor: "#ccc",
+                }}
+              >
+                {children}
+              </div>
+            )}
+            renderThumb={({ props }) => (
+              <div
+                {...props}
+                style={{
+                  ...props.style,
+                  height: "24px",
+                  width: "24px",
+                  borderRadius: "50%",
+                  backgroundColor: "#999",
+                }}
+              />
+            )}
+          />
+        </div>
+      </section>
+    );
+  }
 
   return (
     <Popup
-      trigger={
-        <>
-          Filtros
-          {activeFiltersCount > 0 && (
-            <span className={styles.badge}>{activeFiltersCount}</span>
-          )}
-          <span>
-            <CiFilter />
-          </span>
-        </>
-      }
+      trigger={<>Filtros</>}
       triggerClass={styles.trigger}
       popupClass={styles.popup}
       isOpen={isOpen}
       onOpenChange={setIsOpen}
     >
-      <>
-        <div className={styles.header}>
-          <h1>Filtros</h1>
-          <button
-            className={styles.closeButton}
-            onClick={() => setIsOpen(false)}
-            aria-label="Fechar filtros"
-          >
-            <IoIosClose />
-          </button>
-        </div>
+      <div className={styles.content}>
+        <h3>Filtros</h3>
 
-        <div className={styles.layout}>
-          <aside className={styles.sidebar}>
-            <nav className={styles.topics}>
-              {Object.keys(filters).map((section) => {
-                const isActive = activeSection === section;
+        <AgeRange />
 
-                return (
-                  <button
-                    key={section}
-                    className={`${styles.topicLink} ${
-                      isActive ? styles.topicLinkActive : ""
-                    }`}
-                    onClick={() => {
-                      const el = contentRef.current?.querySelector<HTMLElement>(
-                        `#${section}`
-                      );
+        <CheckboxList
+          title="Nacionalidade"
+          options={options.nationalities}
+          filterKey="nationality"
+        />
 
-                      if (el && contentRef.current) {
-                        setActiveSection(section);
+        <CheckboxList
+          title="Audiência"
+          options={options.audiences}
+          filterKey="audience"
+        />
 
-                        contentRef.current.scrollTo({
-                          top: el.offsetTop - contentRef.current.offsetTop - 10,
-                          behavior: "smooth",
-                        });
-                      }
-                    }}
-                  >
-                    {section}
-                  </button>
-                );
-              })}{" "}
-            </nav>
-          </aside>
+        <CheckboxList
+          title="Idiomas"
+          options={options.languages}
+          filterKey="languages"
+        />
 
-          <div className={styles.content} ref={contentRef}>
-            {Object.entries(filters).map(([sectionLabel, filtersByPath]) => (
-              <section
-                key={sectionLabel}
-                id={sectionLabel}
-                className={styles.filterSection}
-              >
-                <h2 className={styles.sectionTitle}>{sectionLabel}</h2>
-                {Object.entries(filtersByPath).map(([path, value]) =>
-                  renderFilter(path, value)
-                )}
-              </section>
-            ))}
-          </div>
-        </div>
+        <CheckboxList
+          title="Serviços"
+          options={options.services}
+          filterKey="services"
+        />
+
+        <CheckboxList
+          title="Fetiches"
+          options={options.fetiches}
+          filterKey="fetiches"
+        />
+
+        <CheckboxList
+          title="Duração"
+          options={options.durations}
+          filterKey="durations"
+        />
+
+        <PriceRange />
+
+        <CheckboxList
+          title="Pagamentos"
+          options={options.payments}
+          filterKey="payments"
+        />
 
         <div className={styles.footer}>
           <button
-            className={styles.clearButton}
+            className={styles.clear}
             onClick={() => {
-              setLocalFilters({});
-              onClearAllFilters();
+              setFilters({});
+              onApply(filters);
               setIsOpen(false);
             }}
-            disabled={activeFiltersCount === 0}
           >
-            Limpar Filtros
+            Limpar
           </button>
+
           <button
-            className={styles.applyButton}
+            className={styles.apply}
             onClick={() => {
-              onApplyFilters(localFilters);
+              onApply(filters);
               setIsOpen(false);
             }}
           >
-            Aplicar Filtros
+            Aplicar filtros
           </button>
         </div>
-      </>
+      </div>
     </Popup>
   );
 }
