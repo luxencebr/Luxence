@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, useRef } from "react";
 import { useSession } from "next-auth/react";
+import { useParams } from "next/navigation";
 import styles from "./page.module.css";
 
 import FilterPopup from "@/components/FilterPopup/FilterPopup";
@@ -167,12 +168,10 @@ export function applyFilters(producers: Producer[], filters: ActiveFilters) {
   });
 }
 
-interface CatalogProps {
-  params: { uf: string };
-}
-
-export default function CatalogPage({ params }: CatalogProps) {
+export default function CatalogPage() {
+  const params = useParams<{ uf: string }>();
   const uf = params.uf.toUpperCase();
+
   const { data: session, status } = useSession();
 
   const [producers, setProducers] = useState<any[]>([]);
