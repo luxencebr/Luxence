@@ -1,9 +1,12 @@
+type Gender = "MALE" | "FEMALE" | "TRANS";
+
 export interface User {
   id: number;
   email: string;
   role: "CLIENT" | "ADVERTISER";
   name: string;
-  gender: "MALE" | "FEMALE" | "TRANS";
+  gender: Gender;
+  preferences: Gender[];
   locality: Locality | null;
   createdAt: Date;
   updatedAt: Date;

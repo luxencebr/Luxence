@@ -196,9 +196,9 @@ export default function CatalogPage() {
     if (status !== "authenticated") return;
     if (hasInitializedGender.current) return;
 
-    const preferred = session.user?.preferredGenders as
-      | ("female" | "male" | "trans")[]
-      | undefined;
+    const preferred = session.user?.preferences?.map(
+      (p) => p.toLowerCase() as Gender
+    );
 
     const resolvedGender = resolvePreferredGender(preferred);
 

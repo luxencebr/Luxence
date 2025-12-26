@@ -8,6 +8,7 @@ type User = {
   name: string;
   role: string;
   signature?: string | null;
+  preferences: ("MALE" | "FEMALE" | "TRANS")[];
 };
 
 export default async function connector(
@@ -18,6 +19,7 @@ export default async function connector(
     where: { email: email },
     include: {
       producer: true,
+      preferences: true,
     },
   });
 
@@ -34,6 +36,9 @@ export default async function connector(
       name: user.name,
       role: user.role,
       signature: user.producer?.signature ?? null,
+      preferences: user.preferences.map(
+        (p) => p.gender as "MALE" | "FEMALE" | "TRANS"
+      ),
     };
   }
 

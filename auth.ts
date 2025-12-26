@@ -35,6 +35,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           name: user.name,
           role: user.role,
           signature: user.signature,
+          preferences: user.preferences,
         };
       },
     }),
@@ -46,6 +47,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.id = user.id;
         token.role = user.role;
         token.signature = user.signature;
+        token.preferences = user.preferences;
       }
       return token;
     },
@@ -53,7 +55,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
-        session.user.signature = token.signature as string | null | undefined;
+        session.user.signature = token.signature as string | null;
+        session.user.preferences = token.preferences as
+          | ("MALE" | "FEMALE" | "TRANS")[]
+          | undefined;
       }
       return session;
     },
