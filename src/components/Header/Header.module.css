@@ -322,7 +322,7 @@
 @media (max-width: 768px) {
   /* Mantendo altura consistente */
   .header {
-    height: 10vh;
+    height: 5vh;
   }
 
   /* Escondendo navegação desktop no mobile */
@@ -344,7 +344,7 @@
   }
 
   .mobileMenu {
-    top: 10vh;
+    top: 5vh;
     display: block;
   }
 

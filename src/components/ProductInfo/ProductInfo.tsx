@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import styles from "./ProductInfo.module.css";
+import { IoClose } from "react-icons/io5";
 
 import { TbCoinFilled } from "react-icons/tb";
 import { HiLocationMarker } from "react-icons/hi";
@@ -16,6 +17,7 @@ import { HiOutlinePencil } from "react-icons/hi2";
 import type { Producer } from "@/types/Producer";
 import ScrollTo from "@/utils/ScrollTo";
 import { formatUserName } from "@/utils/formatName";
+import Popup from "../ui/Popup/Popup";
 
 const formatWhatsAppNumber = (phone: string) => {
   const onlyNumbers = phone.replace(/\D/g, "");
@@ -30,26 +32,9 @@ const formatWhatsAppNumber = (phone: string) => {
 interface ProductInfoProps {
   producer: Producer;
   canEdit: boolean;
-  isEditingSlogan?: boolean;
-  slogan?: string;
-  setSlogan?: (value: string) => void;
-  onEditSlogan?: () => void;
-  onSaveSlogan?: () => void;
-  onCancelSlogan?: () => void;
-  isSavingSlogan?: boolean;
 }
 
-function ProductInfo({
-  producer,
-  canEdit,
-  isEditingSlogan,
-  slogan,
-  setSlogan,
-  onEditSlogan,
-  onSaveSlogan,
-  onCancelSlogan,
-  isSavingSlogan,
-}: ProductInfoProps) {
+function ProductInfo({ producer, canEdit }: ProductInfoProps) {
   const contentRef = useRef<HTMLDivElement | null>(null);
   const [atBottom, setAtBottom] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -57,6 +42,13 @@ function ProductInfo({
   const [editingContact, setEditingContact] = useState<
     "whatsapp" | "telegram" | "instagram" | null
   >(null);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const [slogan, setSlogan] = useState(producer.profile.slogan || "");
+  const [isEditingSlogan, setIsEditingSlogan] = useState(false);
+  const [originalSlogan, setOriginalSlogan] = useState(slogan);
+  const [isSavingSlogan, setIsSavingSlogan] = useState(false);
+  const sloganInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -82,25 +74,47 @@ function ProductInfo({
     return () => el.removeEventListener("scroll", handleScroll);
   }, [isMobile]);
 
-  const handleSeeMore = () => {
-    if (isMobile) {
-      if (!isExpanded) {
-        setIsExpanded(true);
-        requestAnimationFrame(() => {
-          ScrollTo("anchor", { center: true });
-        });
-      } else {
-        setIsExpanded(false);
-      }
-    } else {
-      const el = contentRef.current;
-      if (!el) return;
+  useEffect(() => {
+    if (isEditingSlogan) {
+      sloganInputRef.current?.focus();
+    }
+  }, [isEditingSlogan]);
 
-      if (atBottom) {
-        el.scrollTo({ top: 0, behavior: "smooth" });
+  const handleEditSlogan = () => {
+    setOriginalSlogan(slogan);
+    setIsEditingSlogan(true);
+  };
+
+  const handleCancelSlogan = () => {
+    setSlogan(originalSlogan);
+    setIsEditingSlogan(false);
+  };
+
+  const handleSaveSlogan = async () => {
+    try {
+      setIsSavingSlogan(true);
+
+      const response = await fetch("/api/profile/showcase/slogan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          profileId: producer.profile.id,
+          slogan,
+        }),
+      });
+
+      if (response.ok) {
+        setOriginalSlogan(slogan);
+        setIsEditingSlogan(false);
       } else {
-        el.scrollTo({ top: el.clientHeight - 44, behavior: "smooth" });
+        console.error("Erro ao salvar slogan");
+        setSlogan(originalSlogan);
       }
+    } catch (error) {
+      console.error("Erro ao salvar slogan:", error);
+      setSlogan(originalSlogan);
+    } finally {
+      setIsSavingSlogan(false);
     }
   };
 
@@ -112,16 +126,6 @@ function ProductInfo({
     : 0;
 
   const price = producer.profile.prices?.[0];
-
-  const displaySlogan = slogan !== undefined ? slogan : producer.profile.slogan;
-
-  const sloganInputRef = useRef<HTMLInputElement | null>(null);
-
-  useEffect(() => {
-    if (isEditingSlogan) {
-      sloganInputRef.current?.focus();
-    }
-  }, [isEditingSlogan]);
 
   const whatsappMsg = encodeURIComponent(
     "Olá! Vi seu perfil na Luxence!\n\nFiquei interessado em seus serviços. Vamos conversar?"
@@ -142,77 +146,89 @@ function ProductInfo({
         }`}
         ref={contentRef}
       >
-        <div className={styles.content}>
-          <div className={styles.productHeader}>
-            <div className={styles.productHighlight}>
-              <h1 className={styles.productName}>
-                {formatUserName(producer.user.name)}
-              </h1>
-              <div className={styles.slogan}>
-                {isEditingSlogan ? (
-                  <div className={styles.sloganEdit}>
-                    <div className={styles.sloganInputWrapper}>
-                      <input
-                        ref={sloganInputRef}
-                        type="text"
-                        value={displaySlogan || ""}
-                        onChange={(e) => setSlogan?.(e.target.value)}
-                        placeholder="Digite seu slogan..."
-                        className={styles.sloganInput}
-                        disabled={isSavingSlogan}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
-                            !isSavingSlogan && onSaveSlogan?.();
-                          }
-                          if (e.key === "Escape") {
-                            e.preventDefault();
-                            onCancelSlogan?.();
-                          }
-                        }}
-                      />
+        <div className={styles.productHeader}>
+          <div className={styles.productHighlight}>
+            <h1 className={styles.productName}>
+              {formatUserName(producer.user.name)}
+            </h1>
+            <div className={styles.slogan}>
+              {isEditingSlogan ? (
+                <div className={styles.sloganEdit}>
+                  <div className={styles.sloganInputWrapper}>
+                    <input
+                      ref={sloganInputRef}
+                      type="text"
+                      value={slogan}
+                      onChange={(e) => setSlogan(e.target.value)}
+                      placeholder="Digite seu slogan..."
+                      className={styles.sloganInput}
+                      disabled={isSavingSlogan}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          !isSavingSlogan && handleSaveSlogan();
+                        }
+                        if (e.key === "Escape") {
+                          e.preventDefault();
+                          handleCancelSlogan();
+                        }
+                      }}
+                    />
 
-                      {isSavingSlogan && <div className={styles.loader}></div>}
+                    <div className={styles.sloganActions}>
+                      {isSavingSlogan ? (
+                        <div className={styles.loader} />
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={handleCancelSlogan}
+                          className={styles.cancelButton}
+                        >
+                          <IoClose />
+                        </button>
+                      )}
                     </div>
                   </div>
-                ) : displaySlogan ? (
-                  <p
-                    className={styles.productSlogan}
-                    onClick={canEdit ? onEditSlogan : undefined}
-                    style={canEdit ? { cursor: "pointer" } : undefined}
-                  >
-                    {displaySlogan}
-                    {canEdit && (
-                      <HiOutlinePencil className={styles.sloganEditIcon} />
-                    )}
-                  </p>
-                ) : (
-                  <p
-                    className={styles.sloganPlaceholder}
-                    onClick={canEdit ? onEditSlogan : undefined}
-                  >
-                    Adicione um Slogan <HiOutlinePencil />
-                  </p>
-                )}
-              </div>
+                </div>
+              ) : slogan ? (
+                <p
+                  className={styles.productSlogan}
+                  onClick={canEdit ? handleEditSlogan : undefined}
+                  style={canEdit ? { cursor: "pointer" } : undefined}
+                >
+                  {slogan}
+                  {canEdit && (
+                    <HiOutlinePencil className={styles.sloganEditIcon} />
+                  )}
+                </p>
+              ) : (
+                <p
+                  className={styles.sloganPlaceholder}
+                  onClick={canEdit ? handleEditSlogan : undefined}
+                >
+                  Adicione um Slogan <HiOutlinePencil />
+                </p>
+              )}
             </div>
-            {producer.verificationStatus === "GREEN" && (
-              <div className={styles.verified} style={{ color: "green" }}>
-                <GoShieldCheck />
-              </div>
-            )}
-            {producer.verificationStatus === "YELLOW" && (
-              <div className={styles.verified} style={{ color: "yellow" }}>
-                <GoShield />
-              </div>
-            )}
-            {producer.verificationStatus === "RED" && (
-              <div className={styles.verified} style={{ color: "red" }}>
-                <GoShieldX />
-              </div>
-            )}
           </div>
+          {producer.verificationStatus === "GREEN" && (
+            <div className={styles.verified} style={{ color: "green" }}>
+              <GoShieldCheck />
+            </div>
+          )}
+          {producer.verificationStatus === "YELLOW" && (
+            <div className={styles.verified} style={{ color: "yellow" }}>
+              <GoShield />
+            </div>
+          )}
+          {producer.verificationStatus === "RED" && (
+            <div className={styles.verified} style={{ color: "red" }}>
+              <GoShieldX />
+            </div>
+          )}
+        </div>
 
+        <div className={styles.content}>
           <button
             className={styles.infoCard}
             onClick={() => ScrollTo("reviews", { center: true })}
@@ -308,80 +324,86 @@ function ProductInfo({
 
         <div className={styles.contactsOptions}>
           <div className={styles.contactsLayout}>
-            <a
-              href={
-                !canEdit
-                  ? `https://wa.me/${formatWhatsAppNumber(
-                      producer.phone
-                    )}?text=${whatsappMsg}`
-                  : undefined
-              }
-              className={`${styles.contactButton} ${styles.whatsapp} ${
-                isContactActive("whatsapp") ? styles.active : ""
-              }`}
-              target={!canEdit ? "_blank" : undefined}
-              rel="noopener noreferrer"
-              onClick={(e) => {
-                if (canEdit) {
-                  e.preventDefault();
-                  setEditingContact("whatsapp");
+            {canEdit ? (
+              <Popup
+                trigger={<FaWhatsapp />}
+                triggerClass={`${styles.contactButton} ${styles.whatsapp}`}
+                popupClass={styles.popup}
+                isOpen={editingContact === "whatsapp"}
+                onOpenChange={(open) =>
+                  setEditingContact(open ? "whatsapp" : null)
                 }
-              }}
-            >
-              <FaWhatsapp />
-            </a>
+              >
+                <div>Whatsapp</div>
+              </Popup>
+            ) : (
+              <a
+                href={`https://wa.me/${formatWhatsAppNumber(
+                  producer.phone
+                )}?text=${whatsappMsg}`}
+                className={`${styles.contactButton} ${styles.whatsapp} ${
+                  isContactActive("whatsapp") ? styles.active : styles.disabled
+                }`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FaWhatsapp />
+              </a>
+            )}
 
-            {producer.profile.telegram ||
-              (canEdit && (
+            {canEdit ? (
+              <Popup
+                trigger={<FaTelegram />}
+                triggerClass={`${styles.contactButton} ${styles.telegram} ${
+                  isContactActive("telegram") ? styles.active : styles.disabled
+                }`}
+                popupClass={styles.popup}
+                isOpen={editingContact === "telegram"}
+                onOpenChange={(open) =>
+                  setEditingContact(open ? "telegram" : null)
+                }
+              >
+                <div>Telegram</div>
+              </Popup>
+            ) : (
+              producer.profile.telegram && (
                 <a
-                  href={
-                    !canEdit
-                      ? `https://t.me/${producer.profile.telegram}`
-                      : undefined
-                  }
-                  className={`${styles.contactButton} ${styles.telegram} ${
-                    isContactActive("telegram")
-                      ? styles.active
-                      : styles.disabled
-                  }`}
-                  target={!canEdit ? "_blank" : undefined}
+                  href="https://t.me/${producer.profile.telegram}"
+                  className={`${styles.contactButton} ${styles.telegram}`}
+                  target="_blank"
                   rel="noopener noreferrer"
-                  onClick={(e) => {
-                    if (canEdit) {
-                      e.preventDefault();
-                      setEditingContact("telegram");
-                    }
-                  }}
                 >
                   <FaTelegram />
                 </a>
-              ))}
+              )
+            )}
 
-            {producer.profile.instagram ||
-              (canEdit && (
+            {canEdit ? (
+              <Popup
+                trigger={<FaInstagram />}
+                triggerClass={`${styles.contactButton} ${styles.instagram} ${
+                  isContactActive("instagram") ? styles.active : styles.disabled
+                }`}
+                popupClass={styles.popup}
+                isOpen={editingContact === "instagram"}
+                onOpenChange={(open) =>
+                  setEditingContact(open ? "instagram" : null)
+                }
+              >
+                <div>Instagram</div>
+              </Popup>
+            ) : (
+              producer.profile.instagram && (
                 <a
-                  href={
-                    !canEdit
-                      ? `https://www.instagram.com/${producer.profile.instagram}`
-                      : undefined
-                  }
-                  className={`${styles.contactButton} ${styles.instagram} ${
-                    isContactActive("instagram")
-                      ? styles.active
-                      : styles.disabled
-                  }`}
-                  target={!canEdit ? "_blank" : undefined}
+                  href={`https://www.instagram.com/${producer.profile.instagram}`}
+                  className={`${styles.contactButton} ${styles.instagram} `}
+                  target="_blank"
                   rel="noopener noreferrer"
-                  onClick={(e) => {
-                    if (canEdit) {
-                      e.preventDefault();
-                      setEditingContact("instagram");
-                    }
-                  }}
                 >
                   <FaInstagram />
                 </a>
-              ))}
+              )
+            )}
           </div>
         </div>
       </div>

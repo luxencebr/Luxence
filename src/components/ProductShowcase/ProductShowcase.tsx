@@ -2,11 +2,9 @@
 
 import type React from "react";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import styles from "./ProductShowcase.module.css";
 import { GoUpload } from "react-icons/go";
-import { HiOutlinePencil } from "react-icons/hi2";
-import { FaTrash, FaPlus } from "react-icons/fa6";
 
 import type { Producer } from "@/types/Producer";
 import Slider from "@/components/Slider/Slider";
@@ -41,50 +39,12 @@ export default function ProductShowcase({
         }))
       : []
   );
-  const [slogan, setSlogan] = useState(producer.profile.slogan || "");
-
-  const [isEditingSlogan, setIsEditingSlogan] = useState(false);
-
-  const [originalSlogan, setOriginalSlogan] = useState(slogan);
 
   const slides = images.map((img, index) => ({
     id: index,
     src: img.url,
     alt: `${img.name} - imagem ${index + 1}`,
   }));
-
-  const handleEditSlogan = () => {
-    setOriginalSlogan(slogan);
-    setIsEditingSlogan(true);
-  };
-
-  const handleCancelSlogan = () => {
-    setSlogan(originalSlogan);
-    setIsEditingSlogan(false);
-  };
-
-  const [isSavingSlogan, setIsSavingSlogan] = useState(false);
-
-  const handleSaveSlogan = async () => {
-    try {
-      setIsSavingSlogan(true);
-
-      await fetch("/api/profile/showcase/slogan", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          profileId: producer.profile.id,
-          slogan,
-        }),
-      });
-
-      setIsEditingSlogan(false);
-    } catch (error) {
-      console.error("Erro ao salvar slogan:", error);
-    } finally {
-      setIsSavingSlogan(false);
-    }
-  };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -171,22 +131,7 @@ export default function ProductShowcase({
         )}
       </div>
 
-      <ProductInfo
-        producer={{
-          ...producer,
-          profile: {
-            ...producer.profile,
-            slogan,
-          },
-        }}
-        canEdit={canEdit}
-        isEditingSlogan={isEditingSlogan}
-        slogan={slogan}
-        setSlogan={setSlogan}
-        onEditSlogan={handleEditSlogan}
-        onSaveSlogan={handleSaveSlogan}
-        onCancelSlogan={handleCancelSlogan}
-      />
+      <ProductInfo producer={producer} canEdit={canEdit} />
     </section>
   );
 }

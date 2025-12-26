@@ -15,6 +15,8 @@ body {
   min-height: 100vh;
 
   font-family: Quicksand;
+
+  overscroll-behavior: none;
 }
 
 h1,

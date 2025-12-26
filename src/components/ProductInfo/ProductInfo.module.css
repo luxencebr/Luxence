@@ -5,8 +5,6 @@
   overflow: hidden;
   border-radius: 8px;
 
-  position: relative;
-
   display: flex;
   flex-flow: column nowrap;
   gap: 8px;
@@ -47,13 +45,12 @@
 
 .contactsOptions {
   background: var(--background-complementary-color);
-  height: 100%;
   flex: 1;
-  width: 100%;
 }
 
 .contactsLayout {
   height: 100%;
+  width: 100%;
   display: flex;
   flex-flow: row nowrap;
   justify-content: center;
@@ -61,7 +58,8 @@
 }
 
 .contactButton {
-  flex: 1 1 30%;
+  flex: 1;
+  padding: 8px;
 
   outline: none;
   border: none;
@@ -81,6 +79,21 @@
 
 .contactButton span {
   font-size: 12px;
+}
+
+.editable {
+  position: relative;
+}
+
+.editIcon {
+  position: absolute;
+  font-size: 32px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.editable:hover .editIcon {
+  opacity: 1;
 }
 
 .disabled {
@@ -105,6 +118,7 @@
 
 .content {
   min-width: 0;
+  flex: 1;
   display: flex;
   flex-flow: column nowrap;
   gap: 8px;
@@ -113,7 +127,6 @@
 }
 
 .productHeader {
-  flex: 1;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
@@ -137,8 +150,10 @@
 
 .productSlogan {
   max-width: 192px;
+  padding: 4px;
 
   color: var(--contrast-complementary-color);
+  font-size: 12px;
   font-style: italic;
   text-align: justify;
   hyphens: auto;
@@ -158,13 +173,6 @@
   color: var(--primary-complementary-color);
 }
 
-/* Slogan editing styles */
-.sloganEdit {
-  display: flex;
-  flex-flow: row nowrap;
-  gap: 4px;
-}
-
 .sloganInput {
   background: var(--background-color);
   flex: 1;
@@ -178,6 +186,28 @@
   font-size: 12px;
   font-family: inherit;
   width: 100%;
+}
+
+.cancelButton {
+  background: transparent;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  padding: 2px;
+
+  border: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--contrast-color);
+  font-size: 16px;
+
+  cursor: pointer;
+}
+
+.cancelButton:hover {
+  color: var(--text-primary);
 }
 
 .sloganActions {
@@ -277,7 +307,7 @@
   align-items: center;
   gap: 4px;
 
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: normal;
 }
 
@@ -285,7 +315,7 @@
   display: flex;
   align-items: center;
 
-  font-size: 20px;
+  font-size: var(--fs-lg);
 }
 
 .cardContent {
@@ -298,15 +328,17 @@
 .cardContent p {
   display: flex;
   flex-flow: column nowrap;
+  font-size: var(--fs-xs);
 }
 
 .cardContent p span {
-  font-size: 20px;
+  font-size: var(--fs-md);
+
   font-weight: bold;
 }
 
 .cardContent p span span {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: normal;
 }
 
@@ -387,6 +419,10 @@
   display: none;
 }
 
+.productHighlight {
+  flex: 1;
+}
+
 /* Mobile responsive styles */
 @media (max-width: 768px) {
   .productInfos {
@@ -398,24 +434,50 @@
   .layout {
     height: calc(100% - 70px);
     overflow-y: visible;
-    padding-bottom: 60px;
   }
 
   .layout.expanded {
     overflow-y: auto;
   }
 
-  .contactsOptions {
-    max-height: 70px;
-  }
-
   .expandableContent {
     flex-flow: row;
+  }
+
+  .contactsOptions {
+    background: var(--background-complementary-color);
+    width: 100%;
+    padding: 16px;
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+  }
+
+  .content {
+    flex-flow: row;
+  }
+
+  .cardContent p span {
+    display: flex;
+    flex-flow: column;
   }
 
   .productSpecifies.hidden {
     display: none;
   }
+}
+
+.sloganEdit {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 4px;
 }
 
 .sloganInputWrapper {
@@ -431,18 +493,20 @@
 }
 
 .loader {
-  width: 16px;
-  height: 16px;
-
-  border: 3px solid var(--contrast-color);
-  border-top-color: var(--primary-color);
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
   border-radius: 50%;
-
-  animation: spin 0.7s linear infinite;
+  animation: spin 0.6s linear infinite;
 }
 
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
+}
+
+.sloganInput:disabled {
+  opacity: 0.6;
 }
