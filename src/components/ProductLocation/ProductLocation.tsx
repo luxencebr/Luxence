@@ -310,7 +310,7 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
     <section id="location" className={styles.productLocation}>
       <div className={styles.layout}>
         <div className={styles.header}>
-          <h2 className={styles.title}>
+          <h2 className={styles.secTitle}>
             <span>
               <HiLocationMarker />
             </span>
@@ -350,19 +350,195 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
           </div>
         ) : (
           <div className={styles.content}>
+            <div className={styles.column}>
+              <div className={styles.line}>
+                <h3 className={styles.columnTitle}>
+                  <span>
+                    <FaLocationArrow />
+                  </span>
+                  Minha Localização
+                </h3>
+
+                {!isEditing ? (
+                  <p className={styles.address}>
+                    {userLocality?.neighborhood} - {userLocality?.city},{" "}
+                    {userLocality?.state}
+                  </p>
+                ) : (
+                  <div className={styles.editGroup}>
+                    <label>
+                      Estado:
+                      <Dropdown
+                        trigger={selectedState || "Selecione um Estado"}
+                        triggerClassName={styles.trigger}
+                        menuClassName={styles.menu}
+                      >
+                        {states.map((st) => (
+                          <button
+                            key={st.id}
+                            onClick={() => handleStateChange(st.sigla)}
+                            className="dropdown-item"
+                          >
+                            {st.nome} - {st.sigla}
+                          </button>
+                        ))}
+                      </Dropdown>
+                    </label>
+
+                    {selectedState && (
+                      <label>
+                        Cidade:
+                        <Dropdown
+                          trigger={selectedCity || "Selecione uma Cidade"}
+                          triggerClassName={styles.trigger}
+                          menuClassName={styles.menu}
+                        >
+                          {cities.map((c) => (
+                            <button
+                              key={c.id}
+                              onClick={() => handleCityChange(c.nome)}
+                              className="dropdown-item"
+                            >
+                              {c.nome}
+                            </button>
+                          ))}
+                        </Dropdown>
+                      </label>
+                    )}
+
+                    {selectedCity && (
+                      <label>
+                        Bairro:
+                        <input
+                          type="text"
+                          placeholder="Digite o bairro"
+                          value={selectedNeighborhood}
+                          onChange={(e) =>
+                            handleNeighborhoodChange(e.target.value)
+                          }
+                        />
+                      </label>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div className={styles.line}>
+                <h3 className={styles.title}>Locais que Atendo</h3>
+
+                {!isEditing ? (
+                  <p className={styles.address}>
+                    {(() => {
+                      const items = locations.map((loc) => loc.option.label);
+
+                      if (hasLocal) {
+                        items.push("Possui local");
+                      }
+
+                      if (items.length === 0) return "Não informado";
+                      if (items.length === 1) return items[0];
+
+                      return `${items.slice(0, -1).join(", ")} e ${items.at(
+                        -1
+                      )}`;
+                    })()}
+                  </p>
+                ) : (
+                  <>
+                    {LOCATIONS_OPTIONS.map((opt) => {
+                      const exists = locations.some(
+                        (l) => l.option.label === opt.label
+                      );
+
+                      return (
+                        <label key={opt.id} className={styles.checkboxItem}>
+                          <input
+                            type="checkbox"
+                            checked={exists}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setLocations([
+                                  ...locations,
+                                  {
+                                    locationId: opt.id,
+                                    option: {
+                                      id: opt.id,
+                                      name: opt.name,
+                                      label: opt.label,
+                                    },
+                                  },
+                                ]);
+                              } else {
+                                setLocations(
+                                  locations.filter(
+                                    (l) => l.option.label !== opt.label
+                                  )
+                                );
+                              }
+                            }}
+                          />
+                          {opt.id}. {opt.label}
+                        </label>
+                      );
+                    })}
+
+                    <label htmlFor="hasLocal" className={styles.checkboxItem}>
+                      <input
+                        type="checkbox"
+                        id="hasLocal"
+                        checked={hasLocal}
+                        onChange={(e) => setHasLocal(e.target.checked)}
+                      />
+                      {LOCATIONS_OPTIONS.length + 1}. Possui Local
+                      {!hasLocal && "?"}
+                    </label>
+                  </>
+                )}
+              </div>
+
+              <div className={styles.line}>
+                <h3 className={styles.title}>Bairros que Atendo</h3>
+                {!isEditing ? (
+                  <p className={styles.address}>
+                    {neighborhoodsServed.length === 0
+                      ? "Nenhum bairro informado."
+                      : formatNeighborhoodList(neighborhoodsServed)}
+                  </p>
+                ) : (
+                  <>
+                    <label>
+                      Adicionar Bairro
+                      <div className={styles.addNeighborhood}>
+                        <input
+                          type="text"
+                          placeholder="Digite um bairro"
+                          value={newNeighborhood}
+                          onChange={(e) => setNewNeighborhood(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") addNeighborhood();
+                          }}
+                        />
+                        <button type="button" onClick={addNeighborhood}>
+                          <FaPlus />
+                        </button>
+                      </div>
+                    </label>
+                    {neighborhoodsServed.length > 0 && (
+                      <p className={styles.neighborhoodsList}>
+                        {formatNeighborhoodListEditable(
+                          neighborhoodsServed,
+                          removeNeighborhood
+                        )}
+                      </p>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+
             <div className={`${styles.column} ${styles.conditional}`}>
               {isEditing ? (
                 <>
-                  <label htmlFor="hasLocal" className={styles.hasLocal}>
-                    <input
-                      type="checkbox"
-                      id="hasLocal"
-                      checked={hasLocal}
-                      onChange={(e) => setHasLocal(e.target.checked)}
-                    />
-                    Possui Local?
-                  </label>
-
                   {hasLocal && (
                     <>
                       <div className={styles.line}>
@@ -471,238 +647,79 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
                       </div>
 
                       <div className={styles.line}>
-                        <h3 className={styles.columnTitle}>Comodidades</h3>
-                        {AMENITIES_OPTIONS.map((opt) => {
-                          const exists = amenities.some(
-                            (a) => a.option.label === opt.label
-                          );
+                        <h3 className={styles.title}>Comodidades</h3>
+                        <div className={styles.amenities}>
+                          {AMENITIES_OPTIONS.map((opt) => {
+                            const exists = amenities.some(
+                              (a) => a.option.label === opt.label
+                            );
 
-                          return (
-                            <label key={opt.id} className={styles.checkboxItem}>
-                              <input
-                                type="checkbox"
-                                checked={exists}
-                                onChange={(e) => {
-                                  if (e.target.checked) {
-                                    setAmenities([
-                                      ...amenities,
-                                      {
-                                        amenityId: opt.id,
-                                        option: {
-                                          id: opt.id,
-                                          name: opt.name,
-                                          label: opt.label,
+                            return (
+                              <label
+                                key={opt.id}
+                                className={styles.checkboxItem}
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={exists}
+                                  onChange={(e) => {
+                                    if (e.target.checked) {
+                                      setAmenities([
+                                        ...amenities,
+                                        {
+                                          amenityId: opt.id,
+                                          option: {
+                                            id: opt.id,
+                                            name: opt.name,
+                                            label: opt.label,
+                                          },
                                         },
-                                      },
-                                    ]);
-                                  } else {
-                                    setAmenities(
-                                      amenities.filter(
-                                        (a) => a.option.id !== opt.id
-                                      )
-                                    );
-                                  }
-                                }}
-                              />
-                              {opt.id}. {opt.label}
-                            </label>
-                          );
-                        })}
+                                      ]);
+                                    } else {
+                                      setAmenities(
+                                        amenities.filter(
+                                          (a) => a.option.id !== opt.id
+                                        )
+                                      );
+                                    }
+                                  }}
+                                />
+                                {opt.id}. {opt.label}
+                              </label>
+                            );
+                          })}
+                        </div>
                       </div>
                     </>
                   )}
                 </>
-              ) : (
-                hasLocal && (
-                  <>
-                    <div className={styles.line}>
-                      <h3 className={styles.columnTitle}>
-                        <span>
-                          <TbHomeCheck />
-                        </span>
-                        Minha Localidade
-                      </h3>
+              ) : hasLocal ? (
+                <>
+                  <div className={styles.line}>
+                    <h3 className={styles.columnTitle}>
+                      <span>
+                        <TbHomeCheck />
+                      </span>
+                      Minha Localidade
+                    </h3>
 
-                      <p className={styles.address}>
-                        {local.neighborhood}, {local.city} - {local.state}
-                      </p>
-                    </div>
-
-                    <div className={styles.line}>
-                      <h3 className={styles.columnTitle}>Comodidades</h3>
-                      <p>
-                        {amenities.length === 0
-                          ? "Nenhuma informada."
-                          : amenities.map((a) => a.option.label).join(", ")}
-                      </p>
-                    </div>
-                  </>
-                )
-              )}
-            </div>
-
-            <div className={styles.column}>
-              <div className={styles.line}>
-                <h3 className={styles.columnTitle}>
-                  <span>
-                    <FaLocationArrow />
-                  </span>
-                  Minha Localização
-                </h3>
-
-                {!isEditing ? (
-                  <p className={styles.address}>
-                    {userLocality?.neighborhood} - {userLocality?.city},{" "}
-                    {userLocality?.state}
-                  </p>
-                ) : (
-                  <div className={styles.editGroup}>
-                    <label>
-                      Estado:
-                      <Dropdown
-                        trigger={selectedState || "Selecione um Estado"}
-                        triggerClassName={styles.trigger}
-                        menuClassName={styles.menu}
-                      >
-                        {states.map((st) => (
-                          <button
-                            key={st.id}
-                            onClick={() => handleStateChange(st.sigla)}
-                            className="dropdown-item"
-                          >
-                            {st.nome} - {st.sigla}
-                          </button>
-                        ))}
-                      </Dropdown>
-                    </label>
-
-                    {selectedState && (
-                      <label>
-                        Cidade:
-                        <Dropdown
-                          trigger={selectedCity || "Selecione uma Cidade"}
-                          triggerClassName={styles.trigger}
-                          menuClassName={styles.menu}
-                        >
-                          {cities.map((c) => (
-                            <button
-                              key={c.id}
-                              onClick={() => handleCityChange(c.nome)}
-                              className="dropdown-item"
-                            >
-                              {c.nome}
-                            </button>
-                          ))}
-                        </Dropdown>
-                      </label>
-                    )}
-
-                    {selectedCity && (
-                      <label>
-                        Bairro:
-                        <input
-                          type="text"
-                          placeholder="Digite o bairro"
-                          value={selectedNeighborhood}
-                          onChange={(e) =>
-                            handleNeighborhoodChange(e.target.value)
-                          }
-                        />
-                      </label>
-                    )}
+                    <p className={styles.address}>
+                      {local.neighborhood}, {local.city} - {local.state}
+                    </p>
                   </div>
-                )}
-              </div>
 
-              <div className={styles.line}>
-                <h3 className={styles.columnTitle}>Locais que Atendo</h3>
-
-                {!isEditing ? (
-                  <p className={styles.address}>
-                    {locations.length === 0
-                      ? "Não Informado"
-                      : locations.map((loc) => loc.option.label).join(", ")}
-                  </p>
-                ) : (
-                  <>
-                    {LOCATIONS_OPTIONS.map((opt) => {
-                      const exists = locations.some(
-                        (l) => l.option.label === opt.label
-                      );
-
-                      return (
-                        <label key={opt.id} className={styles.checkboxItem}>
-                          <input
-                            type="checkbox"
-                            checked={exists}
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                setLocations([
-                                  ...locations,
-                                  {
-                                    locationId: opt.id,
-                                    option: {
-                                      id: opt.id,
-                                      name: opt.name,
-                                      label: opt.label,
-                                    },
-                                  },
-                                ]);
-                              } else {
-                                setLocations(
-                                  locations.filter(
-                                    (l) => l.option.label !== opt.label
-                                  )
-                                );
-                              }
-                            }}
-                          />
-                          {opt.id}. {opt.label}
-                        </label>
-                      );
-                    })}
-                  </>
-                )}
-              </div>
-
-              <div className={styles.line}>
-                <h3 className={styles.columnTitle}>Bairros que Atendo</h3>
-                {!isEditing ? (
-                  <p className={styles.address}>
-                    {neighborhoodsServed.length === 0
-                      ? "Nenhum bairro informado."
-                      : formatNeighborhoodList(neighborhoodsServed)}
-                  </p>
-                ) : (
-                  <>
-                    <label>
-                      Adicionar Bairro
-                      <div className={styles.addNeighborhood}>
-                        <input
-                          type="text"
-                          placeholder="Digite um bairro"
-                          value={newNeighborhood}
-                          onChange={(e) => setNewNeighborhood(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") addNeighborhood();
-                          }}
-                        />
-                        <button type="button" onClick={addNeighborhood}>
-                          <FaPlus />
-                        </button>
-                      </div>
-                    </label>
-                    {neighborhoodsServed.length > 0 && (
-                      <p className={styles.neighborhoodsList}>
-                        {formatNeighborhoodListEditable(
-                          neighborhoodsServed,
-                          removeNeighborhood
-                        )}
-                      </p>
-                    )}
-                  </>
-                )}
-              </div>
+                  <div className={styles.line}>
+                    <h3 className={styles.title}>Comodidades</h3>
+                    <p>
+                      {amenities.length === 0
+                        ? "Nenhuma informada."
+                        : amenities.map((a) => a.option.label).join(", ")}
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <p className={styles.nonHasLocal}>Não possui local</p>
+              )}
             </div>
           </div>
         )}

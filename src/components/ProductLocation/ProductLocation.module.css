@@ -23,21 +23,30 @@
   align-items: center;
 }
 
-.title {
+.secTitle {
   font-size: 24px;
 }
 
 .title,
 .columnTitle {
   margin: 0;
+  margin-bottom: 8px;
 
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
   gap: 4px;
 
+  font-size: 16px;
   text-align: left;
   text-wrap: nowrap;
+}
+
+.columnTitle {
+}
+
+.title {
+  font-weight: normal;
 }
 
 .title span,
@@ -57,7 +66,13 @@
 
 .hasLocal {
   opacity: 0.5;
+  background: var(--primary-color);
   width: 100%;
+  padding: 8px;
+
+  border-radius: 4px;
+
+  color: var(--background-color);
 
   cursor: pointer;
 }
@@ -87,11 +102,6 @@
   flex-flow: row wrap;
   gap: 8px;
   margin: 0 16px;
-}
-
-.columnTitle {
-  font-size: 16px;
-  margin-bottom: 8px;
 }
 
 .line {
@@ -147,7 +157,38 @@
   opacity: 1;
 }
 
+.nonHasLocal {
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 20px;
+}
+
 @media (max-width: 768px) {
+  .content {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 16px;
+  }
+
+  .column {
+    flex-flow: column nowrap;
+  }
+
+  .column.conditional::before {
+    display: none;
+  }
+
+  .amenities {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+
   .line {
     font-size: 14px;
   }

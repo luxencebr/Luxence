@@ -116,6 +116,15 @@
 }
 
 @media (max-width: 768px) {
+  .content {
+    display: flex;
+    flex-flow: column nowrap;
+  }
+
+  .content::before {
+    display: none;
+  }
+
   .valueItem {
     font-size: 12px;
   }

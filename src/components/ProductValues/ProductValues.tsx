@@ -68,10 +68,15 @@ function ProductValues({ producer, canEdit }: ProductValuesProps) {
     try {
       setIsSaving(true);
 
-      const pricesToSave = prices.map((p) => ({
-        priceId: p.option.id,
-        value: Number(p.value),
-      }));
+      const pricesToSave = prices
+        .filter((p) => {
+          const value = Number(p.value);
+          return !isNaN(value) && value > 0;
+        })
+        .map((p) => ({
+          priceId: p.option.id,
+          value: Number(p.value),
+        }));
 
       const paymentsToSave = payments.map((p) => ({
         paymentId: p.option.id,
@@ -90,6 +95,13 @@ function ProductValues({ producer, canEdit }: ProductValuesProps) {
       if (!res.ok) {
         throw new Error("Erro ao salvar.");
       }
+
+      setPrices(
+        prices.filter((p) => {
+          const value = Number(p.value);
+          return !isNaN(value) && value > 0;
+        })
+      );
 
       // Sucesso: fecha edição
       setIsEditing(false);
@@ -202,7 +214,7 @@ function ProductValues({ producer, canEdit }: ProductValuesProps) {
                                   {
                                     profileId: producer.profile.id,
                                     priceId: opt.id,
-                                    value: 0,
+                                    value: "",
                                     option: opt,
                                   },
                                 ]);
@@ -230,7 +242,7 @@ function ProductValues({ producer, canEdit }: ProductValuesProps) {
                               setPrices(
                                 prices.map((p) =>
                                   p.option.label === opt.label
-                                    ? { ...p, value: Number(e.target.value) }
+                                    ? { ...p, value: e.target.value }
                                     : p
                                 )
                               )

@@ -275,7 +275,7 @@
   font-size: 0.95rem;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .container {
     padding: 1rem;
   }
@@ -286,6 +286,11 @@
 
   .characteristicsGrid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid {
+    display: flex;
+    flex-flow: column nowrap;
   }
 }
 
