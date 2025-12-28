@@ -88,7 +88,8 @@
     display: none;
   }
 
-  .servicesList li {
+  .servicesList li,
+  .serviceItem {
     padding: 8px;
   }
 }
