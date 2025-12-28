@@ -112,7 +112,7 @@ function Header() {
                     Minha Assinatura
                   </Link>
                 ) : (
-                  <Link href={"advertiser/plans"} className={styles.menuItem}>
+                  <Link href="/advertiser/plans" className={styles.menuItem}>
                     Assine Já!
                   </Link>
                 )}
@@ -214,7 +214,7 @@ function Header() {
                   </Link>
                 ) : (
                   <Link
-                    href={"advertiser/plans"}
+                    href="/advertiser/plans"
                     className={styles.mobileMenuItem}
                     onClick={() => setIsMenuOpen(false)}
                   >

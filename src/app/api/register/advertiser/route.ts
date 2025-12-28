@@ -46,6 +46,20 @@ export async function POST(req: Request) {
       },
     });
 
+    // Update user with locality information
+    await prisma.user.update({
+      where: { id: Number(data.userId) },
+      data: {
+        locality: {
+          create: {
+            country: "Brasil",
+            state: "RJ",
+            city: "Rio de Janeiro",
+          },
+        },
+      },
+    });
+
     return NextResponse.json({ producer }, { status: 201 });
   } catch (error: any) {
     console.error("[v0] Registration error:", error);
