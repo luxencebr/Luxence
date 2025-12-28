@@ -45,6 +45,8 @@ function ProductValues({ producer, canEdit }: ProductValuesProps) {
   ];
 
   const [prices, setPrices] = useState(producer.profile.prices);
+  const [priceDrafts, setPriceDrafts] = useState<Record<number, string>>({});
+
   const [payments, setPayments] = useState(producer.profile.payments);
 
   const [originalPrices, setOriginalPrices] = useState(producer.profile.prices);
@@ -55,12 +57,22 @@ function ProductValues({ producer, canEdit }: ProductValuesProps) {
   const handleEdit = () => {
     setOriginalPrices(prices);
     setOriginalPayments(payments);
+
+    const drafts: Record<number, string> = {};
+
+    prices.forEach((p) => {
+      drafts[p.priceId] = p.value ? String(p.value) : "";
+    });
+
+    setPriceDrafts(drafts);
+
     setIsEditing(true);
   };
 
   const handleCancel = () => {
     setPrices(originalPrices);
     setPayments(originalPayments);
+    setPriceDrafts({});
     setIsEditing(false);
   };
 
@@ -69,14 +81,16 @@ function ProductValues({ producer, canEdit }: ProductValuesProps) {
       setIsSaving(true);
 
       const pricesToSave = prices
-        .filter((p) => {
-          const value = Number(p.value);
-          return !isNaN(value) && value > 0;
+        .map((p) => {
+          const rawValue = priceDrafts[p.priceId] ?? p.value;
+          const value = Number(rawValue);
+
+          return {
+            priceId: p.option.id,
+            value,
+          };
         })
-        .map((p) => ({
-          priceId: p.option.id,
-          value: Number(p.value),
-        }));
+        .filter((p) => Number.isFinite(p.value) && p.value > 0);
 
       const paymentsToSave = payments.map((p) => ({
         paymentId: p.option.id,
@@ -96,12 +110,21 @@ function ProductValues({ producer, canEdit }: ProductValuesProps) {
         throw new Error("Erro ao salvar.");
       }
 
-      setPrices(
-        prices.filter((p) => {
-          const value = Number(p.value);
-          return !isNaN(value) && value > 0;
-        })
+      setPrices((prev) =>
+        prev
+          .map((p) => {
+            const rawValue = priceDrafts[p.priceId] ?? p.value;
+            const value = Number(rawValue);
+
+            return {
+              ...p,
+              value,
+            };
+          })
+          .filter((p) => Number.isFinite(p.value) && p.value > 0)
       );
+
+      setPriceDrafts({});
 
       // Sucesso: fecha edição
       setIsEditing(false);
@@ -214,10 +237,15 @@ function ProductValues({ producer, canEdit }: ProductValuesProps) {
                                   {
                                     profileId: producer.profile.id,
                                     priceId: opt.id,
-                                    value: "",
+                                    value: 0, // valor neutro no domínio
                                     option: opt,
                                   },
                                 ]);
+
+                                setPriceDrafts((prev) => ({
+                                  ...prev,
+                                  [opt.id]: "", // 👈 começa vazio no input
+                                }));
                               } else {
                                 setPrices(
                                   prices.filter(
@@ -234,18 +262,12 @@ function ProductValues({ producer, canEdit }: ProductValuesProps) {
                           <input
                             type="number"
                             placeholder="Valor"
-                            value={
-                              prices.find((p) => p.option.label === opt.label)
-                                ?.value ?? ""
-                            }
+                            value={priceDrafts[opt.id] ?? ""}
                             onChange={(e) =>
-                              setPrices(
-                                prices.map((p) =>
-                                  p.option.label === opt.label
-                                    ? { ...p, value: e.target.value }
-                                    : p
-                                )
-                              )
+                              setPriceDrafts((prev) => ({
+                                ...prev,
+                                [opt.id]: e.target.value,
+                              }))
                             }
                           />
                         )}

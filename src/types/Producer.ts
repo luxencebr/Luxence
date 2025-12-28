@@ -116,7 +116,7 @@ export interface ProducerPrice {
   id?: number;
   profileId?: number;
   priceId: number;
-  value: number | string;
+  value: number;
   option: Option;
 }
 
