@@ -246,94 +246,96 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
       setInputMax(String(clamped));
     }
 
-    return (
-      <section className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <h4>Idade (Anos)</h4>
-        </div>
-        <div
-          className={styles.range}
-          onMouseDown={(e) => e.stopPropagation()}
-          onTouchStart={(e) => e.stopPropagation()}
-        >
-          <div className={styles.inputs}>
-            <input
-              type="number"
-              value={inputMin}
-              onChange={(e) => setInputMin(e.target.value)}
-              onBlur={commitMin}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  commitMin();
-                  e.currentTarget.blur();
-                }
-              }}
-            />
-
-            <input
-              type="number"
-              value={inputMax}
-              onChange={(e) => setInputMax(e.target.value)}
-              onBlur={commitMax}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  commitMax();
-                  e.currentTarget.blur();
-                }
-              }}
-            />
+    if (min != max) {
+      return (
+        <section className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <h4>Idade (Anos)</h4>
           </div>
-
-          <Range
-            step={1}
-            min={min}
-            max={max}
-            values={values}
-            onChange={(vals) => {
-              setValues(vals as [number, number]);
-              setInputMin(String(vals[0]));
-              setInputMax(String(vals[1]));
-            }}
-            onFinalChange={(vals) => {
-              setFilters((prev) => ({
-                ...prev,
-                ageRange: {
-                  min: vals[0],
-                  max: vals[1],
-                },
-              }));
-            }}
-            renderTrack={({ props, children }) => (
-              <div
-                {...props}
-                style={{
-                  ...props.style,
-                  height: "6px",
-                  width: "100%",
-                  backgroundColor: "var(--contrast-color)",
-                }}
-              >
-                {children}
-              </div>
-            )}
-            renderThumb={({ props }) => (
-              <div
-                {...props}
-                style={{
-                  ...props.style,
-                  height: "16px",
-                  width: "16px",
-                  borderRadius: "50%",
-                  backgroundColor: "var(--primary-color)",
+          <div
+            className={styles.range}
+            onMouseDown={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+          >
+            <div className={styles.inputs}>
+              <input
+                type="number"
+                value={inputMin}
+                onChange={(e) => setInputMin(e.target.value)}
+                onBlur={commitMin}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    commitMin();
+                    e.currentTarget.blur();
+                  }
                 }}
               />
-            )}
-          />
-        </div>
-      </section>
-    );
+
+              <input
+                type="number"
+                value={inputMax}
+                onChange={(e) => setInputMax(e.target.value)}
+                onBlur={commitMax}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    commitMax();
+                    e.currentTarget.blur();
+                  }
+                }}
+              />
+            </div>
+
+            <Range
+              step={1}
+              min={min}
+              max={max}
+              values={values}
+              onChange={(vals) => {
+                setValues(vals as [number, number]);
+                setInputMin(String(vals[0]));
+                setInputMax(String(vals[1]));
+              }}
+              onFinalChange={(vals) => {
+                setFilters((prev) => ({
+                  ...prev,
+                  ageRange: {
+                    min: vals[0],
+                    max: vals[1],
+                  },
+                }));
+              }}
+              renderTrack={({ props, children }) => (
+                <div
+                  {...props}
+                  style={{
+                    ...props.style,
+                    height: "6px",
+                    width: "100%",
+                    backgroundColor: "var(--contrast-color)",
+                  }}
+                >
+                  {children}
+                </div>
+              )}
+              renderThumb={({ props }) => (
+                <div
+                  {...props}
+                  style={{
+                    ...props.style,
+                    height: "16px",
+                    width: "16px",
+                    borderRadius: "50%",
+                    backgroundColor: "var(--primary-color)",
+                  }}
+                />
+              )}
+            />
+          </div>
+        </section>
+      );
+    }
   }
 
   function PriceRange() {
@@ -374,94 +376,96 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
       setInputMax(String(clamped));
     }
 
-    return (
-      <section className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <h4>Preço (R$)</h4>
-        </div>
-        <div
-          className={styles.range}
-          onMouseDown={(e) => e.stopPropagation()}
-          onTouchStart={(e) => e.stopPropagation()}
-        >
-          {" "}
-          <div className={styles.inputs}>
-            <input
-              type="number"
-              value={inputMin}
-              onChange={(e) => setInputMin(e.target.value)}
-              onBlur={commitMin}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  commitMin();
-                  e.currentTarget.blur();
-                }
-              }}
-            />
-
-            <input
-              type="number"
-              value={inputMax}
-              onChange={(e) => setInputMax(e.target.value)}
-              onBlur={commitMax}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  commitMax();
-                  e.currentTarget.blur();
-                }
-              }}
-            />
+    if (min != max) {
+      return (
+        <section className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <h4>Preço (R$)</h4>
           </div>
-          <Range
-            step={50}
-            min={min}
-            max={max}
-            values={values}
-            onChange={(vals) => {
-              setValues(vals as [number, number]);
-              setInputMin(String(vals[0]));
-              setInputMax(String(vals[1]));
-            }}
-            onFinalChange={(vals) => {
-              setFilters((prev) => ({
-                ...prev,
-                priceRange: {
-                  min: vals[0],
-                  max: vals[1],
-                },
-              }));
-            }}
-            renderTrack={({ props, children }) => (
-              <div
-                {...props}
-                style={{
-                  ...props.style,
-                  height: "6px",
-                  width: "100%",
-                  backgroundColor: "var(--contrast-color)",
-                }}
-              >
-                {children}
-              </div>
-            )}
-            renderThumb={({ props }) => (
-              <div
-                {...props}
-                style={{
-                  ...props.style,
-                  height: "16px",
-                  width: "16px",
-                  borderRadius: "50%",
-                  backgroundColor: "var(--primary-color)",
+          <div
+            className={styles.range}
+            onMouseDown={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+          >
+            {" "}
+            <div className={styles.inputs}>
+              <input
+                type="number"
+                value={inputMin}
+                onChange={(e) => setInputMin(e.target.value)}
+                onBlur={commitMin}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    commitMin();
+                    e.currentTarget.blur();
+                  }
                 }}
               />
-            )}
-          />
-        </div>
-      </section>
-    );
+
+              <input
+                type="number"
+                value={inputMax}
+                onChange={(e) => setInputMax(e.target.value)}
+                onBlur={commitMax}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    commitMax();
+                    e.currentTarget.blur();
+                  }
+                }}
+              />
+            </div>
+            <Range
+              step={50}
+              min={min}
+              max={max}
+              values={values}
+              onChange={(vals) => {
+                setValues(vals as [number, number]);
+                setInputMin(String(vals[0]));
+                setInputMax(String(vals[1]));
+              }}
+              onFinalChange={(vals) => {
+                setFilters((prev) => ({
+                  ...prev,
+                  priceRange: {
+                    min: vals[0],
+                    max: vals[1],
+                  },
+                }));
+              }}
+              renderTrack={({ props, children }) => (
+                <div
+                  {...props}
+                  style={{
+                    ...props.style,
+                    height: "6px",
+                    width: "100%",
+                    backgroundColor: "var(--contrast-color)",
+                  }}
+                >
+                  {children}
+                </div>
+              )}
+              renderThumb={({ props }) => (
+                <div
+                  {...props}
+                  style={{
+                    ...props.style,
+                    height: "16px",
+                    width: "16px",
+                    borderRadius: "50%",
+                    backgroundColor: "var(--primary-color)",
+                  }}
+                />
+              )}
+            />
+          </div>
+        </section>
+      );
+    }
   }
 
   return (
