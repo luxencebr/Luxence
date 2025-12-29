@@ -30,11 +30,12 @@ export default function CatalogRedirect() {
       }}
     >
       <img
-        src="/ExenceLogo.svg"
+        src="/LuxenceLogo.png"
         alt=""
         style={{
           height: "128px",
           aspectRatio: "1 / 1",
+          objectFit: "cover",
         }}
       />
       <p>

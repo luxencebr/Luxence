@@ -62,7 +62,15 @@ export default function ProductPage({ params }: ProductPageProps) {
   if (loading || !producer) {
     return (
       <div className={styles.loadingContainer}>
-        <img src="/ExenceLogo.svg" alt="" style={{ height: 128 }} />
+        <img
+          src="/LuxenceLogo.png"
+          alt=""
+          style={{
+            height: "128px",
+            aspectRatio: "1 / 1",
+            objectFit: "cover",
+          }}
+        />
         {loading && <p>Carregando Perfil</p>}
         {!loading && !producer && <p>Produto não encontrado</p>}
       </div>

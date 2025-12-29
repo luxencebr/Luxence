@@ -45,7 +45,7 @@ function Header() {
       <div className={styles.layout}>
         <nav className={styles.left}>
           <Link href="/">
-            <img src="/ExenceLogo.svg" alt="Logo" className={styles.logo} />
+            <img src="/LuxenceLogo.png" alt="Logo" className={styles.logo} />
           </Link>
 
           <Link

@@ -44,7 +44,7 @@ const StartPopup: React.FC<StartPopupProps> = ({
   return (
     <div className={styles.backdrop}>
       <div className={styles.modal}>
-        <img src="/ExenceLogo.svg" alt="Logo" className={styles.logo} />
+        <img src="/LuxenceLogo.png" alt="Logo" className={styles.logo} />
         <h2 className={styles.title}>Este é um site adulto!</h2>
         <p className={styles.text}>
           Este site é voltado para o público <span>adulto</span> e pode conter
@@ -68,7 +68,7 @@ const StartPopup: React.FC<StartPopupProps> = ({
           </button>
         </div>
         <div className={styles.footer}>
-          &copy; {new Date().getFullYear()} Exence. All rights reserved.
+          &copy; {new Date().getFullYear()} Luxence. All rights reserved.
         </div>
       </div>
     </div>

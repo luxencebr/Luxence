@@ -63,11 +63,12 @@ export default function AboutPage() {
         }}
       >
         <img
-          src="/ExenceLogo.svg"
+          src="/LuxenceLogo.png"
           alt=""
           style={{
             height: "128px",
             aspectRatio: "1 / 1",
+            objectFit: "cover",
           }}
         />
         <p>Carregando postagens...</p>

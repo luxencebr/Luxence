@@ -261,11 +261,12 @@ export default function CatalogPage() {
         <div className={styles.layout}>
           <div className={styles.loadingState}>
             <img
-              src="/ExenceLogo.svg"
+              src="/LuxenceLogo.png"
               alt=""
               style={{
                 height: "128px",
                 aspectRatio: "1 / 1",
+                objectFit: "cover",
               }}
             />
             <p>Carregando produtores...</p>

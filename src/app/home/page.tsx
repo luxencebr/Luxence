@@ -72,11 +72,12 @@ export default function HomePage() {
         <div className={styles.layout}>
           <div className={styles.loadingState}>
             <img
-              src="/ExenceLogo.svg"
+              src="/LuxenceLogo.png"
               alt=""
               style={{
                 height: "128px",
                 aspectRatio: "1 / 1",
+                objectFit: "cover",
               }}
             />
             <p>Carregando produtores...</p>
@@ -103,7 +104,7 @@ export default function HomePage() {
       <div className={styles.layout}>
         <Slider slides={sliderData} className={styles.homeSlider} />
         <ProductsRow producers={newProducers} title="Novidades" />
-        <ProductsRow producers={topProducers} title="Top Exence" highlight />
+        <ProductsRow producers={topProducers} title="Top Luxence" highlight />
       </div>
     </main>
   );
