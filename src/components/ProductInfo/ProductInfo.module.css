@@ -461,7 +461,14 @@
   }
 
   .content {
-    flex-flow: row;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, auto);
+  }
+
+  .wide {
+    grid-column: 1 / -1;
+    grid-row: 2;
   }
 
   .cardContent p span {

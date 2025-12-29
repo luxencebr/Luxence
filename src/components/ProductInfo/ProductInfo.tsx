@@ -230,7 +230,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
 
         <div className={styles.content}>
           <button
-            className={styles.infoCard}
+            className={`${styles.infoCard} ${styles.wide}`}
             onClick={() => ScrollTo("reviews", { center: true })}
           >
             <div className={styles.cardHeader}>
