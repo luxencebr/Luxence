@@ -5,6 +5,14 @@
   margin: 16px;
 }
 
+.layout {
+  padding: 16px;
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 16px;
+}
+
 .loadingState,
 .errorState {
   display: flex;

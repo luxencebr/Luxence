@@ -1,68 +1,57 @@
-"use client";
-
-import { SessionProvider } from "next-auth/react";
-import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import type { Metadata } from "next";
+import Providers from "./provider";
 import "../styles/globals.css";
 import "../styles/variables.css";
 import "../styles/Fonts.css";
 
-import StartPopup from "@/components/StartPopup/StartPopup";
-import Header from "@/components/Header/Header";
-import Footer from "@/components/Footer/Footer";
-import { ScrollTop } from "@/utils/ScrollTop";
+export const metadata: Metadata = {
+  title: {
+    default: "Luxence",
+    template: "%s | Luxence",
+  },
+  description:
+    "Luxence — plataforma premium de experiências e conexões exclusivas.",
+
+  icons: {
+    icon: "/LuxenceLogo.png",
+  },
+
+  openGraph: {
+    title: "Luxence",
+    description:
+      "Descubra experiências premium e perfis exclusivos na Luxence.",
+    url: "https://luxence.com.br",
+    siteName: "Luxence",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Luxence",
+      },
+    ],
+    locale: "pt_BR",
+    type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Luxence",
+    description:
+      "Descubra experiências premium e perfis exclusivos na Luxence.",
+    images: ["/og-image.png"],
+  },
+};
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-  const [hasConfirmedAge, setHasConfirmedAge] = useState(false);
-
-  useEffect(() => {
-    const ageConfirmed = sessionStorage.getItem("ageConfirmed");
-    if (ageConfirmed === "true") {
-      setHasConfirmedAge(true);
-    }
-  }, []);
-
-  const handleConfirmAge = () => setHasConfirmedAge(true);
-  const handleExitSite = () => {
-    window.location.href = "https://www.google.com";
-  };
-
-  const noLayout =
-    pathname?.startsWith("/signup") ||
-    pathname?.startsWith("/signin") ||
-    pathname === "/catalog" ||
-    pathname === "/advertiser";
-
-  if (noLayout) {
-    return (
-      <html lang="pt-BR">
-        <body>{children}</body>
-      </html>
-    );
-  }
-
   return (
     <html lang="pt-BR">
       <body>
-        <SessionProvider>
-          <Header />
-          <ScrollTop />
-
-          {children}
-          <Footer />
-        </SessionProvider>
-
-        {!hasConfirmedAge && (
-          <StartPopup
-            onConfirmAge={handleConfirmAge}
-            onExitSite={handleExitSite}
-          />
-        )}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
