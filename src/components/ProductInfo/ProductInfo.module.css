@@ -166,7 +166,6 @@
 }
 
 .editIcon {
-  position: absolute;
   font-size: 32px;
   opacity: 0;
   transition: opacity 0.2s ease;
@@ -196,6 +195,103 @@
   background: #0088cc;
 }
 
+.editableField {
+  max-width: 200px;
+
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.editableValue {
+  padding: 4px;
+
+  color: var(--contrast-complementary-color);
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  hyphens: auto;
+}
+
+.editableValue:hover .editIcon {
+  opacity: 1;
+  color: var(--primary-color);
+}
+
+.editIcon {
+  font-size: 10px;
+  opacity: 0.5;
+}
+
+.editablePlaceholder {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.editablePlaceholder:hover {
+  color: var(--primary-complementary-color);
+}
+
+.editableEdit {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.editableInput {
+  background: var(--background-color);
+  flex: 1;
+  padding: 4px;
+
+  outline: none;
+  border: none;
+  border-radius: 4px;
+
+  color: var(--contrast-color);
+  font-family: inherit;
+  width: 100%;
+}
+
+.editableCancel {
+  background: transparent;
+  aspect-ratio: 1 / 1;
+  padding: 2px;
+
+  border: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--contrast-color);
+  font-size: 16px;
+
+  cursor: pointer;
+}
+
+.editableCancel:hover {
+  color: var(--text-primary);
+}
+
+.nameField .editableValue,
+.nameField .editableInput {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.sloganField .editableValue,
+.sloganField .editableInput {
+  font-size: 12px;
+  font-style: italic;
+}
+
 .content {
   min-width: 0;
   flex: 1;
@@ -212,124 +308,6 @@
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-}
-
-.productName {
-  font-size: 20px;
-  text-wrap: nowrap;
-}
-
-.slogan {
-  font-size: 12px;
-
-  white-space: normal;
-  word-break: break-word;
-  overflow-wrap: break-word;
-  cursor: default;
-}
-
-.productSlogan {
-  max-width: 192px;
-  padding: 4px;
-
-  color: var(--contrast-complementary-color);
-  font-size: 12px;
-  font-style: italic;
-  text-align: justify;
-  hyphens: auto;
-  white-space: normal;
-  overflow-wrap: break-word;
-}
-
-.sloganPlaceholder {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-
-  cursor: pointer;
-}
-
-.sloganPlaceholder:hover {
-  color: var(--primary-complementary-color);
-}
-
-.sloganInput {
-  background: var(--background-color);
-  flex: 1;
-  padding: 4px;
-
-  outline: none;
-  border: none;
-  border-radius: 4px;
-
-  color: var(--contrast-color);
-  font-size: 12px;
-  font-family: inherit;
-  width: 100%;
-}
-
-.cancelButton {
-  background: transparent;
-  height: 100%;
-  aspect-ratio: 1 / 1;
-  padding: 2px;
-
-  border: none;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  color: var(--contrast-color);
-  font-size: 16px;
-
-  cursor: pointer;
-}
-
-.cancelButton:hover {
-  color: var(--text-primary);
-}
-
-.sloganActions {
-  display: flex;
-  gap: 4px;
-}
-
-.sloganSaveBtn,
-.sloganCancelBtn {
-  padding: 4px 8px;
-  border: none;
-  border-radius: 4px;
-  font-size: 10px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.sloganSaveBtn {
-  background: var(--primary-color);
-  color: var(--background-color);
-}
-
-.sloganCancelBtn {
-  background: var(--background-color);
-  color: var(--contrast-color);
-  border: 1px solid var(--contrast-complementary-color);
-}
-
-.sloganSaveBtn:hover,
-.sloganCancelBtn:hover {
-  opacity: 0.8;
-}
-
-.sloganEditIcon {
-  margin-left: 4px;
-  font-size: 10px;
-  opacity: 0.5;
-}
-
-.productSlogan:hover .sloganEditIcon {
-  opacity: 1;
-  color: var(--primary-color);
 }
 
 .verified {
@@ -561,29 +539,11 @@
   }
 }
 
-.sloganEdit {
-  display: flex;
-  flex-flow: row nowrap;
-  gap: 4px;
-}
-
-.sloganInputWrapper {
-  width: 100%;
-
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 4px;
-
-  position: relative;
-}
-
 .loader {
   width: 18px;
   height: 18px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: white;
+  border: 2px solid var(--contrast-color);
+  border-top-color: var(--primary-color);
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
 }
@@ -592,8 +552,4 @@
   to {
     transform: rotate(360deg);
   }
-}
-
-.sloganInput:disabled {
-  opacity: 0.6;
 }

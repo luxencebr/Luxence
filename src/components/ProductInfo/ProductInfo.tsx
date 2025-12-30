@@ -38,6 +38,13 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
   const contentRef = useRef<HTMLDivElement | null>(null);
   const [atBottom, setAtBottom] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  const [name, setName] = useState(producer.name);
+  const [originalName, setOriginalName] = useState(producer.name);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [isSavingName, setIsSavingName] = useState(false);
+  const nameInputRef = useRef<HTMLInputElement | null>(null);
+
   type ContactKey = "whatsapp" | "telegram" | "instagram";
   const [editingContact, setEditingContact] = useState<
     keyof typeof CONTACT_CONFIG | null
@@ -77,10 +84,50 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
   }, [isMobile]);
 
   useEffect(() => {
+    if (isEditingName) {
+      nameInputRef.current?.focus();
+    }
+  }, [isEditingName]);
+
+  useEffect(() => {
     if (isEditingSlogan) {
       sloganInputRef.current?.focus();
     }
   }, [isEditingSlogan]);
+
+  const handleEditName = () => {
+    setOriginalName(name);
+    setIsEditingName(true);
+  };
+
+  const handleCancelName = () => {
+    setName(originalName);
+    setIsEditingName(false);
+  };
+
+  const handleSaveName = async () => {
+    try {
+      setIsSavingName(true);
+
+      const res = await fetch("/api/profile/showcase/name", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          producerId: producer.id,
+          name,
+        }),
+      });
+
+      if (!res.ok) throw new Error();
+
+      setOriginalName(name);
+      setIsEditingName(false);
+    } catch {
+      setName(originalName);
+    } finally {
+      setIsSavingName(false);
+    }
+  };
 
   const handleEditSlogan = () => {
     setOriginalSlogan(slogan);
@@ -182,66 +229,101 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
       <div className={styles.layout} ref={contentRef}>
         <div className={styles.productHeader}>
           <div className={styles.productHighlight}>
-            <h1 className={styles.productName}>
-              {formatUserName(producer.user.name)}
-            </h1>
-            <div className={styles.slogan}>
-              {isEditingSlogan ? (
-                <div className={styles.sloganEdit}>
-                  <div className={styles.sloganInputWrapper}>
-                    <input
-                      ref={sloganInputRef}
-                      type="text"
-                      value={slogan}
-                      onChange={(e) => setSlogan(e.target.value)}
-                      placeholder="Digite seu slogan..."
-                      className={styles.sloganInput}
-                      disabled={isSavingSlogan}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          !isSavingSlogan && handleSaveSlogan();
-                        }
-                        if (e.key === "Escape") {
-                          e.preventDefault();
-                          handleCancelSlogan();
-                        }
-                      }}
-                    />
+            <div className={`${styles.editableField} ${styles.nameField}`}>
+              {isEditingName ? (
+                <div className={styles.editableEdit}>
+                  <input
+                    ref={nameInputRef}
+                    className={styles.editableInput}
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    disabled={isSavingName}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        !isSavingName && handleSaveName();
+                      }
+                      if (e.key === "Escape") {
+                        e.preventDefault();
+                        handleCancelName();
+                      }
+                    }}
+                  />
 
-                    <div className={styles.sloganActions}>
-                      {isSavingSlogan ? (
-                        <div className={styles.loader} />
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={handleCancelSlogan}
-                          className={styles.cancelButton}
-                        >
-                          <IoClose />
-                        </button>
-                      )}
-                    </div>
-                  </div>
+                  {isSavingName ? (
+                    <div className={styles.loader} />
+                  ) : (
+                    <button
+                      type="button"
+                      className={styles.editableCancel}
+                      onClick={handleCancelName}
+                    >
+                      <IoClose />
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <h1
+                  className={styles.editableValue}
+                  onClick={canEdit ? handleEditName : undefined}
+                >
+                  {formatUserName(name)}
+                  {canEdit && <HiOutlinePencil className={styles.editIcon} />}
+                </h1>
+              )}
+            </div>
+
+            <div className={`${styles.editableField} ${styles.sloganField}`}>
+              {isEditingSlogan ? (
+                <div className={styles.editableEdit}>
+                  <input
+                    ref={sloganInputRef}
+                    className={styles.editableInput}
+                    type="text"
+                    value={slogan}
+                    onChange={(e) => setSlogan(e.target.value)}
+                    placeholder="Digite seu slogan..."
+                    disabled={isSavingSlogan}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        !isSavingSlogan && handleSaveSlogan();
+                      }
+                      if (e.key === "Escape") {
+                        e.preventDefault();
+                        handleCancelSlogan();
+                      }
+                    }}
+                  />
+
+                  {isSavingSlogan ? (
+                    <div className={styles.loader} />
+                  ) : (
+                    <button
+                      type="button"
+                      className={styles.editableCancel}
+                      onClick={handleCancelSlogan}
+                    >
+                      <IoClose />
+                    </button>
+                  )}
                 </div>
               ) : slogan ? (
                 <p
-                  className={styles.productSlogan}
+                  className={styles.editableValue}
                   onClick={canEdit ? handleEditSlogan : undefined}
-                  style={canEdit ? { cursor: "pointer" } : undefined}
                 >
                   {slogan}
-                  {canEdit && (
-                    <HiOutlinePencil className={styles.sloganEditIcon} />
-                  )}
+                  {canEdit && <HiOutlinePencil className={styles.editIcon} />}
                 </p>
               ) : (
                 canEdit && (
                   <p
-                    className={styles.sloganPlaceholder}
-                    onClick={canEdit ? handleEditSlogan : undefined}
+                    className={styles.editablePlaceholder}
+                    onClick={handleEditSlogan}
                   >
-                    Adicione um Slogan <HiOutlinePencil />
+                    Adicione um slogan <HiOutlinePencil />
                   </p>
                 )
               )}
