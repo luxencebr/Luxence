@@ -18,6 +18,7 @@ export async function POST(req: Request) {
 
     const producer = await prisma.producer.create({
       data: {
+        name: data.name,
         birthday,
         nationality: data.nationality,
         document: data.document,
