@@ -30,6 +30,9 @@ export async function GET(
             appearance: {
               include: { appearance: true },
             },
+            contacts: {
+              include: { option: true },
+            },
             prices: {
               include: { option: true },
             },

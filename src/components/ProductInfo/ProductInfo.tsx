@@ -37,12 +37,14 @@ interface ProductInfoProps {
 function ProductInfo({ producer, canEdit }: ProductInfoProps) {
   const contentRef = useRef<HTMLDivElement | null>(null);
   const [atBottom, setAtBottom] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  type ContactKey = "whatsapp" | "telegram" | "instagram";
   const [editingContact, setEditingContact] = useState<
-    "whatsapp" | "telegram" | "instagram" | null
+    keyof typeof CONTACT_CONFIG | null
   >(null);
-  const [isOpen, setIsOpen] = useState(false);
+  const [contactValue, setContactValue] = useState("");
+  const [contacts, setContacts] = useState(producer.profile.contacts);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [slogan, setSlogan] = useState(producer.profile.slogan || "");
   const [isEditingSlogan, setIsEditingSlogan] = useState(false);
@@ -118,6 +120,24 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
     }
   };
 
+  async function updateContact({
+    contactId,
+    value,
+  }: {
+    contactId: number;
+    value: string;
+  }) {
+    const res = await fetch("/api/profile/showcase/contact", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ contactId, value }),
+    });
+
+    if (!res.ok) {
+      throw new Error("Erro ao salvar contato");
+    }
+  }
+
   const reviews = producer.profile.reviews || [];
   const hasReviews = reviews.length > 0;
 
@@ -131,21 +151,35 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
     "Olá! Vi seu perfil na Luxence!\n\nFiquei interessado em seus serviços. Vamos conversar?"
   );
 
-  const isContactActive = (type: "whatsapp" | "telegram" | "instagram") => {
-    if (type === "whatsapp") return Boolean(producer.phone);
-    if (type === "telegram") return Boolean(producer.profile.telegram);
-    if (type === "instagram") return Boolean(producer.profile.instagram);
-    return false;
-  };
+  const CONTACT_CONFIG: Record<
+    ContactKey,
+    {
+      icon: React.ElementType;
+      className: string;
+      getHref: (...args: any[]) => string;
+    }
+  > = {
+    whatsapp: {
+      icon: FaWhatsapp,
+      className: styles.whatsapp,
+      getHref: (value: string) =>
+        `https://wa.me/${formatWhatsAppNumber(value)}?text=${whatsappMsg}`,
+    },
+    telegram: {
+      icon: FaTelegram,
+      className: styles.telegram,
+      getHref: (value: string) => `https://t.me/${value}`,
+    },
+    instagram: {
+      icon: FaInstagram,
+      className: styles.instagram,
+      getHref: (value: string) => `https://www.instagram.com/${value}`,
+    },
+  } as const;
 
   return (
     <div className={styles.productInfos}>
-      <div
-        className={`${styles.layout} ${
-          isMobile && isExpanded ? styles.expanded : ""
-        }`}
-        ref={contentRef}
-      >
+      <div className={styles.layout} ref={contentRef}>
         <div className={styles.productHeader}>
           <div className={styles.productHighlight}>
             <h1 className={styles.productName}>
@@ -202,12 +236,14 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                   )}
                 </p>
               ) : (
-                <p
-                  className={styles.sloganPlaceholder}
-                  onClick={canEdit ? handleEditSlogan : undefined}
-                >
-                  Adicione um Slogan <HiOutlinePencil />
-                </p>
+                canEdit && (
+                  <p
+                    className={styles.sloganPlaceholder}
+                    onClick={canEdit ? handleEditSlogan : undefined}
+                  >
+                    Adicione um Slogan <HiOutlinePencil />
+                  </p>
+                )
               )}
             </div>
           </div>
@@ -322,89 +358,123 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
           </button>
         </div>
 
-        <div className={styles.contactsOptions}>
-          <div className={styles.contactsLayout}>
-            {canEdit ? (
-              <Popup
-                trigger={<FaWhatsapp />}
-                triggerClass={`${styles.contactButton} ${styles.whatsapp}`}
-                popupClass={styles.popup}
-                isOpen={editingContact === "whatsapp"}
-                onOpenChange={(open) =>
-                  setEditingContact(open ? "whatsapp" : null)
-                }
-              >
-                <div>Whatsapp</div>
-              </Popup>
-            ) : (
+        <div className={styles.contactsLayout}>
+          {contacts.map((contact) => {
+            const key = contact.option.name as keyof typeof CONTACT_CONFIG;
+            const config = CONTACT_CONFIG[key];
+
+            if (!config) return null;
+
+            const Icon = config.icon;
+            const isActive = contact.value;
+
+            // ===== EDIT MODE =====
+            if (canEdit) {
+              return (
+                <Popup
+                  key={contact.id}
+                  trigger={<Icon />}
+                  triggerClass={`${styles.contactButton} ${config.className} ${
+                    isActive ? styles.active : styles.disabled
+                  }`}
+                  popupClass={styles.popup}
+                  isOpen={editingContact === key}
+                  onOpenChange={(open) => {
+                    if (open) {
+                      setEditingContact(key);
+                      setContactValue(contact.value ?? "");
+                    } else {
+                      setEditingContact(null);
+                      setContactValue("");
+                    }
+                  }}
+                >
+                  <div className={styles.popupContent}>
+                    <div className={styles.contactHeader}>
+                      {contact.option.label}
+                      <button
+                        className={styles.closeBtn}
+                        onClick={() => {
+                          setEditingContact(null);
+                        }}
+                      >
+                        <IoClose />
+                      </button>
+                    </div>
+
+                    <input
+                      type="text"
+                      value={contactValue}
+                      onChange={(e) => setContactValue(e.target.value)}
+                      placeholder={`Digite seu ${contact.option.label.toLowerCase()}`}
+                      className={styles.input}
+                      autoFocus
+                    />
+
+                    <div className={styles.actions}>
+                      <button
+                        type="button"
+                        className={styles.cancel}
+                        onClick={() => {
+                          setEditingContact(null);
+                          setContactValue("");
+                        }}
+                      >
+                        Cancelar
+                      </button>
+
+                      {(contact.value || contactValue.trim()) && (
+                        <button
+                          type="button"
+                          className={styles.save}
+                          disabled={isSaving}
+                          onClick={async () => {
+                            try {
+                              setIsSaving(true);
+                              await updateContact({
+                                contactId: contact.id,
+                                value: contactValue.trim(),
+                              });
+                              setContacts((prev) =>
+                                prev.map((c) =>
+                                  c.id === contact.id
+                                    ? { ...c, value: contactValue.trim() }
+                                    : c
+                                )
+                              );
+                              setEditingContact(null);
+                              setEditingContact(null);
+                            } finally {
+                              setIsSaving(false);
+                            }
+                          }}
+                        >
+                          {contact.value && !contactValue.trim()
+                            ? "Remover"
+                            : "Salvar"}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </Popup>
+              );
+            }
+
+            // ===== VIEW MODE =====
+            if (!isActive) return null;
+
+            return (
               <a
-                href={`https://wa.me/${formatWhatsAppNumber(
-                  producer.phone
-                )}?text=${whatsappMsg}`}
-                className={`${styles.contactButton} ${styles.whatsapp} ${
-                  isContactActive("whatsapp") ? styles.active : styles.disabled
-                }`}
+                key={contact.id}
+                href={config.getHref(contact.value)}
+                className={`${styles.contactButton} ${config.className}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <FaWhatsapp />
+                <Icon />
               </a>
-            )}
-
-            {canEdit ? (
-              <Popup
-                trigger={<FaTelegram />}
-                triggerClass={`${styles.contactButton} ${styles.telegram} ${
-                  isContactActive("telegram") ? styles.active : styles.disabled
-                }`}
-                popupClass={styles.popup}
-                isOpen={editingContact === "telegram"}
-                onOpenChange={(open) =>
-                  setEditingContact(open ? "telegram" : null)
-                }
-              >
-                <div>Telegram</div>
-              </Popup>
-            ) : (
-              producer.profile.telegram && (
-                <a
-                  href="https://t.me/${producer.profile.telegram}"
-                  className={`${styles.contactButton} ${styles.telegram}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <FaTelegram />
-                </a>
-              )
-            )}
-
-            {canEdit ? (
-              <Popup
-                trigger={<FaInstagram />}
-                triggerClass={`${styles.contactButton} ${styles.instagram} ${
-                  isContactActive("instagram") ? styles.active : styles.disabled
-                }`}
-                popupClass={styles.popup}
-                isOpen={editingContact === "instagram"}
-                onOpenChange={(open) =>
-                  setEditingContact(open ? "instagram" : null)
-                }
-              >
-                <div>Instagram</div>
-              </Popup>
-            ) : (
-              producer.profile.instagram && (
-                <a
-                  href={`https://www.instagram.com/${producer.profile.instagram}`}
-                  className={`${styles.contactButton} ${styles.instagram} `}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <FaInstagram />
-                </a>
-              )
-            )}
-          </div>
+            );
+          })}
         </div>
       </div>
     </div>

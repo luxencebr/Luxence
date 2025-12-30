@@ -18,7 +18,6 @@ export interface Locality {
   country: string;
   state: string;
   city: string;
-  zone?: string;
   neighborhood?: string;
 }
 
@@ -31,6 +30,7 @@ export interface Producer {
   verificationStatus: "YELLOW" | "GREEN" | "RED";
   isVerified: boolean;
 
+  name: string;
   birthday: Date;
   document: string;
   nationality: string;
@@ -51,14 +51,11 @@ export interface ProducerProfile {
   images: Array<{ name: string; url: string }>;
   scholarity: string;
   languages: Array<{ name: string; level: string }>;
-  workingHours: Array<{ days: string; hours: string }>;
   hasLocal: boolean;
   views: number;
 
-  telegram?: string;
-  instagram?: string;
-
   producer: Producer;
+  contacts: ProducerContact[];
   local: ProducerLocal | null;
   appearance: ProducerAppearance;
   prices: ProducerPrice[];
@@ -69,6 +66,20 @@ export interface ProducerProfile {
   neighborhoods: Array<{ name: string }>;
   payments: ProducerPayment[];
   reviews: Review[];
+}
+
+export interface ProducerContact {
+  id: number;
+  profileId: number;
+  contactId: number;
+
+  value: string;
+  label?: string;
+  isPrimary: boolean;
+  isPublic: boolean;
+  order: number;
+
+  option: Option;
 }
 
 export interface ProducerLocal {

@@ -105,6 +105,7 @@ model Producer {
   isVerified    Boolean   @default(false)
   verificationStatus STATUS @default(YELLOW)
 
+  name        String
   birthday    DateTime
   nationality String
   document    String
@@ -132,6 +133,7 @@ model ProducerProfile {
   hasLocal    Boolean   @default(false)
   local       ProducerLocal?
 
+  contacts    ProducerContact[]
   appearance  ProducerAppearance[]
   prices      ProducerPrice[]
   services    ProducerService[]
@@ -146,6 +148,32 @@ model ProducerProfile {
 }
 
 //---
+
+model ContactOption {
+  id     Int    @id
+  name   String @unique // whatsapp, instagram, telegram
+  label  String         // WhatsApp, Instagram, Telegram
+  icon   String?        // opcional (ex: "ri-whatsapp-line")
+
+  contacts ProducerContact[]
+}
+
+model ProducerContact {
+  id         Int @id @default(autoincrement())
+  profileId  Int
+  contactId  Int
+
+  value      String
+  label      String?
+  isPrimary  Boolean @default(false)
+  isPublic   Boolean @default(true)
+  order      Int @default(0)
+
+  profile    ProducerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  option     ContactOption   @relation(fields: [contactId], references: [id])
+
+  @@unique([profileId, contactId, value])
+}
 
 model ProducerLocal {
   id         Int        @id @default(autoincrement())

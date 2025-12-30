@@ -1,6 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
+const CONTACT_OPTIONS = [
+  { id: 1, name: "whatsapp", label: "WhatsApp", icon: "whatsapp" },
+  { id: 2, name: "telegram", label: "Telegram", icon: "telegram" },
+  { id: 3, name: "instagram", label: "Instagram", icon: "instagram" },
+];
+
 const LOCATIONS_OPTIONS = [
   { id: 1, name: "a_domicilio", label: "À Domicílio" },
   { id: 2, name: "hoteis", label: "Hotéis" },
@@ -76,6 +82,12 @@ const PAYMENT_OPTIONS = [
 
 async function main() {
   console.log("🌱 Iniciando seed...");
+
+  await prisma.contactOption.createMany({
+    data: CONTACT_OPTIONS,
+    skipDuplicates: true,
+  });
+  console.log("🌱 contactOption OK");
 
   await prisma.locationOption.createMany({
     data: LOCATIONS_OPTIONS,
