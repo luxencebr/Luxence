@@ -9,7 +9,6 @@ import { TbHomeCheck, TbHomeX } from "react-icons/tb";
 import { FaHeart } from "react-icons/fa6";
 
 import ValueDropdown from "../ValuesDropdown/ValuesDropdown";
-import { formatUserName } from "@/utils/formatName";
 
 import type { Producer } from "@/types/Producer";
 
@@ -33,7 +32,7 @@ function calculateAge(birthday: Date | string): number {
 }
 
 function Product({ producer, variant }: ProductProps) {
-  const name = producer.user?.name || "";
+  const name = producer.name || "";
   const age = calculateAge(producer.birthday);
   const city = producer.user?.locality?.city || "";
   const neighborhood = producer.user?.locality?.neighborhood || "";
@@ -62,7 +61,7 @@ function Product({ producer, variant }: ProductProps) {
 
         <div className={styles.itemInfo}>
           <div className={styles.infoHeader}>
-            <h3 className={styles.producerName}>{formatUserName(name)}</h3>
+            <h3 className={styles.producerName}>{name}</h3>
             <span
               className={`${styles.productLoc} ${
                 variant === undefined ? styles.hidden : ""

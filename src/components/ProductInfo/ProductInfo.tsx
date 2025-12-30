@@ -16,7 +16,6 @@ import { HiOutlinePencil } from "react-icons/hi2";
 
 import type { Producer } from "@/types/Producer";
 import ScrollTo from "@/utils/ScrollTo";
-import { formatUserName } from "@/utils/formatName";
 import Popup from "../ui/Popup/Popup";
 
 const formatWhatsAppNumber = (phone: string) => {
@@ -268,7 +267,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                   className={styles.editableValue}
                   onClick={canEdit ? handleEditName : undefined}
                 >
-                  {formatUserName(name)}
+                  {name}
                   {canEdit && <HiOutlinePencil className={styles.editIcon} />}
                 </h1>
               )}
