@@ -3,16 +3,18 @@ import { prisma } from "@/utils/prisma";
 import { deleteFromSpaces } from "@/lib/deleteFromSpaces";
 
 export async function DELETE(
-  req: Request,
-  { params }: { params: { imageId: string } }
+  req: NextRequest,
+  context: { params: { imageId: string } }
 ) {
   try {
-    const { imageId } = params;
+    const { imageId } = context.params;
 
     // 1. Buscar o profile que contém essa imagem
     const profiles = await prisma.producerProfile.findMany();
-    const profile = profiles.find((p) =>
-      Array.isArray(p.images) && p.images.some((img: any) => img.id === imageId)
+    const profile = profiles.find(
+      (p) =>
+        Array.isArray(p.images) &&
+        p.images.some((img: any) => img.id === imageId)
     );
 
     if (!profile || !Array.isArray(profile.images)) {
@@ -25,7 +27,12 @@ export async function DELETE(
     // 2. Separar a imagem
     const image = profile.images.find((img: any) => img.id === imageId);
 
-    if (!image || typeof image !== "object" || !("url" in image) || !image.url) {
+    if (
+      !image ||
+      typeof image !== "object" ||
+      !("url" in image) ||
+      !image.url
+    ) {
       return NextResponse.json({ error: "URL inválida" }, { status: 400 });
     }
 
