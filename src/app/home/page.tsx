@@ -130,7 +130,6 @@ export default function HomePage() {
   return (
     <main className={styles.homePage}>
       <div className={styles.layout}>
-        <Slider slides={sliderData} className={styles.homeSlider} />
         <ProductsRow producers={newProducers} title="Novidades" />
         <ProductsRow producers={topProducers} title="Top Luxence" highlight />
       </div>

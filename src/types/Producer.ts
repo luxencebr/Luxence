@@ -48,7 +48,7 @@ export interface ProducerProfile {
   producerId: number;
   slogan: string;
   description: string;
-  images: Array<{ name: string; url: string }>;
+  images: Array<{ id: string; name: string; url: string }>;
   scholarity: string;
   languages: Array<{ name: string; level: string }>;
   hasLocal: boolean;

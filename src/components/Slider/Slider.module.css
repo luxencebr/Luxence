@@ -1,101 +1,82 @@
 .slider {
   margin: 0 auto;
-
   display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .sliderContainer {
-  height: 100%;
-  width: 100%;
-
-  border-radius: 16px;
-  box-shadow: 0 0 8px rgb(0, 0, 0, 0.75);
-  overflow: hidden;
+  max-height: calc(90vh - 32px);
+  aspect-ratio: 4 / 3;
 
   position: relative;
+  overflow: hidden;
+
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
+/* Slides */
 
 .slideImages {
   width: 100%;
   height: 100%;
-
   display: flex;
-  transition: transform 0.5s ease-in-out;
 }
 
 .slideImage {
-  background: #2f2f2f;
-  height: 100%;
   width: 100%;
+  height: 100%;
+  flex-shrink: 0;
+
   object-fit: cover;
   object-position: center;
-  flex-shrink: 0;
 }
 
+/* Controls */
+
 .controls {
-  width: 100%;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+
+  pointer-events: none;
 
   display: flex;
+  align-items: center;
   justify-content: space-between;
-
-  position: absolute;
-  z-index: 2;
+  padding: 0 8px;
 }
 
 .controls button {
   background: transparent;
+  border: none;
   padding: 8px;
 
-  border: none;
-  border-radius: 50%;
+  pointer-events: auto;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  color: var(--contrast-color);
   font-size: 24px;
+  color: var(--contrast-color);
 
   cursor: pointer;
 }
+
+/* Thumbnails */
 
 .indicators {
+  position: absolute;
+  bottom: 0;
   padding: 8px;
 
-  position: absolute;
-  align-self: flex-end;
-
   display: flex;
-  flex-flow: row nowrap;
   align-items: center;
   gap: 8px;
-
-  text-align: center;
-}
-
-.indicators input[type="radio"] {
-  appearance: none;
-  -webkit-appearance: none;
-
-  background: transparent;
-  width: 12px;
-  height: 12px;
-  margin: 0;
-  border-radius: 50%;
-  border: 2px solid var(--contrast-color);
-
-  cursor: pointer;
-
-  transition: background-color 0.3s ease;
-}
-
-.indicators input[type="radio"]:checked {
-  background-color: var(--contrast-color);
 }
 
 .thumbnailWrapper {
@@ -108,11 +89,11 @@
 
   object-fit: cover;
 
-  border: 1px solid transparent;
   border-radius: 4px;
+  border: 1px solid transparent;
 
   cursor: pointer;
-  transition: border 0.3s ease;
+  transition: border-color 0.3s ease;
 }
 
 .thumbnail:hover,
@@ -120,48 +101,47 @@
   border-color: var(--contrast-color);
 }
 
-.removeBtn {
-  background: rgba(255, 0, 0);
-  height: 16px;
-  aspect-ratio: 1 / 1;
-  padding: 0;
+/* Remove button */
 
+.removeBtn {
+  position: absolute;
+  top: -15%;
+  right: -15%;
+  z-index: 3;
+
+  aspect-ratio: 1 / 1;
+
+  background: red;
   border: none;
   border-radius: 50%;
+  padding: 2px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  position: absolute;
-  top: -10%;
-  right: -10%;
-  z-index: 9999;
-
-  color: var(--contrast-color);
   font-size: 12px;
+  color: var(--contrast-color);
+
   cursor: pointer;
 }
+
+/* Add button */
 
 .addBtn {
   background: var(--contrast-color);
   padding: 8px;
 
   border-radius: 50%;
-
   display: flex;
 
-  color: var(--background-color);
   font-size: 16px;
+  color: var(--background-color);
 
   cursor: pointer;
 }
 
-@media (max-width: 768px) {
-  .controls {
-    display: none;
-  }
-}
+/* States */
 
 .loading {
   pointer-events: none;
@@ -170,6 +150,7 @@
 .spinner {
   width: 12px;
   height: 12px;
+
   border: 2px solid var(--background-color);
   border-top-color: var(--primary-color);
   border-radius: 50%;
@@ -180,14 +161,56 @@
 .spinnerMini {
   width: 14px;
   height: 14px;
+
   border: 2px solid #ffffff44;
   border-top-color: #fff;
   border-radius: 50%;
+
   animation: spin 0.7s linear infinite;
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+  .sliderContainer {
+    max-height: calc(95vh - 32px);
+    aspect-ratio: 3 / 4;
+  }
+  .controls {
+    display: none;
+  }
 }
 
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
+}
+
+.emptyState,
+.noImages,
+.imagesInput {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+  text-align: center;
+}
+
+.imagesInput {
+  cursor: pointer;
+  color: var(--contrast-color);
+}
+
+.imagesInput i {
+  font-size: 32px;
+}
+
+.noImages {
+  opacity: 0.6;
 }
