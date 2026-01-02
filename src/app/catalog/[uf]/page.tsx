@@ -12,7 +12,7 @@ import ProductsCatalog from "@/components/ProductsCatalog/ProductsCatalog";
 
 import { Producer } from "@/types/Producer";
 
-export function calculateAge(birthday: string | Date) {
+function calculateAge(birthday: string | Date) {
   const birth = new Date(birthday);
   const today = new Date();
 
@@ -26,11 +26,11 @@ export function calculateAge(birthday: string | Date) {
   return age;
 }
 
-export function getMainImage(producer: Producer) {
+function getMainImage(producer: Producer) {
   return producer.profile.images?.[0]?.url || "/placeholder.jpg";
 }
 
-export function getAverageRating(producer: Producer) {
+function getAverageRating(producer: Producer) {
   const reviews = producer.profile.reviews || [];
   if (!reviews.length) return null;
 
@@ -38,7 +38,7 @@ export function getAverageRating(producer: Producer) {
   return total / reviews.length;
 }
 
-export function normalizeGender(gender: string) {
+function normalizeGender(gender: string) {
   return gender.toLowerCase();
 }
 
