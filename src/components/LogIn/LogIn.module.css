@@ -124,9 +124,9 @@
   cursor: pointer;
 }
 
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus {
+.form label input:-webkit-autofill,
+.form label input:-webkit-autofill:hover,
+.form label input:-webkit-autofill:focus {
   -webkit-box-shadow: 0 0 0px 1000px var(--background-color) inset !important;
   -webkit-text-fill-color: var(--contrast-color) !important;
   transition: background-color 5000s ease-in-out 0s;
