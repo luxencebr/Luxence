@@ -3,12 +3,13 @@
 =========================== */
 .productInfos {
   background: var(--background-complementary-color);
+  max-height: calc(90vh - 32px);
   color: var(--contrast-color);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  flex: 0 1 auto;
+  flex: 1 1 240px;
   overflow: hidden;
 }
 

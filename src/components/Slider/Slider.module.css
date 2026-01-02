@@ -1,9 +1,8 @@
 .slider {
   background: var(--background-complementary-color);
-  min-height: 0;
-  max-height: calc(90vh - 32px);
-  flex: 1;
-  aspect-ratio: 4 / 3;
+  height: calc(90vh - 32px);
+  width: calc((90vh - 32px) * 4 / 3);
+  margin: 0 auto;
 
   overflow: hidden;
   border-radius: 16px;
@@ -210,7 +209,7 @@
 @media (max-width: 768px) {
   .slider {
     aspect-ratio: 3 / 4; /* retrato */
-    max-height: none; /* deixa o height definido pelo layout */
+    height: auto; /* deixa o height definido pelo layout */
     width: 100%; /* ocupa largura total */
   }
 
