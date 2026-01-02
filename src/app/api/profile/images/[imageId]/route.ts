@@ -2,12 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/utils/prisma";
 import { deleteFromSpaces } from "@/lib/deleteFromSpaces";
 
-export async function DELETE(
-  req: NextRequest,
-  context: { params: { imageId: string } }
-) {
+export async function DELETE(req: NextRequest, { params }: { params: any }) {
   try {
-    const { imageId } = context.params;
+    const { imageId } = params;
 
     // 1. Buscar o profile que contém essa imagem
     const profiles = await prisma.producerProfile.findMany();
