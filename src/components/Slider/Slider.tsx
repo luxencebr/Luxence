@@ -63,16 +63,6 @@ export default function HighlightSlider({
     setCurrentSlide((prev) => (prev - 1 < 0 ? totalSlides - 1 : prev - 1));
   }, [totalSlides]);
 
-  useEffect(() => {
-    if (isDragging || totalSlides <= 1) return;
-
-    intervalRef.current = setInterval(goToNextSlide, slideInterval);
-
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [goToNextSlide, isDragging, totalSlides]);
-
   /* ================= TOUCH ================= */
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -164,13 +154,17 @@ export default function HighlightSlider({
                 isUploading ? styles.loading : ""
               }`}
             >
-              <i>
-                <GoUpload />
-              </i>
-              <span>Adicione imagens ao seu perfil</span>
-              <small>E alcance mais usuários</small>
-
-              {isUploading && <span className={styles.spinner} />}
+              {isUploading ? (
+                <span className={styles.spinner} />
+              ) : (
+                <>
+                  <i>
+                    <GoUpload />
+                  </i>
+                  <span>Adicione imagens ao seu perfil</span>
+                  <small>E alcance mais usuários</small>
+                </>
+              )}
             </label>
 
             <input

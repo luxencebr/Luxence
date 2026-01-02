@@ -1,58 +1,50 @@
+/* ===========================
+   Container Principal
+=========================== */
 .productInfos {
   background: var(--background-complementary-color);
-  flex: 1 0 auto;
-
-  overflow: hidden;
-  border-radius: 8px;
-
-  display: flex;
-  flex-flow: column nowrap;
-  gap: 8px;
-
   color: var(--contrast-color);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 0 1 auto;
+  overflow: hidden;
 }
 
+/* Layout interno com scroll */
 .layout {
   height: 100%;
   min-width: 0;
   padding: 16px;
-
-  overflow-y: auto;
-
   display: flex;
-  flex-flow: column nowrap;
-  gap: 8px;
-
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
   transition: height 0.3s ease;
 }
 
+/* Scroll personalizado */
 .layout::-webkit-scrollbar {
   width: 2px;
 }
-
 .layout::-webkit-scrollbar-track {
   background: transparent;
 }
-
 .layout::-webkit-scrollbar-thumb {
   background: var(--primary-color);
   border-radius: 5px;
 }
-
 .layout::-webkit-scrollbar-thumb:hover {
   background: var(--primary-complementary-color);
 }
 
-.contactsOptions {
-  background: var(--background-complementary-color);
-  flex: 1;
-}
-
+/* ===========================
+   Contatos
+=========================== */
 .contactsLayout {
-  height: 100%;
   width: 100%;
   display: flex;
-  flex-flow: row nowrap;
   justify-content: center;
   gap: 12px;
 }
@@ -60,59 +52,61 @@
 .contactButton {
   flex: 1;
   padding: 8px;
-
-  outline: none;
-  border: none;
   border-radius: 8px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-
-  color: white;
   font-size: 32px;
-  text-decoration: none;
-
+  color: white;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .contactButton span {
   font-size: 12px;
 }
 
+.active {
+  opacity: 1;
+}
+.disabled {
+  opacity: 0.5;
+}
+
+.whatsapp {
+  background: #25d366;
+}
+.instagram {
+  background: #e1306c;
+}
+.telegram {
+  background: #0088cc;
+}
+
+/* Popup */
 .popup {
   background: var(--background-color);
   padding: 16px;
-
   border-radius: 8px;
-
   display: flex;
-  flex-flow: column nowrap;
+  flex-direction: column;
 }
 
 .contactHeader {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-
+  align-items: center;
   font-size: 20px;
 }
 
 .closeBtn {
   background: transparent;
-  aspect-ratio: 1 / 1;
-  padding: 0;
-
-  border: transparent;
-
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-
   color: var(--contrast-color);
   font-size: 20px;
-
   cursor: pointer;
 }
 
@@ -120,10 +114,8 @@
   background: var(--background-complementary-color);
   padding: 8px;
   margin: 16px 0;
-
   border: none;
   border-radius: 8px;
-
   color: var(--contrast-color);
 }
 
@@ -135,12 +127,9 @@
 .actions button {
   flex: 1;
   padding: 8px;
-
-  border: none;
   border-radius: 4px;
-
+  border: none;
   color: var(--background-color);
-
   cursor: pointer;
   transition: 0.2s;
 }
@@ -152,89 +141,35 @@
 .save {
   background: var(--primary-color);
 }
-
 .save:disabled {
-  opacity: 0.75;
   cursor: not-allowed;
+  opacity: 0.75;
 }
 
-.cancel {
-}
-
-.editable {
-  position: relative;
-}
-
-.editIcon {
-  font-size: 32px;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-.editable:hover .editIcon {
-  opacity: 1;
-}
-
-.disabled {
-  opacity: 0.5;
-}
-
-.active {
-  opacity: 1;
-}
-
-.whatsapp {
-  background: #25d366;
-}
-
-.instagram {
-  background: #e1306c;
-}
-
-.telegram {
-  background: #0088cc;
-}
-
+/* ===========================
+   Campos editáveis (nome/slogan)
+=========================== */
 .editableField {
   max-width: 200px;
+}
 
-  white-space: normal;
-  word-break: break-word;
-  overflow-wrap: break-word;
+.editableValue,
+.editablePlaceholder {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
 }
 
 .editableValue {
   padding: 4px;
-
   color: var(--contrast-complementary-color);
-  cursor: pointer;
-
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-
   hyphens: auto;
 }
 
-.editableValue:hover .editIcon {
-  opacity: 1;
-  color: var(--primary-color);
-}
-
-.editIcon {
-  font-size: 10px;
-  opacity: 0.5;
-}
-
 .editablePlaceholder {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-
-  cursor: pointer;
   opacity: 0.7;
 }
-
 .editablePlaceholder:hover {
   color: var(--primary-complementary-color);
 }
@@ -249,30 +184,23 @@
   background: var(--background-color);
   flex: 1;
   padding: 4px;
-
-  outline: none;
-  border: none;
   border-radius: 4px;
-
+  border: none;
+  outline: none;
   color: var(--contrast-color);
   font-family: inherit;
-  width: 100%;
 }
 
 .editableCancel {
   background: transparent;
-  aspect-ratio: 1 / 1;
-  padding: 2px;
-
   border: none;
-
+  aspect-ratio: 1 / 1;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  color: var(--contrast-color);
+  padding: 2px;
   font-size: 16px;
-
+  color: var(--contrast-color);
   cursor: pointer;
 }
 
@@ -280,119 +208,107 @@
   color: var(--text-primary);
 }
 
+.editIcon {
+  font-size: 10px;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+.editable:hover .editIcon,
+.editableValue:hover .editIcon {
+  opacity: 1;
+  color: var(--primary-color);
+}
+
 .nameField .editableValue,
 .nameField .editableInput {
   font-size: 20px;
   font-weight: 600;
 }
-
 .sloganField .editableValue,
 .sloganField .editableInput {
   font-size: 12px;
   font-style: italic;
 }
 
-.content {
-  min-width: 0;
-  flex: 1;
-  display: flex;
-  flex-flow: column nowrap;
-  gap: 8px;
-
-  position: relative;
-}
-
+/* ===========================
+   Header do produto
+=========================== */
 .productHeader {
   display: flex;
-  flex-flow: row nowrap;
   justify-content: space-between;
   align-items: center;
   gap: 8px;
 }
 
 .verified {
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: center;
-
   font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.expandableContent {
-  height: 90%;
-
+/* ===========================
+   Conteúdo interno / Cards
+=========================== */
+.content {
+  flex: 1;
   display: flex;
-  flex-flow: column nowrap;
+  flex-direction: column;
   gap: 8px;
-
-  transition: all 0.3s ease;
+  min-width: 0;
 }
 
 .infoCard {
   background: none;
   flex: 1;
   padding: 12px;
-
   border: none;
   border-radius: 8px;
   box-shadow: 0 0 0 1px var(--primary-complementary-color);
-
-  position: relative;
-
   display: flex;
-  flex-flow: column nowrap;
+  flex-direction: column;
   gap: 8px;
-
-  color: var(--contrast-color);
-  font-family: Quicksand, sans-serif;
-  text-decoration: none;
-
   cursor: pointer;
 }
 
 .cardHeader {
   display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
   justify-content: space-between;
-
+  align-items: center;
   color: var(--primary-color);
 }
 
 .cardHeader h2 {
   display: flex;
-  flex-flow: row nowrap;
   align-items: center;
   gap: 4px;
-
   font-size: var(--fs-xs);
   font-weight: normal;
 }
 
 .cardHeader h2 span {
-  display: flex;
-  align-items: center;
-
   font-size: var(--fs-lg);
 }
 
 .cardContent {
   display: flex;
-  flex-flow: column nowrap;
-
+  flex-direction: column;
   text-align: left;
+  color: var(--contrast-color);
 }
 
 .cardContent p {
   display: flex;
-  flex-flow: column nowrap;
+  flex-direction: column;
   font-size: var(--fs-xs);
 }
 
 .cardContent p span {
   font-size: var(--fs-md);
-
   font-weight: bold;
+  display: flex;
+  flex-direction: column;
 }
 
 .cardContent p span span {
@@ -404,118 +320,39 @@
   display: flex;
   align-items: center;
   gap: 4px;
-
   font-style: normal;
 }
 
-.hasLocal {
-  display: flex;
-  align-items: center;
-  gap: 4px;
+/* ===========================
+   Loader
+=========================== */
+.loader {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--contrast-color);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
 }
 
-.hasLocal span {
-  display: flex;
-  align-items: center;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-.seeMoreButton {
-  background: var(--primary-color);
-  padding: 4px;
-
-  outline: none;
-  border: none;
-  border-radius: 12px;
-
-  color: var(--background-color);
-  font-size: 12px;
-  font-weight: bold;
-
-  cursor: pointer;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-
-.productSpecifies {
-  transition: all 0.3s ease;
-}
-
-.productSpecifies h2 {
-  margin: 8px 0;
-
-  text-align: center;
-  font-size: 16px;
-}
-
-.specifiesList {
-  flex: 0 0 360px;
-  max-width: 768px;
-
-  list-style: none;
-  margin: 0;
-  padding: 0;
-
-  color: var(--contrast-color);
-  font-size: 12px;
-}
-
-.specify {
-  padding: 8px;
-
-  border-bottom: 1px solid var(--contrast-complementary-color);
-  border-collapse: collapse;
-
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-.hidden {
-  display: none;
-}
-
-.productHighlight {
-  flex: 1;
-}
-
-/* Mobile responsive styles */
+/* ===========================
+   Mobile Responsivo
+=========================== */
 @media (max-width: 768px) {
   .productInfos {
-    height: auto;
     width: 100%;
-    overflow: visible;
+    flex: none;
   }
 
   .layout {
     height: calc(100% - 70px);
     overflow-y: visible;
-  }
-
-  .layout.expanded {
-    overflow-y: auto;
-  }
-
-  .expandableContent {
-    flex-flow: row;
-  }
-
-  .contactsOptions {
-    background: var(--background-complementary-color);
-    width: 100%;
-    padding: 16px;
-    box-sizing: border-box;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    z-index: 1000;
   }
 
   .content {
@@ -530,26 +367,18 @@
   }
 
   .cardContent p span {
-    display: flex;
-    flex-flow: column;
+    flex-direction: column;
   }
 
-  .productSpecifies.hidden {
-    display: none;
-  }
-}
+  .contactsLayout {
+    background: var(--background-color);
+    padding: 16px;
 
-.loader {
-  width: 18px;
-  height: 18px;
-  border: 2px solid var(--contrast-color);
-  border-top-color: var(--primary-color);
-  border-radius: 50%;
-  animation: spin 0.6s linear infinite;
-}
+    box-sizing: border-box;
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
   }
 }

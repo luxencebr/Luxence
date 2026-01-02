@@ -4,3 +4,9 @@
   flex-flow: row wrap;
   gap: 16px;
 }
+
+@media (max-width: 768px) {
+  .productShowcase {
+    flex-direction: column; /* empilha slider + info */
+  }
+}

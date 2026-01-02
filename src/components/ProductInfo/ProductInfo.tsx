@@ -395,8 +395,10 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                     <span>{price.option.label}</span>
                   </span>
                 </p>
+              ) : canEdit ? (
+                <p>Informe seus valores!</p>
               ) : (
-                <p>Informe seus valores</p>
+                <p>Ainda não há valores...</p>
               )}
             </div>
           </button>
