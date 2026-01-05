@@ -24,7 +24,7 @@ interface SliderProps {
 
 /* ================= COMPONENT ================= */
 
-export default function HighlightSlider({
+export default function Slider({
   profileId,
   initialImages,
   canEdit = false,
