@@ -19,7 +19,7 @@ import { FaPlus, FaRegTrashCan } from "react-icons/fa6";
 interface ImageItem {
   id: string;
   url: string;
-  originalUrl: string;
+  originalUrl?: string;
   name: string;
   cropData?: {
     x: number;
