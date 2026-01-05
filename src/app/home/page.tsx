@@ -5,12 +5,9 @@ import { Producer } from "@/types/Producer";
 
 import styles from "./page.module.css";
 
-import Slider from "@/components/Slider/Slider";
-import { Slide } from "@/components/Slider/Slider";
 import ProductsRow from "@/components/ProductRow/ProductRow";
 
 export default function HomePage() {
-  const [sliderData, setSliderData] = useState<any[]>([]);
   const [newProducers, setNewProducers] = useState<Producer[]>([]);
   const [topProducers, setTopProducers] = useState<Producer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -65,33 +62,6 @@ export default function HomePage() {
     }
 
     loadHomeData();
-  }, []);
-
-  useEffect(() => {
-    async function loadSlider() {
-      const res = await fetch("/api/slider");
-      const data = await res.json();
-
-      const linkMap: Record<string, string> = {
-        slide1: "https://atlanticaspa.com/",
-        slide2: "https://veenaspa.com.br/",
-      };
-
-      const slides: Slide[] = data.map((src: string) => {
-        const fileName = src.split("/").pop()?.split(".")[0]; // slide1
-
-        return {
-          id: src,
-          src,
-          alt: "Imagem do slider",
-          href: fileName ? linkMap[fileName] : undefined,
-        };
-      });
-
-      setSliderData(slides);
-    }
-
-    loadSlider();
   }, []);
 
   if (isLoading) {
