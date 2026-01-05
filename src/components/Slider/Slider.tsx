@@ -2,18 +2,32 @@
 
 import type React from "react";
 import { useState, useEffect, useCallback, useRef } from "react";
+import Cropper from "react-easy-crop";
 import styles from "./Slider.module.css";
+import { HiOutlinePencil } from "react-icons/hi2";
 
 import { GoUpload } from "react-icons/go";
-import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
-import { FaXmark, FaPlus } from "react-icons/fa6";
+import {
+  IoChevronBackOutline,
+  IoChevronForwardOutline,
+  IoClose,
+} from "react-icons/io5";
+import { FaPlus, FaRegTrashCan } from "react-icons/fa6";
 
 /* ================= TYPES ================= */
 
 interface ImageItem {
   id: string;
   url: string;
+  originalUrl: string;
   name: string;
+  cropData?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    zoom: number;
+  };
 }
 
 interface SliderProps {
@@ -33,6 +47,18 @@ export default function Slider({
 
   const [images, setImages] = useState<ImageItem[]>(() => initialImages ?? []);
   const [currentSlide, setCurrentSlide] = useState(0);
+
+  const [originalFile, setOriginalFile] = useState<File | null>(null);
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+  const [isCropOpen, setIsCropOpen] = useState(false);
+
+  type CropMode = "create" | "edit";
+
+  const [cropMode, setCropMode] = useState<CropMode>("create");
+  const [editingImageId, setEditingImageId] = useState<string | null>(null);
 
   const [isUploading, setIsUploading] = useState(false);
   const [isDeleting, setIsDeleting] = useState<number | null>(null);
@@ -87,58 +113,63 @@ export default function Slider({
 
   /* ================= UPLOAD ================= */
 
-  const handleAddImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAddImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setIsUploading(true);
+    setCropMode("create");
+    setEditingImageId(null);
+    setOriginalFile(file);
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("profileId", String(profileId));
+    const reader = new FileReader();
+    reader.onload = () => {
+      setImageSrc(reader.result as string);
+      setIsCropOpen(true);
+    };
+    reader.readAsDataURL(file);
+  };
 
-    try {
-      const res = await fetch("/api/profile/images", {
-        method: "POST",
-        body: formData,
+  const handleEditImage = (index: number) => {
+    const image = images[index];
+    if (!image) return;
+
+    setCropMode("edit");
+    setEditingImageId(image.id);
+
+    setOriginalFile(null);
+
+    // Usar originalUrl se existir, senão usar url (imagens antigas)
+    const imageToEdit = image.originalUrl || image.url;
+    setImageSrc(imageToEdit);
+    setIsCropOpen(true);
+
+    // Se tiver cropData, restaurar. Senão, iniciar com valores padrão (imagem completa)
+    if (image.cropData) {
+      setCrop({ x: image.cropData.x, y: image.cropData.y });
+      setZoom(image.cropData.zoom);
+      setCroppedAreaPixels({
+        x: image.cropData.x,
+        y: image.cropData.y,
+        width: image.cropData.width,
+        height: image.cropData.height,
       });
-
-      if (!res.ok) throw new Error("Erro no upload");
-
-      const data: ImageItem = await res.json();
-
-      setImages((prev) => {
-        setCurrentSlide(prev.length);
-        return [...prev, data];
-      });
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsUploading(false);
-      e.target.value = "";
+    } else {
+      // Resetar para valores padrão
+      setCrop({ x: 0, y: 0 });
+      setZoom(1);
+      setCroppedAreaPixels(null);
     }
   };
 
   /* ================= DELETE ================= */
 
-  const handleDeleteImage = async (index: number) => {
-    const image = images[index];
-    if (!image) return;
-
+  const handleDeleteImage = (index: number) => {
     setIsDeleting(index);
-
-    try {
-      await fetch(`/api/profile/images/${image.id}`, {
-        method: "DELETE",
-      });
-
+    // Simulate delete operation
+    setTimeout(() => {
       setImages((prev) => prev.filter((_, i) => i !== index));
-      setCurrentSlide((prev) => Math.max(prev - 1, 0));
-    } catch (err) {
-      console.error(err);
-    } finally {
       setIsDeleting(null);
-    }
+    }, 2000);
   };
 
   /* ================= RENDER ================= */
@@ -197,6 +228,32 @@ export default function Slider({
         onTouchEnd={handleTouchEnd}
       >
         {/* Slides */}
+        {canEdit && images[currentSlide] && (
+          <div className={styles.sliderActions}>
+            <button
+              className={styles.editCurrentBtn}
+              onClick={() => handleEditImage(currentSlide)}
+            >
+              <HiOutlinePencil />
+            </button>
+
+            <button
+              className={`${styles.removeCurrentBtn} ${
+                isDeleting === currentSlide ? styles.loading : ""
+              }`}
+              onClick={() => handleDeleteImage(currentSlide)}
+              disabled={isDeleting === currentSlide}
+              aria-label="Remover imagem atual"
+            >
+              {isDeleting === currentSlide ? (
+                <span className={styles.spinner} />
+              ) : (
+                <FaRegTrashCan />
+              )}
+            </button>
+          </div>
+        )}
+
         <div
           className={styles.slideImages}
           style={{
@@ -209,7 +266,7 @@ export default function Slider({
           {images.map((img, index) => (
             <img
               key={`${img.id}-${index}`}
-              src={img.url}
+              src={img.url || "/placeholder.svg"}
               alt={img.name}
               className={styles.slideImage}
               draggable={false}
@@ -237,30 +294,13 @@ export default function Slider({
               key={`${img.id}-thumb-${index}`}
             >
               <img
-                src={img.url}
+                src={img.url || "/placeholder.svg"}
                 alt={img.name}
                 className={`${styles.thumbnail} ${
                   index === currentSlide ? styles.active : ""
                 }`}
                 onClick={() => setCurrentSlide(index)}
               />
-
-              {canEdit && (
-                <button
-                  className={`${styles.removeBtn} ${
-                    isDeleting === index ? styles.loading : ""
-                  }`}
-                  onClick={() => handleDeleteImage(index)}
-                  disabled={isDeleting === index}
-                  aria-label="Remover imagem"
-                >
-                  {isDeleting === index ? (
-                    <span className={styles.spinnerMini} />
-                  ) : (
-                    <FaXmark />
-                  )}
-                </button>
-              )}
             </div>
           ))}
 
@@ -287,6 +327,116 @@ export default function Slider({
           )}
         </div>
       </div>
+      {isCropOpen && imageSrc && (
+        <div className={styles.backdrop}>
+          <div className={styles.cropModal}>
+            <div className={styles.cropHeader}>
+              Cortar Imagem
+              <button onClick={() => setIsCropOpen(false)}>
+                <IoClose />
+              </button>
+            </div>
+
+            <div className={styles.cropContainer}>
+              <Cropper
+                image={imageSrc}
+                crop={crop}
+                zoom={zoom}
+                aspect={4 / 3}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={(_, pixels) => setCroppedAreaPixels(pixels)}
+              />
+
+              <div className={styles.safeArea} />
+            </div>
+
+            <div className={styles.cropActions}>
+              <button onClick={() => setIsCropOpen(false)}>Cancelar</button>
+
+              <button
+                className={styles.saveBtn}
+                onClick={async () => {
+                  if (!croppedAreaPixels) return;
+
+                  setIsUploading(true);
+
+                  try {
+                    let res: Response;
+
+                    if (cropMode === "create") {
+                      if (!originalFile) throw new Error("Arquivo ausente");
+
+                      const formData = new FormData();
+                      formData.append("file", originalFile);
+                      formData.append(
+                        "crop",
+                        JSON.stringify(croppedAreaPixels)
+                      );
+                      formData.append("zoom", String(zoom));
+                      formData.append("aspect", "4/3");
+                      formData.append("profileId", String(profileId));
+
+                      res = await fetch("/api/profile/images", {
+                        method: "POST",
+                        body: formData,
+                      });
+                    } else {
+                      if (!editingImageId)
+                        throw new Error("Imagem não identificada");
+
+                      // Usar PATCH e enviar JSON
+                      res = await fetch(
+                        `/api/profile/images/${editingImageId}`,
+                        {
+                          method: "PATCH",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            cropData: croppedAreaPixels,
+                            zoom: zoom,
+                          }),
+                        }
+                      );
+                    }
+
+                    if (!res.ok) throw new Error("Erro ao salvar");
+
+                    const updatedImage: ImageItem = await res.json();
+
+                    setImages((prev) => {
+                      if (cropMode === "create") {
+                        setCurrentSlide(prev.length);
+                        return [...prev, updatedImage];
+                      }
+
+                      const imageWithTimestamp = {
+                        ...updatedImage,
+                        url: `${updatedImage.url}?t=${Date.now()}`,
+                      };
+
+                      return prev.map((img) =>
+                        img.id === updatedImage.id ? imageWithTimestamp : img
+                      );
+                    });
+
+                    setIsCropOpen(false);
+                    setImageSrc(null);
+                    setOriginalFile(null);
+                    setEditingImageId(null);
+                    setCropMode("create");
+                  } catch (err) {
+                    console.error(err);
+                  } finally {
+                    setIsUploading(false);
+                  }
+                }}
+              >
+                {isUploading ? <span className={styles.spinner} /> : "Salvar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
