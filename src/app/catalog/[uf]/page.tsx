@@ -26,18 +26,6 @@ function calculateAge(birthday: string | Date) {
   return age;
 }
 
-function getMainImage(producer: Producer) {
-  return producer.profile.images?.[0]?.url || "/placeholder.jpg";
-}
-
-function getAverageRating(producer: Producer) {
-  const reviews = producer.profile.reviews || [];
-  if (!reviews.length) return null;
-
-  const total = reviews.reduce((sum, r) => sum + r.rating, 0);
-  return total / reviews.length;
-}
-
 function normalizeGender(gender: string) {
   return gender.toLowerCase();
 }
@@ -71,7 +59,7 @@ function orderBySignature(items: Producer[]): Producer[] {
 
 import { ActiveFilters } from "@/components/FilterPopup/FilterPopup";
 
-export function applyFilters(producers: Producer[], filters: ActiveFilters) {
+function applyFilters(producers: Producer[], filters: ActiveFilters) {
   return producers.filter((p) => {
     const profile = p.profile;
     if (!profile) return false;
