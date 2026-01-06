@@ -163,13 +163,26 @@ export default function Slider({
 
   /* ================= DELETE ================= */
 
-  const handleDeleteImage = (index: number) => {
+  const handleDeleteImage = async (index: number) => {
+    const image = images[index];
+    if (!image) return;
+
     setIsDeleting(index);
-    // Simulate delete operation
-    setTimeout(() => {
+
+    try {
+      const res = await fetch(`/api/profile/images/${image.id}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) throw new Error("Erro ao deletar imagem");
+
       setImages((prev) => prev.filter((_, i) => i !== index));
+      setCurrentSlide((prev) => Math.max(0, prev - 1));
+    } catch (err) {
+      console.error(err);
+    } finally {
       setIsDeleting(null);
-    }, 2000);
+    }
   };
 
   /* ================= RENDER ================= */
