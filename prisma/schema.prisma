@@ -210,31 +210,37 @@ model LocalAmenity {
   @@unique([localId, amenityId])
 }
 
+enum APPEARANCE_VALUE_TYPE {
+  BOOLEAN
+  NUMBER
+  OPTION
+}
+
 model AppearanceOption {
-  id     Int     @id 
-  name   String  @unique
-  label  String
-  type   String 
+  id        Int    @id
+  name      String @unique
+  label     String
+  valueType APPEARANCE_VALUE_TYPE
 
   producers ProducerAppearance[]
 }
 
-model ProducerAppearance {
-  id          Int              @id @default(autoincrement())
-  profileId   Int
-  appearanceId Int
-  profile     ProducerProfile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  appearance  AppearanceOption @relation(fields: [appearanceId], references: [id])
 
-  height      Float?
-  mannequin   Int?
-  feet        Int?
-  tattoos     Boolean?
-  piercings   Boolean?
-  silicone    Boolean?
+model ProducerAppearance {
+  id            Int @id @default(autoincrement())
+  profileId     Int
+  appearanceId  Int
+
+  valueBoolean  Boolean?
+  valueNumber   Float?
+  valueString   String?
+
+  profile    ProducerProfile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  option     AppearanceOption @relation(fields: [appearanceId], references: [id])
 
   @@unique([profileId, appearanceId])
 }
+
 
 model PriceOption {
   id       Int     @id

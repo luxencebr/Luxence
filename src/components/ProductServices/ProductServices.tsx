@@ -26,7 +26,7 @@ function ProductServices({ producer, canEdit }: ProductServicesProps) {
     { id: 7, name: "sexo_vaginal", label: "Sexo Vaginal" },
     { id: 9, name: "striptease", label: "Striptease" },
     { id: 10, name: "sexo_anal", label: "Sexo Anal" },
-    { id: 11, name: "separador", label: "---" },
+    { id: 11, name: "massagem", label: "Massagem" },
     { id: 12, name: "penetracao_dupla", label: "Penetração Dupla" },
     { id: 13, name: "penetracao_tripla", label: "Penetração Tripla" },
   ];

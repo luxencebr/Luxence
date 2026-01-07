@@ -113,7 +113,14 @@ export interface ProducerAppearance {
   id: number;
   profileId: number;
   appearanceId: number;
-  option: Option;
+
+  valueBoolean?: boolean | null;
+  valueNumber?: number | null;
+  valueString?: string | null;
+
+  option: Option & {
+    valueType: "BOOLEAN" | "NUMBER" | "OPTION";
+  };
 }
 
 export interface ProducerLocation {

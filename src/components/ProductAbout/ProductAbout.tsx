@@ -10,10 +10,6 @@ import Dropdown from "@/components/ui/Dropdown/Dropdown";
 
 import {
   Languages,
-  User,
-  Ruler,
-  Eye,
-  Palette,
   Trash,
   Plus,
   Book,

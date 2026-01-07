@@ -1,10 +1,79 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, APPEARANCE_VALUE_TYPE } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const CONTACT_OPTIONS = [
   { id: 1, name: "whatsapp", label: "WhatsApp", icon: "whatsapp" },
   { id: 2, name: "telegram", label: "Telegram", icon: "telegram" },
   { id: 3, name: "instagram", label: "Instagram", icon: "instagram" },
+];
+
+const APPEARANCE_OPTIONS = [
+  {
+    id: 1,
+    name: "ethnicity",
+    label: "Etnia",
+    valueType: APPEARANCE_VALUE_TYPE.OPTION,
+  },
+  {
+    id: 2,
+    name: "hair_color",
+    label: "Cor do cabelo",
+    valueType: APPEARANCE_VALUE_TYPE.OPTION,
+  },
+  {
+    id: 3,
+    name: "eye_color",
+    label: "Cor dos olhos",
+    valueType: APPEARANCE_VALUE_TYPE.OPTION,
+  },
+  {
+    id: 4,
+    name: "altura",
+    label: "Altura",
+    valueType: APPEARANCE_VALUE_TYPE.NUMBER,
+  },
+  {
+    id: 5,
+    name: "manequim",
+    label: "Manequim",
+    valueType: APPEARANCE_VALUE_TYPE.NUMBER,
+  },
+  {
+    id: 6,
+    name: "breast_size",
+    label: "Tamanho do peito",
+    valueType: APPEARANCE_VALUE_TYPE.OPTION,
+  },
+  {
+    id: 7,
+    name: "butt_size",
+    label: "Tamanho da bunda",
+    valueType: APPEARANCE_VALUE_TYPE.OPTION,
+  },
+  {
+    id: 8,
+    name: "pe",
+    label: "Número do pé",
+    valueType: APPEARANCE_VALUE_TYPE.NUMBER,
+  },
+  {
+    id: 9,
+    name: "tatuagens",
+    label: "Tatuagens",
+    valueType: APPEARANCE_VALUE_TYPE.BOOLEAN,
+  },
+  {
+    id: 10,
+    name: "piercings",
+    label: "Piercings",
+    valueType: APPEARANCE_VALUE_TYPE.BOOLEAN,
+  },
+  {
+    id: 11,
+    name: "silicone",
+    label: "Silicone",
+    valueType: APPEARANCE_VALUE_TYPE.BOOLEAN,
+  },
 ];
 
 const LOCATIONS_OPTIONS = [
@@ -42,7 +111,7 @@ const SERVICE_OPTIONS = [
   { id: 7, name: "sexo_vaginal", label: "Sexo Vaginal" },
   { id: 9, name: "striptease", label: "Striptease" },
   { id: 10, name: "sexo_anal", label: "Sexo Anal" },
-  { id: 11, name: "separador", label: "---" },
+  { id: 11, name: "massagem", label: "Massagem" },
   { id: 12, name: "penetracao_dupla", label: "Penetração Dupla" },
   { id: 13, name: "penetracao_tripla", label: "Penetração Tripla" },
 ];
@@ -80,58 +149,53 @@ const PAYMENT_OPTIONS = [
   { id: 3, name: "debito", label: "Débito" },
 ];
 
+async function upsertMany<T extends { id: number }>(
+  model: {
+    upsert: (args: {
+      where: { id: number };
+      update: T;
+      create: T;
+    }) => Promise<any>;
+  },
+  data: T[],
+  label: string
+) {
+  console.log(`🌱 ${label}...`);
+
+  for (const item of data) {
+    await model.upsert({
+      where: { id: item.id },
+      update: item,
+      create: item,
+    });
+  }
+
+  console.log(`🌱 ${label} OK`);
+}
+
 async function main() {
   console.log("🌱 Iniciando seed...");
 
-  await prisma.contactOption.createMany({
-    data: CONTACT_OPTIONS,
-    skipDuplicates: true,
-  });
-  console.log("🌱 contactOption OK");
-
-  await prisma.locationOption.createMany({
-    data: LOCATIONS_OPTIONS,
-    skipDuplicates: true,
-  });
-  console.log("🌱 locationOption OK");
-
-  await prisma.amenityOption.createMany({
-    data: AMENITIES_OPTIONS,
-    skipDuplicates: true,
-  });
-  console.log("🌱 amenityOption OK");
-
-  await prisma.fetishOption.createMany({
-    data: FETICHES_OPTIONS,
-    skipDuplicates: true,
-  });
-  console.log("🌱 fetishOption OK");
-
-  await prisma.serviceOption.createMany({
-    data: SERVICE_OPTIONS,
-    skipDuplicates: true,
-  });
-  console.log("🌱 serviceOption OK");
-
-  await prisma.priceOption.createMany({
-    data: PRICE_OPTIONS,
-    skipDuplicates: true,
-  });
-  console.log("🌱 priceOption OK");
-
-  await prisma.paymentOption.createMany({
-    data: PAYMENT_OPTIONS,
-    skipDuplicates: true,
-  });
-  console.log("🌱 paymentOption OK");
+  await upsertMany(prisma.contactOption, CONTACT_OPTIONS, "contactOption");
+  await upsertMany(
+    prisma.appearanceOption,
+    APPEARANCE_OPTIONS,
+    "appearanceOption"
+  );
+  await upsertMany(prisma.locationOption, LOCATIONS_OPTIONS, "locationOption");
+  await upsertMany(prisma.amenityOption, AMENITIES_OPTIONS, "amenityOption");
+  await upsertMany(prisma.fetishOption, FETICHES_OPTIONS, "fetishOption");
+  await upsertMany(prisma.serviceOption, SERVICE_OPTIONS, "serviceOption");
+  await upsertMany(prisma.priceOption, PRICE_OPTIONS, "priceOption");
+  await upsertMany(prisma.paymentOption, PAYMENT_OPTIONS, "paymentOption");
 
   console.log("🌱 Seed finalizado com sucesso!");
 }
 
 main()
   .then(() => prisma.$disconnect())
-  .catch((err) => {
+  .catch(async (err) => {
     console.error(err);
-    prisma.$disconnect();
+    await prisma.$disconnect();
     process.exit(1);
   });

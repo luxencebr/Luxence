@@ -28,7 +28,7 @@ export async function GET(
         profile: {
           include: {
             appearance: {
-              include: { appearance: true },
+              include: { option: true },
             },
             contacts: {
               include: { option: true },

@@ -39,7 +39,7 @@ export async function GET(
             },
             appearance: {
               include: {
-                appearance: true,
+                option: true,
               },
             },
             prices: {
