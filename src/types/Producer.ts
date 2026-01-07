@@ -158,6 +158,7 @@ export interface ProducerAudience {
   id: number;
   profileId: number;
   audienceId: number;
+  status: string;
   option: Option;
 }
 

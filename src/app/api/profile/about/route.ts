@@ -3,7 +3,7 @@ import { prisma } from "@/utils/prisma";
 
 export async function PUT(req: Request) {
   try {
-    const { profileId, bio, languages } = await req.json();
+    const { profileId, bio } = await req.json();
 
     if (!profileId) {
       return NextResponse.json(
@@ -16,7 +16,6 @@ export async function PUT(req: Request) {
       where: { id: profileId },
       data: {
         description: bio,
-        languages: languages ?? [],
       },
     });
 

@@ -15,6 +15,7 @@ import ProductLocation from "@/components/ProductLocation/ProductLocation";
 import ProductReviews from "@/components/ProductReviews/ProductReviews";
 
 import styles from "./page.module.css";
+import ProductAudience from "@/components/ProductAudience/ProductAudience";
 
 interface ProductPageProps {
   params: Promise<{ id: string }>;
@@ -84,6 +85,7 @@ export default function ProductPage({ params }: ProductPageProps) {
       <div className={styles.layout}>
         <ProductShowcase producer={producer} canEdit={canEdit} />
         <ProductAbout producer={producer} canEdit={canEdit} />
+        <ProductAudience producer={producer} canEdit={canEdit} />
         <ProductServices producer={producer} canEdit={canEdit} />
         <ProductFetiches producer={producer} canEdit={canEdit} />
         <ProductValues producer={producer} canEdit={canEdit} />

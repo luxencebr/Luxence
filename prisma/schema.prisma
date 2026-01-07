@@ -328,9 +328,10 @@ model ProducerAudience {
   id          Int             @id @default(autoincrement())
   profileId   Int        
   audienceId  Int
+  status      String @default("neutral")
   profile     ProducerProfile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
   option      AudienceOption  @relation(fields: [audienceId], references: [id])
-
+  
   @@unique([profileId, audienceId])
 }
 

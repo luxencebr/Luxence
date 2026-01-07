@@ -101,6 +101,14 @@ const AMENITIES_OPTIONS = [
   { id: 15, name: "estacionamento", label: "Estacionamento" },
 ];
 
+const AUDIENCE_OPTIONS = [
+  { id: 1, name: "masculino", label: "Masculino" },
+  { id: 2, name: "feminino", label: "Feminino" },
+  { id: 3, name: "trans", label: "Trans" },
+  { id: 4, name: "casais", label: "Casais" },
+  { id: 5, name: "grupos", label: "Grupos" },
+];
+
 const SERVICE_OPTIONS = [
   { id: 1, name: "acompanhante", label: "Acompanhante" },
   { id: 2, name: "viagem", label: "Viagem" },
@@ -186,6 +194,7 @@ async function main() {
   await upsertMany(prisma.amenityOption, AMENITIES_OPTIONS, "amenityOption");
   await upsertMany(prisma.fetishOption, FETICHES_OPTIONS, "fetishOption");
   await upsertMany(prisma.serviceOption, SERVICE_OPTIONS, "serviceOption");
+  await upsertMany(prisma.audienceOption, AUDIENCE_OPTIONS, "audienceOption");
   await upsertMany(prisma.priceOption, PRICE_OPTIONS, "priceOption");
   await upsertMany(prisma.paymentOption, PAYMENT_OPTIONS, "paymentOption");
 
