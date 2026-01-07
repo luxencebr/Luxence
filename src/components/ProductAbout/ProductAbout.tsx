@@ -144,7 +144,7 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
 
   const [bio, setBio] = useState(producer.profile.description || "");
   const [expanded, setExpanded] = useState(false);
-  const MAX_LENGTH = 244;
+  const MAX_LENGTH = 480;
   const previewText =
     bio && bio.length > MAX_LENGTH ? bio.slice(0, MAX_LENGTH) + "..." : bio;
 
@@ -191,58 +191,49 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
         <div className={styles.saving}>
           <span className={styles.spinner}></span>
         </div>
-      ) : (
-        <div className={styles.grid}>
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              <Book className={styles.icon} />
-              <h3 className={styles.cardTitle}>Biografia</h3>
-            </div>
+      ) : !isEditing ? (
+        <div className={styles.bioContainer}>
+          {bio ? (
+            <>
+              {expanded ? (
+                <div className={styles.bio}>{renderParagraphs(bio)}</div>
+              ) : (
+                <div className={styles.bio}>
+                  {renderParagraphs(previewText)}
+                </div>
+              )}
 
-            {!isEditing ? (
-              <div className={styles.bioContainer}>
-                {bio ? (
-                  <>
-                    {expanded ? (
-                      <div className={styles.bio}>{renderParagraphs(bio)}</div>
-                    ) : (
-                      <div className={styles.bio}>
-                        {renderParagraphs(previewText)}
-                      </div>
-                    )}
-
-                    {bio.length > MAX_LENGTH && (
-                      <button
-                        className={styles.readMoreButton}
-                        onClick={() => setExpanded(!expanded)}
-                      >
-                        {expanded ? "Ler menos" : "Ler mais"}
-                      </button>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    {canEdit ? (
-                      <p>
-                        Adicione uma biografia e aproxime-se de seu público!
-                      </p>
-                    ) : (
-                      <p style={{ opacity: "0.5" }}>Não há biografia</p>
-                    )}
-                  </>
-                )}
-              </div>
-            ) : (
-              <textarea
-                className={styles.textarea}
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-                placeholder="Conte um pouco sobre você..."
-                rows={5}
-              />
-            )}
-          </div>
+              {bio.length > MAX_LENGTH && (
+                <button
+                  className={styles.readMoreButton}
+                  onClick={() => setExpanded(!expanded)}
+                >
+                  {expanded ? "Ler menos" : "Ler mais"}
+                </button>
+              )}
+            </>
+          ) : (
+            <>
+              {canEdit ? (
+                <div className={styles.bio}>
+                  <p style={{ opacity: "0.75" }}>
+                    Adicione uma biografia e aproxime-se de seu público!
+                  </p>
+                </div>
+              ) : (
+                <p style={{ opacity: "0.75" }}>Não há biografia</p>
+              )}
+            </>
+          )}
         </div>
+      ) : (
+        <textarea
+          className={styles.textarea}
+          value={bio}
+          onChange={(e) => setBio(e.target.value)}
+          placeholder="Conte um pouco sobre você..."
+          rows={5}
+        />
       )}
     </section>
   );

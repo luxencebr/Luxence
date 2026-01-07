@@ -290,10 +290,10 @@
 }
 
 .status.green {
-  background: rgba(0, 128, 0, 0.5);
+  background: rgba(0, 128, 0, 0.25);
 }
 .status.red {
-  background: rgba(128, 0, 0, 0.5);
+  background: rgba(128, 0, 0, 0.25);
 }
 .status.neutral {
   background: rgba(128, 128, 128, 0.25);
@@ -341,13 +341,13 @@
 }
 
 .radioOption:has(input:checked):has(.green) {
-  background: rgba(0, 128, 0, 0.5);
+  background: rgba(0, 128, 0, 0.25);
 }
 .radioOption:has(input:checked):has(.red) {
-  background: rgba(128, 0, 0, 0.5);
+  background: rgba(128, 0, 0, 0.25);
 }
 .radioOption:has(input:checked):has(.neutral) {
-  background: rgba(128, 128, 128, 0.5);
+  background: rgba(128, 128, 128, 0.25);
 }
 
 .saving {

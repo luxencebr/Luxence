@@ -83,7 +83,6 @@
 
 .bio {
   max-height: 112px;
-  padding: 0 12px;
   overflow-y: auto;
 }
 
@@ -114,362 +113,34 @@
   overflow-wrap: break-word;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-}
-
-.card {
-  background: var(--background-complementary-color);
-
-  border-radius: 12px;
-  padding: 16px;
-  transition: 0.2s ease;
-
-  display: flex;
-  flex-flow: column nowrap;
-  gap: 16px;
-}
-
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-}
-
-.cardWide {
-  grid-column: 1 / -1;
-}
-
-.cardHeader {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--contrast-complementary-color);
-}
-
-.icon {
-  width: 20px;
-  height: 20px;
-  color: var(--primary-color);
-}
-
-.smallIcon {
-  width: 16px;
-  height: 16px;
-  color: var(--primary-color);
-  flex-shrink: 0;
-}
-
-.cardTitle {
-  font-size: 16px;
-  font-weight: normal;
-  color: var(--primary-color);
-  margin: 0;
-}
-
-.list {
-  list-style: none;
+.readMoreButton {
+  background: none;
   padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.listItem {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.5rem 0;
-  color: #4b5563;
-  font-size: 0.925rem;
-  border-bottom: 1px dashed #f3f4f6;
-}
-
-.listItem:last-child {
-  border-bottom: none;
-}
-
-.languageName {
-  font-weight: 500;
-  color: #1a1a2e;
-}
-
-.languageLevel {
-  font-size: 0.8rem;
-  background: #eef2ff;
-  color: #6366f1;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-weight: 500;
-}
-
-.scheduleItem {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 0;
-  border-bottom: 1px dashed #f3f4f6;
-}
-
-.scheduleItem:last-child {
-  border-bottom: none;
-}
-
-.scheduleDays {
-  font-weight: 500;
-  color: #1a1a2e;
-}
-
-.scheduleHours {
-  color: #6b7280;
-  font-size: 0.875rem;
-}
-
-.tagContainer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.tag {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: white;
-  padding: 0.375rem 0.875rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.characteristicsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 1rem;
-}
-
-.characteristicItem {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem;
-  border-radius: 8px;
-}
-
-.characteristicItem > div {
-  display: flex;
-  flex-direction: column;
-}
-
-.characteristicLabel {
-  font-size: 0.75rem;
-  color: var(--contrast-color);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.characteristicValue {
-  font-weight: 600;
-  color: #1a1a2e;
-  font-size: 0.95rem;
-}
-
-@media (max-width: 768px) {
-  .container {
-    padding: 1rem;
-  }
-
-  .title {
-    font-size: 1.5rem;
-  }
-
-  .characteristicsGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .grid {
-    display: flex;
-    flex-flow: column nowrap;
-  }
-}
-
-.languagesList {
-  display: flex;
-  flex-flow: column nowrap;
-  gap: 2px;
-}
-
-.languageItem {
-  padding: 4px;
-
-  border-radius: 8px;
-
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.editing {
-  background: var(--background-color);
-}
-
-.trigger {
-  flex: 1;
-  padding: 4px 8px;
-
-  border: 1px solid var(--contrast-complementary-color);
-  border-radius: 8px;
-}
-
-.actions {
   border: none;
-
-  display: flex;
-  gap: 4px;
-
-  cursor: pointer;
-}
-
-.btn {
-  background: transparent;
-  height: auto;
-  aspect-ratio: 1 / 1;
-
-  border: none;
-  border-radius: 50%;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  cursor: pointer;
-}
-
-.save,
-.edit {
   color: var(--primary-color);
-  transition: 0.25s ease;
-}
-
-.save:hover,
-.edit:hover {
-  background: var(--primary-complementary-color);
-}
-
-.cancel,
-.delete {
-  color: red;
-  transition: 0.25s ease;
-}
-
-.cancel:hover,
-.delete:hover {
-  background: rgba(255, 0, 0, 0.25);
-}
-
-.addBtn {
-  background: var(--background-complementary-color);
-  padding: 8px;
-
-  border: none;
-  border-radius: 16px;
-  box-shadow: 0 0 0 1px var(--primary-complementary-color);
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  color: var(--primary-color);
-
-  cursor: pointer;
-}
-
-.langDisplay {
-  width: 100%;
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  gap: 8px;
-}
-
-.langDisplay span {
-  flex: 1;
-  padding: 4px 8px;
-}
-
-.langOpts {
-  flex: 1;
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  gap: 8px;
-}
-
-.langOpts span {
-  flex: 1;
-}
-
-.langInput {
-  background: var(--background-color);
-  padding: 8px;
-
-  border: none;
-  border-radius: 8px;
-
-  color: var(--contrast-color);
-}
-
-.menu {
-  background: var(--background-color);
-  max-height: 136px;
-
-  overflow-y: auto;
-  border-radius: 8px;
-}
-
-.menu::-webkit-scrollbar {
-  width: 2px;
-}
-
-.menu::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.menu::-webkit-scrollbar-thumb {
-  background: var(--primary-color);
-  border-radius: 5px;
-}
-
-.menu::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-complementary-color);
-}
-
-.menu button {
-  background: var(--background-complementary-color);
-  padding: 4px;
-
-  border: none;
-  border-radius: 4px;
-
-  color: var(--contrast-color);
   font-size: 14px;
-  font-family: Quicksand;
-
+  font-weight: normal;
   cursor: pointer;
+}
+
+.readMoreButton:hover {
+  text-decoration: underline;
 }
 
 .textarea {
-  background: var(--background-color);
-  flex: 1;
+  background: var(--background-complementary-color);
   min-height: 120px;
-  padding: 12px;
-  font-size: 14;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 16px;
+  resize: none;
+
   border-radius: 8px;
   border: none;
+
   color: var(--contrast-color);
+  font-size: 14;
   font-family: Quicksand;
-  resize: none;
 }
 
 .textarea::-webkit-scrollbar {
@@ -487,24 +158,6 @@
 
 .textarea::-webkit-scrollbar-thumb:hover {
   background: var(--primary-complementary-color);
-}
-
-.readMoreButton {
-  background: none;
-  padding: 0;
-  border: none;
-  color: var(--primary-color);
-  font-size: 14px;
-  font-weight: normal;
-  cursor: pointer;
-}
-
-.readMoreButton:hover {
-  text-decoration: underline;
-}
-
-.notSpeaking {
-  opacity: 0.5;
 }
 
 .saving {
