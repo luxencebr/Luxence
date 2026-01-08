@@ -40,36 +40,43 @@ const APPEARANCE_OPTIONS = [
   },
   {
     id: 6,
-    name: "breast_size",
-    label: "Tamanho do peito",
-    valueType: APPEARANCE_VALUE_TYPE.OPTION,
-  },
-  {
-    id: 7,
-    name: "butt_size",
-    label: "Tamanho da bunda",
-    valueType: APPEARANCE_VALUE_TYPE.OPTION,
-  },
-  {
-    id: 8,
     name: "pe",
     label: "Número do pé",
     valueType: APPEARANCE_VALUE_TYPE.NUMBER,
   },
   {
+    id: 7,
+    name: "body_type",
+    label: "Tipo de corpo",
+    valueType: APPEARANCE_VALUE_TYPE.OPTION,
+  },
+  {
+    id: 8,
+    name: "breast_size",
+    label: "Tamanho do peito",
+    valueType: APPEARANCE_VALUE_TYPE.OPTION,
+  },
+  {
     id: 9,
+    name: "butt_size",
+    label: "Tamanho da bunda",
+    valueType: APPEARANCE_VALUE_TYPE.OPTION,
+  },
+
+  {
+    id: 10,
     name: "tatuagens",
     label: "Tatuagens",
     valueType: APPEARANCE_VALUE_TYPE.BOOLEAN,
   },
   {
-    id: 10,
+    id: 11,
     name: "piercings",
     label: "Piercings",
     valueType: APPEARANCE_VALUE_TYPE.BOOLEAN,
   },
   {
-    id: 11,
+    id: 12,
     name: "silicone",
     label: "Silicone",
     valueType: APPEARANCE_VALUE_TYPE.BOOLEAN,

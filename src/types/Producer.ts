@@ -57,7 +57,7 @@ export interface ProducerProfile {
   producer: Producer;
   contacts: ProducerContact[];
   local: ProducerLocal | null;
-  appearance: ProducerAppearance;
+  appearance: ProducerAppearance[];
   prices: ProducerPrice[];
   services: ProducerService[];
   fetiches: ProducerFetish[];
