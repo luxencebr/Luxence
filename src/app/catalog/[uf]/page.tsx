@@ -96,13 +96,44 @@ function applyFilters(producers: Producer[], filters: ActiveFilters) {
       if (!hasMatch) return false;
     }
 
-    // 🔹 Local
-    if (filters.hasLocal !== undefined) {
-      if (profile.hasLocal !== filters.hasLocal) return false;
+    // 🔹 Aparência
+    if (filters.appearance) {
+      const appearances = profile.appearance || [];
+
+      for (const [key, selectedValues] of Object.entries(filters.appearance)) {
+        if (!selectedValues || selectedValues.length === 0) continue;
+
+        const hasMatch = appearances.some((a) => {
+          if (a.option.name !== key) return false;
+
+          // booleanos (sim / não)
+          if (typeof a.valueBoolean === "boolean") {
+            const value = a.valueBoolean ? "sim" : "não";
+            return selectedValues.includes(value);
+          }
+
+          // strings
+          if (a.valueString) {
+            return selectedValues.includes(a.valueString as "sim" | "não");
+          }
+
+          return false;
+        });
+
+        if (!hasMatch) {
+          return false;
+        }
+      }
     }
 
-    // 🔹 Verificação
-    if (filters.verified && !p.isVerified) return false;
+    // 🔹 Audiência
+    if (filters.audience?.length) {
+      const ids = profile.audience?.map((a) => a.option.id) || [];
+
+      if (!filters.audience.some((id) => ids.includes(id))) {
+        return false;
+      }
+    }
 
     // 🔹 Serviços
     if (filters.services?.length) {
@@ -126,12 +157,13 @@ function applyFilters(producers: Producer[], filters: ActiveFilters) {
       }
     }
 
+    // 🔹 Duração
     if (filters.durations?.length) {
-      producers = producers.filter((p) =>
-        p.profile?.prices?.some((price) =>
-          filters.durations!.includes(price.option.id)
-        )
+      const hasDuration = profile.prices?.some((price) =>
+        filters.durations!.includes(price.option.id)
       );
+
+      if (!hasDuration) return false;
     }
 
     // 🔹 Preço

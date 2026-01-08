@@ -301,7 +301,9 @@ export default function ProductAppearance({
                   {a.valueType === APPEARANCE_VALUE_TYPE.OPTION &&
                     (() => {
                       if (!a.value) {
-                        return canEdit ? "Informe e atraia mais cliques!" : "—";
+                        return canEdit
+                          ? "Informe e atraia mais cliques!"
+                          : "Não informado";
                       }
 
                       const optionName = APPEARANCE_OPTIONS.find(

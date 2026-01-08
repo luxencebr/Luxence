@@ -12,8 +12,8 @@ export interface ActiveFilters {
     min?: number;
     max?: number;
   };
-  nationality?: number[];
 
+  nationality?: number[];
   durations?: number[];
   priceRange?: {
     min?: number;
@@ -25,11 +25,20 @@ export interface ActiveFilters {
   languages?: number[];
   services?: number[];
   fetiches?: number[];
-
   locations?: number[];
 
-  hasLocal?: boolean;
-  verified?: boolean;
+  appearance?: {
+    ethnicity?: string[];
+    hair_color?: string[];
+    eye_color?: string[];
+    body_type?: string[];
+    breast_size?: string[];
+    butt_size?: string[];
+
+    tatuagens?: ("sim" | "não")[];
+    piercings?: ("sim" | "não")[];
+    silicone?: ("sim" | "não")[];
+  };
 }
 
 function getAge(birthday: Date) {
@@ -61,6 +70,18 @@ export function extractFilterOptions(producers: Producer[]) {
     number,
     { id: number; label: string; value: string }
   >();
+
+  const appearanceOptions = {
+    ethnicity: new Set<string>(),
+    hair_color: new Set<string>(),
+    eye_color: new Set<string>(),
+    body_type: new Set<string>(),
+    breast_size: new Set<string>(),
+    butt_size: new Set<string>(),
+    tatuagens: new Set<string>(),
+    piercings: new Set<string>(),
+    silicone: new Set<string>(),
+  };
 
   let minPrice = Infinity;
   let maxPrice = 0;
@@ -105,6 +126,21 @@ export function extractFilterOptions(producers: Producer[]) {
       }
     });
 
+    profile.appearance?.forEach((a) => {
+      const key = a.option.name as keyof typeof appearanceOptions;
+      const target = appearanceOptions[key];
+
+      if (!target) return;
+
+      if (typeof a.valueBoolean === "boolean") {
+        target.add(a.valueBoolean ? "sim" : "não");
+      }
+
+      if (a.valueString) {
+        target.add(a.valueString);
+      }
+    });
+
     profile.services?.forEach((s) => {
       if (s.status === "yes") {
         services.set(s.option.id, s.option);
@@ -139,6 +175,17 @@ export function extractFilterOptions(producers: Producer[]) {
     audiences: Array.from(audiences.values()),
     languages: Array.from(languages.values()),
     locations: Array.from(locations.values()),
+    appearance: {
+      ethnicity: Array.from(appearanceOptions.ethnicity),
+      hair_color: Array.from(appearanceOptions.hair_color),
+      eye_color: Array.from(appearanceOptions.eye_color),
+      body_type: Array.from(appearanceOptions.body_type),
+      breast_size: Array.from(appearanceOptions.breast_size),
+      butt_size: Array.from(appearanceOptions.butt_size),
+      tatuagens: Array.from(appearanceOptions.tatuagens),
+      piercings: Array.from(appearanceOptions.piercings),
+      silicone: Array.from(appearanceOptions.silicone),
+    },
     payments: Array.from(payments.values()),
     durations: Array.from(durations.values()),
     priceRange: minPrice !== Infinity ? { min: minPrice, max: maxPrice } : null,
@@ -157,6 +204,29 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
 
   const [filters, setFilters] = useState<ActiveFilters>({});
 
+  function toggleAppearanceOption(
+    key: keyof NonNullable<ActiveFilters["appearance"]>,
+    value: string
+  ) {
+    setFilters((prev) => {
+      const current = (
+        Array.isArray(prev.appearance?.[key]) ? prev.appearance?.[key] : []
+      ) as string[];
+
+      const updated = current.includes(value)
+        ? current.filter((v) => v !== value)
+        : [...current, value];
+
+      return {
+        ...prev,
+        appearance: {
+          ...prev.appearance,
+          [key]: updated,
+        },
+      };
+    });
+  }
+
   function toggleArrayFilter(key: keyof ActiveFilters, id: number) {
     setFilters((prev) => {
       const current = (prev[key] as number[]) || [];
@@ -169,15 +239,19 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
     });
   }
 
-  function CheckboxList({
+  function CheckboxList<T extends string | number>({
     title,
     options,
-    filterKey,
+    selected,
+    onToggle,
   }: {
     title: string;
-    options: { id: number; label: string }[];
-    filterKey: keyof ActiveFilters;
+    options: { value: T; label: string }[];
+    selected: T[];
+    onToggle: (value: T) => void;
   }) {
+    if (!options.length) return null;
+
     return (
       <section className={styles.section}>
         <div className={styles.sectionHeader}>
@@ -186,19 +260,14 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
 
         <div className={styles.options}>
           {options.map((opt) => (
-            <label key={opt.id} className={styles.checkbox}>
+            <label key={opt.value} className={styles.checkbox}>
               <input
                 type="checkbox"
-                checked={
-                  (filters[filterKey] as number[] | undefined)?.includes(
-                    opt.id
-                  ) || false
-                }
-                onChange={() => toggleArrayFilter(filterKey, opt.id)}
+                checked={selected.includes(opt.value)}
+                onChange={() => onToggle(opt.value)}
               />
 
               <span className={styles.checkmark} />
-
               <span className={styles.label}>{opt.label}</span>
             </label>
           ))}
@@ -319,18 +388,23 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
                   {children}
                 </div>
               )}
-              renderThumb={({ props }) => (
-                <div
-                  {...props}
-                  style={{
-                    ...props.style,
-                    height: "16px",
-                    width: "16px",
-                    borderRadius: "50%",
-                    backgroundColor: "var(--primary-color)",
-                  }}
-                />
-              )}
+              renderThumb={({ props }) => {
+                const { key, ...rest } = props;
+
+                return (
+                  <div
+                    key={key}
+                    {...rest}
+                    style={{
+                      ...rest.style,
+                      height: "16px",
+                      width: "16px",
+                      borderRadius: "50%",
+                      backgroundColor: "var(--primary-color)",
+                    }}
+                  />
+                );
+              }}
             />
           </div>
         </section>
@@ -449,24 +523,55 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
                   {children}
                 </div>
               )}
-              renderThumb={({ props }) => (
-                <div
-                  {...props}
-                  style={{
-                    ...props.style,
-                    height: "16px",
-                    width: "16px",
-                    borderRadius: "50%",
-                    backgroundColor: "var(--primary-color)",
-                  }}
-                />
-              )}
+              renderThumb={({ props }) => {
+                const { key, ...rest } = props;
+
+                return (
+                  <div
+                    key={key}
+                    {...rest}
+                    style={{
+                      ...rest.style,
+                      height: "16px",
+                      width: "16px",
+                      borderRadius: "50%",
+                      backgroundColor: "var(--primary-color)",
+                    }}
+                  />
+                );
+              }}
             />
           </div>
         </section>
       );
     }
   }
+
+  const APPEARANCE_KEYS = [
+    "ethnicity",
+    "hair_color",
+    "eye_color",
+    "body_type",
+    "breast_size",
+    "butt_size",
+    "tatuagens",
+    "piercings",
+    "silicone",
+  ] as const;
+
+  type AppearanceKey = (typeof APPEARANCE_KEYS)[number];
+
+  const APPEARANCE_LABELS: Record<AppearanceKey, string> = {
+    ethnicity: "Etnia",
+    hair_color: "Cor do cabelo",
+    eye_color: "Cor dos olhos",
+    body_type: "Tipo de corpo",
+    breast_size: "Tamanho do Busto",
+    butt_size: "Tamanho do Quadril",
+    tatuagens: "Tatuagens",
+    piercings: "Piercings",
+    silicone: "Silicone",
+  };
 
   return (
     <Popup
@@ -511,46 +616,87 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
 
         <CheckboxList
           title="Nacionalidade"
-          options={options.nationalities}
-          filterKey="nationality"
+          options={options.nationalities.map((n) => ({
+            value: n.id,
+            label: n.label,
+          }))}
+          selected={filters.nationality || []}
+          onToggle={(id) => toggleArrayFilter("nationality", id)}
         />
+
+        {APPEARANCE_KEYS.map((key) => (
+          <CheckboxList
+            key={key}
+            title={APPEARANCE_LABELS[key]}
+            options={options.appearance[key].map((value) => ({
+              value,
+              label: value === "sim" ? "Sim" : value === "não" ? "Não" : value,
+            }))}
+            selected={filters.appearance?.[key] || []}
+            onToggle={(value) => toggleAppearanceOption(key, value)}
+          />
+        ))}
 
         <CheckboxList
           title="Audiência"
-          options={options.audiences}
-          filterKey="audience"
+          options={options.audiences.map((a) => ({
+            value: a.id,
+            label: a.label,
+          }))}
+          selected={filters.audience || []}
+          onToggle={(id) => toggleArrayFilter("audience", id)}
         />
 
         <CheckboxList
           title="Idiomas"
-          options={options.languages}
-          filterKey="languages"
+          options={options.languages.map((l) => ({
+            value: l.id,
+            label: l.label,
+          }))}
+          selected={filters.languages || []}
+          onToggle={(id) => toggleArrayFilter("languages", id)}
         />
 
         <CheckboxList
           title="Serviços"
-          options={options.services}
-          filterKey="services"
+          options={options.services.map((s) => ({
+            value: s.id,
+            label: s.label,
+          }))}
+          selected={filters.services || []}
+          onToggle={(id) => toggleArrayFilter("services", id)}
         />
 
         <CheckboxList
           title="Fetiches"
-          options={options.fetiches}
-          filterKey="fetiches"
+          options={options.fetiches.map((f) => ({
+            value: f.id,
+            label: f.label,
+          }))}
+          selected={filters.fetiches || []}
+          onToggle={(id) => toggleArrayFilter("fetiches", id)}
         />
 
         <CheckboxList
           title="Duração"
-          options={options.durations}
-          filterKey="durations"
+          options={options.durations.map((d) => ({
+            value: d.id,
+            label: d.label,
+          }))}
+          selected={filters.durations || []}
+          onToggle={(id) => toggleArrayFilter("durations", id)}
         />
 
         <PriceRange />
 
         <CheckboxList
           title="Pagamentos"
-          options={options.payments}
-          filterKey="payments"
+          options={options.payments.map((p) => ({
+            value: p.id,
+            label: p.label,
+          }))}
+          selected={filters.payments || []}
+          onToggle={(id) => toggleArrayFilter("payments", id)}
         />
       </div>
 
@@ -558,8 +704,9 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
         <button
           className={styles.clear}
           onClick={() => {
-            setFilters({});
-            onApply(filters);
+            const cleared = {};
+            setFilters(cleared);
+            onApply(cleared);
             setIsOpen(false);
           }}
         >
