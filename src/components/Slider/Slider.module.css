@@ -38,6 +38,7 @@
 }
 
 .noImages {
+  color: var(--contrast-color);
   opacity: 0.6;
 }
 

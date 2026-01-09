@@ -226,7 +226,7 @@ export default function Slider({
     return (
       <section className={styles.slider}>
         <div className={styles.noImages}>
-          <span>Sem imagens disponíveis</span>
+          <span>Perfil sem imagens...</span>
         </div>
       </section>
     );

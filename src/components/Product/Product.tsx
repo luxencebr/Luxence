@@ -53,11 +53,9 @@ function Product({ producer, variant }: ProductProps) {
         ${variant === "row" ? styles.row : ""}`}
     >
       <Link href={`/product/${producer.id}`} className={styles.productLink}>
-        <img
-          className={styles.producerImage}
-          src={firstImage || "/placeholder.svg"}
-          alt={`Foto de ${name}`}
-        />
+        <div className={styles.producerImage}>
+          <img src={firstImage || "/placeholder.svg"} alt={`Foto de ${name}`} />
+        </div>
 
         <div className={styles.itemInfo}>
           <div className={styles.infoHeader}>
@@ -91,7 +89,16 @@ function Product({ producer, variant }: ProductProps) {
             </span>
 
             {producer.profile?.prices && producer.profile.prices.length > 0 && (
-              <ValueDropdown producer={producer} />
+              <div className={styles.value}>
+                <span>A partir de</span>
+                <div>
+                  {producer.profile.prices[0].value.toLocaleString("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                  })}{" "}
+                  <span>- {producer.profile.prices[0].option.label}</span>
+                </div>
+              </div>
             )}
 
             <span className={styles.defaultInfo}>

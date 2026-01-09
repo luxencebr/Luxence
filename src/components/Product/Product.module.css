@@ -1,5 +1,7 @@
 .product {
   background: var(--background-complementary-color);
+  width: 100%;
+  box-sizing: border-box;
 
   border: 2px solid transparent;
   border-radius: 12px;
@@ -40,13 +42,19 @@
 }
 
 .productLink {
+  width: 100%;
   text-decoration: none;
 }
 
 .producerImage {
-  width: 100%;
+  background: var(--background-color);
+  min-width: 100%;
   aspect-ratio: 4 / 3;
+}
 
+.producerImage img {
+  height: 100%;
+  width: 100%;
   object-fit: cover;
 }
 
@@ -169,4 +177,21 @@
   align-items: center;
 
   font-size: 16px;
+}
+
+.value {
+  padding: 8px;
+  margin: 8px 0;
+
+  border-radius: 8px;
+  box-shadow: 0 0 0 1px var(--contrast-color);
+
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.value span {
+  opacity: 0.8;
+  font-size: 12px;
+  font-weight: normal;
 }

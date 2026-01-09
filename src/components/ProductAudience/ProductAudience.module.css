@@ -290,21 +290,13 @@
 }
 
 .status.green {
-  background: rgba(0, 128, 0, 0.25);
+  background: rgba(0, 128, 0);
 }
 .status.red {
-  background: rgba(128, 0, 0, 0.25);
+  background: rgba(128, 0, 0);
 }
 .status.neutral {
-  background: rgba(128, 128, 128, 0.25);
-}
-
-.green {
-  color: green;
-}
-
-.red {
-  color: red;
+  background: rgba(128, 128, 128, 0.5);
 }
 
 .radioGroup {
@@ -341,13 +333,13 @@
 }
 
 .radioOption:has(input:checked):has(.green) {
-  background: rgba(0, 128, 0, 0.25);
+  background: rgba(0, 128, 0);
 }
 .radioOption:has(input:checked):has(.red) {
-  background: rgba(128, 0, 0, 0.25);
+  background: rgba(128, 0, 0);
 }
 .radioOption:has(input:checked):has(.neutral) {
-  background: rgba(128, 128, 128, 0.25);
+  background: rgba(128, 128, 128, 0.5);
 }
 
 .saving {
