@@ -74,6 +74,15 @@ function Header() {
           >
             Sobre
           </Link>
+
+          <Link
+            href="/suport"
+            className={`${styles.navBtn} ${
+              isActive("/suport") ? styles.active : ""
+            }`}
+          >
+            Suporte
+          </Link>
         </nav>
         <div className={styles.headerButtons}>
           {session ? (
