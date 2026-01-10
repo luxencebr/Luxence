@@ -10,12 +10,7 @@ interface ContactCardProps {
   href: string;
 }
 
-export function ContactCard({
-  icon,
-  title,
-  description,
-  href,
-}: ContactCardProps) {
+function ContactCard({ icon, title, description, href }: ContactCardProps) {
   return (
     <a
       href={href}
