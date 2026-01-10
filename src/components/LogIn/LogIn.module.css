@@ -55,6 +55,27 @@
   opacity: 0.75;
 }
 
+.backButton {
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  color: var(--contrast-color);
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.backButton:hover {
+  opacity: 0.75;
+}
+
+.description {
+  color: var(--contrast-color);
+  font-size: 14px;
+  opacity: 0.8;
+  margin-bottom: 8px;
+}
+
 .form {
   position: relative;
 
@@ -173,6 +194,16 @@
   font-weight: bold;
 
   position: absolute;
+}
+
+.successMessage {
+  color: var(--contrast-color);
+  font-size: 12px;
+  font-weight: normal;
+  text-align: center;
+  opacity: 0.8;
+  max-width: 280px;
+  margin-bottom: 8px;
 }
 
 .checkmark {
