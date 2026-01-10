@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect } from "react";
 import styles from "./StartPopup.module.css";
 
 interface StartPopupProps {
@@ -12,34 +13,13 @@ const StartPopup: React.FC<StartPopupProps> = ({
   onConfirmAge,
   onExitSite,
 }) => {
-  const [isVisible, setIsVisible] = useState(true);
-
-  const handleConfirmAge = () => {
-    sessionStorage.setItem("ageConfirmed", "true");
-    setIsVisible(false);
-    onConfirmAge();
-  };
-
-  const handleExitSite = () => {
-    setIsVisible(false);
-    onExitSite();
-  };
-
-  if (!isVisible) {
-    return null;
-  }
-
   useEffect(() => {
-    if (isVisible) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = "hidden";
 
     return () => {
       document.body.style.overflow = "";
     };
-  }, [isVisible]);
+  }, []);
 
   return (
     <div className={styles.backdrop}>
@@ -56,13 +36,13 @@ const StartPopup: React.FC<StartPopupProps> = ({
         <div className={styles.buttons}>
           <button
             className={`${styles.button} ${styles.enter}`}
-            onClick={handleConfirmAge}
+            onClick={onConfirmAge}
           >
             Sou maior, entrar!
           </button>
           <button
             className={`${styles.button} ${styles.exit}`}
-            onClick={handleExitSite}
+            onClick={onExitSite}
           >
             Não sou maior, sair.
           </button>

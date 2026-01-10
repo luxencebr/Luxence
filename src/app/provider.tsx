@@ -1,5 +1,7 @@
 "use client";
 
+import type React from "react";
+
 import { SessionProvider } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -9,18 +11,22 @@ import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
 import { ScrollTop } from "@/utils/ScrollTop";
 
+const AGE_CONFIRMED_KEY = "luxence_age_confirmed";
+
 export default function Providers({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const [hasConfirmedAge, setHasConfirmedAge] = useState(false);
+  const [hasConfirmedAge, setHasConfirmedAge] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const ageConfirmed = sessionStorage.getItem("ageConfirmed");
-    if (ageConfirmed === "true") {
-      setHasConfirmedAge(true);
-    }
+    const ageConfirmed = localStorage.getItem(AGE_CONFIRMED_KEY);
+    setHasConfirmedAge(ageConfirmed === "true");
   }, []);
 
-  const handleConfirmAge = () => setHasConfirmedAge(true);
+  const handleConfirmAge = () => {
+    localStorage.setItem(AGE_CONFIRMED_KEY, "true");
+    setHasConfirmedAge(true);
+  };
+
   const handleExitSite = () => {
     window.location.href = "https://www.google.com";
   };
@@ -33,6 +39,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   if (noLayout) {
     return <>{children}</>;
+  }
+
+  if (hasConfirmedAge === null) {
+    return null;
   }
 
   return (
