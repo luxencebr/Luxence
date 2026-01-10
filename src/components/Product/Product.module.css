@@ -10,6 +10,7 @@
 
   flex-shrink: 0;
   display: flex;
+  justify-content: center;
 
   position: relative;
 
@@ -22,6 +23,7 @@
 .product.highlight {
   height: 100%;
   aspect-ratio: 3 / 4;
+  width: auto;
 
   border: 2px solid transparent;
   box-shadow: none;
@@ -58,8 +60,9 @@
   object-fit: cover;
 }
 
-.producerImage.row .producerImage.highlight {
-  object-position: center;
+.product.row .producerImage,
+.product.highlight .producerImage {
+  aspect-ratio: 3 / 4;
 }
 
 .itemInfo {
