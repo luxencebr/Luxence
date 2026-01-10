@@ -16,8 +16,9 @@
 }
 
 .formContent {
-  min-width: 300px;
   background: var(--background-complementary-color);
+  min-width: 300px;
+  max-width: 300px;
   padding: 16px;
 
   border-radius: 8px;
@@ -35,6 +36,16 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.formHeader h1 {
+  font-size: 24px;
 }
 
 .closeButton {
@@ -73,7 +84,7 @@
   color: var(--contrast-color);
   font-size: 14px;
   opacity: 0.8;
-  margin-bottom: 8px;
+  margin: 8px 0;
 }
 
 .form {
@@ -116,6 +127,9 @@
   display: flex;
   flex-flow: column nowrap;
   gap: 4px;
+
+  color: var(--contrast-complementary-color);
+  font-size: 12px;
 }
 
 .form label input {

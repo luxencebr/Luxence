@@ -228,13 +228,15 @@ export default function LogIn() {
           ) : (
             <div className={styles.formContent}>
               <div className={styles.formHeader}>
-                <button
-                  onClick={handleBackToLogin}
-                  className={styles.backButton}
-                >
-                  <IoArrowBack />
-                </button>
-                <h1>Recuperar senha</h1>
+                <div className={styles.left}>
+                  <button
+                    onClick={handleBackToLogin}
+                    className={styles.backButton}
+                  >
+                    <IoArrowBack />
+                  </button>
+                  <h1>Recuperar senha</h1>
+                </div>
                 <button
                   onClick={() => setIsOpen(false)}
                   className={styles.closeButton}
