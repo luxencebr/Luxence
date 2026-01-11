@@ -276,137 +276,150 @@ export default function ProductAppearance({
           ))}
       </div>
 
-      <div className={styles.content}>
-        <ul className={styles.list}>
-          {appearance.map((a) => (
-            <li key={a.id} className={styles.item}>
-              <span className={styles.label}>{a.label}</span>
+      {isSaving ? (
+        <div className={styles.saving}>
+          <span className={styles.spinner}></span>
+        </div>
+      ) : (
+        <div className={styles.content}>
+          <ul className={styles.list}>
+            {appearance.map((a) => (
+              <li key={a.id} className={styles.item}>
+                <span className={styles.label}>{a.label}</span>
 
-              {!isEditing ? (
-                <span className={styles.value}>
-                  {a.valueType === APPEARANCE_VALUE_TYPE.BOOLEAN &&
-                    (a.value === true
-                      ? "Sim"
-                      : a.value === false
-                      ? "Não"
-                      : canEdit
-                      ? "Informe e atraia mais cliques!"
-                      : "Não informado")}
-                  {a.valueType === APPEARANCE_VALUE_TYPE.NUMBER &&
-                    (a.value !== null
-                      ? a.value
-                      : canEdit
-                      ? "Informe e atraia mais cliques!"
-                      : "Não informado")}
-                  {a.valueType === APPEARANCE_VALUE_TYPE.OPTION &&
-                    (() => {
-                      if (!a.value) {
-                        return canEdit
-                          ? "Informe e atraia mais cliques!"
-                          : "Não informado";
-                      }
+                {!isEditing ? (
+                  <span className={styles.value}>
+                    {a.valueType === APPEARANCE_VALUE_TYPE.BOOLEAN &&
+                      (a.value === true
+                        ? "Sim"
+                        : a.value === false
+                        ? "Não"
+                        : canEdit
+                        ? "Informe e atraia mais cliques!"
+                        : "Não informado")}
+                    {a.valueType === APPEARANCE_VALUE_TYPE.NUMBER &&
+                      (a.value !== null
+                        ? a.value
+                        : canEdit
+                        ? "Informe e atraia mais cliques!"
+                        : "Não informado")}
+                    {a.valueType === APPEARANCE_VALUE_TYPE.OPTION &&
+                      (() => {
+                        if (!a.value) {
+                          return canEdit
+                            ? "Informe e atraia mais cliques!"
+                            : "Não informado";
+                        }
 
-                      const optionName = APPEARANCE_OPTIONS.find(
-                        (opt) => opt.id === a.id
-                      )?.name;
+                        const optionName = APPEARANCE_OPTIONS.find(
+                          (opt) => opt.id === a.id
+                        )?.name;
 
-                      const label = OPTION_MAP[optionName ?? ""]?.find(
-                        (opt) => opt.name === a.value
-                      )?.label;
+                        const label = OPTION_MAP[optionName ?? ""]?.find(
+                          (opt) => opt.name === a.value
+                        )?.label;
 
-                      return label ?? "—";
-                    })()}
-                </span>
-              ) : (
-                <span className={styles.value}>
-                  {a.valueType === APPEARANCE_VALUE_TYPE.BOOLEAN && (
-                    <>
-                      <label className={styles.radioOpt}>
-                        <input
-                          type="radio"
-                          name={`bool-${a.id}`}
-                          checked={a.value === true}
-                          onChange={() => updateAppearanceValue(a.id, true)}
-                        />
-                        Sim
-                      </label>
+                        return label ?? "—";
+                      })()}
+                  </span>
+                ) : (
+                  <>
+                    {a.valueType === APPEARANCE_VALUE_TYPE.BOOLEAN && (
+                      <div className={styles.flex}>
+                        <label className={styles.radioOpt}>
+                          <input
+                            type="radio"
+                            name={`bool-${a.id}`}
+                            checked={a.value === true}
+                            onChange={() => updateAppearanceValue(a.id, true)}
+                          />
+                          Sim
+                        </label>
 
-                      <label className={styles.radioOpt}>
-                        <input
-                          type="radio"
-                          name={`bool-${a.id}`}
-                          checked={a.value === false}
-                          onChange={() => updateAppearanceValue(a.id, false)}
-                        />
-                        Não
-                      </label>
+                        <label className={styles.radioOpt}>
+                          <input
+                            type="radio"
+                            name={`bool-${a.id}`}
+                            checked={a.value === false}
+                            onChange={() => updateAppearanceValue(a.id, false)}
+                          />
+                          Não
+                        </label>
 
-                      <label className={styles.radioOpt}>
-                        <input
-                          type="radio"
-                          name={`bool-${a.id}`}
-                          checked={a.value === null}
-                          onChange={() => updateAppearanceValue(a.id, null)}
-                        />
-                        N/A
-                      </label>
-                    </>
-                  )}
+                        <label className={styles.radioOpt}>
+                          <input
+                            type="radio"
+                            name={`bool-${a.id}`}
+                            checked={a.value === null}
+                            onChange={() => updateAppearanceValue(a.id, null)}
+                          />
+                          N/A
+                        </label>
+                      </div>
+                    )}
 
-                  {a.valueType === APPEARANCE_VALUE_TYPE.NUMBER && (
-                    <input
-                      type="number"
-                      className={styles.number}
-                      onChange={(e) =>
-                        updateAppearanceValue(a.id, Number(e.target.value))
-                      }
-                    />
-                  )}
+                    {a.valueType === APPEARANCE_VALUE_TYPE.NUMBER && (
+                      <input
+                        type="number"
+                        className={styles.number}
+                        value={typeof a.value === "number" ? a.value : ""}
+                        onChange={(e) =>
+                          updateAppearanceValue(
+                            a.id,
+                            e.target.value === ""
+                              ? null
+                              : Number(e.target.value)
+                          )
+                        }
+                      />
+                    )}
 
-                  {a.valueType === APPEARANCE_VALUE_TYPE.OPTION && (
-                    <Dropdown
-                      trigger={
-                        a.value
-                          ? OPTION_MAP[
-                              APPEARANCE_OPTIONS.find((opt) => opt.id === a.id)
-                                ?.name ?? ""
-                            ]?.find((opt) => opt.name === a.value)?.label
-                          : "Selecionar"
-                      }
-                      triggerClassName={styles.trigger}
-                      menuClassName={styles.menu}
-                    >
-                      {OPTION_MAP[
-                        APPEARANCE_OPTIONS.find((opt) => opt.id === a.id)
-                          ?.name ?? ""
-                      ]?.map((option) => (
+                    {a.valueType === APPEARANCE_VALUE_TYPE.OPTION && (
+                      <Dropdown
+                        trigger={
+                          a.value
+                            ? OPTION_MAP[
+                                APPEARANCE_OPTIONS.find(
+                                  (opt) => opt.id === a.id
+                                )?.name ?? ""
+                              ]?.find((opt) => opt.name === a.value)?.label
+                            : "Selecionar"
+                        }
+                        triggerClassName={styles.trigger}
+                        menuClassName={styles.menu}
+                      >
+                        {OPTION_MAP[
+                          APPEARANCE_OPTIONS.find((opt) => opt.id === a.id)
+                            ?.name ?? ""
+                        ]?.map((option) => (
+                          <button
+                            key={option.id}
+                            type="button"
+                            className={styles.dropdownItem}
+                            onClick={() =>
+                              updateAppearanceValue(a.id, option.name)
+                            }
+                          >
+                            {option.label}
+                          </button>
+                        ))}
+
                         <button
-                          key={option.id}
                           type="button"
                           className={styles.dropdownItem}
-                          onClick={() =>
-                            updateAppearanceValue(a.id, option.name)
-                          }
+                          onClick={() => updateAppearanceValue(a.id, null)}
                         >
-                          {option.label}
+                          Não informar
                         </button>
-                      ))}
-
-                      <button
-                        type="button"
-                        className={styles.dropdownItem}
-                        onClick={() => updateAppearanceValue(a.id, null)}
-                      >
-                        Não informar
-                      </button>
-                    </Dropdown>
-                  )}
-                </span>
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
+                      </Dropdown>
+                    )}
+                  </>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </section>
   );
 }
