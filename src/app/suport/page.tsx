@@ -44,7 +44,7 @@ export default function Page() {
             icon={<SiMaildotru />}
             title="E-mail"
             description="Resposta personalizada em até 24h"
-            href="https://mail.google.com/mail/?view=cm&fs=1&to=luxencebr@gmail.com&su=Suporte%20Luxence&body=Olá,%20preciso%20de%20ajuda%20com..."
+            href="https://mail.google.com/mail/?view=cm&fs=1&to=suporte@luxence.com.br&su=Suporte%20Luxence&body=Olá,%20preciso%20de%20ajuda%20com..."
           />
           <ContactCard
             icon={<SiWhatsapp />}
