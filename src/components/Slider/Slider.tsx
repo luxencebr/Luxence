@@ -117,6 +117,9 @@ export default function Slider({
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Reset input to allow re-selecting the same file
+    e.target.value = "";
+
     setCropMode("create");
     setEditingImageId(null);
     setOriginalFile(file);
@@ -214,7 +217,7 @@ export default function Slider({
             <input
               id="addImageInput"
               type="file"
-              accept="image/*"
+              accept=".jpg,.jpeg,.png,.webp,.heic,.heif"
               onChange={handleAddImage}
               hidden
             />
@@ -322,7 +325,7 @@ export default function Slider({
               <input
                 id="addImageInput"
                 type="file"
-                accept="image/*"
+                accept=".jpg,.jpeg,.png,.webp,.heic,.heif"
                 onChange={handleAddImage}
                 hidden
               />
