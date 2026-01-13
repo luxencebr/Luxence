@@ -1,8 +1,10 @@
 "use client";
 
+import type React from "react";
+
 import { useRef, useState, useEffect } from "react";
 import styles from "./ProductInfo.module.css";
-import { IoClose } from "react-icons/io5";
+import { IoCheckmark, IoClose } from "react-icons/io5";
 
 import { TbCoinFilled } from "react-icons/tb";
 import { HiLocationMarker } from "react-icons/hi";
@@ -27,6 +29,28 @@ const formatWhatsAppNumber = (phone: string) => {
 
   return `55${onlyNumbers}`;
 };
+
+const DEFAULT_SLOGANS = [
+  "Momentos únicos com discrição e sofisticação. 💕",
+  "Seu desejo, no tempo certo e com muita intensidade. 🌪️",
+  "Uma experiência para sair da rotina. 🔥",
+  "Sedução que começa no olhar. 🔥",
+  "Companhia para momentos especiais. 💝",
+  "Qualidade, respeito e prazer. ✨",
+  "Mais que companhia, uma experiência envolvente.",
+  "Discrição e prazer. 💕",
+  "Sofisticação em cada detalhe. ✨",
+  "Experiência inesquecível.",
+  "Prazer sem pressa, do jeito que você imagina.",
+  "Safadeza na medida certa pra te tirar do controle. 🫦",
+  "Não sou promessa, sou experiência. 💥",
+  "Seu segredo mais gostoso. 🫦",
+  "Intensa, quente e inesquecível. 🔥",
+  "Realizo fantasias sem julgamentos. 😈",
+  "Onde o desejo fala mais alto. 🔥",
+  "Vício bom. 🫦",
+  "Sem limites. ❤️‍🔥",
+];
 
 interface ProductInfoProps {
   producer: Producer;
@@ -57,6 +81,12 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
   const [originalSlogan, setOriginalSlogan] = useState(slogan);
   const [isSavingSlogan, setIsSavingSlogan] = useState(false);
   const sloganInputRef = useRef<HTMLInputElement | null>(null);
+  const [fallbackSlogan] = useState(() => {
+    const index = Math.floor(Math.random() * DEFAULT_SLOGANS.length);
+    return DEFAULT_SLOGANS[index];
+  });
+  const hasCustomSlogan = Boolean(producer.profile.slogan);
+  const displayedSlogan = hasCustomSlogan ? slogan : fallbackSlogan;
 
   useEffect(() => {
     const checkMobile = () => {
@@ -228,7 +258,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
       <div className={styles.layout} ref={contentRef}>
         <div className={styles.productHeader}>
           <div className={styles.productHighlight}>
-            <div className={`${styles.editableField} ${styles.nameField}`}>
+            <div className={`${styles.editable} ${styles.name}`}>
               {isEditingName ? (
                 <div className={styles.editableEdit}>
                   <input
@@ -253,13 +283,26 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                   {isSavingName ? (
                     <div className={styles.loader} />
                   ) : (
-                    <button
-                      type="button"
-                      className={styles.editableCancel}
-                      onClick={handleCancelName}
-                    >
-                      <IoClose />
-                    </button>
+                    <div className={styles.editActions}>
+                      <button
+                        type="button"
+                        className={styles.editableSave}
+                        onClick={handleSaveName}
+                        disabled={isSavingName}
+                        title="Salvar"
+                      >
+                        <IoCheckmark />
+                      </button>
+
+                      <button
+                        type="button"
+                        className={styles.editableCancel}
+                        onClick={handleCancelName}
+                        title="Cancelar"
+                      >
+                        <IoClose />
+                      </button>
+                    </div>
                   )}
                 </div>
               ) : (
@@ -273,7 +316,11 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
               )}
             </div>
 
-            <div className={`${styles.editableField} ${styles.sloganField}`}>
+            <div
+              className={`${styles.editable} ${styles.slogan} ${
+                !hasCustomSlogan ? styles.isSuggestion : ""
+              }`}
+            >
               {isEditingSlogan ? (
                 <div className={styles.editableEdit}>
                   <input
@@ -299,32 +346,41 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                   {isSavingSlogan ? (
                     <div className={styles.loader} />
                   ) : (
-                    <button
-                      type="button"
-                      className={styles.editableCancel}
-                      onClick={handleCancelSlogan}
-                    >
-                      <IoClose />
-                    </button>
+                    <div className={styles.editActions}>
+                      <button
+                        type="button"
+                        className={styles.editableSave}
+                        onClick={handleSaveSlogan}
+                        disabled={isSavingSlogan}
+                        title="Salvar"
+                      >
+                        <IoCheckmark />
+                      </button>
+
+                      <button
+                        type="button"
+                        className={styles.editableCancel}
+                        onClick={handleCancelSlogan}
+                        title="Cancelar"
+                      >
+                        <IoClose />
+                      </button>
+                    </div>
                   )}
                 </div>
-              ) : slogan ? (
+              ) : (
                 <p
                   className={styles.editableValue}
                   onClick={canEdit ? handleEditSlogan : undefined}
+                  title={
+                    !hasCustomSlogan && canEdit
+                      ? "Slogan sugerido — clique para personalizar"
+                      : undefined
+                  }
                 >
-                  {slogan}
+                  {displayedSlogan}
                   {canEdit && <HiOutlinePencil className={styles.editIcon} />}
                 </p>
-              ) : (
-                canEdit && (
-                  <p
-                    className={styles.editablePlaceholder}
-                    onClick={handleEditSlogan}
-                  >
-                    Adicione um slogan <HiOutlinePencil />
-                  </p>
-                )
               )}
             </div>
           </div>

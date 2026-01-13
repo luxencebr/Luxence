@@ -31,12 +31,36 @@ function calculateAge(birthday: Date | string): number {
   return age;
 }
 
+const DEFAULT_SLOGANS = [
+  "Momentos únicos com discrição e sofisticação. 💕",
+  "Seu desejo, no tempo certo e com muita intensidade. 🌪️",
+  "Uma experiência para sair da rotina. 🔥",
+  "Sedução que começa no olhar. 🔥",
+  "Companhia para momentos especiais. 💝",
+  "Qualidade, respeito e prazer. ✨",
+  "Mais que companhia, uma experiência envolvente.",
+  "Discrição e prazer. 💕",
+  "Sofisticação em cada detalhe. ✨",
+  "Experiência inesquecível.",
+  "Prazer sem pressa, do jeito que você imagina.",
+  "Safadeza na medida certa pra te tirar do controle. 🫦",
+  "Não sou promessa, sou experiência. 💥",
+  "Seu segredo mais gostoso. 🫦",
+  "Intensa, quente e inesquecível. 🔥",
+  "Realizo fantasias sem julgamentos. 😈",
+  "Onde o desejo fala mais alto. 🔥",
+  "Vício bom. 🫦",
+  "Sem limites. ❤️‍🔥",
+];
+
 function Product({ producer, variant }: ProductProps) {
   const name = producer.name || "";
   const age = calculateAge(producer.birthday);
   const city = producer.user?.locality?.city || "";
   const neighborhood = producer.user?.locality?.neighborhood || "";
-  const slogan = producer.profile?.slogan || "";
+  const slogan =
+    producer.profile?.slogan ||
+    DEFAULT_SLOGANS[Math.floor(Math.random() * DEFAULT_SLOGANS.length)];
   const hasLocal = producer.profile?.hasLocal || false;
   const images = producer.profile?.images || [];
   const reviews = producer.profile?.reviews || [];

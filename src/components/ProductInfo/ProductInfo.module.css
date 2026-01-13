@@ -20,7 +20,7 @@
   padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
   overflow-y: auto;
   transition: height 0.3s ease;
 }
@@ -150,86 +150,107 @@
 /* ===========================
    Campos editáveis (nome/slogan)
 =========================== */
-.editableField {
-  max-width: 200px;
-}
-
-.editableValue,
-.editablePlaceholder {
-  display: inline-flex;
+.editable {
+  display: flex;
   align-items: center;
-  gap: 4px;
-  cursor: pointer;
 }
 
 .editableValue {
-  padding: 4px;
-  color: var(--contrast-complementary-color);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  cursor: pointer;
+
+  white-space: normal;
+  word-break: break-word;
   hyphens: auto;
 }
 
-.editablePlaceholder {
+.editable.isSuggestion .editableValue {
   opacity: 0.7;
+  font-style: italic;
 }
-.editablePlaceholder:hover {
-  color: var(--primary-complementary-color);
+
+.editable.isSuggestion:hover .editableValue {
+  opacity: 1;
 }
 
 .editableEdit {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  width: 100%;
 }
 
 .editableInput {
-  background: var(--background-color);
+  max-height: 33.33px;
   flex: 1;
-  padding: 4px;
-  border-radius: 4px;
+  min-width: 0;
+  box-sizing: border-box;
+
+  padding: 4px 6px;
+  border-radius: 6px;
   border: none;
-  outline: none;
+  background: var(--background-color);
   color: var(--contrast-color);
   font-family: inherit;
 }
 
+.editActions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.editableSave,
 .editableCancel {
   background: transparent;
   border: none;
-  aspect-ratio: 1 / 1;
+  padding: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2px;
-  font-size: 16px;
-  color: var(--contrast-color);
   cursor: pointer;
+  color: var(--contrast-color);
+  font-size: 16px;
+}
+
+.editableSave:hover {
+  color: var(--primary-color);
 }
 
 .editableCancel:hover {
-  color: var(--text-primary);
+  color: var(--danger-color, #e54848);
+}
+
+.editableSave:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.editable.name .editableValue,
+.editable.name .editableInput {
+  font-size: clamp(16px, 2vw, 20px);
+  font-weight: 600;
+}
+
+.editable.slogan .editableValue,
+.editable.slogan .editableInput {
+  font-size: clamp(11px, 1.6vw, 13px);
+  font-style: italic;
+  color: var(--contrast-complementary-color);
 }
 
 .editIcon {
   font-size: 10px;
-  opacity: 0.5;
-  transition: opacity 0.2s ease;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  flex-shrink: 0;
 }
 
-.editable:hover .editIcon,
-.editableValue:hover .editIcon {
+.editable:hover .editIcon {
   opacity: 1;
-  color: var(--primary-color);
-}
-
-.nameField .editableValue,
-.nameField .editableInput {
-  font-size: 20px;
-  font-weight: 600;
-}
-.sloganField .editableValue,
-.sloganField .editableInput {
-  font-size: 12px;
-  font-style: italic;
 }
 
 /* ===========================
@@ -237,13 +258,24 @@
 =========================== */
 .productHeader {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.productHighlight {
+  flex: 1;
+  min-width: 0; /* ESSENCIAL - permite que o flex-child encolha abaixo do content-size */
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .verified {
+  height: 100%;
   font-size: 24px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -300,6 +332,7 @@
 }
 
 .cardContent p {
+  font-family: Quicksand;
   display: flex;
   flex-direction: column;
   font-size: var(--fs-xs);
@@ -309,12 +342,14 @@
   font-size: var(--fs-md);
   font-weight: bold;
   display: flex;
-  flex-direction: column;
+  flex-flow: row nowrap;
+  gap: 4px;
 }
 
 .cardContent p span span {
   font-size: var(--fs-xs);
   font-weight: normal;
+  align-items: end;
 }
 
 .cardContent p i {
@@ -365,10 +400,6 @@
   .wide {
     grid-column: 1 / -1;
     grid-row: 2;
-  }
-
-  .cardContent p span {
-    flex-direction: column;
   }
 
   .contactsLayout {

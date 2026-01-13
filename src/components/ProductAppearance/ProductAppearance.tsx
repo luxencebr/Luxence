@@ -7,9 +7,9 @@ import { HiOutlinePencil } from "react-icons/hi2";
 import Dropdown from "../ui/Dropdown/Dropdown";
 
 const ETHNICITY = [
-  { id: 1, name: "asiatico", label: "Asiático" },
+  { id: 1, name: "oriental", label: "Oriental" },
   { id: 2, name: "branco", label: "Branco" },
-  { id: 3, name: "pardo", label: "Pardo" },
+  { id: 3, name: "moreno", label: "Morena" },
   { id: 4, name: "preto", label: "Preto" },
 ];
 
@@ -31,10 +31,11 @@ const EYE_COLORS = [
 ];
 
 const BODY_TYPE = [
-  { id: 1, name: "slim", label: "Slim" },
-  { id: 2, name: "midi", label: "Midi" },
-  { id: 3, name: "athletic", label: "Athletic" },
-  { id: 4, name: "plus", label: "Plus" },
+  { id: 1, name: "madura", label: "Madura" },
+  { id: 2, name: "magra", label: "Magra" },
+  { id: 3, name: "mignon", label: "Mignon" },
+  { id: 4, name: "ninfeta", label: "Ninfeta" },
+  { id: 5, name: "plus_size", label: "Plus Size" },
 ];
 
 const SIZES = [
