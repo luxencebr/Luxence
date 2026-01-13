@@ -79,7 +79,7 @@ export default function ProductPage({ params }: ProductPageProps) {
     );
   }
 
-  const canEdit = Number(session?.user?.id) === producer.user.id;
+  const canEdit = Number(session?.user?.producerId) === producer.id;
 
   return (
     <div className={styles.productPage}>

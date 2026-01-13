@@ -193,36 +193,154 @@ export default function Slider({
   if (images.length === 0) {
     if (canEdit) {
       return (
-        <section className={styles.slider}>
-          <div className={styles.emptyState}>
-            <label
-              htmlFor="addImageInput"
-              className={`${styles.imagesInput} ${
-                isUploading ? styles.loading : ""
-              }`}
-            >
-              {isUploading ? (
-                <span className={styles.spinner} />
-              ) : (
-                <>
-                  <i>
-                    <GoUpload />
-                  </i>
-                  <span>Adicione imagens ao seu perfil</span>
-                  <small>E alcance mais usuários</small>
-                </>
-              )}
-            </label>
+        <>
+          <section className={styles.slider}>
+            <div className={styles.emptyState}>
+              <label
+                htmlFor="addImageInput"
+                className={`${styles.imagesInput} ${
+                  isUploading ? styles.loading : ""
+                }`}
+              >
+                {isUploading ? (
+                  <span className={styles.spinner} />
+                ) : (
+                  <>
+                    <i>
+                      <GoUpload />
+                    </i>
+                    <span>Adicione imagens ao seu perfil</span>
+                    <small>E alcance mais usuários</small>
+                  </>
+                )}
+              </label>
 
-            <input
-              id="addImageInput"
-              type="file"
-              accept=".jpg,.jpeg,.png,.webp,.heic,.heif"
-              onChange={handleAddImage}
-              hidden
-            />
-          </div>
-        </section>
+              <input
+                id="addImageInput"
+                type="file"
+                accept=".jpg,.jpeg,.png,.webp,.heic,.heif"
+                onChange={handleAddImage}
+                hidden
+              />
+            </div>
+          </section>
+
+          {isCropOpen && imageSrc && (
+            <div className={styles.backdrop}>
+              <div className={styles.cropModal}>
+                <div className={styles.cropHeader}>
+                  Cortar Imagem
+                  <button onClick={() => setIsCropOpen(false)}>
+                    <IoClose />
+                  </button>
+                </div>
+
+                <div className={styles.cropContainer}>
+                  <Cropper
+                    image={imageSrc}
+                    crop={crop}
+                    zoom={zoom}
+                    aspect={4 / 3}
+                    onCropChange={setCrop}
+                    onZoomChange={setZoom}
+                    onCropComplete={(_, pixels) => setCroppedAreaPixels(pixels)}
+                  />
+
+                  <div className={styles.safeArea} />
+                </div>
+
+                <div className={styles.cropActions}>
+                  <button onClick={() => setIsCropOpen(false)}>Cancelar</button>
+
+                  <button
+                    className={styles.saveBtn}
+                    onClick={async () => {
+                      if (!croppedAreaPixels) return;
+
+                      setIsUploading(true);
+
+                      try {
+                        let res: Response;
+
+                        if (cropMode === "create") {
+                          if (!originalFile) throw new Error("Arquivo ausente");
+
+                          const formData = new FormData();
+                          formData.append("file", originalFile);
+                          formData.append(
+                            "crop",
+                            JSON.stringify(croppedAreaPixels)
+                          );
+                          formData.append("zoom", String(zoom));
+                          formData.append("aspect", "4/3");
+                          formData.append("profileId", String(profileId));
+
+                          res = await fetch("/api/profile/images", {
+                            method: "POST",
+                            body: formData,
+                          });
+                        } else {
+                          if (!editingImageId)
+                            throw new Error("Imagem não identificada");
+
+                          res = await fetch(
+                            `/api/profile/images/${editingImageId}`,
+                            {
+                              method: "PATCH",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({
+                                cropData: croppedAreaPixels,
+                                zoom: zoom,
+                              }),
+                            }
+                          );
+                        }
+
+                        if (!res.ok) throw new Error("Erro ao salvar");
+
+                        const updatedImage: ImageItem = await res.json();
+
+                        setImages((prev) => {
+                          if (cropMode === "create") {
+                            setCurrentSlide(prev.length);
+                            return [...prev, updatedImage];
+                          }
+
+                          const imageWithTimestamp = {
+                            ...updatedImage,
+                            url: `${updatedImage.url}?t=${Date.now()}`,
+                          };
+
+                          return prev.map((img) =>
+                            img.id === updatedImage.id
+                              ? imageWithTimestamp
+                              : img
+                          );
+                        });
+
+                        setIsCropOpen(false);
+                        setImageSrc(null);
+                        setOriginalFile(null);
+                        setEditingImageId(null);
+                        setCropMode("create");
+                      } catch (err) {
+                        console.error(err);
+                      } finally {
+                        setIsUploading(false);
+                      }
+                    }}
+                  >
+                    {isUploading ? (
+                      <span className={styles.spinner} />
+                    ) : (
+                      "Salvar"
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
       );
     }
 
@@ -343,116 +461,6 @@ export default function Slider({
           )}
         </div>
       </div>
-      {isCropOpen && imageSrc && (
-        <div className={styles.backdrop}>
-          <div className={styles.cropModal}>
-            <div className={styles.cropHeader}>
-              Cortar Imagem
-              <button onClick={() => setIsCropOpen(false)}>
-                <IoClose />
-              </button>
-            </div>
-
-            <div className={styles.cropContainer}>
-              <Cropper
-                image={imageSrc}
-                crop={crop}
-                zoom={zoom}
-                aspect={4 / 3}
-                onCropChange={setCrop}
-                onZoomChange={setZoom}
-                onCropComplete={(_, pixels) => setCroppedAreaPixels(pixels)}
-              />
-
-              <div className={styles.safeArea} />
-            </div>
-
-            <div className={styles.cropActions}>
-              <button onClick={() => setIsCropOpen(false)}>Cancelar</button>
-
-              <button
-                className={styles.saveBtn}
-                onClick={async () => {
-                  if (!croppedAreaPixels) return;
-
-                  setIsUploading(true);
-
-                  try {
-                    let res: Response;
-
-                    if (cropMode === "create") {
-                      if (!originalFile) throw new Error("Arquivo ausente");
-
-                      const formData = new FormData();
-                      formData.append("file", originalFile);
-                      formData.append(
-                        "crop",
-                        JSON.stringify(croppedAreaPixels)
-                      );
-                      formData.append("zoom", String(zoom));
-                      formData.append("aspect", "4/3");
-                      formData.append("profileId", String(profileId));
-
-                      res = await fetch("/api/profile/images", {
-                        method: "POST",
-                        body: formData,
-                      });
-                    } else {
-                      if (!editingImageId)
-                        throw new Error("Imagem não identificada");
-
-                      // Usar PATCH e enviar JSON
-                      res = await fetch(
-                        `/api/profile/images/${editingImageId}`,
-                        {
-                          method: "PATCH",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({
-                            cropData: croppedAreaPixels,
-                            zoom: zoom,
-                          }),
-                        }
-                      );
-                    }
-
-                    if (!res.ok) throw new Error("Erro ao salvar");
-
-                    const updatedImage: ImageItem = await res.json();
-
-                    setImages((prev) => {
-                      if (cropMode === "create") {
-                        setCurrentSlide(prev.length);
-                        return [...prev, updatedImage];
-                      }
-
-                      const imageWithTimestamp = {
-                        ...updatedImage,
-                        url: `${updatedImage.url}?t=${Date.now()}`,
-                      };
-
-                      return prev.map((img) =>
-                        img.id === updatedImage.id ? imageWithTimestamp : img
-                      );
-                    });
-
-                    setIsCropOpen(false);
-                    setImageSrc(null);
-                    setOriginalFile(null);
-                    setEditingImageId(null);
-                    setCropMode("create");
-                  } catch (err) {
-                    console.error(err);
-                  } finally {
-                    setIsUploading(false);
-                  }
-                }}
-              >
-                {isUploading ? <span className={styles.spinner} /> : "Salvar"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </section>
   );
 }
