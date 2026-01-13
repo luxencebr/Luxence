@@ -111,7 +111,7 @@ function Header() {
                 menuClassName={styles.menu}
               >
                 <Link
-                  href={`/product/${session?.user?.id}`}
+                  href={`/product/${session?.user?.producerId}`}
                   className={styles.menuItem}
                 >
                   Ver Perfil
@@ -193,7 +193,7 @@ function Header() {
             {session ? (
               <div className={styles.mobileUserSection}>
                 <Link
-                  href={`/product/${session?.user?.id}`}
+                  href={`/product/${session?.user?.producerId}`}
                   className={styles.mobileUserInfo}
                   onClick={() => setIsMenuOpen(false)}
                 >

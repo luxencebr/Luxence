@@ -36,6 +36,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           role: user.role,
           signature: user.signature,
           preferences: user.preferences,
+          producerId: user.producer?.id ? String(user.producer.id) : null,
         };
       },
     }),
@@ -48,9 +49,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.role = user.role;
         token.signature = user.signature;
         token.preferences = user.preferences;
+        token.producerId = user.producerId;
       }
       return token;
     },
+
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
@@ -59,6 +62,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.preferences = token.preferences as
           | ("MALE" | "FEMALE" | "TRANS")[]
           | undefined;
+
+        session.user.producerId = token.producerId as string | null;
       }
       return session;
     },
