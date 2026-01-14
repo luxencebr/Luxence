@@ -190,10 +190,10 @@ export default function Slider({
 
   /* ================= RENDER ================= */
 
-  if (images.length === 0) {
-    if (canEdit) {
-      return (
-        <>
+  return (
+    <>
+      {images.length === 0 ? (
+        canEdit ? (
           <section className={styles.slider}>
             <div className={styles.emptyState}>
               <label
@@ -224,243 +224,236 @@ export default function Slider({
               />
             </div>
           </section>
+        ) : (
+          <section className={styles.slider}>
+            <div className={styles.noImages}>
+              <span>Perfil sem imagens...</span>
+            </div>
+          </section>
+        )
+      ) : (
+        <section className={styles.slider}>
+          <div
+            className={styles.sliderContainer}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            {/* Slides */}
+            {canEdit && images[currentSlide] && (
+              <div className={styles.sliderActions}>
+                <button
+                  className={styles.editCurrentBtn}
+                  onClick={() => handleEditImage(currentSlide)}
+                >
+                  <HiOutlinePencil />
+                </button>
 
-          {isCropOpen && imageSrc && (
-            <div className={styles.backdrop}>
-              <div className={styles.cropModal}>
-                <div className={styles.cropHeader}>
-                  Cortar Imagem
-                  <button onClick={() => setIsCropOpen(false)}>
-                    <IoClose />
-                  </button>
+                <button
+                  className={`${styles.removeCurrentBtn} ${
+                    isDeleting === currentSlide ? styles.loading : ""
+                  }`}
+                  onClick={() => handleDeleteImage(currentSlide)}
+                  disabled={isDeleting === currentSlide}
+                  aria-label="Remover imagem atual"
+                >
+                  {isDeleting === currentSlide ? (
+                    <span className={styles.spinner} />
+                  ) : (
+                    <FaRegTrashCan />
+                  )}
+                </button>
+              </div>
+            )}
+
+            <div
+              className={styles.slideImages}
+              style={{
+                transform: `translateX(calc(-${
+                  currentSlide * 100
+                }% + ${dragOffset}px))`,
+                transition: isDragging ? "none" : "transform 0.3s ease",
+              }}
+            >
+              {images.map((img, index) => (
+                <img
+                  key={`${img.id}-${index}`}
+                  src={img.url || "/placeholder.svg"}
+                  alt={img.name}
+                  className={styles.slideImage}
+                  draggable={false}
+                />
+              ))}
+            </div>
+
+            {/* Controls */}
+            {totalSlides > 1 && (
+              <div className={styles.controls}>
+                <button onClick={goToPrevSlide} aria-label="Imagem anterior">
+                  <IoChevronBackOutline />
+                </button>
+                <button onClick={goToNextSlide} aria-label="Próxima imagem">
+                  <IoChevronForwardOutline />
+                </button>
+              </div>
+            )}
+
+            {/* Indicators */}
+            <div className={styles.indicators}>
+              {images.map((img, index) => (
+                <div
+                  className={styles.thumbnailWrapper}
+                  key={`${img.id}-thumb-${index}`}
+                >
+                  <img
+                    src={img.url || "/placeholder.svg"}
+                    alt={img.name}
+                    className={`${styles.thumbnail} ${
+                      index === currentSlide ? styles.active : ""
+                    }`}
+                    onClick={() => setCurrentSlide(index)}
+                  />
                 </div>
+              ))}
 
-                <div className={styles.cropContainer}>
-                  <Cropper
-                    image={imageSrc}
-                    crop={crop}
-                    zoom={zoom}
-                    aspect={4 / 3}
-                    onCropChange={setCrop}
-                    onZoomChange={setZoom}
-                    onCropComplete={(_, pixels) => setCroppedAreaPixels(pixels)}
+              {canEdit && (
+                <>
+                  <input
+                    id="addImageInput"
+                    type="file"
+                    accept=".jpg,.jpeg,.png,.webp,.heic,.heif"
+                    onChange={handleAddImage}
+                    hidden
                   />
 
-                  <div className={styles.safeArea} />
-                </div>
-
-                <div className={styles.cropActions}>
-                  <button onClick={() => setIsCropOpen(false)}>Cancelar</button>
-
-                  <button
-                    className={styles.saveBtn}
-                    onClick={async () => {
-                      if (!croppedAreaPixels) return;
-
-                      setIsUploading(true);
-
-                      try {
-                        let res: Response;
-
-                        if (cropMode === "create") {
-                          if (!originalFile) throw new Error("Arquivo ausente");
-
-                          const formData = new FormData();
-                          formData.append("file", originalFile);
-                          formData.append(
-                            "crop",
-                            JSON.stringify(croppedAreaPixels)
-                          );
-                          formData.append("zoom", String(zoom));
-                          formData.append("aspect", "4/3");
-                          formData.append("profileId", String(profileId));
-
-                          res = await fetch("/api/profile/images", {
-                            method: "POST",
-                            body: formData,
-                          });
-                        } else {
-                          if (!editingImageId)
-                            throw new Error("Imagem não identificada");
-
-                          res = await fetch(
-                            `/api/profile/images/${editingImageId}`,
-                            {
-                              method: "PATCH",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({
-                                cropData: croppedAreaPixels,
-                                zoom: zoom,
-                              }),
-                            }
-                          );
-                        }
-
-                        if (!res.ok) throw new Error("Erro ao salvar");
-
-                        const updatedImage: ImageItem = await res.json();
-
-                        setImages((prev) => {
-                          if (cropMode === "create") {
-                            setCurrentSlide(prev.length);
-                            return [...prev, updatedImage];
-                          }
-
-                          const imageWithTimestamp = {
-                            ...updatedImage,
-                            url: `${updatedImage.url}?t=${Date.now()}`,
-                          };
-
-                          return prev.map((img) =>
-                            img.id === updatedImage.id
-                              ? imageWithTimestamp
-                              : img
-                          );
-                        });
-
-                        setIsCropOpen(false);
-                        setImageSrc(null);
-                        setOriginalFile(null);
-                        setEditingImageId(null);
-                        setCropMode("create");
-                      } catch (err) {
-                        console.error(err);
-                      } finally {
-                        setIsUploading(false);
-                      }
-                    }}
+                  <label
+                    htmlFor="addImageInput"
+                    className={`${styles.addBtn} ${
+                      isUploading ? styles.loading : ""
+                    }`}
+                    aria-label="Adicionar imagem"
                   >
                     {isUploading ? (
                       <span className={styles.spinner} />
                     ) : (
-                      "Salvar"
+                      <FaPlus />
                     )}
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-        </>
-      );
-    }
-
-    return (
-      <section className={styles.slider}>
-        <div className={styles.noImages}>
-          <span>Perfil sem imagens...</span>
-        </div>
-      </section>
-    );
-  }
-
-  return (
-    <section className={styles.slider}>
-      <div
-        className={styles.sliderContainer}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
-        {/* Slides */}
-        {canEdit && images[currentSlide] && (
-          <div className={styles.sliderActions}>
-            <button
-              className={styles.editCurrentBtn}
-              onClick={() => handleEditImage(currentSlide)}
-            >
-              <HiOutlinePencil />
-            </button>
-
-            <button
-              className={`${styles.removeCurrentBtn} ${
-                isDeleting === currentSlide ? styles.loading : ""
-              }`}
-              onClick={() => handleDeleteImage(currentSlide)}
-              disabled={isDeleting === currentSlide}
-              aria-label="Remover imagem atual"
-            >
-              {isDeleting === currentSlide ? (
-                <span className={styles.spinner} />
-              ) : (
-                <FaRegTrashCan />
+                  </label>
+                </>
               )}
-            </button>
-          </div>
-        )}
-
-        <div
-          className={styles.slideImages}
-          style={{
-            transform: `translateX(calc(-${
-              currentSlide * 100
-            }% + ${dragOffset}px))`,
-            transition: isDragging ? "none" : "transform 0.3s ease",
-          }}
-        >
-          {images.map((img, index) => (
-            <img
-              key={`${img.id}-${index}`}
-              src={img.url || "/placeholder.svg"}
-              alt={img.name}
-              className={styles.slideImage}
-              draggable={false}
-            />
-          ))}
-        </div>
-
-        {/* Controls */}
-        {totalSlides > 1 && (
-          <div className={styles.controls}>
-            <button onClick={goToPrevSlide} aria-label="Imagem anterior">
-              <IoChevronBackOutline />
-            </button>
-            <button onClick={goToNextSlide} aria-label="Próxima imagem">
-              <IoChevronForwardOutline />
-            </button>
-          </div>
-        )}
-
-        {/* Indicators */}
-        <div className={styles.indicators}>
-          {images.map((img, index) => (
-            <div
-              className={styles.thumbnailWrapper}
-              key={`${img.id}-thumb-${index}`}
-            >
-              <img
-                src={img.url || "/placeholder.svg"}
-                alt={img.name}
-                className={`${styles.thumbnail} ${
-                  index === currentSlide ? styles.active : ""
-                }`}
-                onClick={() => setCurrentSlide(index)}
-              />
             </div>
-          ))}
+          </div>
+        </section>
+      )}
+      {isCropOpen && imageSrc && (
+        <div className={styles.backdrop}>
+          <div className={styles.cropModal}>
+            <div className={styles.cropHeader}>
+              Cortar Imagem
+              <button onClick={() => setIsCropOpen(false)}>
+                <IoClose />
+              </button>
+            </div>
 
-          {canEdit && (
-            <>
-              <input
-                id="addImageInput"
-                type="file"
-                accept=".jpg,.jpeg,.png,.webp,.heic,.heif"
-                onChange={handleAddImage}
-                hidden
+            <div className={styles.cropContainer}>
+              <Cropper
+                image={imageSrc}
+                crop={crop}
+                zoom={zoom}
+                aspect={4 / 3}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={(_, pixels) => setCroppedAreaPixels(pixels)}
               />
 
-              <label
-                htmlFor="addImageInput"
-                className={`${styles.addBtn} ${
-                  isUploading ? styles.loading : ""
-                }`}
-                aria-label="Adicionar imagem"
+              <div className={styles.safeArea} />
+            </div>
+
+            <div className={styles.cropActions}>
+              <button onClick={() => setIsCropOpen(false)}>Cancelar</button>
+
+              <button
+                className={styles.saveBtn}
+                onClick={async () => {
+                  if (!croppedAreaPixels) return;
+
+                  setIsUploading(true);
+
+                  try {
+                    let res: Response;
+
+                    if (cropMode === "create") {
+                      if (!originalFile) throw new Error("Arquivo ausente");
+
+                      const formData = new FormData();
+                      formData.append("file", originalFile);
+                      formData.append(
+                        "crop",
+                        JSON.stringify(croppedAreaPixels)
+                      );
+                      formData.append("zoom", String(zoom));
+                      formData.append("aspect", "4/3");
+                      formData.append("profileId", String(profileId));
+
+                      res = await fetch("/api/profile/images", {
+                        method: "POST",
+                        body: formData,
+                      });
+                    } else {
+                      if (!editingImageId)
+                        throw new Error("Imagem não identificada");
+
+                      res = await fetch(
+                        `/api/profile/images/${editingImageId}`,
+                        {
+                          method: "PATCH",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            cropData: croppedAreaPixels,
+                            zoom: zoom,
+                          }),
+                        }
+                      );
+                    }
+
+                    if (!res.ok) throw new Error("Erro ao salvar");
+
+                    const updatedImage: ImageItem = await res.json();
+
+                    setImages((prev) => {
+                      if (cropMode === "create") {
+                        setCurrentSlide(prev.length);
+                        return [...prev, updatedImage];
+                      }
+
+                      const imageWithTimestamp = {
+                        ...updatedImage,
+                        url: `${updatedImage.url}?t=${Date.now()}`,
+                      };
+
+                      return prev.map((img) =>
+                        img.id === updatedImage.id ? imageWithTimestamp : img
+                      );
+                    });
+
+                    setIsCropOpen(false);
+                    setImageSrc(null);
+                    setOriginalFile(null);
+                    setEditingImageId(null);
+                    setCropMode("create");
+                  } catch (err) {
+                    console.error(err);
+                  } finally {
+                    setIsUploading(false);
+                  }
+                }}
               >
-                {isUploading ? <span className={styles.spinner} /> : <FaPlus />}
-              </label>
-            </>
-          )}
+                {isUploading ? <span className={styles.spinner} /> : "Salvar"}
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
-    </section>
+      )}
+    </>
   );
 }
