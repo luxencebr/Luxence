@@ -378,16 +378,26 @@
   gap: 8px;
 }
 
+.ratingLabel {
+  display: flex;
+  align-items: end;
+  gap: 4px;
+
+  font-family: Quicksand;
+}
+
 .ratingStars {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 2px;
+
   color: var(--primary-color);
-  font-size: var(--fs-lg);
-  letter-spacing: 2px;
+  font-size: var(--fs-md);
 }
 
 .ratingNumber {
   font-size: var(--fs-xl);
   font-weight: 700;
-  color: var(--primary-color);
 }
 
 .noData {

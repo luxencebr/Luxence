@@ -1,6 +1,72 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { Resend } from "resend";
 
 import { prisma } from "@/utils/prisma";
+
+function getResend() {
+  const apiKey = process.env.RESEND_API_KEY;
+
+  if (!apiKey) {
+    throw new Error("RESEND_API_KEY is not configured");
+  }
+
+  return new Resend(apiKey);
+}
+
+async function sendReviewNotificationEmail(
+  email: string,
+  producerName: string,
+  reviewerName: string,
+  profileId: number
+) {
+  const resend = getResend();
+
+  const reviewLink = `${process.env.NEXTAUTH_URL}/profile/${profileId}`;
+
+  await resend.emails.send({
+    from: "Luxence <no-reply@luxence.com.br>",
+    replyTo: "contato@luxence.com.br",
+    to: email,
+    subject: "Nova avaliação aguardando aprovação - Luxence",
+    html: `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        </head>
+        <body style="font-family: Arial, sans-serif; background-color: #1a1a1a; color: #ffffff; padding: 40px 20px; margin: 0;">
+          <div style="max-width: 500px; margin: 0 auto; background-color: #2a2a2a; border-radius: 12px; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+            <h1 style="color: #d4af37; margin-bottom: 24px; text-align: center;">Luxence</h1>
+            <h2 style="color: #ffffff; font-size: 24px; margin-bottom: 16px;">Nova Avaliação Pendente</h2>
+            <p style="color: #e0e0e0; line-height: 1.6; margin-bottom: 16px;">
+              Olá, <strong>${producerName}</strong>!
+            </p>
+            <p style="color: #e0e0e0; line-height: 1.6; margin-bottom: 24px;">
+              <strong>${reviewerName}</strong> enviou uma nova avaliação sobre seu perfil. 
+              A avaliação está aguardando sua aprovação para ser publicada.
+            </p>
+            <div style="background-color: #1a1a1a; border-left: 4px solid #d4af37; padding: 16px; margin: 24px 0; border-radius: 4px;">
+              <p style="color: #d4af37; font-weight: bold; margin: 0 0 8px 0;">⚠️ Importante:</p>
+              <p style="color: #b0b0b0; margin: 0; font-size: 14px; line-height: 1.5;">
+                Você pode aprovar ou recusar esta avaliação. Ao aprovar, ela se tornará pública 
+                e será exibida em seu perfil. Você poderá visualizar a nota completa após tomar sua decisão.
+              </p>
+            </div>
+            <div style="text-align: center; margin: 32px 0;">
+              <a href="${reviewLink}" style="background-color: #d4af37; color: #1a1a1a; padding: 14px 32px; border-radius: 6px; font-weight: bold; text-decoration: none; display: inline-block;">
+                Ver Avaliação Pendente
+              </a>
+            </div>
+            <p style="font-size: 12px; color: #666; text-align: center; margin-top: 32px;">
+              Este é um email automático. Para suporte, escreva para contato@luxence.com.br
+            </p>
+          </div>
+        </body>
+      </html>
+    `,
+  });
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -56,9 +122,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verifica se o perfil do produtor existe
     const profile = await prisma.producerProfile.findUnique({
       where: { id: parsedProfileId },
+      include: {
+        producer: {
+          include: {
+            user: true,
+          },
+        },
+      },
     });
 
     if (!profile) {
@@ -91,6 +163,18 @@ export async function POST(request: NextRequest) {
         },
       },
     });
+
+    try {
+      await sendReviewNotificationEmail(
+        profile.producer.user.email,
+        profile.producer.name,
+        user.name,
+        parsedProfileId
+      );
+    } catch (emailError) {
+      // Log error but don't fail the review creation
+      console.error("Erro ao enviar email de notificação:", emailError);
+    }
 
     return NextResponse.json(review, { status: 201 });
   } catch (error) {

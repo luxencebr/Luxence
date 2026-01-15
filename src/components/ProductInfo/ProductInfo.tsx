@@ -420,16 +420,24 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
             <div className={styles.cardContent}>
               {hasReviews ? (
                 <>
-                  <p className={styles.reviewCount}>
-                    {approvedReviews.length}{" "}
-                    {approvedReviews.length === 1 ? "avaliação" : "avaliações"}
-                  </p>
-                  <div className={styles.ratingDisplay}>
-                    <span className={styles.ratingStars}>
-                      {"♥".repeat(Math.round(rating))}
-                    </span>
+                  <div className={styles.ratingLabel}>
                     <span className={styles.ratingNumber}>
                       {rating.toFixed(1)}
+                    </span>
+                    <p className={styles.reviewCount}>
+                      {approvedReviews.length}{" "}
+                      {approvedReviews.length === 1
+                        ? "avaliação"
+                        : "avaliações"}
+                    </p>
+                  </div>
+                  <div className={styles.ratingDisplay}>
+                    <span className={styles.ratingStars}>
+                      {Array.from({ length: Math.round(rating) }).map(
+                        (_, i) => (
+                          <FaHeart key={i} />
+                        )
+                      )}
                     </span>
                   </div>
                 </>
