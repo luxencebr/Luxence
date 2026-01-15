@@ -21,7 +21,7 @@ async function sendReviewNotificationEmail(
 ) {
   const resend = getResend();
 
-  const reviewLink = `${process.env.NEXTAUTH_URL}/profile/${profileId}`;
+  const reviewLink = `${process.env.NEXTAUTH_URL}/product/${profileId}`;
 
   await resend.emails.send({
     from: "Luxence <no-reply@luxence.com.br>",
