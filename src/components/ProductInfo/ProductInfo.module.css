@@ -303,6 +303,12 @@
   flex-direction: column;
   gap: 8px;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.infoCard:hover {
+  box-shadow: 0 0 0 1.5px var(--primary-color);
+  transform: translateY(-1px);
 }
 
 .cardHeader {
@@ -357,6 +363,37 @@
   align-items: center;
   gap: 4px;
   font-style: normal;
+}
+
+/* New styles for reviews display in infoCard */
+.reviewCount {
+  font-size: var(--fs-xs);
+  color: var(--contrast-complementary-color);
+  margin-bottom: 4px;
+}
+
+.ratingDisplay {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ratingStars {
+  color: var(--primary-color);
+  font-size: var(--fs-lg);
+  letter-spacing: 2px;
+}
+
+.ratingNumber {
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.noData {
+  font-size: var(--fs-xs);
+  color: var(--contrast-complementary-color);
+  font-style: italic;
 }
 
 /* ===========================

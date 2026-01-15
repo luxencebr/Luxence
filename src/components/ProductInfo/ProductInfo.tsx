@@ -215,10 +215,12 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
   }
 
   const reviews = producer.profile.reviews || [];
-  const hasReviews = reviews.length > 0;
+  const approvedReviews = reviews.filter((review) => review.isApproved);
+  const hasReviews = approvedReviews.length > 0;
 
   const rating = hasReviews
-    ? reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length
+    ? approvedReviews.reduce((acc, review) => acc + review.rating, 0) /
+      approvedReviews.length
     : 0;
 
   const price = producer.profile.prices?.[0];
@@ -416,15 +418,23 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
               <IoIosArrowDown />
             </div>
             <div className={styles.cardContent}>
-              {producer.profile.reviews.length > 0 ? (
-                <p>
-                  {producer.profile.reviews.length} -{" "}
-                  {typeof rating === "number" && !isNaN(rating)
-                    ? rating.toFixed(1)
-                    : "N/D"}
-                </p>
+              {hasReviews ? (
+                <>
+                  <p className={styles.reviewCount}>
+                    {approvedReviews.length}{" "}
+                    {approvedReviews.length === 1 ? "avaliação" : "avaliações"}
+                  </p>
+                  <div className={styles.ratingDisplay}>
+                    <span className={styles.ratingStars}>
+                      {"♥".repeat(Math.round(rating))}
+                    </span>
+                    <span className={styles.ratingNumber}>
+                      {rating.toFixed(1)}
+                    </span>
+                  </div>
+                </>
               ) : (
-                <p>Ainda não há avaliações</p>
+                <p className={styles.noData}>Ainda não há avaliações</p>
               )}
             </div>
           </button>
