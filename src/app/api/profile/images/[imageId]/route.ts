@@ -25,15 +25,12 @@ function isImageArray(value: unknown): value is ProfileImage[] {
   );
 }
 
-interface RouteParams {
-  params: {
-    imageId: string;
-  };
-}
-
 /* ========================= DELETE ========================= */
 
-export async function DELETE(req: Request, { params }: RouteParams) {
+export async function DELETE(
+  req: Request,
+  { params }: { params: { imageId: string } }
+) {
   try {
     const { imageId } = params;
 
@@ -41,8 +38,7 @@ export async function DELETE(req: Request, { params }: RouteParams) {
 
     const profile = profiles.find(
       (p) =>
-        Array.isArray(p.images) &&
-        p.images.some((img: any) => img.id === imageId)
+        isImageArray(p.images) && p.images.some((img) => img.id === imageId)
     );
 
     if (!profile || !isImageArray(profile.images)) {
@@ -52,8 +48,7 @@ export async function DELETE(req: Request, { params }: RouteParams) {
       );
     }
 
-    const images = profile.images; // ProfileImage[]
-
+    const images = profile.images;
     const image = images.find((img) => img.id === imageId);
 
     if (!image) {
@@ -76,9 +71,7 @@ export async function DELETE(req: Request, { params }: RouteParams) {
 
     await prisma.producerProfile.update({
       where: { id: profile.id },
-      data: {
-        images: updatedImages as any,
-      },
+      data: { images: updatedImages as any },
     });
 
     return NextResponse.json({ success: true });
@@ -93,7 +86,10 @@ export async function DELETE(req: Request, { params }: RouteParams) {
 
 /* ========================= PATCH ========================= */
 
-export async function PATCH(req: Request, { params }: RouteParams) {
+export async function PATCH(
+  req: Request,
+  { params }: { params: { imageId: string } }
+) {
   try {
     const { imageId } = params;
     const { cropData, zoom } = await req.json();
@@ -119,8 +115,7 @@ export async function PATCH(req: Request, { params }: RouteParams) {
       );
     }
 
-    const images = profile.images; // ProfileImage[]
-
+    const images = profile.images;
     const imageIndex = images.findIndex((img) => img.id === imageId);
 
     if (imageIndex === -1) {
@@ -131,7 +126,6 @@ export async function PATCH(req: Request, { params }: RouteParams) {
     }
 
     const image = images[imageIndex];
-
     const originalImageUrl = image.originalUrl ?? image.url;
 
     if (!originalImageUrl) {
@@ -165,8 +159,6 @@ export async function PATCH(req: Request, { params }: RouteParams) {
       folder: `profiles/${profile.id}`,
     });
 
-    const updatedImages: ProfileImage[] = [...images];
-
     const safeImage: ProfileImage = {
       id: image.id,
       url: image.url,
@@ -175,6 +167,7 @@ export async function PATCH(req: Request, { params }: RouteParams) {
       cropData: image.cropData,
     };
 
+    const updatedImages: ProfileImage[] = [...images];
     updatedImages[imageIndex] = {
       ...safeImage,
       url: newCroppedUrl,
@@ -187,9 +180,7 @@ export async function PATCH(req: Request, { params }: RouteParams) {
 
     await prisma.producerProfile.update({
       where: { id: profile.id },
-      data: {
-        images: updatedImages as any, // Prisma JSON
-      },
+      data: { images: updatedImages as any },
     });
 
     return NextResponse.json(updatedImages[imageIndex]);
