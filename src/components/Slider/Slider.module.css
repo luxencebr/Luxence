@@ -1,7 +1,7 @@
 .slider {
   background: var(--background-complementary-color);
   height: calc(90vh - 32px);
-  width: calc((90vh - 32px) * 4 / 3);
+  width: calc((90vh - 32px) * 3 / 4);
   margin: 0 auto;
 
   overflow: hidden;
@@ -344,7 +344,7 @@
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
 }
 
 .removeCurrentBtn,
@@ -378,11 +378,11 @@
 }
 
 .editCurrentBtn {
-  background: var(--contrast-complementary-color);
+  background: var(--primary-complementary-color);
   color: var(--background-color);
 }
 
 .removeCurrentBtn {
-  background: rgba(255, 0, 0, 0.25);
-  color: red;
+  background: rgba(255, 0, 0, 0.8);
+  color: var(--contrast-color);
 }

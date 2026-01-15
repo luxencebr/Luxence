@@ -4,9 +4,12 @@ import { deleteFromSpaces } from "@/lib/deleteFromSpaces";
 import { uploadToSpaces } from "@/lib/uploadToSpaces";
 import sharp from "sharp";
 
-export async function DELETE(req: NextRequest, { params }: { params: any }) {
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { imageId: string } }
+) {
   try {
-    const { imageId } = params;
+    const { imageId } = await params;
 
     const profiles = await prisma.producerProfile.findMany();
     const profile = profiles.find(
@@ -63,9 +66,13 @@ export async function DELETE(req: NextRequest, { params }: { params: any }) {
   }
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: any }) {
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: { imageId: string } }
+) {
   try {
-    const { imageId } = params;
+    const { imageId } = await params;
+
     const body = await req.json();
     const { cropData, zoom } = body;
 
@@ -116,11 +123,9 @@ export async function PATCH(req: NextRequest, { params }: { params: any }) {
       );
     }
 
-    // Buscar a imagem original do storage
     const originalResponse = await fetch(originalImageUrl as string);
     const originalBuffer = Buffer.from(await originalResponse.arrayBuffer());
 
-    // Aplicar novo crop
     const croppedBuffer = await sharp(originalBuffer)
       .extract({
         left: Math.round(cropData.x),
@@ -141,10 +146,14 @@ export async function PATCH(req: NextRequest, { params }: { params: any }) {
       await deleteFromSpaces(oldCroppedKey);
     }
 
-    // Upload nova versão cortada
+    const timestamp = Date.now();
     const newCroppedUrl = await uploadToSpaces({
       buffer: croppedBuffer,
-      filename: `${imageId}-cropped-${typeof image === "object" && image !== null && "name" in image ? (image.name as string) : "image"}`,
+      filename: `${imageId}-cropped-${timestamp}-${
+        typeof image === "object" && image !== null && "name" in image
+          ? (image.name as string)
+          : "image"
+      }`,
       contentType: "image/jpeg",
       folder: `profiles/${profile.id}`,
     });
@@ -153,7 +162,7 @@ export async function PATCH(req: NextRequest, { params }: { params: any }) {
     updatedImages[imageIndex] = {
       ...image,
       url: newCroppedUrl,
-      originalUrl: originalImageUrl, // Preservar ou criar originalUrl
+      originalUrl: originalImageUrl,
       cropData: {
         x: cropData.x,
         y: cropData.y,
@@ -170,9 +179,7 @@ export async function PATCH(req: NextRequest, { params }: { params: any }) {
       },
     });
 
-    return NextResponse.json(
-      updatedImages[imageIndex] as object
-    );
+    return NextResponse.json(updatedImages[imageIndex] as object);
   } catch (err) {
     console.error(err);
     return NextResponse.json(

@@ -34,6 +34,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           email: user.email,
           name: user.name,
           role: user.role,
+          gender: user.gender, // 👈 AQUI
           signature: user.signature,
           preferences: user.preferences,
           producerId: user.producer?.id ? String(user.producer.id) : null,
@@ -47,6 +48,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (user) {
         token.id = user.id;
         token.role = user.role;
+        token.gender = user.gender; // 👈
         token.signature = user.signature;
         token.preferences = user.preferences;
         token.producerId = user.producerId;
@@ -58,11 +60,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
+        session.user.gender = token.gender as
+          | "MALE"
+          | "FEMALE"
+          | "TRANS"
+          | null; // 👈
         session.user.signature = token.signature as string | null;
         session.user.preferences = token.preferences as
           | ("MALE" | "FEMALE" | "TRANS")[]
           | undefined;
-
         session.user.producerId = token.producerId as string | null;
       }
       return session;

@@ -51,7 +51,7 @@
 .producerImage {
   background: var(--background-color);
   min-width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 3 / 4;
 }
 
 .producerImage img {

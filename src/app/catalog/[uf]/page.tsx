@@ -26,8 +26,15 @@ function calculateAge(birthday: string | Date) {
   return age;
 }
 
-function normalizeGender(gender: string) {
-  return gender.toLowerCase();
+function normalizeGender(gender?: string | null): Gender | null {
+  if (!gender) return null;
+
+  const value = gender.toLowerCase();
+  if (value === "female" || value === "male" || value === "trans") {
+    return value;
+  }
+
+  return null;
 }
 
 type Gender = "female" | "male" | "trans";
@@ -36,6 +43,23 @@ function resolvePreferredGender(preferred?: Gender[] | null): Gender {
   if (preferred?.includes("female")) return "female";
   if (preferred?.includes("male")) return "male";
   return "trans";
+}
+
+function resolveInitialGender(session: any): Gender {
+  if (!session?.user) return "female";
+
+  // 👉 Caso seja anunciante
+  if (session.user.role === "ADVERTISER") {
+    const gender = normalizeGender(session.user.gender);
+    return gender ?? "female"; // fallback seguro
+  }
+
+  // 👉 Caso seja usuário comum
+  const preferred = session.user.preferences?.map(
+    (p: string) => p.toLowerCase() as Gender
+  );
+
+  return resolvePreferredGender(preferred);
 }
 
 type Signature = "DIAMOND" | "GOLD" | "SILVER" | "COPPER";
@@ -216,13 +240,9 @@ export default function CatalogPage() {
     if (status !== "authenticated") return;
     if (hasInitializedGender.current) return;
 
-    const preferred = session.user?.preferences?.map(
-      (p) => p.toLowerCase() as Gender
-    );
+    const gender = resolveInitialGender(session);
 
-    const resolvedGender = resolvePreferredGender(preferred);
-
-    setSelectedGender(resolvedGender);
+    setSelectedGender(gender);
     hasInitializedGender.current = true;
   }, [status, session]);
 
@@ -245,8 +265,11 @@ export default function CatalogPage() {
   }, [selectedGender, loading]);
 
   const producersByGender = useMemo(() => {
+    if (!selectedGender) return [];
+
     return producers.filter((p) => {
-      return normalizeGender(p.user.gender) === selectedGender;
+      const gender = normalizeGender(p.user?.gender);
+      return gender === selectedGender;
     });
   }, [producers, selectedGender]);
 

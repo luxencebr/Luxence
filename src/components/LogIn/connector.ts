@@ -6,6 +6,7 @@ type User = {
   email: string;
   name: string;
   role: string;
+  gender: "MALE" | "FEMALE" | "TRANS" | null; // 👈
   signature: string | null;
   preferences?: ("MALE" | "FEMALE" | "TRANS")[];
   producer?: {
@@ -35,6 +36,7 @@ export default async function connector(
     email: user.email,
     name: user.name,
     role: user.role,
+    gender: user.gender, // 👈 AQUI
     signature: user.producer?.signature ?? null,
     preferences: user.preferences.map(
       (p) => p.gender as "MALE" | "FEMALE" | "TRANS"

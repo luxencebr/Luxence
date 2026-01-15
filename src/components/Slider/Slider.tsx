@@ -141,15 +141,18 @@ export default function Slider({
 
     setOriginalFile(null);
 
-    // Usar originalUrl se existir, senão usar url (imagens antigas)
     const imageToEdit = image.originalUrl || image.url;
     setImageSrc(imageToEdit);
     setIsCropOpen(true);
 
-    // Se tiver cropData, restaurar. Senão, iniciar com valores padrão (imagem completa)
+    // Note: cropData contains pixel coordinates but Cropper expects percentage-based crop
+    // We'll store the pixel data for the API but let the Cropper handle initial positioning
     if (image.cropData) {
-      setCrop({ x: image.cropData.x, y: image.cropData.y });
+      // Reset crop to center (0, 0) and restore zoom
+      // The Cropper will handle positioning based on the zoom level
+      setCrop({ x: 0, y: 0 });
       setZoom(image.cropData.zoom);
+      // Store pixel data for reference but let Cropper recalculate
       setCroppedAreaPixels({
         x: image.cropData.x,
         y: image.cropData.y,
@@ -157,7 +160,7 @@ export default function Slider({
         height: image.cropData.height,
       });
     } else {
-      // Resetar para valores padrão
+      // Reset to default values
       setCrop({ x: 0, y: 0 });
       setZoom(1);
       setCroppedAreaPixels(null);
@@ -360,13 +363,11 @@ export default function Slider({
                 image={imageSrc}
                 crop={crop}
                 zoom={zoom}
-                aspect={4 / 3}
+                aspect={3 / 4}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={(_, pixels) => setCroppedAreaPixels(pixels)}
               />
-
-              <div className={styles.safeArea} />
             </div>
 
             <div className={styles.cropActions}>
@@ -392,7 +393,7 @@ export default function Slider({
                         JSON.stringify(croppedAreaPixels)
                       );
                       formData.append("zoom", String(zoom));
-                      formData.append("aspect", "4/3");
+                      formData.append("aspect", "3/4");
                       formData.append("profileId", String(profileId));
 
                       res = await fetch("/api/profile/images", {
@@ -441,6 +442,9 @@ export default function Slider({
                     setOriginalFile(null);
                     setEditingImageId(null);
                     setCropMode("create");
+                    setCrop({ x: 0, y: 0 });
+                    setZoom(1);
+                    setCroppedAreaPixels(null);
                   } catch (err) {
                     console.error(err);
                   } finally {
