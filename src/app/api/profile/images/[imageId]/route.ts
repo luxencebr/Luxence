@@ -9,7 +9,7 @@ export async function DELETE(
   { params }: { params: { imageId: string } }
 ) {
   try {
-    const { imageId } = await params;
+    const { imageId } = params;
 
     const profiles = await prisma.producerProfile.findMany();
     const profile = profiles.find(
@@ -71,7 +71,7 @@ export async function PATCH(
   { params }: { params: { imageId: string } }
 ) {
   try {
-    const { imageId } = await params;
+    const { imageId } = params;
 
     const body = await req.json();
     const { cropData, zoom } = body;
