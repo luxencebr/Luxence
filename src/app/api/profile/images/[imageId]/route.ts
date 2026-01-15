@@ -27,12 +27,9 @@ function isImageArray(value: unknown): value is ProfileImage[] {
 
 /* ========================= DELETE ========================= */
 
-export async function DELETE(
-  req: Request,
-  { params }: { params: { imageId: string } }
-) {
+export async function DELETE(req: Request, context: any) {
   try {
-    const { imageId } = params;
+    const { imageId } = context.params;
 
     const profiles = await prisma.producerProfile.findMany();
 
@@ -86,12 +83,9 @@ export async function DELETE(
 
 /* ========================= PATCH ========================= */
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: { imageId: string } }
-) {
+export async function PATCH(req: Request, context: any) {
   try {
-    const { imageId } = params;
+    const { imageId } = context.params;
     const { cropData, zoom } = await req.json();
 
     if (!cropData) {
