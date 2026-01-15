@@ -92,7 +92,7 @@ export default function ProductPage({ params }: ProductPageProps) {
         <ProductFetiches producer={producer} canEdit={canEdit} />
         <ProductValues producer={producer} canEdit={canEdit} />
         <ProductLocation producer={producer} canEdit={canEdit} />
-        {/* <ProductReviews producer={producer} /> */}
+        <ProductReviews producer={producer} />
       </div>
     </div>
   );

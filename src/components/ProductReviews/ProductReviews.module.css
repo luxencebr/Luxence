@@ -72,6 +72,11 @@
   border-radius: 8px;
 }
 
+/* Added pending state style for reviews awaiting approval */
+.reviewItem.reviewPending {
+  box-shadow: 0 0 0 1px var(--primary-complementary-color);
+}
+
 .reviewItemLayout {
   padding: 12px;
 
@@ -89,13 +94,25 @@
 }
 
 .reviewerName {
+  width: 100%;
   margin: 0;
 
   display: flex;
   align-items: center;
-  gap: 4px;
+  justify-content: space-between;
 
   font-weight: bold;
+}
+
+/* Added pending badge for reviews in analysis */
+.pendingBadge {
+  font-size: 0.75rem;
+  font-weight: normal;
+  color: var(--primary-color);
+  box-shadow: 0 0 0 1px var(--primary-complementary-color);
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-left: 8px;
 }
 
 .rate {
@@ -121,6 +138,72 @@
 .reviewDate {
   font-size: 12px;
   color: var(--contrast-complementary-color);
+}
+
+/* Added delete button for user's own reviews */
+.deleteButton {
+  background: transparent;
+  padding: 6px 12px;
+  border: 1px solid #ff4444;
+  border-radius: 16px;
+
+  color: #ff4444;
+  font-family: Quicksand;
+  font-size: 0.85rem;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.deleteButton:hover {
+  background: rgba(255, 68, 68, 0.1);
+}
+
+/* Added approval buttons for profile owner */
+.approvalButtons {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.approveButton,
+.rejectButton {
+  flex: 1;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 16px;
+
+  font-family: Quicksand;
+  font-size: 0.9rem;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.approveButton {
+  background: #4caf50;
+  color: white;
+}
+
+.approveButton:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.rejectButton {
+  background: #f44336;
+  color: white;
+}
+
+.rejectButton:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.approveButton:disabled,
+.rejectButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .showMoreButton {
@@ -167,6 +250,50 @@
   border-radius: 8px;
 }
 
+/* Added rating selector styles */
+.ratingSelector {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 8px;
+}
+
+.ratingLabel {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.hearts {
+  display: flex;
+  gap: 8px;
+}
+
+.heartButton {
+  background: transparent;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  font-size: 28px;
+  transition: transform 0.2s;
+}
+
+.heartButton:hover:not(:disabled) {
+  transform: scale(1.15);
+}
+
+.heartButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.heartFilled {
+  color: var(--primary-color);
+}
+
+.heartEmpty {
+  color: var(--contrast-complementary-color);
+}
+
 .commentInput {
   background: transparent;
   flex: 0 1 auto;
@@ -185,6 +312,11 @@
   line-height: 1.4;
 }
 
+.commentInput:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .commentInput::-webkit-scrollbar {
   width: 2px;
 }
@@ -200,4 +332,173 @@
 
 .commentInput::-webkit-scrollbar-thumb:hover {
   background: color-mix(in srgb, var(--contrast-color) 70%, white 30%);
+}
+
+/* Added submit button and message styles */
+.submitButton {
+  background: var(--primary-color);
+  padding: 12px 24px;
+  border: none;
+  border-radius: 20px;
+
+  font-family: Quicksand;
+  font-weight: bold;
+  font-size: 1rem;
+
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.submitButton:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.errorMessage {
+  margin: 0;
+  padding: 8px 12px;
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  border-radius: 8px;
+  color: #ff4444;
+  font-size: 0.9rem;
+}
+
+.successMessage {
+  margin: 0;
+  padding: 8px 12px;
+  background: rgba(0, 255, 0, 0.1);
+  border: 1px solid rgba(0, 255, 0, 0.3);
+  border-radius: 8px;
+  color: #44ff44;
+  font-size: 0.9rem;
+}
+
+.noReviews {
+  padding: 24px;
+  text-align: center;
+  color: var(--contrast-complementary-color);
+}
+
+/* Added already reviewed message styling */
+.alreadyReviewedMessage {
+  padding: 16px;
+  text-align: center;
+  background: rgba(76, 175, 80, 0.1);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  border-radius: 8px;
+  color: #4caf50;
+}
+
+.alreadyReviewedMessage p {
+  margin: 0;
+  font-weight: 600;
+}
+
+/* Estilos para lista de reviews pendentes e mensagem quando não há pendentes */
+.pendingReviewsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 12px;
+}
+
+.noPendingReviews {
+  padding: 24px;
+  text-align: center;
+  color: var(--contrast-complementary-color);
+  background: var(--background-complementary-color);
+  border-radius: 8px;
+}
+
+.noPendingReviews p {
+  margin: 0;
+}
+
+/* Added custom modal for delete confirmation */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.modalContent {
+  background: var(--background-complementary-color);
+  padding: 24px;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 16px;
+}
+
+.modalContent h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: var(--contrast-color);
+}
+
+.modalContent p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--contrast-complementary-color);
+}
+
+.modalActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.modalCancel,
+.modalConfirm {
+  flex: 1;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+
+  font-family: Quicksand;
+  font-size: 0.95rem;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.modalCancel {
+  background: transparent;
+  box-shadow: 0 0 0 1px var(--contrast-color);
+  color: var(--contrast-color);
+}
+
+.modalCancel:hover {
+  opacity: 0.8;
+}
+
+.modalConfirm {
+  background: #f44336;
+  color: white;
+}
+
+.modalConfirm:hover {
+  opacity: 0.8;
 }

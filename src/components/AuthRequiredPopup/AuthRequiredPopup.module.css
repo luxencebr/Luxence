@@ -1,0 +1,80 @@
+.menu {
+  background: var(--background-complementary-color);
+  max-width: 300px;
+
+  border-radius: 16px;
+}
+
+.header {
+  padding: 16px;
+
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  font-size: 24px;
+}
+
+.closeButton {
+  background: transparent;
+
+  border: none;
+
+  display: flex;
+  align-items: center;
+
+  color: var(--contrast-color);
+  font-size: 20px;
+
+  cursor: pointer;
+}
+
+.closeButton:hover {
+  opacity: 0.75;
+}
+
+.text {
+  padding: 0 24px;
+
+  font-size: 14px;
+  line-height: 1.5;
+
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: auto;
+
+  text-align: justify;
+}
+
+.footer {
+  padding: 16px;
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 4px;
+}
+
+.options {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 16px;
+}
+
+.options > * {
+  flex: 1;
+  padding: 8px;
+
+  border-radius: 8px;
+}
+
+.options > :first-child {
+  background: var(--background-color);
+}
+
+.helperText {
+  color: var(--contrast-complementary-color);
+  font-size: 12px;
+}

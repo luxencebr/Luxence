@@ -1,4 +1,7 @@
 .trigger {
+  border-bottom: 1px solid transparent;
+
+  text-wrap: nowrap;
   color: var(--primary-color);
   font-size: 20px;
 }
