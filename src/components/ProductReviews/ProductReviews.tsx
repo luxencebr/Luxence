@@ -333,7 +333,7 @@ function ProductReviews({
             })
           ) : (
             <li className={styles.noReviews}>
-              <p>Este produtor ainda não possui avaliações aprovadas.</p>
+              <p>Este produtor ainda não possui avaliações.</p>
             </li>
           )}
         </ul>
