@@ -1,12 +1,15 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/utils/prisma";
 
+// Definimos um tipo para facilitar a manutenção
+type RouteParams = { params: Promise<{ reviewId: string }> };
+
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { reviewId: string } }
+  { params }: RouteParams // 1. Mudança na tipagem
 ) {
   try {
-    const { reviewId } = params;
+    const { reviewId } = await params; // 2. Adicionado await
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get("userId");
 
@@ -17,7 +20,6 @@ export async function DELETE(
       );
     }
 
-    // Buscar a review
     const review = await prisma.review.findUnique({
       where: { id: reviewId },
       include: {
@@ -46,7 +48,6 @@ export async function DELETE(
       );
     }
 
-    // Deletar a review
     await prisma.review.delete({
       where: { id: reviewId },
     });
@@ -66,15 +67,14 @@ export async function DELETE(
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { reviewId: string } }
+  { params }: RouteParams // 1. Mudança na tipagem
 ) {
   try {
-    const { reviewId } = params;
+    const { reviewId } = await params; // 2. Adicionado await
     const { searchParams } = new URL(request.url);
     const action = searchParams.get("action");
 
     if (action === "preview") {
-      // Retorna apenas o comentário, sem a nota
       const review = await prisma.review.findUnique({
         where: { id: reviewId },
         select: {
@@ -113,10 +113,10 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { reviewId: string } }
+  { params }: RouteParams // 1. Mudança na tipagem
 ) {
   try {
-    const { reviewId } = params;
+    const { reviewId } = await params; // 2. Adicionado await
     const body = await request.json();
     const { userId, isApproved } = body;
 
@@ -127,7 +127,6 @@ export async function PATCH(
       );
     }
 
-    // Buscar a review
     const review = await prisma.review.findUnique({
       where: { id: reviewId },
       include: {
@@ -146,7 +145,6 @@ export async function PATCH(
       );
     }
 
-    // Verificar se o usuário é o dono do perfil
     if (review.profile.producer.userId !== Number(userId)) {
       return NextResponse.json(
         { error: "Você não tem permissão para aprovar esta avaliação" },
@@ -165,7 +163,6 @@ export async function PATCH(
       );
     }
 
-    // Atualizar o status de aprovação
     const updatedReview = await prisma.review.update({
       where: { id: reviewId },
       data: { isApproved },
