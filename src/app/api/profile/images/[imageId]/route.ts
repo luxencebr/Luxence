@@ -1,64 +1,89 @@
-import { type NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { prisma } from "@/utils/prisma";
 import { deleteFromSpaces } from "@/lib/deleteFromSpaces";
 import { uploadToSpaces } from "@/lib/uploadToSpaces";
 import sharp from "sharp";
 
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { imageId: string } }
-) {
+interface ProfileImage {
+  id: string;
+  url?: string;
+  originalUrl?: string;
+  name?: string;
+  cropData?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    zoom?: number;
+  };
+}
+
+function isImageArray(value: unknown): value is ProfileImage[] {
+  return (
+    Array.isArray(value) &&
+    value.every((img) => typeof img === "object" && img !== null && "id" in img)
+  );
+}
+
+interface RouteParams {
+  params: {
+    imageId: string;
+  };
+}
+
+/* ========================= DELETE ========================= */
+
+export async function DELETE(req: Request, { params }: RouteParams) {
   try {
     const { imageId } = params;
 
     const profiles = await prisma.producerProfile.findMany();
+
     const profile = profiles.find(
       (p) =>
         Array.isArray(p.images) &&
         p.images.some((img: any) => img.id === imageId)
     );
 
-    if (!profile || !Array.isArray(profile.images)) {
+    if (!profile || !isImageArray(profile.images)) {
       return NextResponse.json(
         { error: "Imagem não encontrada" },
         { status: 404 }
       );
     }
 
-    const image = profile.images.find((img: any) => img.id === imageId);
+    const images = profile.images; // ProfileImage[]
 
-    if (!image || typeof image !== "object") {
+    const image = images.find((img) => img.id === imageId);
+
+    if (!image) {
       return NextResponse.json({ error: "Imagem inválida" }, { status: 400 });
     }
 
-    if ("url" in image && typeof image.url === "string") {
-      const croppedKey = image.url.split(
-        `/${process.env.DO_SPACES_BUCKET}/`
-      )[1];
-      await deleteFromSpaces(croppedKey);
+    if (typeof image.url === "string") {
+      const key = image.url.split(`/${process.env.DO_SPACES_BUCKET}/`)[1];
+      await deleteFromSpaces(key);
     }
 
-    if ("originalUrl" in image && typeof image.originalUrl === "string") {
-      const originalKey = image.originalUrl.split(
+    if (typeof image.originalUrl === "string") {
+      const key = image.originalUrl.split(
         `/${process.env.DO_SPACES_BUCKET}/`
       )[1];
-      await deleteFromSpaces(originalKey);
+      await deleteFromSpaces(key);
     }
 
-    const updatedImages = profile.images.filter(
-      (img: any) => img.id !== imageId
-    );
+    const updatedImages = images.filter((img) => img.id !== imageId);
 
     await prisma.producerProfile.update({
       where: { id: profile.id },
       data: {
-        images: updatedImages,
+        images: updatedImages as any,
       },
     });
 
     return NextResponse.json({ success: true });
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error(error);
     return NextResponse.json(
       { error: "Erro ao deletar imagem" },
       { status: 500 }
@@ -66,15 +91,12 @@ export async function DELETE(
   }
 }
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { imageId: string } }
-) {
+/* ========================= PATCH ========================= */
+
+export async function PATCH(req: Request, { params }: RouteParams) {
   try {
     const { imageId } = params;
-
-    const body = await req.json();
-    const { cropData, zoom } = body;
+    const { cropData, zoom } = await req.json();
 
     if (!cropData) {
       return NextResponse.json(
@@ -84,37 +106,33 @@ export async function PATCH(
     }
 
     const profiles = await prisma.producerProfile.findMany();
+
     const profile = profiles.find(
       (p) =>
-        Array.isArray(p.images) &&
-        p.images.some((img: any) => img.id === imageId)
+        isImageArray(p.images) && p.images.some((img) => img.id === imageId)
     );
 
-    if (!profile || !Array.isArray(profile.images)) {
+    if (!profile || !isImageArray(profile.images)) {
       return NextResponse.json(
         { error: "Imagem não encontrada" },
         { status: 404 }
       );
     }
 
-    const imageIndex = profile.images.findIndex(
-      (img: any) => img.id === imageId
-    );
-    const image = profile.images[imageIndex];
+    const images = profile.images; // ProfileImage[]
 
-    if (!image || typeof image !== "object") {
+    const imageIndex = images.findIndex((img) => img.id === imageId);
+
+    if (imageIndex === -1) {
       return NextResponse.json(
         { error: "Imagem não encontrada" },
         { status: 404 }
       );
     }
 
-    const originalImageUrl =
-      "originalUrl" in image && image.originalUrl
-        ? image.originalUrl
-        : "url" in image && image.url
-        ? image.url
-        : null;
+    const image = images[imageIndex];
+
+    const originalImageUrl = image.originalUrl ?? image.url;
 
     if (!originalImageUrl) {
       return NextResponse.json(
@@ -123,7 +141,7 @@ export async function PATCH(
       );
     }
 
-    const originalResponse = await fetch(originalImageUrl as string);
+    const originalResponse = await fetch(originalImageUrl);
     const originalBuffer = Buffer.from(await originalResponse.arrayBuffer());
 
     const croppedBuffer = await sharp(originalBuffer)
@@ -135,39 +153,34 @@ export async function PATCH(
       })
       .toBuffer();
 
-    if (
-      "url" in image &&
-      typeof image.url === "string" &&
-      image.url !== originalImageUrl
-    ) {
-      const oldCroppedKey = image.url.split(
-        `/${process.env.DO_SPACES_BUCKET}/`
-      )[1];
-      await deleteFromSpaces(oldCroppedKey);
+    if (image.url && image.url !== originalImageUrl) {
+      const oldKey = image.url.split(`/${process.env.DO_SPACES_BUCKET}/`)[1];
+      await deleteFromSpaces(oldKey);
     }
 
-    const timestamp = Date.now();
     const newCroppedUrl = await uploadToSpaces({
       buffer: croppedBuffer,
-      filename: `${imageId}-cropped-${timestamp}-${
-        typeof image === "object" && image !== null && "name" in image
-          ? (image.name as string)
-          : "image"
-      }`,
+      filename: `${imageId}-cropped-${image.name ?? "image"}`,
       contentType: "image/jpeg",
       folder: `profiles/${profile.id}`,
     });
 
-    const updatedImages = [...profile.images];
+    const updatedImages: ProfileImage[] = [...images];
+
+    const safeImage: ProfileImage = {
+      id: image.id,
+      url: image.url,
+      originalUrl: image.originalUrl,
+      name: image.name,
+      cropData: image.cropData,
+    };
+
     updatedImages[imageIndex] = {
-      ...image,
+      ...safeImage,
       url: newCroppedUrl,
       originalUrl: originalImageUrl,
       cropData: {
-        x: cropData.x,
-        y: cropData.y,
-        width: cropData.width,
-        height: cropData.height,
+        ...cropData,
         zoom,
       },
     };
@@ -175,13 +188,13 @@ export async function PATCH(
     await prisma.producerProfile.update({
       where: { id: profile.id },
       data: {
-        images: updatedImages,
+        images: updatedImages as any, // Prisma JSON
       },
     });
 
-    return NextResponse.json(updatedImages[imageIndex] as object);
-  } catch (err) {
-    console.error(err);
+    return NextResponse.json(updatedImages[imageIndex]);
+  } catch (error) {
+    console.error(error);
     return NextResponse.json(
       { error: "Erro ao atualizar crop" },
       { status: 500 }
