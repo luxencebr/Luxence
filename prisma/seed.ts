@@ -62,7 +62,6 @@ const APPEARANCE_OPTIONS = [
     label: "Tamanho da bunda",
     valueType: APPEARANCE_VALUE_TYPE.OPTION,
   },
-
   {
     id: 10,
     name: "tatuagens",
@@ -77,8 +76,20 @@ const APPEARANCE_OPTIONS = [
   },
   {
     id: 12,
-    name: "silicone",
-    label: "Silicone",
+    name: "pubis",
+    label: "Pubis",
+    valueType: APPEARANCE_VALUE_TYPE.OPTION,
+  },
+  {
+    id: 13,
+    name: "silicone_busto",
+    label: "Silicone no Busto",
+    valueType: APPEARANCE_VALUE_TYPE.BOOLEAN,
+  },
+  {
+    id: 14,
+    name: "silicone_quadril",
+    label: "Silicone no Quadril",
     valueType: APPEARANCE_VALUE_TYPE.BOOLEAN,
   },
 ];
@@ -102,10 +113,9 @@ const AMENITIES_OPTIONS = [
   { id: 9, name: "jacuzzi", label: "Jacuzzi" },
   { id: 10, name: "toalhas_limpas", label: "Toalhas Limpas" },
   { id: 11, name: "produtos_de_higiene", label: "Produtos de Higiene" },
-  { id: 12, name: "preservativos", label: "Preservativos" },
-  { id: 13, name: "wifi", label: "Wi-Fi" },
-  { id: 14, name: "frigobar", label: "Frigobar" },
-  { id: 15, name: "estacionamento", label: "Estacionamento" },
+  { id: 12, name: "wifi", label: "Wi-Fi" },
+  { id: 13, name: "frigobar", label: "Frigobar" },
+  { id: 14, name: "estacionamento", label: "Estacionamento" },
 ];
 
 const AUDIENCE_OPTIONS = [
@@ -164,6 +174,32 @@ const PAYMENT_OPTIONS = [
   { id: 3, name: "debito", label: "Débito" },
 ];
 
+async function upsertManyByName<T extends { id: number; name: string }>(
+  model: {
+    upsert: (args: {
+      where: { name: string };
+      update: Omit<T, "id">;
+      create: T;
+    }) => Promise<any>;
+  },
+  data: T[],
+  label: string
+) {
+  console.log(`🌱 ${label}...`);
+
+  for (const item of data) {
+    const { id, ...rest } = item;
+
+    await model.upsert({
+      where: { name: item.name },
+      update: rest,
+      create: item,
+    });
+  }
+
+  console.log(`🌱 ${label} OK`);
+}
+
 async function upsertMany<T extends { id: number }>(
   model: {
     upsert: (args: {
@@ -191,19 +227,43 @@ async function upsertMany<T extends { id: number }>(
 async function main() {
   console.log("🌱 Iniciando seed...");
 
-  await upsertMany(prisma.contactOption, CONTACT_OPTIONS, "contactOption");
-  await upsertMany(
+  await upsertManyByName(
+    prisma.contactOption,
+    CONTACT_OPTIONS,
+    "contactOption"
+  );
+  await upsertManyByName(
     prisma.appearanceOption,
     APPEARANCE_OPTIONS,
     "appearanceOption"
   );
-  await upsertMany(prisma.locationOption, LOCATIONS_OPTIONS, "locationOption");
-  await upsertMany(prisma.amenityOption, AMENITIES_OPTIONS, "amenityOption");
-  await upsertMany(prisma.fetishOption, FETICHES_OPTIONS, "fetishOption");
-  await upsertMany(prisma.serviceOption, SERVICE_OPTIONS, "serviceOption");
-  await upsertMany(prisma.audienceOption, AUDIENCE_OPTIONS, "audienceOption");
-  await upsertMany(prisma.priceOption, PRICE_OPTIONS, "priceOption");
-  await upsertMany(prisma.paymentOption, PAYMENT_OPTIONS, "paymentOption");
+  await upsertManyByName(
+    prisma.locationOption,
+    LOCATIONS_OPTIONS,
+    "locationOption"
+  );
+  await upsertManyByName(
+    prisma.amenityOption,
+    AMENITIES_OPTIONS,
+    "amenityOption"
+  );
+  await upsertManyByName(prisma.fetishOption, FETICHES_OPTIONS, "fetishOption");
+  await upsertManyByName(
+    prisma.serviceOption,
+    SERVICE_OPTIONS,
+    "serviceOption"
+  );
+  await upsertManyByName(
+    prisma.audienceOption,
+    AUDIENCE_OPTIONS,
+    "audienceOption"
+  );
+  await upsertManyByName(prisma.priceOption, PRICE_OPTIONS, "priceOption");
+  await upsertManyByName(
+    prisma.paymentOption,
+    PAYMENT_OPTIONS,
+    "paymentOption"
+  );
 
   console.log("🌱 Seed finalizado com sucesso!");
 }

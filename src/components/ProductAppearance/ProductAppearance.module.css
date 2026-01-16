@@ -120,15 +120,14 @@
   border-top-right-radius: 8px;
 
   display: flex;
-  flex-flow: column nowrap;
+  flex-flow: row nowrap;
   gap: 4px;
 
   transition: 0.2s ease;
 }
 
-.item:hover {
-  transform: translateY(-2px);
-  z-index: 2;
+.item > * {
+  flex: 1;
 }
 
 .label {
@@ -160,6 +159,9 @@
 .menu {
   background: var(--background-complementary-color);
   max-height: 96px;
+
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 
   overflow-y: auto;
 }
@@ -219,7 +221,7 @@
 }
 
 .radioOpt:has(input:checked) {
-  background: var(--background-complementary-color);
+  background: var(--background-color);
   opacity: 1;
 }
 
@@ -228,7 +230,7 @@
 }
 
 .number {
-  background: var(--background-complementary-color);
+  background: var(--background-color);
   height: 33.33px;
   width: 100%;
   padding: 8px;
@@ -252,6 +254,62 @@
 /* Firefox */
 .number {
   -moz-appearance: textfield;
+}
+
+.input {
+  display: flex;
+  gap: 8px;
+}
+
+.input > * {
+  flex: 1;
+}
+
+/* Substituídos estilos de checkbox por radio buttons para silicone */
+
+.siliconeLabel {
+  opacity: 0.8;
+  font-size: 12px;
+}
+
+.siliconeRadioGroup {
+  padding: 4px 0;
+  display: flex;
+  gap: 6px;
+}
+
+.siliconeRadioOpt {
+  opacity: 0.5;
+
+  flex: 1;
+  padding: 4px;
+
+  border-radius: 6px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 12px;
+
+  cursor: pointer;
+
+  transition: 0.25s ease;
+}
+
+.siliconeRadioOpt:has(input:checked) {
+  background: var(--background-color);
+  opacity: 1;
+}
+
+.siliconeRadioOpt input {
+  display: none;
+}
+
+.siliconeInfo {
+  display: block;
+  font-size: 12px;
+  opacity: 0.7;
 }
 
 .saving {

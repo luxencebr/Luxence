@@ -1,5 +1,7 @@
+"use client";
+
 import { useState } from "react";
-import { Producer } from "@/types/Producer";
+import type { Producer } from "@/types/Producer";
 import { APPEARANCE_VALUE_TYPE } from "@prisma/client";
 
 import styles from "./ProductAppearance.module.css";
@@ -44,6 +46,12 @@ const SIZES = [
   { id: 3, name: "grande", label: "Grande" },
 ];
 
+const PUBIS = [
+  { id: 1, name: "depilado", label: "Depilado" },
+  { id: 2, name: "aparado", label: "Aparado" },
+  { id: 3, name: "natural", label: "Natural" },
+];
+
 const OPTION_MAP: Record<
   string,
   { id: number; name: string; label: string }[]
@@ -54,6 +62,7 @@ const OPTION_MAP: Record<
   body_type: BODY_TYPE,
   breast_size: SIZES,
   butt_size: SIZES,
+  pubis: PUBIS, // Adicionado pubis ao mapa de opções
 };
 
 type AppearanceState = {
@@ -130,7 +139,6 @@ export default function ProductAppearance({
       label: "Tamanho do Quadril",
       valueType: APPEARANCE_VALUE_TYPE.OPTION,
     },
-
     {
       id: 10,
       name: "tatuagens",
@@ -145,11 +153,26 @@ export default function ProductAppearance({
     },
     {
       id: 12,
-      name: "silicone",
-      label: "Silicone",
+      name: "pubis",
+      label: "Pubis",
+      valueType: APPEARANCE_VALUE_TYPE.OPTION,
+    },
+    {
+      id: 13,
+      name: "silicone_busto",
+      label: "Silicone no Busto",
+      valueType: APPEARANCE_VALUE_TYPE.BOOLEAN,
+    },
+    {
+      id: 14,
+      name: "silicone_quadril",
+      label: "Silicone no Quadril",
       valueType: APPEARANCE_VALUE_TYPE.BOOLEAN,
     },
   ];
+
+  // IDs que não serão renderizados separadamente (serão exibidos junto com outro campo)
+  const HIDDEN_IDS = [13, 14]; // silicone_busto e silicone_quadril
 
   const initialStates: AppearanceState[] = APPEARANCE_OPTIONS.map((opt) => {
     const found = producer.profile.appearance?.find(
@@ -186,7 +209,7 @@ export default function ProductAppearance({
   };
 
   const handleSave = async () => {
-    if (isSaving) return; // evita duplicidade
+    if (isSaving) return;
 
     setIsSaving(true);
 
@@ -223,7 +246,6 @@ export default function ProductAppearance({
         return;
       }
 
-      // sucesso → sai do modo edição
       setIsEditing(false);
     } catch (err) {
       console.error("Erro inesperado ao salvar aparência:", err);
@@ -243,6 +265,60 @@ export default function ProductAppearance({
   ) => {
     setAppearance((prev) =>
       prev.map((item) => (item.id === id ? { ...item, value } : item))
+    );
+  };
+
+  const getSiliconeValue = (fieldId: number) => {
+    // fieldId 8 = breast_size -> silicone_busto (13)
+    // fieldId 9 = butt_size -> silicone_quadril (14)
+    const siliconeId = fieldId === 8 ? 13 : fieldId === 9 ? 14 : null;
+    if (!siliconeId) return null;
+    return appearance.find((a) => a.id === siliconeId);
+  };
+
+  const renderSiliconeCheckbox = (fieldId: number) => {
+    const silicone = getSiliconeValue(fieldId);
+    if (!silicone) return null;
+
+    const label = fieldId === 8 ? "Silicone no Busto" : "Silicone no Quadril";
+
+    if (!isEditing) {
+      if (silicone.value === null) return null;
+      return (
+        <div className={styles.itemContent}>
+          <span className={styles.label}>{label}</span>
+          <span className={styles.value}>
+            {silicone.value === true ? `Com Silicone` : `Sem Silicone`}
+          </span>
+        </div>
+      );
+    }
+
+    return (
+      <div className={styles.siliconeOptions}>
+        <span className={styles.siliconeLabel}>{label}</span>
+        <div className={styles.siliconeRadioGroup}>
+          <label className={styles.siliconeRadioOpt}>
+            <input
+              type="radio"
+              name={`silicone-${silicone.id}`}
+              checked={silicone.value === true}
+              onChange={() => updateAppearanceValue(silicone.id, true)}
+            />
+            Sim
+          </label>
+
+          <label className={styles.siliconeRadioOpt}>
+            <input
+              type="radio"
+              name={`silicone-${silicone.id}`}
+              checked={silicone.value === false}
+              onChange={() => updateAppearanceValue(silicone.id, false)}
+            />
+            Não
+          </label>
+        </div>
+      </div>
     );
   };
 
@@ -284,140 +360,155 @@ export default function ProductAppearance({
       ) : (
         <div className={styles.content}>
           <ul className={styles.list}>
-            {appearance.map((a) => (
-              <li key={a.id} className={styles.item}>
-                <span className={styles.label}>{a.label}</span>
+            {appearance
+              .filter((a) => !HIDDEN_IDS.includes(a.id))
+              .map((a) => (
+                <li key={a.id} className={styles.item}>
+                  <div className={styles.itemContent}>
+                    <span className={styles.label}>{a.label}</span>
 
-                {!isEditing ? (
-                  <span className={styles.value}>
-                    {a.valueType === APPEARANCE_VALUE_TYPE.BOOLEAN &&
-                      (a.value === true
-                        ? "Sim"
-                        : a.value === false
-                        ? "Não"
-                        : canEdit
-                        ? "Informe e atraia mais cliques!"
-                        : "Não informado")}
-                    {a.valueType === APPEARANCE_VALUE_TYPE.NUMBER &&
-                      (a.value !== null
-                        ? a.value
-                        : canEdit
-                        ? "Informe e atraia mais cliques!"
-                        : "Não informado")}
-                    {a.valueType === APPEARANCE_VALUE_TYPE.OPTION &&
-                      (() => {
-                        if (!a.value) {
-                          return canEdit
-                            ? "Informe e atraia mais cliques!"
-                            : "Não informado";
-                        }
+                    {!isEditing ? (
+                      <>
+                        <span className={styles.value}>
+                          {a.valueType === APPEARANCE_VALUE_TYPE.BOOLEAN &&
+                            (a.value === true
+                              ? "Sim"
+                              : a.value === false
+                              ? "Não"
+                              : canEdit
+                              ? "Informe e atraia mais cliques!"
+                              : "Não informado")}
+                          {a.valueType === APPEARANCE_VALUE_TYPE.NUMBER &&
+                            (a.value !== null
+                              ? a.value
+                              : canEdit
+                              ? "Informe e atraia mais cliques!"
+                              : "Não informado")}
+                          {a.valueType === APPEARANCE_VALUE_TYPE.OPTION &&
+                            (() => {
+                              if (!a.value) {
+                                return canEdit
+                                  ? "Informe e atraia mais cliques!"
+                                  : "Não informado";
+                              }
 
-                        const optionName = APPEARANCE_OPTIONS.find(
-                          (opt) => opt.id === a.id
-                        )?.name;
+                              const optionName = APPEARANCE_OPTIONS.find(
+                                (opt) => opt.id === a.id
+                              )?.name;
 
-                        const label = OPTION_MAP[optionName ?? ""]?.find(
-                          (opt) => opt.name === a.value
-                        )?.label;
+                              const label = OPTION_MAP[optionName ?? ""]?.find(
+                                (opt) => opt.name === a.value
+                              )?.label;
 
-                        return label ?? "—";
-                      })()}
-                  </span>
-                ) : (
-                  <>
-                    {a.valueType === APPEARANCE_VALUE_TYPE.BOOLEAN && (
-                      <div className={styles.flex}>
-                        <label className={styles.radioOpt}>
+                              return label ?? "—";
+                            })()}
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        {a.valueType === APPEARANCE_VALUE_TYPE.BOOLEAN && (
+                          <div className={styles.flex}>
+                            <label className={styles.radioOpt}>
+                              <input
+                                type="radio"
+                                name={`bool-${a.id}`}
+                                checked={a.value === true}
+                                onChange={() =>
+                                  updateAppearanceValue(a.id, true)
+                                }
+                              />
+                              Sim
+                            </label>
+
+                            <label className={styles.radioOpt}>
+                              <input
+                                type="radio"
+                                name={`bool-${a.id}`}
+                                checked={a.value === false}
+                                onChange={() =>
+                                  updateAppearanceValue(a.id, false)
+                                }
+                              />
+                              Não
+                            </label>
+
+                            <label className={styles.radioOpt}>
+                              <input
+                                type="radio"
+                                name={`bool-${a.id}`}
+                                checked={a.value === null}
+                                onChange={() =>
+                                  updateAppearanceValue(a.id, null)
+                                }
+                              />
+                              N/A
+                            </label>
+                          </div>
+                        )}
+
+                        {a.valueType === APPEARANCE_VALUE_TYPE.NUMBER && (
                           <input
-                            type="radio"
-                            name={`bool-${a.id}`}
-                            checked={a.value === true}
-                            onChange={() => updateAppearanceValue(a.id, true)}
-                          />
-                          Sim
-                        </label>
-
-                        <label className={styles.radioOpt}>
-                          <input
-                            type="radio"
-                            name={`bool-${a.id}`}
-                            checked={a.value === false}
-                            onChange={() => updateAppearanceValue(a.id, false)}
-                          />
-                          Não
-                        </label>
-
-                        <label className={styles.radioOpt}>
-                          <input
-                            type="radio"
-                            name={`bool-${a.id}`}
-                            checked={a.value === null}
-                            onChange={() => updateAppearanceValue(a.id, null)}
-                          />
-                          N/A
-                        </label>
-                      </div>
-                    )}
-
-                    {a.valueType === APPEARANCE_VALUE_TYPE.NUMBER && (
-                      <input
-                        type="number"
-                        className={styles.number}
-                        value={typeof a.value === "number" ? a.value : ""}
-                        onChange={(e) =>
-                          updateAppearanceValue(
-                            a.id,
-                            e.target.value === ""
-                              ? null
-                              : Number(e.target.value)
-                          )
-                        }
-                      />
-                    )}
-
-                    {a.valueType === APPEARANCE_VALUE_TYPE.OPTION && (
-                      <Dropdown
-                        trigger={
-                          a.value
-                            ? OPTION_MAP[
-                                APPEARANCE_OPTIONS.find(
-                                  (opt) => opt.id === a.id
-                                )?.name ?? ""
-                              ]?.find((opt) => opt.name === a.value)?.label
-                            : "Selecionar"
-                        }
-                        triggerClassName={styles.trigger}
-                        menuClassName={styles.menu}
-                      >
-                        {OPTION_MAP[
-                          APPEARANCE_OPTIONS.find((opt) => opt.id === a.id)
-                            ?.name ?? ""
-                        ]?.map((option) => (
-                          <button
-                            key={option.id}
-                            type="button"
-                            className={styles.dropdownItem}
-                            onClick={() =>
-                              updateAppearanceValue(a.id, option.name)
+                            type="number"
+                            className={styles.number}
+                            value={typeof a.value === "number" ? a.value : ""}
+                            onChange={(e) =>
+                              updateAppearanceValue(
+                                a.id,
+                                e.target.value === ""
+                                  ? null
+                                  : Number(e.target.value)
+                              )
                             }
-                          >
-                            {option.label}
-                          </button>
-                        ))}
+                          />
+                        )}
 
-                        <button
-                          type="button"
-                          className={styles.dropdownItem}
-                          onClick={() => updateAppearanceValue(a.id, null)}
-                        >
-                          Não informar
-                        </button>
-                      </Dropdown>
+                        {a.valueType === APPEARANCE_VALUE_TYPE.OPTION && (
+                          <Dropdown
+                            trigger={
+                              a.value
+                                ? OPTION_MAP[
+                                    APPEARANCE_OPTIONS.find(
+                                      (opt) => opt.id === a.id
+                                    )?.name ?? ""
+                                  ]?.find((opt) => opt.name === a.value)?.label
+                                : "Selecionar"
+                            }
+                            triggerClassName={styles.trigger}
+                            menuClassName={styles.menu}
+                          >
+                            {OPTION_MAP[
+                              APPEARANCE_OPTIONS.find((opt) => opt.id === a.id)
+                                ?.name ?? ""
+                            ]?.map((option) => (
+                              <button
+                                key={option.id}
+                                type="button"
+                                className={styles.dropdownItem}
+                                onClick={() =>
+                                  updateAppearanceValue(a.id, option.name)
+                                }
+                              >
+                                {option.label}
+                              </button>
+                            ))}
+
+                            <button
+                              type="button"
+                              className={styles.dropdownItem}
+                              onClick={() => updateAppearanceValue(a.id, null)}
+                            >
+                              Não informar
+                            </button>
+                          </Dropdown>
+                        )}
+                      </>
                     )}
-                  </>
-                )}
-              </li>
-            ))}
+                  </div>
+                  {(a.id === 8 || a.id === 9) &&
+                    a.value !== null &&
+                    renderSiliconeCheckbox(a.id)}
+                </li>
+              ))}
           </ul>
         </div>
       )}
