@@ -53,6 +53,7 @@ export interface ProducerProfile {
   languages: Array<{ name: string; level: string }>;
   hasLocal: boolean;
   views: number;
+  lastWeekViews: number;
 
   producer: Producer;
   contacts: ProducerContact[];

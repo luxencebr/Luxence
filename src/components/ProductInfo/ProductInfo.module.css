@@ -272,6 +272,59 @@
   gap: 4px;
 }
 
+/* Adicionado estilos para contador de visitas semanais */
+.weeklyViews {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 8px 10px;
+  font-size: var(--fs-xs);
+  color: var(--contrast-complementary-color);
+
+  background: var(--background-color);
+  border-radius: 999px;
+  width: fit-content;
+  white-space: nowrap;
+
+  cursor: default;
+
+  overflow: hidden;
+  transition:
+    padding 0.25s ease,
+    background-color 0.25s ease;
+}
+
+/* Ícone */
+.weeklyViews svg {
+  font-size: 16px;
+  color: var(--primary-color);
+  flex-shrink: 0;
+}
+
+/* Texto oculto inicialmente */
+.label {
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+
+  transition:
+    max-width 0.3s ease,
+    opacity 0.2s ease;
+}
+
+/* Hover: expande */
+.weeklyViews:hover {
+  padding-right: 16px;
+  background: var(--background-soft-color, var(--background-color));
+}
+
+/* Revela o texto */
+.weeklyViews:hover .label {
+  max-width: 220px; /* controla o "quanto expande" */
+  opacity: 1;
+}
+
 .verified {
   height: 100%;
   font-size: 24px;

@@ -168,6 +168,9 @@ model ProducerProfile {
   payments    ProducerPayment[]
 
   views       Int       @default(0)
+  lastWeekViews Int     @default(0)
+  lastWeekViewsUpdatedAt DateTime?
+  profileViews ProfileView[]
   reviews     Review[]
 }
 
@@ -406,4 +409,14 @@ model Comment {
   likes       Int       @default(0)
 
   createdAt   DateTime @default(now())
+}
+
+model ProfileView {
+  id        Int      @id @default(autoincrement())
+  profileId Int
+  viewedAt  DateTime @default(now())
+
+  profile   ProducerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId, viewedAt])
 }

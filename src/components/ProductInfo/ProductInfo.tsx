@@ -11,6 +11,7 @@ import { HiLocationMarker } from "react-icons/hi";
 import { TbHomeCheck, TbHomeX } from "react-icons/tb";
 import { FaHeart } from "react-icons/fa6";
 import { IoIosArrowDown } from "react-icons/io";
+import { FaEye } from "react-icons/fa";
 
 import { FaWhatsapp, FaInstagram, FaTelegram } from "react-icons/fa6";
 import { GoShieldCheck, GoShield, GoShieldX } from "react-icons/go";
@@ -316,12 +317,15 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                   {canEdit && <HiOutlinePencil className={styles.editIcon} />}
                 </h1>
               )}
+              <div className={styles.weeklyViews}>
+                <FaEye />
+                <strong>{producer.profile.lastWeekViews}</strong>
+                <span className={styles.label}>visitas na última semana</span>
+              </div>
             </div>
 
             <div
-              className={`${styles.editable} ${styles.slogan} ${
-                !hasCustomSlogan ? styles.isSuggestion : ""
-              }`}
+              className={`${styles.editable} ${styles.slogan} ${!hasCustomSlogan ? styles.isSuggestion : ""}`}
             >
               {isEditingSlogan ? (
                 <div className={styles.editableEdit}>
@@ -386,6 +390,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
               )}
             </div>
           </div>
+
           {producer.verificationStatus === "GREEN" && (
             <div className={styles.verified} style={{ color: "green" }}>
               <GoShieldCheck />
