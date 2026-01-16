@@ -1,11 +1,59 @@
-import { useMemo, useState } from "react";
+"use client";
+
+import { useMemo, useState, useEffect } from "react";
 import { Range } from "react-range";
 
-import { Producer } from "@/types/Producer";
+import type { Producer } from "@/types/Producer";
 import Popup from "../ui/Popup/Popup";
 import styles from "./FilterPopup.module.css";
 import { CiFilter } from "react-icons/ci";
 import { IoCloseOutline } from "react-icons/io5";
+
+const APPEARANCE_VALUE_LABELS: Record<string, Record<string, string>> = {
+  ethnicity: {
+    oriental: "Oriental",
+    branco: "Branco",
+    moreno: "Morena",
+    preto: "Preto",
+  },
+  hair_color: {
+    branco: "Branco",
+    castanho: "Castanho",
+    colorido: "Colorido",
+    loiro: "Loiro",
+    preto: "Preto",
+    ruivo: "Ruivo",
+  },
+  eye_color: {
+    azul: "Azul",
+    castanho: "Castanho",
+    mel: "Mel",
+    preto: "Preto",
+    verde: "Verde",
+  },
+  body_type: {
+    madura: "Madura",
+    magra: "Magra",
+    mignon: "Mignon",
+    ninfeta: "Ninfeta",
+    plus_size: "Plus Size",
+  },
+  breast_size: {
+    pequeno: "Pequeno",
+    médio: "Médio",
+    grande: "Grande",
+  },
+  butt_size: {
+    pequeno: "Pequeno",
+    médio: "Médio",
+    grande: "Grande",
+  },
+  pubis: {
+    depilado: "Depilado",
+    aparado: "Aparado",
+    natural: "Natural",
+  },
+};
 
 export interface ActiveFilters {
   ageRange?: {
@@ -34,10 +82,11 @@ export interface ActiveFilters {
     body_type?: string[];
     breast_size?: string[];
     butt_size?: string[];
-
+    pubis?: string[];
     tatuagens?: ("sim" | "não")[];
     piercings?: ("sim" | "não")[];
-    silicone?: ("sim" | "não")[];
+    silicone_busto?: ("sim" | "não")[];
+    silicone_quadril?: ("sim" | "não")[];
   };
 }
 
@@ -78,15 +127,17 @@ export function extractFilterOptions(producers: Producer[]) {
     body_type: new Set<string>(),
     breast_size: new Set<string>(),
     butt_size: new Set<string>(),
+    pubis: new Set<string>(),
     tatuagens: new Set<string>(),
     piercings: new Set<string>(),
-    silicone: new Set<string>(),
+    silicone_busto: new Set<string>(),
+    silicone_quadril: new Set<string>(),
   };
 
-  let minPrice = Infinity;
+  let minPrice = Number.POSITIVE_INFINITY;
   let maxPrice = 0;
 
-  let minAge = Infinity;
+  let minAge = Number.POSITIVE_INFINITY;
   let maxAge = 0;
 
   producers.forEach((p) => {
@@ -168,7 +219,8 @@ export function extractFilterOptions(producers: Producer[]) {
   });
 
   return {
-    ageRange: minAge !== Infinity ? { min: minAge, max: maxAge } : null,
+    ageRange:
+      minAge !== Number.POSITIVE_INFINITY ? { min: minAge, max: maxAge } : null,
     nationalities: Array.from(nationalities.values()),
     services: Array.from(services.values()),
     fetiches: Array.from(fetiches.values()),
@@ -182,13 +234,18 @@ export function extractFilterOptions(producers: Producer[]) {
       body_type: Array.from(appearanceOptions.body_type),
       breast_size: Array.from(appearanceOptions.breast_size),
       butt_size: Array.from(appearanceOptions.butt_size),
+      pubis: Array.from(appearanceOptions.pubis),
       tatuagens: Array.from(appearanceOptions.tatuagens),
       piercings: Array.from(appearanceOptions.piercings),
-      silicone: Array.from(appearanceOptions.silicone),
+      silicone_busto: Array.from(appearanceOptions.silicone_busto),
+      silicone_quadril: Array.from(appearanceOptions.silicone_quadril),
     },
     payments: Array.from(payments.values()),
     durations: Array.from(durations.values()),
-    priceRange: minPrice !== Infinity ? { min: minPrice, max: maxPrice } : null,
+    priceRange:
+      minPrice !== Number.POSITIVE_INFINITY
+        ? { min: minPrice, max: maxPrice }
+        : null,
   };
 }
 
@@ -199,10 +256,35 @@ interface FilterPopupProps {
 
 export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
   const [isOpen, setIsOpen] = useState(false);
-
+  const [filters, setFilters] = useState<ActiveFilters>({});
   const options = useMemo(() => extractFilterOptions(producers), [producers]);
 
-  const [filters, setFilters] = useState<ActiveFilters>({});
+  const [ageValues, setAgeValues] = useState<[number, number]>([0, 0]);
+  const [priceValues, setPriceValues] = useState<[number, number]>([0, 0]);
+  const [inputMinAge, setInputMinAge] = useState("");
+  const [inputMaxAge, setInputMaxAge] = useState("");
+  const [inputMinPrice, setInputMinPrice] = useState("");
+  const [inputMaxPrice, setInputMaxPrice] = useState("");
+
+  useEffect(() => {
+    if (options.ageRange) {
+      const { min, max } = options.ageRange;
+
+      setAgeValues([min, max]);
+      setInputMinAge(String(min));
+      setInputMaxAge(String(max));
+    }
+  }, [options.ageRange]);
+
+  useEffect(() => {
+    if (options.priceRange) {
+      const { min, max } = options.priceRange;
+
+      setPriceValues([min, max]);
+      setInputMinPrice(String(min));
+      setInputMaxPrice(String(max));
+    }
+  }, [options.priceRange]);
 
   function toggleAppearanceOption(
     key: keyof NonNullable<ActiveFilters["appearance"]>,
@@ -237,6 +319,21 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
         [key]: exists ? current.filter((v) => v !== id) : [...current, id],
       };
     });
+  }
+
+  function getAppearanceLabel(key: string, value: string): string {
+    // Valores booleanos
+    if (value === "sim") return "Sim";
+    if (value === "não") return "Não";
+
+    // Valores com mapa de labels
+    const labelMap = APPEARANCE_VALUE_LABELS[key];
+    if (labelMap && labelMap[value]) {
+      return labelMap[value];
+    }
+
+    // Fallback: capitalizar primeira letra
+    return value.charAt(0).toUpperCase() + value.slice(1);
   }
 
   function CheckboxList<T extends string | number>({
@@ -281,38 +378,30 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
 
     const { min, max } = options.ageRange;
 
-    const [values, setValues] = useState<[number, number]>([
-      filters.ageRange?.min ?? min,
-      filters.ageRange?.max ?? max,
-    ]);
-
-    const [inputMin, setInputMin] = useState(String(values[0]));
-    const [inputMax, setInputMax] = useState(String(values[1]));
-
     function commitMin() {
-      const v = Number(inputMin);
+      const v = Number(inputMinAge);
 
       if (isNaN(v)) {
-        setInputMin(String(values[0]));
+        setInputMinAge(String(ageValues[0]));
         return;
       }
 
-      const clamped = Math.min(Math.max(v, min), values[1]);
-      setValues([clamped, values[1]]);
-      setInputMin(String(clamped));
+      const clamped = Math.min(Math.max(v, min), ageValues[1]);
+      setAgeValues([clamped, ageValues[1]]);
+      setInputMinAge(String(clamped));
     }
 
     function commitMax() {
-      const v = Number(inputMax);
+      const v = Number(inputMaxAge);
 
       if (isNaN(v)) {
-        setInputMax(String(values[1]));
+        setInputMaxAge(String(ageValues[1]));
         return;
       }
 
-      const clamped = Math.max(Math.min(v, max), values[0]);
-      setValues([values[0], clamped]);
-      setInputMax(String(clamped));
+      const clamped = Math.max(Math.min(v, max), ageValues[0]);
+      setAgeValues([ageValues[0], clamped]);
+      setInputMaxAge(String(clamped));
     }
 
     if (min != max) {
@@ -329,8 +418,8 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
             <div className={styles.inputs}>
               <input
                 type="number"
-                value={inputMin}
-                onChange={(e) => setInputMin(e.target.value)}
+                value={inputMinAge}
+                onChange={(e) => setInputMinAge(e.target.value)}
                 onBlur={commitMin}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
@@ -343,8 +432,8 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
 
               <input
                 type="number"
-                value={inputMax}
-                onChange={(e) => setInputMax(e.target.value)}
+                value={inputMaxAge}
+                onChange={(e) => setInputMaxAge(e.target.value)}
                 onBlur={commitMax}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
@@ -360,11 +449,14 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
               step={1}
               min={min}
               max={max}
-              values={values}
+              values={[
+                Math.max(ageValues[0], min),
+                Math.min(ageValues[1], max),
+              ]}
               onChange={(vals) => {
-                setValues(vals as [number, number]);
-                setInputMin(String(vals[0]));
-                setInputMax(String(vals[1]));
+                setAgeValues(vals as [number, number]);
+                setInputMinAge(String(vals[0]));
+                setInputMaxAge(String(vals[1]));
               }}
               onFinalChange={(vals) => {
                 setFilters((prev) => ({
@@ -417,37 +509,30 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
 
     const { min, max } = options.priceRange;
 
-    const [values, setValues] = useState<[number, number]>([
-      filters.priceRange?.min ?? min,
-      filters.priceRange?.max ?? max,
-    ]);
-    const [inputMin, setInputMin] = useState(String(values[0]));
-    const [inputMax, setInputMax] = useState(String(values[1]));
-
     function commitMin() {
-      const v = Number(inputMin);
+      const v = Number(inputMinPrice);
 
       if (isNaN(v)) {
-        setInputMin(String(values[0]));
+        setInputMinPrice(String(priceValues[0]));
         return;
       }
 
-      const clamped = Math.min(Math.max(v, min), values[1]);
-      setValues([clamped, values[1]]);
-      setInputMin(String(clamped));
+      const clamped = Math.min(Math.max(v, min), priceValues[1]);
+      setPriceValues([clamped, priceValues[1]]);
+      setInputMinPrice(String(clamped));
     }
 
     function commitMax() {
-      const v = Number(inputMax);
+      const v = Number(inputMaxPrice);
 
       if (isNaN(v)) {
-        setInputMax(String(values[1]));
+        setInputMaxPrice(String(priceValues[1]));
         return;
       }
 
-      const clamped = Math.max(Math.min(v, max), values[0]);
-      setValues([values[0], clamped]);
-      setInputMax(String(clamped));
+      const clamped = Math.max(Math.min(v, max), priceValues[0]);
+      setPriceValues([priceValues[0], clamped]);
+      setInputMaxPrice(String(clamped));
     }
 
     if (min != max) {
@@ -465,8 +550,8 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
             <div className={styles.inputs}>
               <input
                 type="number"
-                value={inputMin}
-                onChange={(e) => setInputMin(e.target.value)}
+                value={inputMinPrice}
+                onChange={(e) => setInputMinPrice(e.target.value)}
                 onBlur={commitMin}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
@@ -479,8 +564,8 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
 
               <input
                 type="number"
-                value={inputMax}
-                onChange={(e) => setInputMax(e.target.value)}
+                value={inputMaxPrice}
+                onChange={(e) => setInputMaxPrice(e.target.value)}
                 onBlur={commitMax}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
@@ -495,11 +580,14 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
               step={50}
               min={min}
               max={max}
-              values={values}
+              values={[
+                Math.max(priceValues[0], min),
+                Math.min(priceValues[1], max),
+              ]}
               onChange={(vals) => {
-                setValues(vals as [number, number]);
-                setInputMin(String(vals[0]));
-                setInputMax(String(vals[1]));
+                setPriceValues(vals as [number, number]);
+                setInputMinPrice(String(vals[0]));
+                setInputMaxPrice(String(vals[1]));
               }}
               onFinalChange={(vals) => {
                 setFilters((prev) => ({
@@ -554,9 +642,11 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
     "body_type",
     "breast_size",
     "butt_size",
+    "pubis",
     "tatuagens",
     "piercings",
-    "silicone",
+    "silicone_busto",
+    "silicone_quadril",
   ] as const;
 
   type AppearanceKey = (typeof APPEARANCE_KEYS)[number];
@@ -568,9 +658,11 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
     body_type: "Tipo de corpo",
     breast_size: "Tamanho do Busto",
     butt_size: "Tamanho do Quadril",
+    pubis: "Pubis",
     tatuagens: "Tatuagens",
     piercings: "Piercings",
-    silicone: "Silicone",
+    silicone_busto: "Silicone no Busto",
+    silicone_quadril: "Silicone no Quadril",
   };
 
   return (
@@ -630,7 +722,7 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
             title={APPEARANCE_LABELS[key]}
             options={options.appearance[key].map((value) => ({
               value,
-              label: value === "sim" ? "Sim" : value === "não" ? "Não" : value,
+              label: getAppearanceLabel(key, value),
             }))}
             selected={filters.appearance?.[key] || []}
             onToggle={(value) => toggleAppearanceOption(key, value)}
