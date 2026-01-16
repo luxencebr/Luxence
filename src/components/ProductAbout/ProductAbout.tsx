@@ -1,14 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 import styles from "./ProductAbout.module.css";
 import { HiOutlinePencil } from "react-icons/hi";
+import { Sparkles } from "lucide-react";
 
-import type { Producer } from "@/types/Producer";
-import Dropdown from "@/components/ui/Dropdown/Dropdown";
-
-import { Languages, Trash, Plus, Book } from "lucide-react";
+import type { Producer, ProducerAppearance } from "@/types/Producer";
 
 interface ProductAboutProps {
   producer: Producer;
@@ -26,6 +24,118 @@ interface OtherLanguage {
   level: string;
 }
 
+function generateBioSuggestions(
+  appearance: ProducerAppearance[],
+  name: string
+): string[] {
+  const getAppearanceValue = (optionName: string) => {
+    const item = appearance.find((a) => a.option.name === optionName);
+    if (!item) return null;
+    if (item.valueString) return item.valueString;
+    if (item.valueNumber) return item.valueNumber;
+    if (item.valueBoolean !== null) return item.valueBoolean;
+    return null;
+  };
+
+  const ethnicity = getAppearanceValue("ethnicity") as string | null;
+  const hairColor = getAppearanceValue("hair_color") as string | null;
+  const eyeColor = getAppearanceValue("eye_color") as string | null;
+  const height = getAppearanceValue("altura") as number | null;
+  const bodyType = getAppearanceValue("body_type") as string | null;
+  const hasTattoos = getAppearanceValue("tatuagens") as boolean | null;
+  const hasPiercings = getAppearanceValue("piercings") as boolean | null;
+
+  const heightFormatted = height ? `${(height / 100).toFixed(2)}m` : null;
+
+  const ethnicityDesc = ethnicity ? ethnicity.toLowerCase() : null;
+  const hairDesc = hairColor ? `cabelos ${hairColor.toLowerCase()}` : null;
+  const eyeDesc = eyeColor ? `olhos ${eyeColor.toLowerCase()}` : null;
+  const bodyDesc = bodyType ? `corpo ${bodyType.toLowerCase()}` : null;
+
+  const extras: string[] = [];
+  if (hasTattoos) extras.push("tatuagens");
+  if (hasPiercings) extras.push("piercings");
+
+  const extrasText =
+    extras.length > 0
+      ? `✨ Com ${extras.join(" e ")} que revelam atitude e personalidade.`
+      : "";
+
+  const suggestions: string[] = [];
+
+  // 1. Elegante & sofisticada
+  suggestions.push(
+    `✨ ${name}, ${heightFormatted || "presença marcante"}, ${
+      bodyDesc || "silhueta elegante"
+    }. ${hairDesc || "Cabelos envolventes"} e ${
+      eyeDesc || "olhar encantador"
+    }. Uma companhia refinada para quem valoriza momentos especiais e conexões verdadeiras.${extrasText}`
+  );
+
+  // 2. Sensual & confiante
+  suggestions.push(
+    `🔥 Prazer, sou ${name}. ${
+      heightFormatted
+        ? `${heightFormatted} de pura intensidade`
+        : "Confiança em cada detalhe"
+    }. ${bodyDesc || "Corpo que chama atenção"}, ${
+      eyeDesc || "olhar provocante"
+    } e uma energia que conquista sem esforço.${extrasText}`
+  );
+
+  // 3. Misteriosa & envolvente
+  suggestions.push(
+    `🌙 ${name}. ${
+      eyeDesc
+        ? eyeDesc.charAt(0).toUpperCase() + eyeDesc.slice(1)
+        : "Olhar hipnotizante"
+    }, ${
+      hairDesc || "cabelos que despertam curiosidade"
+    } e uma presença impossível de ignorar. Descubra aos poucos…${extrasText}`
+  );
+
+  // 4. Próxima & acolhedora
+  suggestions.push(
+    `💬 Oi, eu sou ${name}. Gosto de boas conversas, risadas sinceras e momentos leves. ${
+      hairDesc || "Meu sorriso e minha energia"
+    } tornam cada encontro especial. Vamos nos conhecer melhor? 💖`
+  );
+
+  // 5. Experiência premium
+  suggestions.push(
+    `💎 ${name} — uma experiência que vai além da expectativa. ${
+      heightFormatted || "Presença elegante"
+    }, ${
+      bodyDesc || "estilo marcante"
+    } e atenção aos detalhes. Ideal para quem busca exclusividade e sofisticação.${extrasText}`
+  );
+
+  // 6. Intensa & marcante
+  suggestions.push(
+    `🖤 Intensa, confiante e memorável. Sou ${name}, ${
+      bodyDesc || "corpo cheio de atitude"
+    }, ${
+      eyeDesc || "olhar firme"
+    } e uma personalidade que deixa marcas. Nem todo encontro é comum.${extrasText}`
+  );
+
+  // 7. Leve & charmosa
+  suggestions.push(
+    `🌸 ${name} aqui! Delicada na medida certa, com ${
+      hairDesc || "cabelos cheios de charme"
+    } e uma vibe envolvente. Ideal para momentos leves, agradáveis e cheios de sintonia. ✨`
+  );
+
+  // 8. Ousada & provocante
+  suggestions.push(
+    `🔥 Sou ${name}. ${heightFormatted || "Presença dominante"}, ${
+      bodyDesc || "corpo provocante"
+    } e uma personalidade que não passa despercebida. Se você gosta de intensidade, talvez eu seja o seu tipo.${extrasText}`
+  );
+
+  return suggestions;
+}
+
 export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -35,6 +145,13 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
     fixed: FixedLanguages;
     others: OtherLanguage[];
   } | null>(null);
+
+  const lastSuggestionIndexRef = useRef<number>(-1);
+
+  const bioSuggestions = generateBioSuggestions(
+    producer.profile.appearance || [],
+    producer.name
+  );
 
   const handleEdit = () => {
     setBackup({
@@ -52,15 +169,16 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
       setOtherLanguages(backup.others);
     }
     setIsEditing(false);
+    lastSuggestionIndexRef.current = -1;
   };
 
   const handleSave = async () => {
     setIsSaving(true);
 
     const payload = {
-      profileId: producer.profile.id, // ID correto
+      profileId: producer.profile.id,
       bio,
-      languages: getAllLanguages(), // retorna array [{ name, level }]
+      languages: getAllLanguages(),
     };
 
     try {
@@ -74,15 +192,22 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
         throw new Error("Erro ao salvar dados");
       }
 
-      // Sucesso: limpa backup e fecha edição
       setBackup(null);
       setIsEditing(false);
+      lastSuggestionIndexRef.current = -1;
     } catch (err) {
       console.error("Erro ao salvar:", err);
       alert("Ocorreu um erro ao salvar as informações. Tente novamente.");
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleCycleSuggestion = () => {
+    const nextIndex =
+      (lastSuggestionIndexRef.current + 1) % bioSuggestions.length;
+    lastSuggestionIndexRef.current = nextIndex;
+    setBio(bioSuggestions[nextIndex]);
   };
 
   const [fixedLanguages, setFixedLanguages] = useState<FixedLanguages>({
@@ -227,13 +352,24 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
           )}
         </div>
       ) : (
-        <textarea
-          className={styles.textarea}
-          value={bio}
-          onChange={(e) => setBio(e.target.value)}
-          placeholder="Conte um pouco sobre você..."
-          rows={5}
-        />
+        <div className={styles.editArea}>
+          <textarea
+            className={styles.textarea}
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+            placeholder="Conte um pouco sobre você..."
+            rows={5}
+          />
+
+          <button
+            type="button"
+            className={styles.suggestionsToggle}
+            onClick={handleCycleSuggestion}
+          >
+            <Sparkles size={16} />
+            Sugerir biografia
+          </button>
+        </div>
       )}
     </section>
   );

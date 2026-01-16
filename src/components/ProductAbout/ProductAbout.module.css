@@ -160,6 +160,35 @@
   background: var(--primary-complementary-color);
 }
 
+/* Área de edição com sugestões */
+.editArea {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.suggestionsToggle {
+  align-self: flex-start;
+  background: transparent;
+  padding: 8px 12px;
+  border: 1px solid var(--primary-color);
+  border-radius: 6px;
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  color: var(--primary-color);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.suggestionsToggle:hover {
+  background: var(--primary-color);
+  color: var(--background-color);
+}
+
 .saving {
   width: 100%;
 
