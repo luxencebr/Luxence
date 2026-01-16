@@ -71,7 +71,7 @@ async function sendReviewNotificationEmail(
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { userId, profileId, rating, comment } = body;
+    const { userId, profileId, rating, comment, reviewerName } = body;
 
     if (!userId || !profileId || !rating) {
       return NextResponse.json(
@@ -146,6 +146,7 @@ export async function POST(request: NextRequest) {
         profileId: parsedProfileId,
         rating: parsedRating,
         comment: comment.trim(),
+        reviewerName: reviewerName?.trim() || null,
         hasComment: true,
         isApproved: false,
       },
@@ -164,11 +165,13 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    const displayName = reviewerName?.trim() || "Anônimo";
+
     try {
       await sendReviewNotificationEmail(
         profile.producer.user.email,
         profile.producer.name,
-        user.name,
+        displayName,
         parsedProfileId
       );
     } catch (emailError) {

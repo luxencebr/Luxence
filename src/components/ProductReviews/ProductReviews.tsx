@@ -30,6 +30,7 @@ function ProductReviews({
 
   const [userComment, setUserComment] = useState("");
   const [userRating, setUserRating] = useState(0);
+  const [userName, setUserName] = useState("");
   const [hoveredRating, setHoveredRating] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -147,6 +148,7 @@ function ProductReviews({
           profileId,
           rating: userRating,
           comment: userComment.trim(),
+          reviewerName: userName.trim() || null,
         }),
       });
 
@@ -161,6 +163,7 @@ function ProductReviews({
 
       setUserComment("");
       setUserRating(0);
+      setUserName("");
       setSuccess(true);
       setUserHasReviewed(true);
 
@@ -308,9 +311,25 @@ function ProductReviews({
                   <div className={styles.reviewItemLayout}>
                     <div className={styles.reviewInfo}>
                       <p className={styles.reviewerName}>
-                        {review.user.name || `Cliente ${review.userId}`}
+                        {review.reviewerName || "Anônimo"}
                       </p>
-                      <span className={styles.rate}>({review.rating} / 5)</span>
+                      <span className={styles.rate}>
+                        {[1, 2, 3, 4, 5].map((heart) =>
+                          heart <= review.rating ? (
+                            <FaHeart
+                              key={heart}
+                              className={styles.heartFilled}
+                              aria-label={`Nota ${review.rating} de 5`}
+                            />
+                          ) : (
+                            <FaRegHeart
+                              key={heart}
+                              className={styles.heartEmpty}
+                              aria-hidden
+                            />
+                          )
+                        )}
+                      </span>
                     </div>
                     {review.comment && (
                       <p className={styles.reviewComment}>{review.comment}</p>
@@ -367,7 +386,7 @@ function ProductReviews({
                     <div className={styles.reviewItemLayout}>
                       <div className={styles.reviewInfo}>
                         <p className={styles.reviewerName}>
-                          {review.user.name || `Cliente ${review.userId}`}
+                          {review.reviewerName || "Anônimo"}
                           <span className={styles.pendingBadge}>Pendente</span>
                         </p>
                       </div>
@@ -433,53 +452,78 @@ function ProductReviews({
               </div>
             ) : (
               <>
-                <div className={styles.ratingSelector}>
-                  <p className={styles.ratingLabel}>Sua avaliação:</p>
-                  <div className={styles.hearts}>
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <button
-                        key={star}
-                        type="button"
-                        className={styles.heartButton}
-                        onMouseEnter={() => setHoveredRating(star)}
-                        onMouseLeave={() => setHoveredRating(0)}
-                        onClick={() => {
-                          if (!session) {
-                            handleAuthRequired();
-                          } else {
-                            setUserRating(star);
-                          }
-                        }}
-                        disabled={isSubmitting || userHasReviewed}
-                      >
-                        {star <= (hoveredRating || userRating) ? (
-                          <FaHeart className={styles.heartFilled} />
-                        ) : (
-                          <FaRegHeart className={styles.heartEmpty} />
-                        )}
-                      </button>
-                    ))}
-                  </div>
+                <p className={styles.ratingLabel}>Sua avaliação:</p>
+
+                <div className={styles.flex}>
+                  <label htmlFor="" className={styles.label}>
+                    Nome:
+                    <input
+                      type="text"
+                      placeholder={
+                        session
+                          ? "Deixe vazio para anônimo"
+                          : "Faça login para avaliar..."
+                      }
+                      className={styles.nameInput}
+                      value={userName}
+                      onChange={(e) => setUserName(e.target.value)}
+                      onFocus={handleAuthRequired}
+                      disabled={isSubmitting || !session || userHasReviewed}
+                      maxLength={50}
+                    />
+                  </label>
+
+                  <label htmlFor="" className={styles.label}>
+                    Nota:
+                    <div className={styles.hearts}>
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          className={styles.heartButton}
+                          onMouseEnter={() => setHoveredRating(star)}
+                          onMouseLeave={() => setHoveredRating(0)}
+                          onClick={() => {
+                            if (!session) {
+                              handleAuthRequired();
+                            } else {
+                              setUserRating(star);
+                            }
+                          }}
+                          disabled={isSubmitting || userHasReviewed}
+                        >
+                          {star <= (hoveredRating || userRating) ? (
+                            <FaHeart className={styles.heartFilled} />
+                          ) : (
+                            <FaRegHeart className={styles.heartEmpty} />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </label>
                 </div>
 
-                <textarea
-                  placeholder={
-                    session
-                      ? "Deixe seu comentário (obrigatório, mínimo 10 caracteres)..."
-                      : "Faça login para deixar um comentário..."
-                  }
-                  className={styles.commentInput}
-                  rows={1}
-                  value={userComment}
-                  onChange={(e) => setUserComment(e.target.value)}
-                  onInput={(e: React.FormEvent<HTMLTextAreaElement>) => {
-                    const target = e.currentTarget;
-                    target.style.height = "auto";
-                    target.style.height = `${target.scrollHeight}px`;
-                  }}
-                  onFocus={handleAuthRequired}
-                  disabled={isSubmitting || !session || userHasReviewed}
-                />
+                <label htmlFor="" className={styles.label}>
+                  Comentário:
+                  <textarea
+                    placeholder={
+                      session
+                        ? "Deixe seu comentário (Mínimo 10 caracteres)..."
+                        : "Faça login para deixar um comentário..."
+                    }
+                    className={styles.commentInput}
+                    rows={1}
+                    value={userComment}
+                    onChange={(e) => setUserComment(e.target.value)}
+                    onInput={(e: React.FormEvent<HTMLTextAreaElement>) => {
+                      const target = e.currentTarget;
+                      target.style.height = "auto";
+                      target.style.height = `${target.scrollHeight}px`;
+                    }}
+                    onFocus={handleAuthRequired}
+                    disabled={isSubmitting || !session || userHasReviewed}
+                  />
+                </label>
 
                 {error && <p className={styles.errorMessage}>{error}</p>}
                 {success && (

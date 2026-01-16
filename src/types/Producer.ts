@@ -176,6 +176,7 @@ export interface Review {
   profileId: number;
   rating: number;
   comment: string | null;
+  reviewerName: string | null;
   isApproved: boolean;
   hasComment: boolean;
   createdAt: Date;

@@ -94,6 +94,7 @@ model Review {
 
   rating      Int
   comment     String?
+  reviewerName String?
 
   isApproved  Boolean  @default(false)
   hasComment  Boolean  @default(false)

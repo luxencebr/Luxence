@@ -263,7 +263,27 @@
   font-weight: bold;
 }
 
+.flex {
+  width: 100%;
+  display: flex;
+  gap: 16px;
+}
+
+.flex > * {
+  flex: 1;
+}
+
+.label {
+  color: var(--contrast-complementary-color);
+  font-size: 12px;
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 4px;
+}
+
 .hearts {
+  padding: 4px 8px;
   display: flex;
   gap: 8px;
 }
@@ -272,6 +292,8 @@
   background: transparent;
   padding: 0;
   border: none;
+  display: flex;
+  align-items: center;
   cursor: pointer;
   font-size: 28px;
   transition: transform 0.2s;
@@ -291,6 +313,45 @@
 }
 
 .heartEmpty {
+  color: var(--contrast-complementary-color);
+}
+
+.rate {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.heartFilled {
+  font-size: 0.9rem;
+}
+
+.heartEmpty {
+  color: #ccc;
+  font-size: 0.9rem;
+}
+
+/* Adicionado estilo para input de nome */
+.nameInput {
+  background: transparent;
+  padding: 8px 12px;
+
+  outline: none;
+  border: 1px solid var(--contrast-complementary-color);
+  border-radius: 8px;
+  box-sizing: border-box;
+
+  color: var(--contrast-color);
+  font-family: Quicksand;
+  font-size: 14px;
+}
+
+.nameInput:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.nameInput::placeholder {
   color: var(--contrast-complementary-color);
 }
 
