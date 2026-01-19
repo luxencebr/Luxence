@@ -24,7 +24,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const user = await connector(
           credentials.email as string,
-          credentials.password as string
+          credentials.password as string,
         );
 
         if (!user) return null;
@@ -44,15 +44,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
 
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
         token.role = user.role;
-        token.gender = user.gender; // 👈
+        token.gender = user.gender;
         token.signature = user.signature;
         token.preferences = user.preferences;
         token.producerId = user.producerId;
       }
+
+      // Handle session update (e.g., after advertiser registration)
+      if (trigger === "update" && session?.producerId) {
+        token.producerId = session.producerId;
+        token.signature = session.signature || token.signature;
+      }
+
       return token;
     },
 

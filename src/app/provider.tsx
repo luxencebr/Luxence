@@ -38,7 +38,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     pathname === "/advertiser";
 
   if (noLayout) {
-    return <>{children}</>;
+    return <SessionProvider>{children}</SessionProvider>;
   }
 
   if (hasConfirmedAge === null) {

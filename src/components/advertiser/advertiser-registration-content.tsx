@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import styles from "@/app/advertiser/page.module.css";
 
 import StepIndicator from "@/components/advertiser/step-indicator";
@@ -13,6 +14,7 @@ import StepNavigation from "@/components/advertiser/step-navigation";
 const TOTAL_STEPS = 3;
 
 export default function AdvertiserRegistrationContent() {
+  const { update: updateSession } = useSession();
   const [currentStep, setCurrentStep] = useState(1);
 
   const searchParams = useSearchParams();
@@ -120,6 +122,13 @@ export default function AdvertiserRegistrationContent() {
 
       // ID do producer criado
       const producerId = data.producer.id;
+      const signature = data.producer.signature || "COPPER";
+
+      // Atualiza a sessão com o novo producerId
+      await updateSession({
+        producerId: String(producerId),
+        signature: signature,
+      });
 
       // Redireciona para a página do perfil
       window.location.href = `/product/${producerId}`;
