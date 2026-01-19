@@ -38,7 +38,7 @@ export function validator(data: RegisterFormData): ValidationErrors {
   }
 
   if (!data.preferences || data.preferences.length === 0) {
-    errors.preffer = "Selecione ao menos uma preferência.";
+    errors.preferences = "Selecione ao menos uma preferência.";
   }
 
   return errors;

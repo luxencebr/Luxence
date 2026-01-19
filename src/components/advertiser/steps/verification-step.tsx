@@ -1,5 +1,7 @@
 "use client";
 
+import React from "react";
+
 import { useEffect, useState } from "react";
 import styles from "./verification-step.module.css";
 
@@ -16,20 +18,23 @@ export default function VerificationStep({
 }: VerificationStepProps) {
   const [substep, setSubstep] = useState<1 | 2>(1);
 
-  // Previews
-  const [previewFront, setPreviewFront] = useState<string | null>(
-    formData.documentFront ? URL.createObjectURL(formData.documentFront) : null
-  );
+  // Previews - usa as URLs salvas no formData ou cria novas para Files
+  const [previewFront, setPreviewFront] = useState<string | null>(null);
+  const [previewBack, setPreviewBack] = useState<string | null>(null);
+  const [previewSelfie, setPreviewSelfie] = useState<string | null>(null);
 
-  const [previewBack, setPreviewBack] = useState<string | null>(
-    formData.documentBack ? URL.createObjectURL(formData.documentBack) : null
-  );
-
-  const [previewSelfie, setPreviewSelfie] = useState<string | null>(
-    formData.selfieDocument
-      ? URL.createObjectURL(formData.selfieDocument)
-      : null
-  );
+  // Inicializa previews baseado no formData existente
+  useEffect(() => {
+    if (formData.documentFrontFile && !previewFront) {
+      setPreviewFront(URL.createObjectURL(formData.documentFrontFile));
+    }
+    if (formData.documentBackFile && !previewBack) {
+      setPreviewBack(URL.createObjectURL(formData.documentBackFile));
+    }
+    if (formData.selfieWithDocumentFile && !previewSelfie) {
+      setPreviewSelfie(URL.createObjectURL(formData.selfieWithDocumentFile));
+    }
+  }, []);
 
   // Errors
   const [frontError, setFrontError] = useState<string | null>(null);
@@ -38,8 +43,8 @@ export default function VerificationStep({
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    field: "documentFront" | "documentBack" | "selfieDocument",
-    setPreview: (url: string | null) => void
+    field: "documentFrontFile" | "documentBackFile" | "selfieWithDocumentFile",
+    setPreview: (url: string | null) => void,
   ) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -47,37 +52,37 @@ export default function VerificationStep({
       setPreview(url);
       onUpdate({ [field]: file });
 
-      if (field === "documentFront") setFrontError(null);
-      if (field === "documentBack") setBackError(null);
-      if (field === "selfieDocument") setSelfieError(null);
+      if (field === "documentFrontFile") setFrontError(null);
+      if (field === "documentBackFile") setBackError(null);
+      if (field === "selfieWithDocumentFile") setSelfieError(null);
     }
   };
 
   // 👉 AUTO-AVANÇO PARA SUBETAPA 2
   useEffect(() => {
-    if (formData.documentFront && formData.documentBack) {
+    if (formData.documentFrontFile && formData.documentBackFile) {
       setSubstep(2);
     }
-  }, [formData.documentFront, formData.documentBack]);
+  }, [formData.documentFrontFile, formData.documentBackFile]);
 
   // 👉 AUTO-FINALIZAR QUANDO A SELFIE FOR ENVIADA
   useEffect(() => {
-    if (formData.selfieDocument) {
+    if (formData.selfieWithDocumentFile) {
       onValidate?.(true);
     }
-  }, [formData.selfieDocument]);
+  }, [formData.selfieWithDocumentFile]);
 
   useEffect(() => {
-    const hasFront = !!formData.documentFront;
-    const hasBack = !!formData.documentBack;
-    const hasSelfie = !!formData.selfieDocument;
+    const hasFront = !!formData.documentFrontFile;
+    const hasBack = !!formData.documentBackFile;
+    const hasSelfie = !!formData.selfieWithDocumentFile;
 
     // Erros locais
     if (!hasFront) setFrontError("Envie a frente do documento.");
     if (!hasBack) setBackError("Envie o verso do documento.");
     if (substep === 2 && !hasSelfie)
       setSelfieError(
-        "Envie uma selfie segurando o documento ao lado do rosto."
+        "Envie uma selfie segurando o documento ao lado do rosto.",
       );
 
     // Validação geral da etapa
@@ -85,15 +90,15 @@ export default function VerificationStep({
 
     onValidate?.(isValid);
   }, [
-    formData.documentFront,
-    formData.documentBack,
-    formData.selfieDocument,
+    formData.documentFrontFile,
+    formData.documentBackFile,
+    formData.selfieWithDocumentFile,
     substep,
   ]);
 
   const goToSelfie = () => {
-    const hasFront = !!formData.documentFront;
-    const hasBack = !!formData.documentBack;
+    const hasFront = !!formData.documentFrontFile;
+    const hasBack = !!formData.documentBackFile;
 
     if (!hasFront) setFrontError("Envie a frente do documento.");
     if (!hasBack) setBackError("Envie o verso do documento.");
@@ -103,7 +108,8 @@ export default function VerificationStep({
     }
   };
 
-  const canAdvance = !!formData.documentFront && !!formData.documentBack;
+  const canAdvance =
+    !!formData.documentFrontFile && !!formData.documentBackFile;
 
   // -------------------- RENDERIZAÇÃO --------------------
   return (
@@ -150,14 +156,17 @@ export default function VerificationStep({
 
               {previewFront ? (
                 <div className={styles.previewWrapper}>
-                  <img src={previewFront} className={styles.previewImage} />
+                  <img
+                    src={previewFront || "/placeholder.svg"}
+                    className={styles.previewImage}
+                  />
 
                   <button
                     type="button"
                     className={styles.removeButton}
                     onClick={() => {
                       setPreviewFront(null);
-                      onUpdate({ documentFront: null });
+                      onUpdate({ documentFrontFile: null });
                     }}
                   >
                     Remover
@@ -173,7 +182,7 @@ export default function VerificationStep({
                     type="file"
                     accept="image/*"
                     onChange={(e) =>
-                      handleFileChange(e, "documentFront", setPreviewFront)
+                      handleFileChange(e, "documentFrontFile", setPreviewFront)
                     }
                   />
                 </>
@@ -190,14 +199,17 @@ export default function VerificationStep({
 
               {previewBack ? (
                 <div className={styles.previewWrapper}>
-                  <img src={previewBack} className={styles.previewImage} />
+                  <img
+                    src={previewBack || "/placeholder.svg"}
+                    className={styles.previewImage}
+                  />
 
                   <button
                     type="button"
                     className={styles.removeButton}
                     onClick={() => {
                       setPreviewBack(null);
-                      onUpdate({ documentBack: null });
+                      onUpdate({ documentBackFile: null });
                     }}
                   >
                     Remover
@@ -213,7 +225,7 @@ export default function VerificationStep({
                     type="file"
                     accept="image/*"
                     onChange={(e) =>
-                      handleFileChange(e, "documentBack", setPreviewBack)
+                      handleFileChange(e, "documentBackFile", setPreviewBack)
                     }
                   />
                 </>
@@ -232,14 +244,17 @@ export default function VerificationStep({
 
               {previewSelfie ? (
                 <div className={styles.previewWrapper}>
-                  <img src={previewSelfie} className={styles.previewImage} />
+                  <img
+                    src={previewSelfie || "/placeholder.svg"}
+                    className={styles.previewImage}
+                  />
 
                   <button
                     type="button"
                     className={styles.removeButton}
                     onClick={() => {
                       setPreviewSelfie(null);
-                      onUpdate({ selfieDocument: null });
+                      onUpdate({ selfieWithDocumentFile: null });
                     }}
                   >
                     Remover
@@ -258,7 +273,11 @@ export default function VerificationStep({
                     type="file"
                     accept="image/*"
                     onChange={(e) =>
-                      handleFileChange(e, "selfieDocument", setPreviewSelfie)
+                      handleFileChange(
+                        e,
+                        "selfieWithDocumentFile",
+                        setPreviewSelfie,
+                      )
                     }
                   />
                 </>

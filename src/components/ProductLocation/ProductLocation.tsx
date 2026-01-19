@@ -20,7 +20,7 @@ function formatNeighborhood(name: string) {
       part
         .split("-")
         .map((sub) => sub.charAt(0).toUpperCase() + sub.slice(1).toLowerCase())
-        .join("-")
+        .join("-"),
     )
     .join(" ");
 }
@@ -35,7 +35,7 @@ function formatNeighborhoodList(list: string[]) {
 
 function formatNeighborhoodListEditable(
   list: string[],
-  onRemove: (n: string) => void
+  onRemove: (n: string) => void,
 ) {
   if (list.length === 0) return "Nenhum bairro informado.";
 
@@ -75,8 +75,6 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
     neighborhood: producer.user.locality?.neighborhood || "",
   });
 
-  console.log(producer);
-
   const [locations, setLocations] = useState(producer.profile.locations);
 
   const LOCATIONS_OPTIONS = [
@@ -102,7 +100,7 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
   });
 
   const [amenities, setAmenities] = useState(
-    producer.profile.local?.amenities || []
+    producer.profile.local?.amenities || [],
   );
 
   const AMENITIES_OPTIONS = [
@@ -163,15 +161,15 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
   const [selectedState, setSelectedState] = useState(userLocality.state || "");
   const [selectedCity, setSelectedCity] = useState(userLocality.city || "");
   const [selectedNeighborhood, setSelectedNeighborhood] = useState(
-    userLocality.neighborhood || ""
+    userLocality.neighborhood || "",
   );
 
   const [neighborhoodsServed, setNeighborhoodsServed] = useState<string[]>(
     Array.isArray(producer.profile.neighborhoods)
       ? producer.profile.neighborhoods.map((n) =>
-          typeof n === "string" ? n : n.name
+          typeof n === "string" ? n : n.name,
         )
-      : []
+      : [],
   );
   const [newNeighborhood, setNewNeighborhood] = useState("");
 
@@ -181,7 +179,7 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
     if (!formatted || neighborhoodsServed.includes(formatted)) return;
 
     const updated = [...neighborhoodsServed, formatted].sort((a, b) =>
-      a.localeCompare(b)
+      a.localeCompare(b),
     );
     setNeighborhoodsServed(updated);
     setNewNeighborhood("");
@@ -197,7 +195,7 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
       .then((res) => res.json())
       .then((data) => {
         const ordered = data.sort((a: any, b: any) =>
-          a.nome.localeCompare(b.nome)
+          a.nome.localeCompare(b.nome),
         );
         setStates(ordered);
       })
@@ -211,12 +209,12 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
     }
 
     fetch(
-      `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${selectedState}/municipios`
+      `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${selectedState}/municipios`,
     )
       .then((res) => res.json())
       .then((data) => {
         const ordered = data.sort((a: any, b: any) =>
-          a.nome.localeCompare(b.nome)
+          a.nome.localeCompare(b.nome),
         );
         setCities(ordered);
       })
@@ -372,16 +370,20 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
                         trigger={selectedState || "Selecione um Estado"}
                         triggerClassName={styles.trigger}
                         menuClassName={styles.menu}
+                        searchable={true}
+                        searchPlaceholder="Buscar estado..."
+                        options={states.map((st) => `${st.nome} - ${st.sigla}`)}
+                        selectedValue={
+                          states.find((st) => st.sigla === selectedState)
+                            ? `${states.find((st) => st.sigla === selectedState)?.nome} - ${selectedState}`
+                            : ""
+                        }
+                        onSelect={(value) => {
+                          const sigla = value.split(" - ").pop() || "";
+                          handleStateChange(sigla);
+                        }}
                       >
-                        {states.map((st) => (
-                          <button
-                            key={st.id}
-                            onClick={() => handleStateChange(st.sigla)}
-                            className="dropdown-item"
-                          >
-                            {st.nome} - {st.sigla}
-                          </button>
-                        ))}
+                        {null}
                       </Dropdown>
                     </label>
 
@@ -392,16 +394,13 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
                           trigger={selectedCity || "Selecione uma Cidade"}
                           triggerClassName={styles.trigger}
                           menuClassName={styles.menu}
+                          searchable={true}
+                          searchPlaceholder="Buscar cidade..."
+                          options={cities.map((c) => c.nome)}
+                          selectedValue={selectedCity}
+                          onSelect={(value) => handleCityChange(value)}
                         >
-                          {cities.map((c) => (
-                            <button
-                              key={c.id}
-                              onClick={() => handleCityChange(c.nome)}
-                              className="dropdown-item"
-                            >
-                              {c.nome}
-                            </button>
-                          ))}
+                          {null}
                         </Dropdown>
                       </label>
                     )}
@@ -439,7 +438,7 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
                       if (items.length === 1) return items[0];
 
                       return `${items.slice(0, -1).join(", ")} e ${items.at(
-                        -1
+                        -1,
                       )}`;
                     })()}
                   </p>
@@ -447,7 +446,7 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
                   <>
                     {LOCATIONS_OPTIONS.map((opt) => {
                       const exists = locations.some(
-                        (l) => l.option.label === opt.label
+                        (l) => l.option.label === opt.label,
                       );
 
                       return (
@@ -471,8 +470,8 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
                               } else {
                                 setLocations(
                                   locations.filter(
-                                    (l) => l.option.label !== opt.label
-                                  )
+                                    (l) => l.option.label !== opt.label,
+                                  ),
                                 );
                               }
                             }}
@@ -527,7 +526,7 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
                       <p className={styles.neighborhoodsList}>
                         {formatNeighborhoodListEditable(
                           neighborhoodsServed,
-                          removeNeighborhood
+                          removeNeighborhood,
                         )}
                       </p>
                     )}
@@ -651,7 +650,7 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
                         <div className={styles.amenities}>
                           {AMENITIES_OPTIONS.map((opt) => {
                             const exists = amenities.some(
-                              (a) => a.option.label === opt.label
+                              (a) => a.option.label === opt.label,
                             );
 
                             return (
@@ -678,8 +677,8 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
                                     } else {
                                       setAmenities(
                                         amenities.filter(
-                                          (a) => a.option.id !== opt.id
-                                        )
+                                          (a) => a.option.id !== opt.id,
+                                        ),
                                       );
                                     }
                                   }}

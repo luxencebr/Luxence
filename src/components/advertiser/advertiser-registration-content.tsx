@@ -19,7 +19,17 @@ export default function AdvertiserRegistrationContent() {
   const userId = searchParams.get("uid");
 
   // Dados principais do formulário
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    userId: string | null;
+    birthday: string;
+    nationality: string;
+    document: string;
+    phone: string;
+    documentFrontFile: File | null;
+    documentBackFile: File | null;
+    selfieWithDocumentFile: File | null;
+    agreed: boolean;
+  }>({
     userId,
 
     // Profile
@@ -28,10 +38,10 @@ export default function AdvertiserRegistrationContent() {
     document: "",
     phone: "",
 
-    // Verification
-    documentFrontPhoto: "",
-    documentBackPhoto: "",
-    selfieWithDocument: "",
+    // Verification - arquivos File
+    documentFrontFile: null,
+    documentBackFile: null,
+    selfieWithDocumentFile: null,
 
     agreed: false,
   });
@@ -61,18 +71,48 @@ export default function AdvertiserRegistrationContent() {
     if (currentStep > 1) setCurrentStep((s) => s - 1);
   };
 
+  // Estado de loading durante submissão
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // Submissão final
   const handleSubmit = async () => {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+
     try {
+      // Usar FormData para enviar arquivos
+      const submitData = new FormData();
+
+      // Dados básicos
+      submitData.append("userId", formData.userId || "");
+      submitData.append("birthday", formData.birthday);
+      submitData.append("nationality", formData.nationality);
+      submitData.append("document", formData.document);
+      submitData.append("phone", formData.phone);
+
+      // Arquivos de verificação
+      if (formData.documentFrontFile) {
+        submitData.append("documentFrontFile", formData.documentFrontFile);
+      }
+      if (formData.documentBackFile) {
+        submitData.append("documentBackFile", formData.documentBackFile);
+      }
+      if (formData.selfieWithDocumentFile) {
+        submitData.append(
+          "selfieWithDocumentFile",
+          formData.selfieWithDocumentFile,
+        );
+      }
+
       const res = await fetch("/api/register/advertiser", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: submitData, // FormData - não definir Content-Type, o browser faz automaticamente
       });
 
       if (!res.ok) {
         const error = await res.json();
-        alert("Erro ao criar cadastro: " + error.message);
+        alert("Erro ao criar cadastro: " + (error.error || error.message));
         return;
       }
 
@@ -86,6 +126,8 @@ export default function AdvertiserRegistrationContent() {
     } catch (e) {
       console.error(e);
       alert("Erro inesperado ao finalizar cadastro.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -144,6 +186,7 @@ export default function AdvertiserRegistrationContent() {
               onPrev={handlePrev}
               onSubmit={handleSubmit}
               canProceed={canProceed}
+              isSubmitting={isSubmitting}
             />
           </div>
         </div>

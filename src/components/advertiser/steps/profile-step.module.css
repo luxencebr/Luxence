@@ -49,22 +49,32 @@
   padding: 10px 12px;
 
   outline: none;
-  border: none;
+  border: 1.5px solid transparent;
   border-radius: 0.6rem;
 
   color: var(--contrast-color);
   font-size: 16px;
   letter-spacing: 1px;
 
-  transition: border-color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* Added error state styling for inputs */
+.label input[aria-invalid="true"],
+.inputError {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
 }
 
 .menu {
   background: var(--background-color);
-  max-height: 120px;
 
-  overflow-y: scroll;
+  overflow-y: hidden;
   box-shadow: 0 0 8px black;
+  border-radius: 0.6rem;
+  margin-top: 4px;
 }
 
 .dropdownItem {
@@ -87,23 +97,6 @@
   opacity: 0.75;
 }
 
-.menu::-webkit-scrollbar {
-  width: 2px;
-}
-
-.menu::-webkit-scrollbar-thumb {
-  background: var(--primary-color);
-  border-radius: 4px;
-}
-
-.menu::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-complementary-color);
-}
-
-.menu::-webkit-scrollbar-track {
-  background: transparent;
-}
-
 .label input[disabled] {
   opacity: 0.5;
   cursor: not-allowed;
@@ -119,4 +112,64 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
+}
+
+/* Improved error message styling */
+.error {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 4px;
+  padding: 4px 8px;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 4px;
+  border-left: 3px solid #ef4444;
+  animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}
+
+/* Loading state for async validation */
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--contrast-complementary-color);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--contrast-complementary-color);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Dropdown error state */
+.triggerError {
+  border: 2px solid #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
 }

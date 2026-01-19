@@ -132,7 +132,7 @@ model Producer {
   name        String
   birthday    DateTime
   nationality String
-  document    String
+  document    String    @unique
   phone       String
 
   documentFrontPhoto  String

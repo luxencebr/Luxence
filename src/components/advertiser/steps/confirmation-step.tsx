@@ -56,14 +56,13 @@ export default function ConfirmationStep({
         <div className={styles.infoList}>
           <p>
             <strong>Frente do Documento:</strong>{" "}
-            {formData.documentFront ? (
+            {formData.documentFrontFile ? (
               <img
                 src={
-                  typeof formData.profilePhoto === "string"
-                    ? formData.profilePhoto
-                    : URL.createObjectURL(formData.documentFront)
+                  URL.createObjectURL(formData.documentFrontFile) ||
+                  "/placeholder.svg"
                 }
-                alt="Foto de perfil"
+                alt="Frente do documento"
                 className={styles.thumbnail}
               />
             ) : (
@@ -72,14 +71,13 @@ export default function ConfirmationStep({
           </p>
           <p>
             <strong>Verso do Documento:</strong>{" "}
-            {formData.documentBack ? (
+            {formData.documentBackFile ? (
               <img
                 src={
-                  typeof formData.documentFront === "string"
-                    ? formData.documentPhoto
-                    : URL.createObjectURL(formData.documentBack)
+                  URL.createObjectURL(formData.documentBackFile) ||
+                  "/placeholder.svg"
                 }
-                alt="Foto com documento"
+                alt="Verso do documento"
                 className={styles.thumbnail}
               />
             ) : (
@@ -88,14 +86,13 @@ export default function ConfirmationStep({
           </p>
           <p>
             <strong>Selfie com Documento:</strong>{" "}
-            {formData.selfieDocument ? (
+            {formData.selfieWithDocumentFile ? (
               <img
                 src={
-                  typeof formData.documentFront === "string"
-                    ? formData.documentPhoto
-                    : URL.createObjectURL(formData.selfieDocument)
+                  URL.createObjectURL(formData.selfieWithDocumentFile) ||
+                  "/placeholder.svg"
                 }
-                alt="Foto com documento"
+                alt="Selfie com documento"
                 className={styles.thumbnail}
               />
             ) : (

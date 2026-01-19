@@ -17,7 +17,7 @@ export default async function register(
   }: RegisterProps & {
     setIsLoading?: (v: boolean) => void;
     role: "CLIENT" | "ADVERTISER";
-  }
+  },
 ) {
   const formData = new FormData(event.currentTarget);
 
@@ -28,7 +28,7 @@ export default async function register(
     confirmPassword: (formData.get("confirmPassword") as string) || "",
     gender: (formData.get("gender") as "MALE" | "FEMALE" | "TRANS" | "") || "",
     preferences: formData
-      .getAll("genderPreffer")
+      .getAll("preferences")
       .filter((v): v is string => typeof v === "string"),
   };
 

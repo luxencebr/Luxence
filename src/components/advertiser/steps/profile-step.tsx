@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import styles from "./profile-step.module.css";
 import Dropdown from "@/components/ui/Dropdown/Dropdown";
 
@@ -53,30 +53,50 @@ const validateCPF = (cpfRaw: string) => {
   if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
 
   let soma = 0;
-  for (let i = 0; i < 9; i++) soma += parseInt(cpf[i]) * (10 - i);
+  for (let i = 0; i < 9; i++) soma += Number.parseInt(cpf[i]) * (10 - i);
   let resto = (soma * 10) % 11;
   if (resto >= 10) resto = 0;
-  if (resto !== parseInt(cpf[9])) return false;
+  if (resto !== Number.parseInt(cpf[9])) return false;
 
   soma = 0;
-  for (let i = 0; i < 10; i++) soma += parseInt(cpf[i]) * (11 - i);
+  for (let i = 0; i < 10; i++) soma += Number.parseInt(cpf[i]) * (11 - i);
   resto = (soma * 10) % 11;
   if (resto >= 10) resto = 0;
-  if (resto !== parseInt(cpf[10])) return false;
+  if (resto !== Number.parseInt(cpf[10])) return false;
 
   return true;
+};
+
+const validatePassport = (passport: string) => {
+  const raw = passport.replace(/[^A-Za-z0-9]/g, "").toUpperCase();
+
+  // Passaporte brasileiro: 2 letras + 6 dígitos
+  if (/^[A-Z]{2}\d{6}$/.test(raw)) return true;
+
+  // Formato antigo brasileiro: 1 letra + 6-8 dígitos
+  if (/^[A-Z]\d{6,8}$/.test(raw)) return true;
+
+  // Formato internacional genérico: letras e números, 6-9 caracteres
+  if (/^[A-Z0-9]{6,9}$/.test(raw) && /[A-Z]/.test(raw)) return true;
+
+  return false;
 };
 
 // Validação unificada
 const validateDocument = (doc: string) => {
   const raw = doc.replace(/\W/g, "");
 
+  if (!raw) return { valid: false, reason: "Informe o documento" };
+
   // Passaporte → começa com letra
   if (/^[A-Za-z]/.test(raw)) {
-    const valid = /^[A-Za-z][0-9]{7,8}$/.test(raw);
+    const valid = validatePassport(raw);
     return valid
       ? { valid: true, reason: "" }
-      : { valid: false, reason: "Passaporte inválido" };
+      : {
+          valid: false,
+          reason: "Passaporte inválido. Use o formato: XX000000 ou A0000000",
+        };
   }
 
   // CPF → começa com número
@@ -86,6 +106,9 @@ const validateDocument = (doc: string) => {
 };
 
 const validateBirthday = (birthRaw: string) => {
+  if (!birthRaw)
+    return { valid: false, reason: "Informe a data de nascimento" };
+
   const [d, m, y] = birthRaw.split("/").map(Number);
   if (!d || !m || !y) return { valid: false, reason: "Data incompleta" };
 
@@ -113,7 +136,10 @@ const validateBirthday = (birthRaw: string) => {
 
 const validatePhone = (phoneRaw: string) => {
   const digits = phoneRaw.replace(/\D/g, "");
-  return digits.length === 11;
+  if (!digits) return { valid: false, reason: "Informe o telefone" };
+  if (digits.length !== 11)
+    return { valid: false, reason: "Telefone deve ter 11 dígitos" };
+  return { valid: true, reason: "" };
 };
 
 const validateNationality = (value: string) => {
@@ -134,14 +160,25 @@ export default function ProfileStep({
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [nationalityError, setNationalityError] = useState<string | null>(null);
 
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [documentChecking, setDocumentChecking] = useState(false);
+  const [documentExists, setDocumentExists] = useState(false);
+
+  const [phoneChecking, setPhoneChecking] = useState(false);
+  const [phoneExists, setPhoneExists] = useState(false);
+
   const [countries, setCountries] = useState<string[]>([]);
+
+  const handleBlur = (field: string) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+  };
 
   /* ----- Carregar Países ----- */
   useEffect(() => {
     const loadCountries = async () => {
       try {
         const res = await fetch(
-          "https://servicodados.ibge.gov.br/api/v1/paises/"
+          "https://servicodados.ibge.gov.br/api/v1/paises/",
         );
         const data = await res.json();
 
@@ -159,49 +196,167 @@ export default function ProfileStep({
     loadCountries();
   }, []);
 
+  const checkDocumentExists = useCallback(async (document: string) => {
+    const validation = validateDocument(document);
+    if (!validation.valid) return;
+
+    setDocumentChecking(true);
+    try {
+      const res = await fetch(
+        `/api/register/check-document?document=${encodeURIComponent(document)}`,
+      );
+      const data = await res.json();
+      setDocumentExists(data.exists);
+      if (data.exists) {
+        setDocumentError("Este documento já está cadastrado");
+      }
+    } catch (err) {
+      console.error("Erro ao verificar documento", err);
+    } finally {
+      setDocumentChecking(false);
+    }
+  }, []);
+
+  const checkPhoneExists = useCallback(async (phone: string) => {
+    const validation = validatePhone(phone);
+    if (!validation.valid) return;
+
+    setPhoneChecking(true);
+    try {
+      const res = await fetch(
+        `/api/register/check-phone?phone=${encodeURIComponent(phone)}`,
+      );
+      const data = await res.json();
+      setPhoneExists(data.exists);
+      if (data.exists) {
+        setPhoneError("Este telefone já está cadastrado");
+      }
+    } catch (err) {
+      console.error("Erro ao verificar telefone", err);
+    } finally {
+      setPhoneChecking(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!formData.document) return;
+
+    const validation = validateDocument(formData.document);
+    if (!validation.valid) return;
+
+    const timer = setTimeout(() => {
+      checkDocumentExists(formData.document);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [formData.document, checkDocumentExists]);
+
+  useEffect(() => {
+    if (!formData.phone) return;
+
+    const validation = validatePhone(formData.phone);
+    if (!validation.valid) return;
+
+    const timer = setTimeout(() => {
+      checkPhoneExists(formData.phone);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [formData.phone, checkPhoneExists]);
+
   /* ----- Validações ----- */
   useEffect(() => {
     // DOCUMENTO
-    if (!formData.document) setDocumentError("Informe o documento");
-    else {
+    if (!formData.document) {
+      setDocumentError(touched.document ? "Informe o documento" : null);
+    } else {
       const validation = validateDocument(formData.document);
-      setDocumentError(validation.valid ? null : validation.reason);
+      if (!validation.valid) {
+        setDocumentError(validation.reason);
+      } else if (!documentExists && !documentChecking) {
+        setDocumentError(null);
+      }
     }
 
     // BIRTHDAY
-    if (!formData.birthday) setBirthError("Informe a data de nascimento");
-    else {
+    if (!formData.birthday) {
+      setBirthError(touched.birthday ? "Informe a data de nascimento" : null);
+    } else {
       const validation = validateBirthday(formData.birthday);
       setBirthError(validation.valid ? null : validation.reason);
     }
 
     // NATIONALITY
-    if (!formData.nationality) setNationalityError("Informe a nacionalidade");
-    else {
+    if (!formData.nationality) {
+      setNationalityError(
+        touched.nationality ? "Informe a nacionalidade" : null,
+      );
+    } else {
       const validation = validateNationality(formData.nationality);
       setNationalityError(validation.valid ? null : validation.reason);
     }
 
-    // PHONE
-    if (!formData.phone) setPhoneError("Informe o telefone");
-    else if (!validatePhone(formData.phone)) setPhoneError("Telefone inválido");
-    else setPhoneError(null);
+    // PHONE - Adicionada verificação de existência
+    if (!formData.phone) {
+      setPhoneError(touched.phone ? "Informe o telefone" : null);
+    } else {
+      const validation = validatePhone(formData.phone);
+      if (!validation.valid) {
+        setPhoneError(validation.reason);
+      } else if (!phoneExists && !phoneChecking) {
+        setPhoneError(null);
+      }
+    }
   }, [
     formData.document,
     formData.birthday,
     formData.nationality,
     formData.phone,
+    touched,
+    documentExists,
+    documentChecking,
+    phoneExists,
+    phoneChecking,
   ]);
 
   /* ----- isValid ----- */
-  const isValid = useMemo(
-    () => !documentError && !birthError && !phoneError && !nationalityError,
-    [documentError, birthError, phoneError, nationalityError]
-  );
+  const isValid = useMemo(() => {
+    const docValidation = validateDocument(formData.document || "");
+    const birthValidation = validateBirthday(formData.birthday || "");
+    const phoneValidation = validatePhone(formData.phone || "");
+    const natValidation = validateNationality(formData.nationality || "");
+
+    return (
+      docValidation.valid &&
+      !documentExists &&
+      !documentChecking &&
+      birthValidation.valid &&
+      phoneValidation.valid &&
+      !phoneExists &&
+      !phoneChecking &&
+      natValidation.valid
+    );
+  }, [formData, documentExists, documentChecking, phoneExists, phoneChecking]);
+
+  const lastIsValid = useRef<boolean | null>(null);
 
   useEffect(() => {
+    if (lastIsValid.current === isValid) return;
+
+    lastIsValid.current = isValid;
     onValidate?.(isValid);
   }, [isValid]);
+
+  const getInputClass = (
+    field: string,
+    error: string | null,
+    value: string,
+  ) => {
+    if (!touched[field] && !value) return styles.input;
+    if (error) return `${styles.input} ${styles.inputError}`;
+    if (value && !error) return `${styles.input} ${styles.inputSuccess}`;
+    return styles.input;
+  };
 
   /* -------------------- Render -------------------- */
   return (
@@ -220,34 +375,41 @@ export default function ProfileStep({
             type="text"
             value={formData.birthday || ""}
             onChange={(e) => onUpdate({ birthday: formatDate(e.target.value) })}
+            onBlur={() => handleBlur("birthday")}
             placeholder="dd/mm/aaaa"
             maxLength={10}
-            className={styles.input}
+            className={getInputClass("birthday", birthError, formData.birthday)}
             aria-invalid={!!birthError}
+            aria-describedby={birthError ? "birthday-error" : undefined}
           />
-          {birthError && <small className={styles.error}>{birthError}</small>}
+          {birthError && (
+            <small id="birthday-error" className={styles.error}>
+              {birthError}
+            </small>
+          )}
         </label>
 
         <label className={styles.label}>
           Nacionalidade:
           <Dropdown
             trigger={formData.nationality || "Selecione a nacionalidade"}
-            triggerClassName={styles.trigger}
+            selectedValue={formData.nationality || ""}
+            triggerClassName={`${styles.trigger} ${
+              touched.nationality && nationalityError ? styles.triggerError : ""
+            } ${formData.nationality && !nationalityError ? styles.triggerSuccess : ""}`}
             menuClassName={styles.menu}
+            searchable={true}
+            searchPlaceholder="Buscar país..."
+            options={countries}
+            onSelect={(value) => {
+              onUpdate({ nationality: value });
+              setTouched((prev) => ({ ...prev, nationality: true }));
+            }}
           >
-            {countries.map((country) => (
-              <button
-                key={country}
-                onClick={() => {
-                  onUpdate({ nationality: country });
-                }}
-                className={styles.dropdownItem}
-              >
-                {country}
-              </button>
-            ))}
+            {/* Fallback vazio - o Dropdown usará options quando searchable=true */}
+            <></>
           </Dropdown>
-          {nationalityError && (
+          {nationalityError && touched.nationality && (
             <small className={styles.error}>{nationalityError}</small>
           )}
         </label>
@@ -260,13 +422,27 @@ export default function ProfileStep({
             onChange={(e) =>
               onUpdate({ document: formatDocument(e.target.value) })
             }
+            onBlur={() => handleBlur("document")}
             placeholder="CPF ou Passaporte"
             maxLength={14}
-            className={styles.input}
+            className={getInputClass(
+              "document",
+              documentError,
+              formData.document,
+            )}
             aria-invalid={!!documentError}
+            aria-describedby={documentError ? "document-error" : undefined}
           />
-          {documentError && (
-            <small className={styles.error}>{documentError}</small>
+          {documentChecking && (
+            <small className={styles.loading}>
+              <span className={styles.spinner}></span>
+              Verificando documento...
+            </small>
+          )}
+          {documentError && !documentChecking && (
+            <small id="document-error" className={styles.error}>
+              {documentError}
+            </small>
           )}
         </label>
 
@@ -276,12 +452,24 @@ export default function ProfileStep({
             type="tel"
             value={formData.phone || ""}
             onChange={(e) => onUpdate({ phone: formatPhone(e.target.value) })}
+            onBlur={() => handleBlur("phone")}
             placeholder="(00) 00000-0000"
             maxLength={15}
-            className={styles.input}
+            className={getInputClass("phone", phoneError, formData.phone)}
             aria-invalid={!!phoneError}
+            aria-describedby={phoneError ? "phone-error" : undefined}
           />
-          {phoneError && <small className={styles.error}>{phoneError}</small>}
+          {phoneChecking && (
+            <small className={styles.loading}>
+              <span className={styles.spinner}></span>
+              Verificando telefone...
+            </small>
+          )}
+          {phoneError && !phoneChecking && (
+            <small id="phone-error" className={styles.error}>
+              {phoneError}
+            </small>
+          )}
         </label>
       </div>
     </div>

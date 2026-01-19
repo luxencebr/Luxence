@@ -9,6 +9,7 @@ interface StepNavigationProps {
   onPrev: () => void;
   onSubmit: () => void;
   canProceed: () => boolean;
+  isSubmitting?: boolean;
 }
 
 export default function StepNavigation({
@@ -18,6 +19,7 @@ export default function StepNavigation({
   onPrev,
   onSubmit,
   canProceed,
+  isSubmitting = false,
 }: StepNavigationProps) {
   const handleNextClick = () => {
     if (currentStep === totalSteps) {
@@ -61,8 +63,14 @@ export default function StepNavigation({
       <button
         onClick={handleNextClick}
         className={`${styles.button} ${styles.buttonNext}`}
+        disabled={isSubmitting}
+        style={{ opacity: isSubmitting ? 0.7 : 1 }}
       >
-        {currentStep === totalSteps ? "Finalizar" : "Próximo →"}
+        {isSubmitting
+          ? "Enviando..."
+          : currentStep === totalSteps
+            ? "Finalizar"
+            : "Próximo →"}
       </button>
     </div>
   );

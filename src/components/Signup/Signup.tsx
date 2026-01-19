@@ -4,21 +4,68 @@ import type React from "react";
 
 import { useRouter } from "next/navigation";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import styles from "./Signup.module.css";
 
 import { FaMars, FaVenus, FaTransgender } from "react-icons/fa6";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaCheck, FaTimes } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 
 import Popup from "@/components/ui/Popup/Popup";
 import register from "./register";
+
+function PasswordRequirements({ password }: { password: string }) {
+  const requirements = useMemo(
+    () => [
+      {
+        label: "Deve conter ao menos 8 caracteres.",
+        met: password.length >= 8,
+      },
+      {
+        label: "Deve conter ao menos UMA maiúscula.",
+        met: /[A-Z]/.test(password),
+      },
+      {
+        label: "Deve conter ao menos UMA minúscula.",
+        met: /[a-z]/.test(password),
+      },
+      { label: "Deve conter ao menos UM número.", met: /\d/.test(password) },
+      {
+        label: "Deve conter ao menos UM símbolo.",
+        met: /[\W_]/.test(password),
+      },
+    ],
+    [password],
+  );
+
+  // 🔹 Requisitos NÃO atendidos
+  const unmetRequirements = requirements.filter((req) => !req.met);
+
+  // 🔹 Se não digitou nada ou se todos foram atendidos, não renderiza nada
+  if (!password || unmetRequirements.length === 0) return null;
+
+  return (
+    <div className={styles.passwordRequirements}>
+      {unmetRequirements.map((req, index) => (
+        <div
+          key={index}
+          className={`${styles.requirement} ${styles.requirementUnmet}`}
+        >
+          <FaTimes />
+          <span>{req.label}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default function SignupPage() {
   const [isOpen, setIsOpen] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [password, setPassword] = useState("");
 
   const [role, setRole] = useState<"CLIENT" | "ADVERTISER" | null>(null);
 
@@ -39,6 +86,7 @@ export default function SignupPage() {
       setIsLoading(false);
       setShowPassword(false);
       setRole(null);
+      setPassword(""); // Limpa senha ao fechar
       formRef.current?.reset();
     }
   }, [isOpen]);
@@ -121,9 +169,7 @@ export default function SignupPage() {
           <form
             ref={formRef}
             onSubmit={handleSubmit}
-            className={`${styles.form} ${
-              isFormDisabled ? styles.disabled : ""
-            }`}
+            className={`${styles.form} ${isFormDisabled ? styles.disabled : ""}`}
             aria-busy={isLoading}
           >
             <div className={styles.fieldsets}>
@@ -158,7 +204,10 @@ export default function SignupPage() {
                       id="password"
                       type={showPassword ? "text" : "password"}
                       placeholder="Sua senha..."
-                      onChange={() => setErrors({})}
+                      onChange={(e) => {
+                        setErrors({});
+                        setPassword(e.target.value);
+                      }}
                     />
                     <button
                       type="button"
@@ -191,6 +240,7 @@ export default function SignupPage() {
                     </button>
                   </div>
                 </label>
+                <PasswordRequirements password={password} />
               </fieldset>
               <fieldset>
                 <h2>
@@ -246,7 +296,7 @@ export default function SignupPage() {
                   <label>
                     <input
                       type="checkbox"
-                      name="genderPreffer"
+                      name="preferences"
                       value="MALE"
                       onChange={() => setErrors({})}
                     />
@@ -260,7 +310,7 @@ export default function SignupPage() {
                   <label>
                     <input
                       type="checkbox"
-                      name="genderPreffer"
+                      name="preferences"
                       value="FEMALE"
                       onChange={() => setErrors({})}
                     />
@@ -274,7 +324,7 @@ export default function SignupPage() {
                   <label>
                     <input
                       type="checkbox"
-                      name="genderPreffer"
+                      name="preferences"
                       value="TRANS"
                       onChange={() => setErrors({})}
                     />
