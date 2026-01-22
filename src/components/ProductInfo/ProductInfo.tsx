@@ -74,7 +74,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
     keyof typeof CONTACT_CONFIG | null
   >(null);
   const [contactValue, setContactValue] = useState("");
-  const [contacts, setContacts] = useState(producer.profile.contacts);
+  const [contacts, setContacts] = useState(producer.profile.contacts || []);
   const [isSaving, setIsSaving] = useState(false);
 
   const [slogan, setSlogan] = useState(producer.profile.slogan || "");
@@ -227,7 +227,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
   const price = producer.profile.prices?.[0];
 
   const whatsappMsg = encodeURIComponent(
-    "Olá! Vi seu perfil na Luxence!\n\nFiquei interessado em seus serviços. Vamos conversar?"
+    "Olá! Vi seu perfil na Luxence!\n\nFiquei interessado em seus serviços. Vamos conversar?",
   );
 
   const CONTACT_CONFIG: Record<
@@ -441,7 +441,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                       {Array.from({ length: Math.round(rating) }).map(
                         (_, i) => (
                           <FaHeart key={i} />
-                        )
+                        ),
                       )}
                     </span>
                   </div>
@@ -601,8 +601,8 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                                 prev.map((c) =>
                                   c.id === contact.id
                                     ? { ...c, value: contactValue.trim() }
-                                    : c
-                                )
+                                    : c,
+                                ),
                               );
                               setEditingContact(null);
                               setEditingContact(null);

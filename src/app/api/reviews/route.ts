@@ -17,7 +17,7 @@ async function sendReviewNotificationEmail(
   email: string,
   producerName: string,
   reviewerName: string,
-  profileId: number
+  profileId: number,
 ) {
   const resend = getResend();
 
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
     if (!userId || !profileId || !rating) {
       return NextResponse.json(
         { error: "userId, profileId e rating são obrigatórios" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
     if (rating < 1 || rating > 5) {
       return NextResponse.json(
         { error: "A avaliação deve ser entre 1 e 5" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
           error:
             "O comentário é obrigatório e deve ter pelo menos 10 caracteres",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
     if (!user) {
       return NextResponse.json(
         { error: "Usuário não encontrado" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
     if (!profile) {
       return NextResponse.json(
         { error: "Perfil do produtor não encontrado" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -172,7 +172,7 @@ export async function POST(request: NextRequest) {
         profile.producer.user.email,
         profile.producer.name,
         displayName,
-        parsedProfileId
+        parsedProfileId,
       );
     } catch (emailError) {
       // Log error but don't fail the review creation
@@ -185,14 +185,14 @@ export async function POST(request: NextRequest) {
 
     if (error instanceof Error && error.message.includes("Unique constraint")) {
       return NextResponse.json(
-        { error: "Você já avaliou este produtor" },
-        { status: 409 }
+        { error: "Você avaliou este produtor" },
+        { status: 409 },
       );
     }
 
     return NextResponse.json(
       { error: "Erro ao criar avaliação" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -206,7 +206,7 @@ export async function GET(request: NextRequest) {
     if (!profileId) {
       return NextResponse.json(
         { error: "profileId é obrigatório" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -248,7 +248,7 @@ export async function GET(request: NextRequest) {
     console.error("Erro ao buscar reviews:", error);
     return NextResponse.json(
       { error: "Erro ao buscar avaliações" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

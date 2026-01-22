@@ -104,6 +104,11 @@ export async function POST(req: Request) {
       select: { name: true },
     });
 
+    // Buscar todas as opções de contato disponíveis
+    const contactOptions = await prisma.contactOption.findMany({
+      select: { id: true },
+    });
+
     const producer = await prisma.producer.create({
       data: {
         name: user?.name || "",
@@ -127,11 +132,28 @@ export async function POST(req: Request) {
             scholarity: "",
             languages: [],
             neighborhoods: [],
+            // Criar contatos vazios para todas as opções disponíveis
+            contacts: {
+              create: contactOptions.map((option, index) => ({
+                contactId: option.id,
+                value: "",
+                label: null,
+                isPrimary: false,
+                isPublic: false,
+                order: index,
+              })),
+            },
           },
         },
       },
       include: {
-        profile: true,
+        profile: {
+          include: {
+            contacts: {
+              include: { option: true },
+            },
+          },
+        },
       },
     });
 

@@ -81,6 +81,8 @@ export default function ProductPage({ params }: ProductPageProps) {
 
   const canEdit = Number(session?.user?.producerId) === producer.id;
 
+  console.log("Contatods", producer.profile.contacts);
+
   return (
     <div className={styles.productPage}>
       <div className={styles.layout}>

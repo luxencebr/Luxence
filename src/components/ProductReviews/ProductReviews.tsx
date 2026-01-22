@@ -24,7 +24,7 @@ function ProductReviews({
   const { data: session } = useSession();
 
   const [reviews, setReviews] = useState<Review[]>(
-    producer.profile.reviews || []
+    producer.profile.reviews || [],
   );
   const [visibleCount, setVisibleCount] = useState(3);
 
@@ -41,7 +41,7 @@ function ProductReviews({
   const [userReview, setUserReview] = useState<Review | null>(null);
 
   const [approvingReviewId, setApprovingReviewId] = useState<string | null>(
-    null
+    null,
   );
 
   const [deletingReviewId, setDeletingReviewId] = useState<string | null>(null);
@@ -71,7 +71,7 @@ function ProductReviews({
       try {
         const userId = session?.user?.id || "";
         const response = await fetch(
-          `/api/reviews?profileId=${producer.profile.id}&userId=${userId}`
+          `/api/reviews?profileId=${producer.profile.id}&userId=${userId}`,
         );
 
         if (response.ok) {
@@ -90,7 +90,7 @@ function ProductReviews({
     if (session?.user?.id) {
       const userId = session.user.id;
       const existingReview = reviews.find(
-        (review) => review.userId === Number(userId)
+        (review) => review.userId === Number(userId),
       );
       setUserHasReviewed(!!existingReview);
       setUserReview(existingReview || null);
@@ -113,7 +113,7 @@ function ProductReviews({
     }
 
     if (userHasReviewed) {
-      setError("Você já avaliou este produtor");
+      setError("Você avaliou este produtor");
       return;
     }
 
@@ -127,7 +127,7 @@ function ProductReviews({
 
     if (userComment.trim().length < 10) {
       setError(
-        "O comentário é obrigatório e deve ter pelo menos 10 caracteres"
+        "O comentário é obrigatório e deve ter pelo menos 10 caracteres",
       );
       return;
     }
@@ -188,7 +188,7 @@ function ProductReviews({
         `/api/reviews/${deletingReviewId}?userId=${session.user.id}`,
         {
           method: "DELETE",
-        }
+        },
       );
 
       if (!response.ok) {
@@ -208,7 +208,7 @@ function ProductReviews({
       setDeletingReviewId(null);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Erro ao deletar avaliação"
+        err instanceof Error ? err.message : "Erro ao deletar avaliação",
       );
       setShowDeleteConfirm(false);
       setDeletingReviewId(null);
@@ -242,12 +242,12 @@ function ProductReviews({
       } else {
         const updatedReview = await response.json();
         setReviews((prev) =>
-          prev.map((r) => (r.id === reviewId ? updatedReview : r))
+          prev.map((r) => (r.id === reviewId ? updatedReview : r)),
         );
       }
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Erro ao atualizar avaliação"
+        err instanceof Error ? err.message : "Erro ao atualizar avaliação",
       );
     } finally {
       setApprovingReviewId(null);
@@ -327,7 +327,7 @@ function ProductReviews({
                               className={styles.heartEmpty}
                               aria-hidden
                             />
-                          )
+                          ),
                         )}
                       </span>
                     </div>
@@ -437,7 +437,7 @@ function ProductReviews({
 
             {userHasReviewed ? (
               <div className={styles.alreadyReviewedMessage}>
-                <p>✓ Você já avaliou este produtor</p>
+                <p>✓ Você avaliou este produtor</p>
                 {userReview && !userReview.isApproved && (
                   <p
                     style={{
