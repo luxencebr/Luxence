@@ -313,23 +313,6 @@ function ProductReviews({
                       <p className={styles.reviewerName}>
                         {review.reviewerName || "Anônimo"}
                       </p>
-                      <span className={styles.rate}>
-                        {[1, 2, 3, 4, 5].map((heart) =>
-                          heart <= review.rating ? (
-                            <FaHeart
-                              key={heart}
-                              className={styles.heartFilled}
-                              aria-label={`Nota ${review.rating} de 5`}
-                            />
-                          ) : (
-                            <FaRegHeart
-                              key={heart}
-                              className={styles.heartEmpty}
-                              aria-hidden
-                            />
-                          ),
-                        )}
-                      </span>
                     </div>
                     {review.comment && (
                       <p className={styles.reviewComment}>{review.comment}</p>

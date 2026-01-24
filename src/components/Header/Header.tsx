@@ -83,6 +83,13 @@ function Header() {
           >
             Suporte
           </Link>
+
+          <Link
+            href={"/advertiser/plans"}
+            className={`${styles.navBtn} ${styles.plans} `}
+          >
+            Assine Já!
+          </Link>
         </nav>
         <div className={styles.headerButtons}>
           {session ? (
@@ -185,6 +192,22 @@ function Header() {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Sobre
+              </Link>
+
+              <Link
+                href="/suport"
+                className={`${styles.mobileNavBtn} ${
+                  isActive("/suport") ? styles.active : ""
+                }`}
+              >
+                Suporte
+              </Link>
+
+              <Link
+                href={"/advertiser/plans"}
+                className={`${styles.mobileNavBtn} ${styles.plans} `}
+              >
+                Assine Já!
               </Link>
             </nav>
 

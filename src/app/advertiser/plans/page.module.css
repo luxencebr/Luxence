@@ -28,12 +28,14 @@
   width: 100%;
 
   display: flex;
-  align-items: start;
+  align-items: center;
   gap: 16px;
 }
 
 .signatureCard {
   background: var(--background-complementary-color);
+  width: 100%;
+  box-sizing: border-box;
   flex: 1;
   padding: 16px;
 
@@ -110,4 +112,10 @@
 
 .deny {
   opacity: 0.6;
+}
+
+@media (max-width: 768px) {
+  .signatures {
+    flex-flow: column nowrap;
+  }
 }

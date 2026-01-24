@@ -318,6 +318,13 @@
   display: none;
 }
 
+.plans {
+  opacity: 1;
+  background: var(--primary-color);
+  border-radius: 4px;
+  color: var(--background-color);
+}
+
 @media (max-width: 768px) {
   /* Mantendo altura consistente */
   .header {

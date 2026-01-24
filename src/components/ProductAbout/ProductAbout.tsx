@@ -26,7 +26,7 @@ interface OtherLanguage {
 
 function generateBioSuggestions(
   appearance: ProducerAppearance[],
-  name: string
+  name: string,
 ): string[] {
   const getAppearanceValue = (optionName: string) => {
     const item = appearance.find((a) => a.option.name === optionName);
@@ -69,7 +69,7 @@ function generateBioSuggestions(
       bodyDesc || "silhueta elegante"
     }. ${hairDesc || "Cabelos envolventes"} e ${
       eyeDesc || "olhar encantador"
-    }. Uma companhia refinada para quem valoriza momentos especiais e conexões verdadeiras.${extrasText}`
+    }. Uma companhia refinada para quem valoriza momentos especiais e conexões verdadeiras.${extrasText}`,
   );
 
   // 2. Sensual & confiante
@@ -80,7 +80,7 @@ function generateBioSuggestions(
         : "Confiança em cada detalhe"
     }. ${bodyDesc || "Corpo que chama atenção"}, ${
       eyeDesc || "olhar provocante"
-    } e uma energia que conquista sem esforço.${extrasText}`
+    } e uma energia que conquista sem esforço.${extrasText}`,
   );
 
   // 3. Misteriosa & envolvente
@@ -91,14 +91,14 @@ function generateBioSuggestions(
         : "Olhar hipnotizante"
     }, ${
       hairDesc || "cabelos que despertam curiosidade"
-    } e uma presença impossível de ignorar. Descubra aos poucos…${extrasText}`
+    } e uma presença impossível de ignorar. Descubra aos poucos…${extrasText}`,
   );
 
   // 4. Próxima & acolhedora
   suggestions.push(
     `💬 Oi, eu sou ${name}. Gosto de boas conversas, risadas sinceras e momentos leves. ${
       hairDesc || "Meu sorriso e minha energia"
-    } tornam cada encontro especial. Vamos nos conhecer melhor? 💖`
+    } tornam cada encontro especial. Vamos nos conhecer melhor? 💖`,
   );
 
   // 5. Experiência premium
@@ -107,7 +107,7 @@ function generateBioSuggestions(
       heightFormatted || "Presença elegante"
     }, ${
       bodyDesc || "estilo marcante"
-    } e atenção aos detalhes. Ideal para quem busca exclusividade e sofisticação.${extrasText}`
+    } e atenção aos detalhes. Ideal para quem busca exclusividade e sofisticação.${extrasText}`,
   );
 
   // 6. Intensa & marcante
@@ -116,21 +116,21 @@ function generateBioSuggestions(
       bodyDesc || "corpo cheio de atitude"
     }, ${
       eyeDesc || "olhar firme"
-    } e uma personalidade que deixa marcas. Nem todo encontro é comum.${extrasText}`
+    } e uma personalidade que deixa marcas. Nem todo encontro é comum.${extrasText}`,
   );
 
   // 7. Leve & charmosa
   suggestions.push(
     `🌸 ${name} aqui! Delicada na medida certa, com ${
       hairDesc || "cabelos cheios de charme"
-    } e uma vibe envolvente. Ideal para momentos leves, agradáveis e cheios de sintonia. ✨`
+    } e uma vibe envolvente. Ideal para momentos leves, agradáveis e cheios de sintonia. ✨`,
   );
 
   // 8. Ousada & provocante
   suggestions.push(
     `🔥 Sou ${name}. ${heightFormatted || "Presença dominante"}, ${
       bodyDesc || "corpo provocante"
-    } e uma personalidade que não passa despercebida. Se você gosta de intensidade, talvez eu seja o seu tipo.${extrasText}`
+    } e uma personalidade que não passa despercebida. Se você gosta de intensidade, talvez eu seja o seu tipo.${extrasText}`,
   );
 
   return suggestions;
@@ -150,7 +150,7 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
 
   const bioSuggestions = generateBioSuggestions(
     producer.profile.appearance || [],
-    producer.name
+    producer.name,
   );
 
   const handleEdit = () => {
@@ -223,8 +223,8 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
 
   const [otherLanguages, setOtherLanguages] = useState<OtherLanguage[]>(
     producer.profile.languages?.filter(
-      (l) => !["Português", "Inglês", "Espanhol"].includes(l.name)
-    ) || []
+      (l) => !["Português", "Inglês", "Espanhol"].includes(l.name),
+    ) || [],
   );
 
   const languagesLevels = ["Básico", "Avançado", "Fluente", "Nativo"];
@@ -243,13 +243,13 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
 
   const updateOtherLanguageName = (index: number, name: string) => {
     setOtherLanguages((prev) =>
-      prev.map((item, i) => (i === index ? { ...item, name } : item))
+      prev.map((item, i) => (i === index ? { ...item, name } : item)),
     );
   };
 
   const updateOtherLanguageLevel = (index: number, level: string) => {
     setOtherLanguages((prev) =>
-      prev.map((item, i) => (i === index ? { ...item, level } : item))
+      prev.map((item, i) => (i === index ? { ...item, level } : item)),
     );
   };
 
