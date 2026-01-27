@@ -5,6 +5,11 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Cropper from "react-easy-crop";
 import styles from "./Slider.module.css";
 import { HiOutlinePencil } from "react-icons/hi2";
+import {
+  SIGNATURE_LIMITS,
+  type Signature,
+  canAddMoreImages,
+} from "@/utils/signatureLimits";
 
 import { GoUpload } from "react-icons/go";
 import {
@@ -34,6 +39,7 @@ interface SliderProps {
   profileId: number;
   initialImages?: ImageItem[];
   canEdit?: boolean;
+  signature?: Signature;
 }
 
 /* ================= COMPONENT ================= */
@@ -42,6 +48,7 @@ export default function Slider({
   profileId,
   initialImages,
   canEdit = false,
+  signature = "COPPER",
 }: SliderProps) {
   /* ================= STATE ================= */
 
@@ -119,6 +126,14 @@ export default function Slider({
 
     // Reset input to allow re-selecting the same file
     e.target.value = "";
+
+    // Verificar limite de imagens baseado na assinatura
+    if (!canAddMoreImages(signature, images.length)) {
+      alert(
+        `Limite de imagens atingido! Seu plano ${signature} permite até ${SIGNATURE_LIMITS[signature]} imagens. Considere fazer upgrade do seu plano para adicionar mais imagens.`,
+      );
+      return;
+    }
 
     setCropMode("create");
     setEditingImageId(null);
@@ -333,8 +348,13 @@ export default function Slider({
                     htmlFor="addImageInput"
                     className={`${styles.addBtn} ${
                       isUploading ? styles.loading : ""
-                    }`}
+                    } ${!canAddMoreImages(signature, images.length) ? styles.disabled : ""}`}
                     aria-label="Adicionar imagem"
+                    title={
+                      !canAddMoreImages(signature, images.length)
+                        ? `Limite atingido (${images.length}/${SIGNATURE_LIMITS[signature]})`
+                        : `Adicionar imagem (${images.length}/${SIGNATURE_LIMITS[signature]})`
+                    }
                   >
                     {isUploading ? (
                       <span className={styles.spinner} />
@@ -390,7 +410,7 @@ export default function Slider({
                       formData.append("file", originalFile);
                       formData.append(
                         "crop",
-                        JSON.stringify(croppedAreaPixels)
+                        JSON.stringify(croppedAreaPixels),
                       );
                       formData.append("zoom", String(zoom));
                       formData.append("aspect", "3/4");
@@ -413,11 +433,22 @@ export default function Slider({
                             cropData: croppedAreaPixels,
                             zoom: zoom,
                           }),
-                        }
+                        },
                       );
                     }
 
-                    if (!res.ok) throw new Error("Erro ao salvar");
+                    if (!res.ok) {
+                      const errorData = await res.json();
+                      if (res.status === 403 && errorData.limit) {
+                        // Erro de limite de imagens
+                        alert(
+                          `${errorData.error}\n\nConsidere fazer upgrade do seu plano para adicionar mais imagens.`,
+                        );
+                      } else {
+                        throw new Error(errorData.error || "Erro ao salvar");
+                      }
+                      return;
+                    }
 
                     const updatedImage: ImageItem = await res.json();
 
@@ -433,7 +464,7 @@ export default function Slider({
                       };
 
                       return prev.map((img) =>
-                        img.id === updatedImage.id ? imageWithTimestamp : img
+                        img.id === updatedImage.id ? imageWithTimestamp : img,
                       );
                     });
 

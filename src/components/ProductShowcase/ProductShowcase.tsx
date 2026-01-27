@@ -23,6 +23,7 @@ export default function ProductShowcase({
         profileId={producer.profile.id}
         initialImages={images}
         canEdit={canEdit}
+        signature={producer.signature}
       />
       <ProductInfo producer={producer} canEdit={canEdit} />
     </section>

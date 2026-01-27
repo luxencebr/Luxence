@@ -175,6 +175,40 @@
   color: var(--background-color);
 
   cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.addBtn.disabled {
+  display: none;
+}
+
+/* Image counter */
+
+.imageCounter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+
+  font-size: 12px;
+  color: var(--contrast-color);
+  text-align: center;
+}
+
+.imageCounter span {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.imageCounter span.limitReached {
+  color: #ff6b6b;
+}
+
+.imageCounter small {
+  opacity: 0.7;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 /* States */

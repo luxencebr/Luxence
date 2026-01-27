@@ -3,6 +3,7 @@ import { prisma } from "@/utils/prisma";
 import { uploadToSpaces } from "@/lib/uploadToSpaces";
 import { randomUUID } from "crypto";
 import sharp from "sharp";
+import { SIGNATURE_LIMITS, type Signature } from "@/utils/signatureLimits";
 
 export async function POST(req: Request) {
   try {
@@ -17,6 +18,45 @@ export async function POST(req: Request) {
     }
 
     const cropData = JSON.parse(cropDataStr);
+
+    // Buscar o perfil com informações do produtor e assinatura
+    const profile = await prisma.producerProfile.findUnique({
+      where: { id: profileId },
+      select: {
+        images: true,
+        producer: {
+          select: {
+            signature: true,
+          },
+        },
+      },
+    });
+
+    if (!profile) {
+      return NextResponse.json(
+        { error: "Perfil não encontrado" },
+        { status: 404 },
+      );
+    }
+
+    const images = Array.isArray(profile.images) ? profile.images : [];
+    const currentImageCount = images.length;
+    const signature = profile.producer.signature as Signature;
+    const maxImages = SIGNATURE_LIMITS[signature];
+
+    // Verificar se já atingiu o limite
+    if (currentImageCount >= maxImages) {
+      return NextResponse.json(
+        {
+          error: `Limite de imagens atingido. Seu plano ${signature} permite até ${maxImages} imagens.`,
+          limit: maxImages,
+          current: currentImageCount,
+          signature,
+        },
+        { status: 403 },
+      );
+    }
+
     const buffer = Buffer.from(await file.arrayBuffer());
     const imageId = randomUUID();
 
@@ -42,13 +82,6 @@ export async function POST(req: Request) {
       contentType: file.type,
       folder: `profiles/${profileId}`,
     });
-
-    const profile = await prisma.producerProfile.findUnique({
-      where: { id: profileId },
-      select: { images: true },
-    });
-
-    const images = Array.isArray(profile?.images) ? profile.images : [];
 
     const newImage = {
       id: imageId,
