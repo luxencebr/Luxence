@@ -133,9 +133,7 @@ export default function PerformancePage() {
   if (loading) {
     return (
       <div className={styles.container}>
-        <div className={styles.loading}>
-          Carregando métricas de performance...
-        </div>
+        <div className={styles.loading}>Carregando dados de desempenho...</div>
       </div>
     );
   }

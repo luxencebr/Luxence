@@ -2,13 +2,25 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  const start = Date.now();
-
-  // Continue with the request
+  // Continue with the request without analytics tracking
   const response = NextResponse.next();
 
-  // Record the request in a way that can be accessed by our monitoring
-  // We'll do this in the API routes themselves for now
+  // Set session cookie if it doesn't exist
+  const shouldTrack =
+    !request.nextUrl.pathname.startsWith("/api") &&
+    !request.nextUrl.pathname.startsWith("/_next") &&
+    !request.nextUrl.pathname.startsWith("/admin") &&
+    !request.nextUrl.pathname.includes("favicon");
+
+  if (shouldTrack && !request.cookies.get("session-id")) {
+    const sessionId = `sess_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    response.cookies.set("session-id", sessionId, {
+      maxAge: 30 * 24 * 60 * 60, // 30 days
+      httpOnly: false, // Allow JavaScript access
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+    });
+  }
 
   return response;
 }

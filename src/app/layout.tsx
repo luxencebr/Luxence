@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Providers from "./provider";
+import AnalyticsTracker from "@/components/AnalyticsTracker";
 import "../styles/globals.css";
 import "../styles/variables.css";
 import "../styles/Fonts.css";
@@ -51,7 +52,10 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <AnalyticsTracker />
+          {children}
+        </Providers>
       </body>
     </html>
   );
