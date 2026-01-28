@@ -1,0 +1,86 @@
+.container {
+  background: var(--dark-complementary-color);
+  margin: var(--space-md);
+
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.user {
+  padding: var(--space-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  text-decoration: none;
+  color: inherit;
+  flex: 1;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--light-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.image {
+  object-fit: cover;
+}
+
+.fallback {
+  font-size: var(--ft-md);
+  font-weight: bold;
+  color: var(--dark-color);
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.name {
+  font-size: var(--ft-md);
+}
+
+.role {
+  font-size: var(--ft-sm);
+  opacity: 0.5;
+}
+
+.logout {
+  background: transparent;
+  height: 100%;
+  padding: var(--space-sm);
+
+  border: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: inherit;
+
+  cursor: pointer;
+
+  transition: var(--transition-normal);
+}
+
+.logout:hover {
+  background: var(--dark-color);
+  color: var(--primary-color);
+}
+
+.icon {
+  height: 16px;
+  width: 16px;
+}

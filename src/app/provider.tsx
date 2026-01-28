@@ -35,7 +35,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     pathname?.startsWith("/signup") ||
     pathname?.startsWith("/signin") ||
     pathname === "/catalog" ||
-    pathname === "/advertiser";
+    pathname === "/advertiser" ||
+    pathname?.startsWith("/admin");
 
   if (noLayout) {
     return <SessionProvider>{children}</SessionProvider>;

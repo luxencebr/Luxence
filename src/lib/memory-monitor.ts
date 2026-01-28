@@ -10,6 +10,10 @@ export class MemoryMonitor {
     return MemoryMonitor.instance;
   }
 
+  isMonitoring() {
+    return this.intervalId !== undefined;
+  }
+
   startMonitoring(intervalMs = 60000) {
     // Monitor every minute by default
     this.intervalId = setInterval(() => {
@@ -28,7 +32,7 @@ export class MemoryMonitor {
       if (heapPercentage > 80) {
         console.warn(
           "[v0] WARNING: High heap usage detected:",
-          heapPercentage.toFixed(2) + "%"
+          heapPercentage.toFixed(2) + "%",
         );
       }
     }, intervalMs);
@@ -51,7 +55,7 @@ export class MemoryMonitor {
       });
     } else {
       console.warn(
-        "[v0] Garbage collection not exposed. Run Node with --expose-gc flag."
+        "[v0] Garbage collection not exposed. Run Node with --expose-gc flag.",
       );
     }
   }

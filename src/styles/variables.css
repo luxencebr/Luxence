@@ -8,11 +8,53 @@
   --primary-color: #ffd700;
   --primary-complementary-color: rgba(255, 215, 0, 0.75);
 
+  --dark-color: #1f1f1f;
+  --dark-complementary-color: #2f2f2f;
+
+  --light-color: #fefefe;
+  --light-complementary-color: #f0f0f0;
+
+  --success-color: rgba(163, 230, 191); /* verde pastel */
+  --warning-color: rgba(253, 224, 140); /* amarelo pastel */
+  --danger-color: rgba(252, 165, 165); /* vermelho pastel */
+
+  --success-text: #2f855a;
+  --warning-text: #b7791f;
+  --danger-text: #9b2c2c;
+
   /* FONTES */
 
-  --fs-xs: clamp(0.7rem, 1.8vw, 0.85rem);
-  --fs-sm: clamp(0.85rem, 2.2vw, 1rem);
-  --fs-md: clamp(1rem, 2.6vw, 1.15rem);
-  --fs-lg: clamp(1.2rem, 3vw, 1.4rem);
-  --fs-xl: clamp(1.4rem, 3.5vw, 1.8rem);
+  --ft-xs: 10px;
+  --ft-sm: 12px;
+  --ft-md: 16px;
+  --ft-lg: 20px;
+  --ft-xl: 24px;
+
+  /* === Shadows === */
+
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.75);
+
+  /* === Border Radius === */
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  /* === Spacing === */
+
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 20px;
+  --space-xl: 24px;
+
+  /* === Transitions === */
+
+  --transition-fast: all 0.1s ease;
+  --transition-normal: all 0.25s ease;
+  --transition-slow: all 0.5s ease;
+  --transition-veryslow: all 1s ease;
 }
