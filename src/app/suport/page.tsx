@@ -50,7 +50,7 @@ export default function Page() {
             icon={<SiWhatsapp />}
             title="Whatsapp"
             description="Resposta automática imediatamente"
-            href="https://wa.me/5521979502430?text=*Suporte%20Luxence*%0A%0AOlá,%20preciso%20de%20ajuda%20com..."
+            href="https://wa.me/5521967957268?text=*Suporte%20Luxence*%0A%0AOlá,%20preciso%20de%20ajuda%20com..."
           />
         </div>
       </div>
