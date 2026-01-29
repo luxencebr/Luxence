@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import styles from "./NavLinks.module.css";
 import { IconType } from "react-icons";
-import { LayoutDashboard, Package, Tags, Calendar } from "lucide-react";
+import { LayoutDashboard, Users, BarChart3, Activity } from "lucide-react";
 
 export interface AdminRoute {
   label: string;
@@ -21,17 +21,17 @@ export const adminRoutes: AdminRoute[] = [
   {
     label: "Anunciantes",
     href: "/admin/advertisers",
-    icon: Tags,
+    icon: Users,
   },
   {
     label: "Métricas",
     href: "/admin/metrics",
-    icon: Package,
+    icon: BarChart3,
   },
   {
-    label: "Desempenho",
+    label: "Performance",
     href: "/admin/performance",
-    icon: Calendar,
+    icon: Activity,
   },
 ];
 

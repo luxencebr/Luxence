@@ -1,7 +1,15 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import styles from "./performance.module.css";
+import {
+  Activity,
+  AlertTriangle,
+  Server,
+  Database,
+  Cpu,
+  HardDrive,
+} from "lucide-react";
 
 interface PerformanceData {
   infrastructure: {
@@ -124,6 +132,10 @@ export default function PerformancePage() {
     return () => clearInterval(interval);
   }, [autoRefresh]);
 
+  const refreshPerformance = () => {
+    fetchData();
+  };
+
   const getStatusColor = (percentage: number) => {
     if (percentage > 80) return styles.critical;
     if (percentage > 60) return styles.warning;
@@ -133,7 +145,10 @@ export default function PerformancePage() {
   if (loading) {
     return (
       <div className={styles.container}>
-        <div className={styles.loading}>Carregando dados de desempenho...</div>
+        <div className={styles.loading}>
+          <div className={styles.spinner}></div>
+          <span>Carregando performance...</span>
+        </div>
       </div>
     );
   }
@@ -141,10 +156,14 @@ export default function PerformancePage() {
   if (error) {
     return (
       <div className={styles.container}>
-        <div className={styles.error}>Erro ao carregar dados: {error}</div>
-        <button onClick={fetchData} className={styles.retryButton}>
-          Tentar novamente
-        </button>
+        <div className={styles.error}>
+          <AlertTriangle size={48} />
+          <h2>Erro ao carregar performance</h2>
+          <p>{error}</p>
+          <button onClick={refreshPerformance} className={styles.retryButton}>
+            Tentar novamente
+          </button>
+        </div>
       </div>
     );
   }
@@ -153,8 +172,11 @@ export default function PerformancePage() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <h1 className={styles.title}>Performance do Sistema</h1>
+      <header className={styles.header}>
+        <div className={styles.headerContent}>
+          <h1 className={styles.title}>Performance</h1>
+          <p className={styles.subtitle}>Monitoramento do sistema</p>
+        </div>
         <div className={styles.controls}>
           <label className={styles.autoRefreshLabel}>
             <input
@@ -164,11 +186,16 @@ export default function PerformancePage() {
             />
             Auto-refresh (30s)
           </label>
-          <button onClick={fetchData} className={styles.refreshButton}>
-            Atualizar
+          <button
+            onClick={refreshPerformance}
+            className={styles.refreshButton}
+            disabled={loading}
+          >
+            <Activity size={16} className={loading ? styles.spinning : ""} />
+            {loading ? "Atualizando..." : "Atualizar"}
           </button>
         </div>
-      </div>
+      </header>
 
       <div className={styles.content}>
         {/* Infraestrutura */}

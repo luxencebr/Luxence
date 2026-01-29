@@ -5,8 +5,8 @@ import NavLinks from "@/components/admin/NavLinks/NavLinks";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "São Sebastião | Administração",
-  description: "Painel administrativo da Paróquia São Sebastião",
+  title: "Luxence | Administração",
+  description: "Painel administrativo da plataforma Luxence",
 };
 
 export default function AdminLayout({

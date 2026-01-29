@@ -1,7 +1,15 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import styles from "./metrics.module.css";
+import {
+  Activity,
+  AlertTriangle,
+  Users,
+  Globe,
+  Smartphone,
+  TrendingUp,
+} from "lucide-react";
 
 interface MetricsData {
   users: {
@@ -88,10 +96,17 @@ export default function MetricsPage() {
     return () => clearInterval(interval);
   }, [autoRefresh]);
 
+  const refreshMetrics = () => {
+    fetchData();
+  };
+
   if (loading) {
     return (
       <div className={styles.container}>
-        <div className={styles.loading}>Carregando métricas...</div>
+        <div className={styles.loading}>
+          <div className={styles.spinner}></div>
+          <span>Carregando métricas...</span>
+        </div>
       </div>
     );
   }
@@ -99,10 +114,14 @@ export default function MetricsPage() {
   if (error) {
     return (
       <div className={styles.container}>
-        <div className={styles.error}>Erro ao carregar dados: {error}</div>
-        <button onClick={fetchData} className={styles.retryButton}>
-          Tentar novamente
-        </button>
+        <div className={styles.error}>
+          <AlertTriangle size={48} />
+          <h2>Erro ao carregar métricas</h2>
+          <p>{error}</p>
+          <button onClick={refreshMetrics} className={styles.retryButton}>
+            Tentar novamente
+          </button>
+        </div>
       </div>
     );
   }
@@ -111,8 +130,11 @@ export default function MetricsPage() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <h1 className={styles.title}>Métricas da Aplicação</h1>
+      <header className={styles.header}>
+        <div className={styles.headerContent}>
+          <h1 className={styles.title}>Métricas</h1>
+          <p className={styles.subtitle}>Análise de uso da aplicação</p>
+        </div>
         <div className={styles.controls}>
           <label className={styles.autoRefreshLabel}>
             <input
@@ -122,11 +144,16 @@ export default function MetricsPage() {
             />
             Auto-refresh (1min)
           </label>
-          <button onClick={fetchData} className={styles.refreshButton}>
-            Atualizar
+          <button
+            onClick={refreshMetrics}
+            className={styles.refreshButton}
+            disabled={loading}
+          >
+            <Activity size={16} className={loading ? styles.spinning : ""} />
+            {loading ? "Atualizando..." : "Atualizar"}
           </button>
         </div>
-      </div>
+      </header>
 
       <div className={styles.content}>
         {/* Summary */}
