@@ -1,11 +1,9 @@
 .container {
   background: var(--dark-complementary-color);
   margin: var(--space-md);
-
   overflow: hidden;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
-
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -16,8 +14,6 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  text-decoration: none;
-  color: inherit;
   flex: 1;
 }
 
@@ -29,17 +25,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-}
-
-.image {
-  object-fit: cover;
-}
-
-.fallback {
-  font-size: var(--ft-md);
-  font-weight: bold;
-  color: var(--dark-color);
 }
 
 .info {
@@ -49,11 +34,11 @@
 }
 
 .name {
-  font-size: var(--ft-md);
+  font-size: var(--ft-sm);
 }
 
-.role {
-  font-size: var(--ft-sm);
+.email {
+  font-size: var(--ft-xs);
   opacity: 0.5;
 }
 
@@ -61,17 +46,12 @@
   background: transparent;
   height: 100%;
   padding: var(--space-sm);
-
   border: none;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   color: inherit;
-
   cursor: pointer;
-
   transition: var(--transition-normal);
 }
 
@@ -83,4 +63,22 @@
 .icon {
   height: 16px;
   width: 16px;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--light-color);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

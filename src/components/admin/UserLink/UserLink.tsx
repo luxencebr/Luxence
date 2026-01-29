@@ -1,52 +1,72 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
-import { useState } from "react";
-import { LogOut } from "lucide-react";
+import { useState, useEffect } from "react";
+import { signOut } from "next-auth/react";
+import { LogOut, User } from "lucide-react";
 import styles from "./UserLink.module.css";
+import { AdminUser } from "@/lib/admin-auth";
 
-interface UserLinkProps {
-  name: string;
-  role: string;
-  imageUrl?: string | null;
-  href?: string;
-}
+export default function UserLink() {
+  const [user, setUser] = useState<AdminUser | null>(null);
+  const [loading, setLoading] = useState(false);
 
-export default function UserLink({
-  name,
-  role,
-  imageUrl,
-  href = "/admin/profile",
-}: UserLinkProps) {
-  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      const response = await fetch("/api/admin/auth/session");
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data.user);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar dados do usuário:", error);
+    }
+  };
+
+  const handleLogout = async () => {
+    setLoading(true);
+    try {
+      await signOut({
+        redirect: true,
+        callbackUrl: "/admin",
+      });
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className={styles.container}>
-      <Link href={href} className={styles.user}>
+      <div className={styles.user}>
         <div className={styles.avatar}>
-          {imageUrl ? (
-            <Image src={imageUrl} alt={name} width={40} height={40} />
-          ) : (
-            <span className={styles.fallback}>
-              {name.charAt(0).toUpperCase()}
-            </span>
-          )}
+          <User size={18} />
         </div>
-
         <div className={styles.info}>
-          <strong className={styles.name}>{name}</strong>
-          <span className={styles.role}>{role}</span>
+          <span className={styles.name}>{user.name}</span>
+          <span className={styles.email}>{user.email}</span>
         </div>
-      </Link>
+      </div>
 
       <button
         type="button"
         className={styles.logout}
-        onClick={() => setOpen((v) => !v)}
-        aria-label="Sair do perfil"
+        onClick={handleLogout}
+        disabled={loading}
       >
-        <LogOut className={styles.icon} />
+        {loading ? (
+          <div className={styles.spinner}></div>
+        ) : (
+          <LogOut className={styles.icon} />
+        )}
       </button>
     </div>
   );

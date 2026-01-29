@@ -398,7 +398,7 @@
   border: 2px solid var(--background-color);
   border-top-color: var(--primary-color);
   border-radius: 50%;
-  animation: spin 0.7s linear infinite;
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {

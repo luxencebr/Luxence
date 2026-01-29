@@ -1,0 +1,237 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--background-color);
+  padding: var(--space-lg);
+}
+
+.popup {
+  display: flex;
+  flex-flow: column-reverse;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.formContent {
+  background: var(--background-complementary-color);
+  min-width: 300px;
+  max-width: 300px;
+  padding: 16px;
+
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0, 0, 0);
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 8px;
+
+  color: var(--contrast-color);
+}
+
+.formHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.formHeader h1 {
+  font-size: 24px;
+  color: var(--contrast-color);
+  margin: 0;
+}
+
+.form {
+  position: relative;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 8px;
+}
+
+.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.disabled button {
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #fff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.form label {
+  width: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 4px;
+
+  color: var(--contrast-complementary-color);
+  font-size: 12px;
+}
+
+.form label input {
+  flex: 1;
+  background: var(--background-color);
+  padding: 8px 12px;
+
+  border: none;
+  border-radius: 4px;
+  outline: none;
+
+  color: var(--contrast-color);
+}
+
+.passwordWrapper {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.showPasswordBtn {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  color: var(--contrast-color);
+  cursor: pointer;
+}
+
+.form label input:-webkit-autofill,
+.form label input:-webkit-autofill:hover,
+.form label input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px var(--background-color) inset !important;
+  -webkit-text-fill-color: var(--contrast-color) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.submit {
+  width: 100%;
+  background-color: var(--primary-color);
+
+  padding: 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 4px;
+  box-shadow: 0 0 4px black;
+
+  color: var(--background-color);
+  font-size: 16px;
+  font-family: Quicksand;
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+.successContainer {
+  background: var(--background-color);
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 0 8px rgba(0, 0, 0);
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  gap: 0.5rem;
+  color: #4bb543;
+  font-weight: bold;
+
+  position: absolute;
+}
+
+.checkmark {
+  height: 96px;
+  aspect-ratio: 1 / 1;
+  stroke-width: 3;
+  stroke: #4bb543;
+  stroke-miterlimit: 10;
+  animation: scaleUp 0.3s ease-out forwards;
+}
+
+.checkmarkCircle {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 2;
+  stroke: #4bb543;
+  fill: none;
+  animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.checkmarkCheck {
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: stroke 0.3s 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+@keyframes stroke {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes scaleUp {
+  0% {
+    transform: scale(0);
+  }
+  70% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.error {
+  background: var(--contrast-color);
+  width: 300px;
+  padding: 12px;
+
+  overflow: hidden;
+  border-radius: 4px;
+
+  color: var(--background-color);
+  font-size: 12px;
+  font-weight: bold;
+  text-align: justify;
+  hyphens: auto;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+  .container {
+    padding: var(--space-md);
+  }
+
+  .formContent {
+    min-width: 280px;
+    max-width: 280px;
+  }
+
+  .error {
+    width: 280px;
+  }
+}
