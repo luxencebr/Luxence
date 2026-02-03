@@ -15,11 +15,15 @@ export async function POST(
       );
     }
 
-    const { title } = await request.json();
+    const { content } = await request.json();
 
-    if (!title || typeof title !== "string" || title.trim().length === 0) {
+    if (
+      !content ||
+      typeof content !== "string" ||
+      content.trim().length === 0
+    ) {
       return NextResponse.json(
-        { error: "Título é obrigatório" },
+        { error: "Conteúdo é obrigatório" },
         { status: 400 },
       );
     }
@@ -36,18 +40,18 @@ export async function POST(
       );
     }
 
-    // Atualizar o título do post
+    // Atualizar o conteúdo do post
     const updatedPost = await prisma.post.update({
       where: { id: postId },
-      data: { title: title.trim() },
+      data: { content: content.trim() },
       // Removido include de comments - funcionalidade desabilitada
     });
 
     return NextResponse.json(updatedPost);
   } catch (error) {
-    console.error("Erro ao atualizar título:", error);
+    console.error("Erro ao atualizar conteúdo:", error);
     return NextResponse.json(
-      { error: "Erro interno ao atualizar título" },
+      { error: "Erro interno ao atualizar conteúdo" },
       { status: 500 },
     );
   }

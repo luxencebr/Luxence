@@ -387,8 +387,8 @@ model Post {
 
   publishedAt DateTime @default(now())
   title       String
-  image       Json?
-  content     String
+  imageUrl    String?
+  content     String   @db.Text
 
   views       Int       @default(0)
   likes       Int       @default(0)

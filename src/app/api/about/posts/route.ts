@@ -1,5 +1,7 @@
 import { prisma } from "@/utils/prisma";
+import { uploadToSpaces } from "@/lib/uploadToSpaces";
 import { NextResponse } from "next/server";
+import { randomUUID } from "crypto";
 
 export async function POST(req: Request) {
   try {
@@ -11,27 +13,34 @@ export async function POST(req: Request) {
     if (!title || !content) {
       return NextResponse.json(
         { error: "Título e conteúdo são obrigatórios" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    let imageJson: string[] | null = null;
+    let imageUrl: string | undefined = undefined;
 
     if (file) {
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
-      const mimeType = file.type;
-      const dataUrl = `data:${mimeType};base64,${buffer.toString("base64")}`;
 
-      // Salva apenas o base64 em um array
-      imageJson = [dataUrl];
+      // Gerar nome único para o arquivo
+      const fileExtension = file.name.split(".").pop() || "jpg";
+      const filename = `${randomUUID()}.${fileExtension}`;
+
+      // Upload para DigitalOcean Spaces
+      imageUrl = await uploadToSpaces({
+        buffer,
+        filename,
+        contentType: file.type,
+        folder: "blog",
+      });
     }
 
     const newPost = await prisma.post.create({
       data: {
         title,
         content,
-        image: imageJson ?? undefined, // JSON de string
+        imageUrl,
       },
     });
 
@@ -39,8 +48,8 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("POST CREATE ERROR:", error);
     return NextResponse.json(
-      { error: "Erro ao criar post", details: String(error) },
-      { status: 500 }
+      { error: "Erro ao criar publicação", details: String(error) },
+      { status: 500 },
     );
   }
 }

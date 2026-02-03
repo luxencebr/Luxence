@@ -16,9 +16,12 @@ export async function GET(request: Request) {
           id: true,
           title: true,
           content: true,
+          imageUrl: true,
           createdAt: true,
           updatedAt: true,
-          // Não incluímos 'image' aqui para evitar carregar base64 completo
+          publishedAt: true,
+          views: true,
+          // likes: true, // Funcionalidade desabilitada
         },
         orderBy: {
           createdAt: "desc",
@@ -41,8 +44,8 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error("Erro ao buscar posts:", error);
     return NextResponse.json(
-      { error: "Erro interno ao buscar posts" },
-      { status: 500 }
+      { error: "Erro interno ao buscar publicações" },
+      { status: 500 },
     );
   }
 }
