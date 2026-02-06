@@ -1,13 +1,19 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { Producer } from "@/types/Producer";
 
 import styles from "./page.module.css";
 
 import ProductsRow from "@/components/ProductRow/ProductRow";
+import Slider from "@/components/about/Slider/Slider";
 
 export default function HomePage() {
+  const { data: session } = useSession();
+  const canEdit = session?.user?.role === "ADMIN";
+  const [sliderImages, setSliderImages] = useState([]);
+
   const [newProducers, setNewProducers] = useState<Producer[]>([]);
   const [topProducers, setTopProducers] = useState<Producer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -33,13 +39,20 @@ export default function HomePage() {
       setIsLoading(true);
 
       try {
-        const res = await fetch("/api/home");
-        const data = await res.json();
+        const [producersRes, sliderRes] = await Promise.all([
+          fetch("/api/home"),
+          fetch("/api/home/slider"),
+        ]);
+
+        const data = await producersRes.json();
+        const sliderData = await sliderRes.json();
+
+        setSliderImages(sliderData);
 
         const newList = [...data].sort(
           (a, b) =>
             new Date(b.user.createdAt).getTime() -
-            new Date(a.user.createdAt).getTime()
+            new Date(a.user.createdAt).getTime(),
         );
 
         const topList = [...data].sort((a, b) => {
@@ -100,6 +113,7 @@ export default function HomePage() {
   return (
     <main className={styles.homePage}>
       <div className={styles.layout}>
+        <Slider initialImages={sliderImages} canEdit={canEdit} />
         <ProductsRow producers={newProducers} title="Novidades" />
         <ProductsRow producers={topProducers} title="Top Luxence" highlight />
       </div>

@@ -1,0 +1,314 @@
+.slider {
+  background: var(--background-complementary-color);
+  width: 640px;
+  aspect-ratio: 21 / 9;
+  margin: 0 auto;
+
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+
+  position: relative;
+}
+
+.imagesInput {
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+
+  color: var(--light-color);
+  font-size: var(--ft-md);
+
+  cursor: pointer;
+
+  transition: var(--transition-normal);
+}
+
+.imagesInput svg {
+  font-size: var(--ft-xl);
+}
+
+.imagesInput:hover {
+  transform: scale(1.1);
+}
+
+.sliderActions {
+  background: var(--background-color);
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 5;
+  padding: var(--space-sm);
+
+  border-bottom-left-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.removeCurrentBtn,
+.editCurrentBtn {
+  padding: 8px;
+
+  width: 32px;
+  height: 32px;
+
+  border-radius: 50%;
+  border: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.removeCurrentBtn:hover,
+.editCurrentBtn:hover {
+  transform: scale(1.1);
+}
+
+.removeCurrentBtn:disabled,
+.editCurrentBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.editCurrentBtn {
+  background: var(--light-color);
+  color: var(--dark-color);
+}
+
+.removeCurrentBtn {
+  background: var(--danger-text);
+  color: var(--light-color);
+}
+
+.controls {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.controls button {
+  background: var(--background-color);
+  border: none;
+  aspect-ratio: 3 / 4;
+  padding: var(--space-sm) var(--space-xs);
+  pointer-events: all;
+
+  box-shadow: var(--shadow-sm);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 24px;
+  color: var(--contrast-color);
+
+  cursor: pointer;
+}
+
+.controls > :first-child {
+  border-top-right-radius: var(--radius-sm);
+  border-bottom-right-radius: var(--radius-sm);
+}
+
+.controls > :nth-child(2) {
+  border-top-left-radius: var(--radius-sm);
+  border-bottom-left-radius: var(--radius-sm);
+}
+
+.slideImages {
+  width: 100%;
+  height: 100%;
+  display: flex;
+
+  transition: var(--transition-normal);
+}
+
+.slideImage {
+  width: 100%;
+  height: 100%;
+  flex-shrink: 0;
+
+  object-fit: cover;
+  object-position: center;
+}
+
+.indicators {
+  background: var(--background-color);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  padding: var(--space-xs) var(--space-sm);
+
+  border-top-left-radius: var(--radius-sm);
+  border-top-right-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dot {
+  background: transparent;
+  height: 12px;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+
+  border: 1.5px solid var(--light-color);
+  border-radius: 50%;
+
+  cursor: pointer;
+}
+
+.activeDot {
+  background: var(--light-color);
+}
+
+.addBtn {
+  background: var(--light-color);
+  padding: 4px;
+
+  border-radius: 50%;
+  display: flex;
+
+  font-size: 12px;
+  color: var(--dark-color);
+
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.addBtn.disabled {
+  display: none;
+}
+
+/* ----------------------------- */
+
+.backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  width: 100%;
+  height: 100%;
+
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cropModal {
+  background: var(--background-complementary-color);
+  height: min(90vh, calc(90vw * 4 / 3));
+  aspect-ratio: 3 / 4;
+
+  overflow: hidden;
+  border-radius: 16px;
+
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.cropContainer {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #000;
+  overflow: hidden;
+}
+
+.cropActions,
+.cropHeader {
+  width: 100%;
+  padding: 16px;
+  box-sizing: border-box;
+
+  box-shadow: 0 0 8px black;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  color: var(--contrast-color);
+  font-size: 20px;
+}
+
+.cropHeader button {
+  background: transparent;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+
+  border: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--contrast-color);
+  font-size: 20px;
+
+  cursor: pointer;
+}
+
+.cropActions button {
+  background: var(--background-color);
+  flex: 1;
+  padding: 8px;
+
+  border: none;
+  border-radius: 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--contrast-color);
+  font-size: 16px;
+
+  cursor: pointer;
+}
+
+.saveBtn {
+  background: var(--primary-color) !important;
+  color: var(--background-color) !important;
+}
+
+.spinner {
+  height: 16px;
+  aspect-ratio: 1 / 1;
+
+  border: 2px solid var(--background-color);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

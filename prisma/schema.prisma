@@ -420,3 +420,20 @@ model ProfileView {
 
   @@index([profileId, viewedAt])
 }
+
+model HomeSliderImage {
+  id          String   @id
+  name        String
+  url         String
+  originalUrl String?
+
+  cropX       Float?
+  cropY       Float?
+  cropWidth   Float?
+  cropHeight  Float?
+  cropZoom    Float?
+
+  order       Int      @default(0)
+
+  createdAt   DateTime @default(now())
+}
