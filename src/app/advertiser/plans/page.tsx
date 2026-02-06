@@ -23,75 +23,63 @@ export default function Plans() {
   const benefitList: BenefitBase[] = [
     { id: 1, name: "Fotos no Perfil", type: "number" },
     { id: 2, name: "Vídeos no Perfil", type: "number" },
-    { id: 3, name: "Shorts no Perfil", type: "number" },
-    { id: 4, name: "Controle de Comentários", type: "boolean" },
+    { id: 3, name: "Controle de Comentários", type: "boolean" },
 
     //----------------------------
 
-    { id: 5, name: "Atualizações de Mídia", type: "number" },
-    { id: 6, name: "Atualizações de Perfil", type: "number" },
-    { id: 7, name: "Respostas", type: "number" },
-    { id: 8, name: "Demosntração de Voz", type: "boolean" },
-    { id: 9, name: "Prioridade", type: "string" },
+    { id: 4, name: "Atualizações de Perfil", type: "number" },
+    { id: 5, name: "Demosntração de Voz", type: "boolean" },
+    { id: 6, name: "Prioridade", type: "string" },
 
     //----------------------------
 
-    { id: 10, name: "Perfil em destaque", type: "boolean" },
+    { id: 7, name: "Perfil em destaque", type: "boolean" },
   ];
 
   const plans: Plan[] = [
     {
       id: 1,
       title: "Prata",
-      price: "R$ 99,90/mês",
+      price: "",
       description: "Ideal para quem está começando.",
       benefits: {
-        1: 10,
-        2: 2,
-        3: 2,
-        4: true,
-        5: 2,
-        6: 2,
-        7: 6,
-        8: false,
-        9: "",
-        10: false,
+        1: 5, // Fotos
+        2: 1, // Vídeos
+        3: true, // Controle comentários
+        4: 5, // Atualizações perfil
+        5: false, // Voz
+        6: "", // Prioridade
+        7: false, // Destaque
       },
     },
     {
       id: 2,
       title: "Ouro",
-      price: "R$ 149,90/mês",
+      price: "",
       description: "Perfeito para quem quer crescer.",
       benefits: {
-        1: 30,
-        2: 4,
-        3: 10,
-        4: true,
-        5: 6,
-        6: 10,
-        7: 10,
-        8: true,
-        9: "Alta",
-        10: false,
+        1: 10,
+        2: 2,
+        3: true,
+        4: 10,
+        5: true,
+        6: "Alta",
+        7: false,
       },
     },
     {
       id: 3,
       title: "Diamante",
-      price: "R$ 199,90/mês",
+      price: "",
       description: "O melhor para quem quer se destacar.",
       benefits: {
-        1: 50,
-        2: 10,
-        3: Infinity, // Shorts ilimitados
-        4: true,
-        5: 10,
-        6: Infinity,
-        7: Infinity,
-        8: true,
-        9: "Máxima",
-        10: true,
+        1: 20,
+        2: 5,
+        3: true,
+        4: Infinity,
+        5: true,
+        6: "Máxima",
+        7: true,
       },
     },
   ];
