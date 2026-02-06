@@ -86,10 +86,11 @@ export async function POST(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } },
+  context: { params: Promise<{ id: string }> },
 ) {
   try {
-    const postId = parseInt(params.id);
+    const { id } = await context.params;
+    const postId = parseInt(id);
 
     if (isNaN(postId)) {
       return NextResponse.json(

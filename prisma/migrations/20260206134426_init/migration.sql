@@ -37,14 +37,31 @@ CREATE TABLE `User` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `PasswordResetToken` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `token` VARCHAR(191) NOT NULL,
+    `expiresAt` DATETIME(3) NOT NULL,
+    `userId` INTEGER NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    INDEX `PasswordResetToken_token_idx`(`token`),
+    INDEX `PasswordResetToken_userId_idx`(`userId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `Review` (
     `id` VARCHAR(191) NOT NULL,
     `userId` INTEGER NOT NULL,
     `profileId` INTEGER NOT NULL,
     `rating` INTEGER NOT NULL,
-    `comment` VARCHAR(191) NOT NULL,
+    `comment` VARCHAR(191) NULL,
+    `reviewerName` VARCHAR(191) NULL,
+    `isApproved` BOOLEAN NOT NULL DEFAULT false,
+    `hasComment` BOOLEAN NOT NULL DEFAULT false,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
+    UNIQUE INDEX `Review_userId_profileId_key`(`userId`, `profileId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -55,6 +72,7 @@ CREATE TABLE `Producer` (
     `signature` ENUM('COPPER', 'SILVER', 'GOLD', 'DIAMOND') NOT NULL DEFAULT 'COPPER',
     `isVerified` BOOLEAN NOT NULL DEFAULT false,
     `verificationStatus` ENUM('YELLOW', 'GREEN', 'RED') NOT NULL DEFAULT 'YELLOW',
+    `name` VARCHAR(191) NOT NULL,
     `birthday` DATETIME(3) NOT NULL,
     `nationality` VARCHAR(191) NOT NULL,
     `document` VARCHAR(191) NOT NULL,
@@ -64,6 +82,7 @@ CREATE TABLE `Producer` (
     `selfieWithDocument` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `Producer_userId_key`(`userId`),
+    UNIQUE INDEX `Producer_document_key`(`document`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -72,15 +91,43 @@ CREATE TABLE `ProducerProfile` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `producerId` INTEGER NOT NULL,
     `slogan` VARCHAR(191) NOT NULL,
-    `description` VARCHAR(191) NOT NULL,
+    `description` TEXT NOT NULL,
     `images` JSON NOT NULL,
     `scholarity` VARCHAR(191) NOT NULL,
     `languages` JSON NOT NULL,
     `hasLocal` BOOLEAN NOT NULL DEFAULT false,
     `neighborhoods` JSON NOT NULL,
     `views` INTEGER NOT NULL DEFAULT 0,
+    `lastWeekViews` INTEGER NOT NULL DEFAULT 0,
+    `lastWeekViewsUpdatedAt` DATETIME(3) NULL,
 
     UNIQUE INDEX `ProducerProfile_producerId_key`(`producerId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `ContactOption` (
+    `id` INTEGER NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `label` VARCHAR(191) NOT NULL,
+    `icon` VARCHAR(191) NULL,
+
+    UNIQUE INDEX `ContactOption_name_key`(`name`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `ProducerContact` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `profileId` INTEGER NOT NULL,
+    `contactId` INTEGER NOT NULL,
+    `value` VARCHAR(191) NOT NULL,
+    `label` VARCHAR(191) NULL,
+    `isPrimary` BOOLEAN NOT NULL DEFAULT false,
+    `isPublic` BOOLEAN NOT NULL DEFAULT true,
+    `order` INTEGER NOT NULL DEFAULT 0,
+
+    UNIQUE INDEX `ProducerContact_profileId_contactId_value_key`(`profileId`, `contactId`, `value`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -126,7 +173,7 @@ CREATE TABLE `AppearanceOption` (
     `id` INTEGER NOT NULL,
     `name` VARCHAR(191) NOT NULL,
     `label` VARCHAR(191) NOT NULL,
-    `type` VARCHAR(191) NOT NULL,
+    `valueType` ENUM('BOOLEAN', 'NUMBER', 'OPTION') NOT NULL,
 
     UNIQUE INDEX `AppearanceOption_name_key`(`name`),
     PRIMARY KEY (`id`)
@@ -137,12 +184,9 @@ CREATE TABLE `ProducerAppearance` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `profileId` INTEGER NOT NULL,
     `appearanceId` INTEGER NOT NULL,
-    `height` DOUBLE NULL,
-    `mannequin` INTEGER NULL,
-    `feet` INTEGER NULL,
-    `tattoos` BOOLEAN NULL,
-    `piercings` BOOLEAN NULL,
-    `silicone` BOOLEAN NULL,
+    `valueBoolean` BOOLEAN NULL,
+    `valueNumber` DOUBLE NULL,
+    `valueString` VARCHAR(191) NULL,
 
     UNIQUE INDEX `ProducerAppearance_profileId_appearanceId_key`(`profileId`, `appearanceId`),
     PRIMARY KEY (`id`)
@@ -225,6 +269,7 @@ CREATE TABLE `ProducerFetish` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `profileId` INTEGER NOT NULL,
     `fetishId` INTEGER NOT NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'neutral',
 
     UNIQUE INDEX `ProducerFetish_profileId_fetishId_key`(`profileId`, `fetishId`),
     PRIMARY KEY (`id`)
@@ -245,6 +290,7 @@ CREATE TABLE `ProducerAudience` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `profileId` INTEGER NOT NULL,
     `audienceId` INTEGER NOT NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'neutral',
 
     UNIQUE INDEX `ProducerAudience_profileId_audienceId_key`(`profileId`, `audienceId`),
     PRIMARY KEY (`id`)
@@ -277,12 +323,12 @@ CREATE TABLE `Post` (
     `updatedAt` DATETIME(3) NOT NULL,
     `publishedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `title` VARCHAR(191) NOT NULL,
-    `image` JSON NULL,
-    `content` VARCHAR(191) NOT NULL,
+    `imageUrl` VARCHAR(191) NULL,
+    `content` TEXT NOT NULL,
     `views` INTEGER NOT NULL DEFAULT 0,
     `likes` INTEGER NOT NULL DEFAULT 0,
 
-    INDEX `Post_createdAt_idx`(`createdAt`),
+    INDEX `Post_createdAt_idx`(`createdAt` DESC),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -298,11 +344,24 @@ CREATE TABLE `Comment` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- CreateTable
+CREATE TABLE `ProfileView` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `profileId` INTEGER NOT NULL,
+    `viewedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    INDEX `ProfileView_profileId_viewedAt_idx`(`profileId`, `viewedAt`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 -- AddForeignKey
 ALTER TABLE `UserPreference` ADD CONSTRAINT `UserPreference_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Locality` ADD CONSTRAINT `Locality_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `PasswordResetToken` ADD CONSTRAINT `PasswordResetToken_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Review` ADD CONSTRAINT `Review_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -315,6 +374,12 @@ ALTER TABLE `Producer` ADD CONSTRAINT `Producer_userId_fkey` FOREIGN KEY (`userI
 
 -- AddForeignKey
 ALTER TABLE `ProducerProfile` ADD CONSTRAINT `ProducerProfile_producerId_fkey` FOREIGN KEY (`producerId`) REFERENCES `Producer`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `ProducerContact` ADD CONSTRAINT `ProducerContact_profileId_fkey` FOREIGN KEY (`profileId`) REFERENCES `ProducerProfile`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `ProducerContact` ADD CONSTRAINT `ProducerContact_contactId_fkey` FOREIGN KEY (`contactId`) REFERENCES `ContactOption`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `ProducerLocal` ADD CONSTRAINT `ProducerLocal_profileId_fkey` FOREIGN KEY (`profileId`) REFERENCES `ProducerProfile`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -372,3 +437,6 @@ ALTER TABLE `Comment` ADD CONSTRAINT `Comment_userId_fkey` FOREIGN KEY (`userId`
 
 -- AddForeignKey
 ALTER TABLE `Comment` ADD CONSTRAINT `Comment_postId_fkey` FOREIGN KEY (`postId`) REFERENCES `Post`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `ProfileView` ADD CONSTRAINT `ProfileView_profileId_fkey` FOREIGN KEY (`profileId`) REFERENCES `ProducerProfile`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
