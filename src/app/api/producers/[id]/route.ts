@@ -23,7 +23,7 @@ function getLastWeekRange(): { start: Date; end: Date } {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -89,7 +89,7 @@ export async function GET(
     if (!producer) {
       return NextResponse.json(
         { error: "Perfil não encontrado" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -146,13 +146,13 @@ export async function GET(
           lastWeekViews,
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("[v0] Erro ao buscar produtor:", error);
     return NextResponse.json(
       { error: "Erro interno do servidor" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ uf: string }> }
+  { params }: { params: Promise<{ uf: string }> },
 ) {
   try {
     const { uf } = await params;
@@ -11,6 +11,7 @@ export async function GET(
 
     const producers = await prisma.producer.findMany({
       where: {
+        verificationStatus: "GREEN", // 👈 filtro novo
         profile: {
           isNot: null,
         },
@@ -38,44 +39,28 @@ export async function GET(
               },
             },
             appearance: {
-              include: {
-                option: true,
-              },
+              include: { option: true },
             },
             prices: {
-              include: {
-                option: true,
-              },
+              include: { option: true },
             },
             services: {
-              include: {
-                option: true,
-              },
+              include: { option: true },
             },
             fetiches: {
-              include: {
-                option: true,
-              },
+              include: { option: true },
             },
             audience: {
-              include: {
-                option: true,
-              },
+              include: { option: true },
             },
             locations: {
-              include: {
-                option: true,
-              },
+              include: { option: true },
             },
             payments: {
-              include: {
-                option: true,
-              },
+              include: { option: true },
             },
             reviews: {
-              include: {
-                user: true,
-              },
+              include: { user: true },
             },
           },
         },
@@ -87,7 +72,7 @@ export async function GET(
     console.error("[API CATALOG]", error);
     return NextResponse.json(
       { error: "Erro ao buscar produtores" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
