@@ -319,8 +319,8 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
               )}
               <div className={styles.weeklyViews}>
                 <FaEye />
-                <strong>{producer.profile.lastWeekViews}</strong>
-                <span className={styles.label}>visitas na última semana</span>
+                <strong>{producer.profile.views}</strong>
+                <span className={styles.label}>visualizações</span>
               </div>
             </div>
 
