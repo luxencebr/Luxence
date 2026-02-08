@@ -10,8 +10,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Dados inválidos" }, { status: 400 });
     }
 
-    // Validação: se houver preços, deve haver pelo menos um método de pagamento
-    if (prices.length > 0 && payments.length === 0) {
+    // Validação: se houver preços com valor > 0, deve haver pelo menos um método de pagamento
+    const hasValidPrices = prices.some((p: { value: number }) => p.value > 0);
+    if (hasValidPrices && payments.length === 0) {
       return NextResponse.json(
         { error: "É necessário selecionar pelo menos um método de pagamento quando há valores cadastrados" },
         { status: 400 }

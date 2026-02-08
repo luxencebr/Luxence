@@ -81,24 +81,23 @@ function ProductValues({ producer, canEdit }: ProductValuesProps) {
     try {
       setIsSaving(true);
 
-      const pricesToSave = prices
-        .map((p) => {
-          const rawValue = priceDrafts[p.priceId] ?? p.value;
-          const value = Number(rawValue);
+      const pricesToSave = prices.map((p) => {
+        const rawValue = priceDrafts[p.priceId] ?? p.value;
+        const value = rawValue === "" || rawValue === null || rawValue === undefined ? 0 : Number(rawValue);
 
-          return {
-            priceId: p.option.id,
-            value,
-          };
-        })
-        .filter((p) => Number.isFinite(p.value) && p.value > 0);
+        return {
+          priceId: p.option.id,
+          value: Number.isFinite(value) ? value : 0,
+        };
+      });
 
       const paymentsToSave = payments.map((p) => ({
         paymentId: p.option.id,
       }));
 
-      // Validação: se houver preços, deve haver pelo menos um método de pagamento
-      if (pricesToSave.length > 0 && paymentsToSave.length === 0) {
+      // Validação: se houver preços com valor > 0, deve haver pelo menos um método de pagamento
+      const hasValidPrices = pricesToSave.some((p) => p.value > 0);
+      if (hasValidPrices && paymentsToSave.length === 0) {
         alert("Você precisa selecionar pelo menos um método de pagamento quando adicionar valores.");
         return;
       }
@@ -119,17 +118,15 @@ function ProductValues({ producer, canEdit }: ProductValuesProps) {
       }
 
       setPrices((prev) =>
-        prev
-          .map((p) => {
-            const rawValue = priceDrafts[p.priceId] ?? p.value;
-            const value = Number(rawValue);
+        prev.map((p) => {
+          const rawValue = priceDrafts[p.priceId] ?? p.value;
+          const value = rawValue === "" || rawValue === null || rawValue === undefined ? 0 : Number(rawValue);
 
-            return {
-              ...p,
-              value,
-            };
-          })
-          .filter((p) => Number.isFinite(p.value) && p.value > 0)
+          return {
+            ...p,
+            value: Number.isFinite(value) ? value : 0,
+          };
+        })
       );
 
       setPriceDrafts({});
@@ -213,10 +210,16 @@ function ProductValues({ producer, canEdit }: ProductValuesProps) {
                           {price.option.label}
                         </dt>
                         <dd className={styles.priceValue}>
-                          R$
-                          {Number(price.value).toLocaleString("pt-BR", {
-                            minimumFractionDigits: 2,
-                          })}
+                          {price.value > 0 ? (
+                            <>
+                              R$
+                              {Number(price.value).toLocaleString("pt-BR", {
+                                minimumFractionDigits: 2,
+                              })}
+                            </>
+                          ) : (
+                            "A combinar"
+                          )}
                         </dd>
                       </dl>
                     ))

@@ -13,15 +13,19 @@ export default function ValueDropdown({ producer }: ValueDropdownProps) {
   const values = producer.profile.prices || [];
 
   function ValueTrigger() {
+    const firstValue = values[0];
+    const displayValue = firstValue.value > 0 
+      ? firstValue.value.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        })
+      : "A combinar";
+
     return (
       <div className={styles.triggerText}>
         <span>A partir de</span>
         <div>
-          {values[0].value.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          })}{" "}
-          <span>- {values[0].option.label}</span>
+          {displayValue} <span>- {firstValue.option.label}</span>
         </div>
       </div>
     );
@@ -37,10 +41,12 @@ export default function ValueDropdown({ producer }: ValueDropdownProps) {
         <dl key={idx} className={styles.valueItem}>
           <dt>{item.option.label}</dt>
           <dd>
-            {item.value.toLocaleString("pt-BR", {
-              style: "currency",
-              currency: "BRL",
-            })}
+            {item.value > 0
+              ? item.value.toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })
+              : "A combinar"}
           </dd>
         </dl>
       ))}

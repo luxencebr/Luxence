@@ -88,6 +88,7 @@ function applyFilters(producers: Producer[], filters: ActiveFilters) {
     const profile = p.profile;
     if (!profile) return false;
 
+    // 🔹 Idade
     if (filters.ageRange) {
       const age = calculateAge(p.birthday);
 
@@ -100,6 +101,7 @@ function applyFilters(producers: Producer[], filters: ActiveFilters) {
       }
     }
 
+    // 🔹 Nacionalidade
     if (filters.nationality?.length) {
       const nationalityKey = p.nationality.toLowerCase();
       const nationalityId = nationalityKey.length;
@@ -109,6 +111,7 @@ function applyFilters(producers: Producer[], filters: ActiveFilters) {
       }
     }
 
+    // 🔹 Idiomas
     if (filters.languages?.length) {
       const producerLanguages =
         p.profile.languages?.map((l) => l.name.toLowerCase().length) || [];
@@ -162,8 +165,8 @@ function applyFilters(producers: Producer[], filters: ActiveFilters) {
     // 🔹 Serviços
     if (filters.services?.length) {
       const ids = profile.services
-        .filter((s) => s.status === "yes")
-        .map((s) => s.option.id);
+        ?.filter((s) => s.status === "yes")
+        .map((s) => s.option.id) || [];
 
       if (!filters.services.some((id) => ids.includes(id))) {
         return false;
@@ -173,10 +176,19 @@ function applyFilters(producers: Producer[], filters: ActiveFilters) {
     // 🔹 Fetiches
     if (filters.fetiches?.length) {
       const ids = profile.fetiches
-        .filter((f) => f.status === "yes")
-        .map((f) => f.option.id);
+        ?.filter((f) => f.status === "yes")
+        .map((f) => f.option.id) || [];
 
       if (!filters.fetiches.some((id) => ids.includes(id))) {
+        return false;
+      }
+    }
+
+    // 🔹 Localização
+    if (filters.locations?.length) {
+      const ids = profile.locations?.map((l) => l.option.id) || [];
+
+      if (!filters.locations.some((id) => ids.includes(id))) {
         return false;
       }
     }
@@ -192,19 +204,27 @@ function applyFilters(producers: Producer[], filters: ActiveFilters) {
 
     // 🔹 Preço
     if (filters.priceRange) {
-      const prices = profile.prices.map((p) => p.value);
-      if (
-        (filters.priceRange.min &&
-          Math.min(...prices) < filters.priceRange.min) ||
-        (filters.priceRange.max && Math.max(...prices) > filters.priceRange.max)
-      ) {
-        return false;
+      const prices = profile.prices?.map((p) => p.value).filter((v) => v > 0) || [];
+      
+      // Se não há preços válidos, não filtra por preço
+      if (prices.length > 0) {
+        const minPrice = Math.min(...prices);
+        const maxPrice = Math.max(...prices);
+        
+        // Verifica se algum preço está dentro do range selecionado
+        if (filters.priceRange.min !== undefined && maxPrice < filters.priceRange.min) {
+          return false;
+        }
+        
+        if (filters.priceRange.max !== undefined && minPrice > filters.priceRange.max) {
+          return false;
+        }
       }
     }
 
     // 🔹 Pagamentos
     if (filters.payments?.length) {
-      const ids = profile.payments.map((p) => p.option.id);
+      const ids = profile.payments?.map((p) => p.option.id) || [];
       if (!filters.payments.some((id) => ids.includes(id))) return false;
     }
 

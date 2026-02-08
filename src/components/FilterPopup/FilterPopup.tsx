@@ -211,8 +211,10 @@ export function extractFilterOptions(producers: Producer[]) {
     profile.payments?.forEach((p) => payments.set(p.option.id, p.option));
 
     profile.prices?.forEach((price) => {
-      minPrice = Math.min(minPrice, price.value);
-      maxPrice = Math.max(maxPrice, price.value);
+      if (price.value > 0) {
+        minPrice = Math.min(minPrice, price.value);
+        maxPrice = Math.max(maxPrice, price.value);
+      }
 
       durations.set(price.option.id, price.option);
     });
@@ -389,6 +391,14 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
       const clamped = Math.min(Math.max(v, min), ageValues[1]);
       setAgeValues([clamped, ageValues[1]]);
       setInputMinAge(String(clamped));
+      
+      setFilters((prev) => ({
+        ...prev,
+        ageRange: {
+          min: clamped,
+          max: ageValues[1],
+        },
+      }));
     }
 
     function commitMax() {
@@ -402,6 +412,14 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
       const clamped = Math.max(Math.min(v, max), ageValues[0]);
       setAgeValues([ageValues[0], clamped]);
       setInputMaxAge(String(clamped));
+      
+      setFilters((prev) => ({
+        ...prev,
+        ageRange: {
+          min: ageValues[0],
+          max: clamped,
+        },
+      }));
     }
 
     if (min != max) {
@@ -410,11 +428,7 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
           <div className={styles.sectionHeader}>
             <h4>Idade (Anos)</h4>
           </div>
-          <div
-            className={styles.range}
-            onMouseDown={(e) => e.stopPropagation()}
-            onTouchStart={(e) => e.stopPropagation()}
-          >
+          <div className={styles.range}>
             <div className={styles.inputs}>
               <input
                 type="number"
@@ -475,6 +489,7 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
                     height: "6px",
                     width: "100%",
                     backgroundColor: "var(--contrast-color)",
+                    borderRadius: "3px",
                   }}
                 >
                   {children}
@@ -489,10 +504,22 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
                     {...rest}
                     style={{
                       ...rest.style,
-                      height: "16px",
-                      width: "16px",
+                      height: "20px",
+                      width: "20px",
                       borderRadius: "50%",
                       backgroundColor: "var(--primary-color)",
+                      cursor: "grab",
+                      boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+                    }}
+                    onMouseDown={(e) => {
+                      if (rest.style) {
+                        (e.currentTarget.style as any).cursor = "grabbing";
+                      }
+                    }}
+                    onMouseUp={(e) => {
+                      if (rest.style) {
+                        (e.currentTarget.style as any).cursor = "grab";
+                      }
                     }}
                   />
                 );
@@ -520,6 +547,14 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
       const clamped = Math.min(Math.max(v, min), priceValues[1]);
       setPriceValues([clamped, priceValues[1]]);
       setInputMinPrice(String(clamped));
+      
+      setFilters((prev) => ({
+        ...prev,
+        priceRange: {
+          min: clamped,
+          max: priceValues[1],
+        },
+      }));
     }
 
     function commitMax() {
@@ -533,6 +568,14 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
       const clamped = Math.max(Math.min(v, max), priceValues[0]);
       setPriceValues([priceValues[0], clamped]);
       setInputMaxPrice(String(clamped));
+      
+      setFilters((prev) => ({
+        ...prev,
+        priceRange: {
+          min: priceValues[0],
+          max: clamped,
+        },
+      }));
     }
 
     if (min != max) {
@@ -541,12 +584,7 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
           <div className={styles.sectionHeader}>
             <h4>Preço (R$)</h4>
           </div>
-          <div
-            className={styles.range}
-            onMouseDown={(e) => e.stopPropagation()}
-            onTouchStart={(e) => e.stopPropagation()}
-          >
-            {" "}
+          <div className={styles.range}>
             <div className={styles.inputs}>
               <input
                 type="number"
@@ -606,6 +644,7 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
                     height: "6px",
                     width: "100%",
                     backgroundColor: "var(--contrast-color)",
+                    borderRadius: "3px",
                   }}
                 >
                   {children}
@@ -620,10 +659,22 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
                     {...rest}
                     style={{
                       ...rest.style,
-                      height: "16px",
-                      width: "16px",
+                      height: "20px",
+                      width: "20px",
                       borderRadius: "50%",
                       backgroundColor: "var(--primary-color)",
+                      cursor: "grab",
+                      boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+                    }}
+                    onMouseDown={(e) => {
+                      if (rest.style) {
+                        (e.currentTarget.style as any).cursor = "grabbing";
+                      }
+                    }}
+                    onMouseUp={(e) => {
+                      if (rest.style) {
+                        (e.currentTarget.style as any).cursor = "grab";
+                      }
                     }}
                   />
                 );
@@ -767,6 +818,16 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
           }))}
           selected={filters.fetiches || []}
           onToggle={(id) => toggleArrayFilter("fetiches", id)}
+        />
+
+        <CheckboxList
+          title="Localização"
+          options={options.locations.map((l) => ({
+            value: l.id,
+            label: l.label,
+          }))}
+          selected={filters.locations || []}
+          onToggle={(id) => toggleArrayFilter("locations", id)}
         />
 
         <CheckboxList

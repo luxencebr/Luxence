@@ -116,10 +116,12 @@ function Product({ producer, variant }: ProductProps) {
               <div className={styles.value}>
                 <span>A partir de</span>
                 <div>
-                  {producer.profile.prices[0].value.toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  })}{" "}
+                  {producer.profile.prices[0].value > 0
+                    ? producer.profile.prices[0].value.toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      })
+                    : "A combinar"}{" "}
                   <span>- {producer.profile.prices[0].option.label}</span>
                 </div>
               </div>

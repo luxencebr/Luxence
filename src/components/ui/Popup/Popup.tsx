@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, ReactNode } from "react";
+import { useEffect, ReactNode } from "react";
 import styles from "./Popup.module.css";
 
 interface PopupProps {
@@ -20,8 +20,6 @@ export default function Popup({
   isOpen,
   onOpenChange,
 }: PopupProps) {
-  const popupRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -35,26 +33,15 @@ export default function Popup({
   }, [isOpen]);
 
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        popupRef.current &&
-        !popupRef.current.contains(event.target as Node)
-      ) {
-        onOpenChange(false);
-      }
-    }
-
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") onOpenChange(false);
     }
 
     if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
       document.addEventListener("keydown", handleKeyDown);
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen, onOpenChange]);
@@ -69,8 +56,16 @@ export default function Popup({
       </div>
 
       {isOpen && (
-        <div className={styles.backdrop}>
-          <div ref={popupRef} className={`${styles.popup} ${popupClass || ""}`}>
+        <div 
+          className={styles.backdrop}
+          onClick={(e) => {
+            // Fecha apenas se clicar diretamente no backdrop
+            if (e.target === e.currentTarget) {
+              onOpenChange(false);
+            }
+          }}
+        >
+          <div className={`${styles.popup} ${popupClass || ""}`}>
             {children}
           </div>
         </div>

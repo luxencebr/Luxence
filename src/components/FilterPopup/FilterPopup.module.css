@@ -178,6 +178,11 @@
   display: flex;
   flex-flow: column nowrap;
   gap: 16px;
+  user-select: none;
+}
+
+.range * {
+  user-select: none;
 }
 
 .inputs {

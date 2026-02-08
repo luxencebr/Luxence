@@ -491,7 +491,9 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                 <p>
                   A partir de:
                   <span>
-                    {price && `R$ ${price.value}`},00{" "}
+                    {price.value > 0
+                      ? `R$ ${price.value.toFixed(2).replace(".", ",")}`
+                      : "A combinar"}{" "}
                     <span>{price.option.label}</span>
                   </span>
                 </p>

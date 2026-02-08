@@ -8,6 +8,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const planFilter = searchParams.get("plan");
     const statusFilter = searchParams.get("status");
+    const genderFilter = searchParams.get("gender");
     const searchQuery = searchParams.get("search");
 
     const searchConditions = searchQuery
@@ -24,7 +25,10 @@ export async function GET(request: NextRequest) {
 
     const advertisers = await prisma.producer.findMany({
       where: {
-        user: { role: "ADVERTISER" },
+        user: { 
+          role: "ADVERTISER",
+          ...(genderFilter && { gender: genderFilter as any }),
+        },
         ...(statusFilter && { verificationStatus: statusFilter as any }),
         ...(planFilter && { signature: planFilter as any }),
         ...searchConditions,
@@ -35,6 +39,7 @@ export async function GET(request: NextRequest) {
             id: true,
             name: true,
             email: true,
+            gender: true,
             createdAt: true,
           },
         },
@@ -63,6 +68,7 @@ export async function GET(request: NextRequest) {
       name: advertiser.user.name,
       producerName: advertiser.name,
       email: advertiser.user.email,
+      gender: advertiser.user.gender,
       signature: advertiser.signature,
       verificationStatus: advertiser.verificationStatus,
       phone: advertiser.phone,
@@ -115,6 +121,7 @@ export async function PATCH(request: NextRequest) {
             id: true,
             name: true,
             email: true,
+            gender: true,
             createdAt: true,
           },
         },
@@ -142,6 +149,7 @@ export async function PATCH(request: NextRequest) {
       name: updatedAdvertiser.user.name,
       producerName: updatedAdvertiser.name,
       email: updatedAdvertiser.user.email,
+      gender: updatedAdvertiser.user.gender,
       signature: updatedAdvertiser.signature,
       verificationStatus: updatedAdvertiser.verificationStatus,
       phone: updatedAdvertiser.phone,
