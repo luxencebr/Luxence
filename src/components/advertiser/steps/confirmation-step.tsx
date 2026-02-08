@@ -23,10 +23,45 @@ export default function ConfirmationStep({
     <div className={styles.container}>
       {/* Cabeçalho */}
       <div className={styles.header}>
-        <h2 className={styles.title}>Confirmação</h2>
-        <p className={styles.subtitle}>
-          Revise suas informações antes de finalizar o cadastro
-        </p>
+        <h2>Confirmação</h2>
+        <p>Revise suas informações antes de finalizar o cadastro</p>
+      </div>
+
+      {/* CONTA */}
+      <div className={styles.section}>
+        <h3>Conta</h3>
+        <div className={styles.infoList}>
+          <p>
+            <strong>Nome:</strong> {formData.name || "Não informado"}
+          </p>
+          <p>
+            <strong>Email:</strong> {formData.email || "Não informado"}
+          </p>
+          <p>
+            <strong>Gênero:</strong>{" "}
+            {formData.gender === "MALE"
+              ? "Homem"
+              : formData.gender === "FEMALE"
+                ? "Mulher"
+                : formData.gender === "TRANS"
+                  ? "Trans"
+                  : "Não informado"}
+          </p>
+          <p>
+            <strong>Interesses:</strong>{" "}
+            {formData.preferences && formData.preferences.length > 0
+              ? formData.preferences
+                  .map((p: string) =>
+                    p === "MALE"
+                      ? "Homem"
+                      : p === "FEMALE"
+                        ? "Mulher"
+                        : "Trans",
+                  )
+                  .join(", ")
+              : "Não informado"}
+          </p>
+        </div>
       </div>
 
       {/* PERFIL */}

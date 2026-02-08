@@ -1,0 +1,231 @@
+.container {
+  width: 480px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+  color: var(--contrast-color);
+}
+
+.header h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 4px;
+  color: var(--contrast-color);
+}
+
+.header p {
+  color: var(--contrast-complementary-color);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--contrast-complementary-color);
+}
+
+.label input {
+  background: var(--background-color);
+  width: auto;
+  padding: 10px 12px;
+  outline: none;
+  border: 1.5px solid transparent;
+  border-radius: 0.6rem;
+  color: var(--contrast-color);
+  font-size: 16px;
+  letter-spacing: 1px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.label input:focus {
+  border-color: var(--primary-color);
+}
+
+.inputError {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+.passwordWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.passwordWrapper input {
+  flex: 1;
+  padding-right: 3rem;
+}
+
+.showPasswordBtn {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--contrast-complementary-color);
+  font-size: 1.25rem;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.showPasswordBtn:hover {
+  color: var(--primary-color);
+}
+
+.passwordRequirements {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background: var(--background-color);
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.requirement {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.requirementUnmet {
+  color: #ef4444;
+}
+
+.requirementUnmet svg {
+  font-size: 0.75rem;
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 4px;
+  padding: 4px 8px;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 4px;
+  border-left: 3px solid #ef4444;
+  animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--contrast-complementary-color);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--contrast-complementary-color);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.genderSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.sectionTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--contrast-color);
+}
+
+.genderGroup {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.genderGroup label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border: 1.5px solid transparent;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--background-color);
+}
+
+.genderGroup label:hover {
+  border-color: var(--primary-color);
+  opacity: 0.8;
+}
+
+.genderGroup label.selected {
+  border-color: var(--primary-color);
+  background: var(--background-color);
+}
+
+.genderGroup label input {
+  display: none;
+}
+
+.genderGroup label span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--contrast-color);
+}
+
+.genderGroup label i {
+  display: flex;
+  align-items: center;
+  font-size: 1.25rem;
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: 100%;
+  }
+
+  .genderGroup {
+    grid-template-columns: 1fr;
+  }
+}

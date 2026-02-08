@@ -352,9 +352,7 @@ export default function ProfileStep({
     error: string | null,
     value: string,
   ) => {
-    if (!touched[field] && !value) return styles.input;
     if (error) return `${styles.input} ${styles.inputError}`;
-    if (value && !error) return `${styles.input} ${styles.inputSuccess}`;
     return styles.input;
   };
 
@@ -362,10 +360,8 @@ export default function ProfileStep({
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h2 className={styles.title}>Perfil</h2>
-        <p className={styles.subtitle}>
-          Preencha as informações básicas do seu perfil
-        </p>
+        <h2>Perfil</h2>
+        <p>Preencha as informações básicas do seu perfil</p>
       </div>
 
       <div className={styles.section}>
@@ -396,7 +392,7 @@ export default function ProfileStep({
             selectedValue={formData.nationality || ""}
             triggerClassName={`${styles.trigger} ${
               touched.nationality && nationalityError ? styles.triggerError : ""
-            } ${formData.nationality && !nationalityError ? styles.triggerSuccess : ""}`}
+            }`}
             menuClassName={styles.menu}
             searchable={true}
             searchPlaceholder="Buscar país..."

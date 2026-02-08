@@ -54,7 +54,7 @@ const DEFAULT_SLOGANS = [
 ];
 
 function Product({ producer, variant }: ProductProps) {
-  const name = producer.name || "";
+  const name = producer.name || "Perfil sem nome";
   const age = calculateAge(producer.birthday);
   const city = producer.user?.locality?.city || "";
   const neighborhood = producer.user?.locality?.neighborhood || "";

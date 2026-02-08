@@ -334,7 +334,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                   className={styles.editableValue}
                   onClick={canEdit ? handleEditName : undefined}
                 >
-                  {name}
+                  {name || "Perfil sem nome"}
                   {canEdit && <HiOutlinePencil className={styles.editIcon} />}
                 </h1>
               )}

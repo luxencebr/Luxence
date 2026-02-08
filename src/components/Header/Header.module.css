@@ -325,6 +325,25 @@
   color: var(--background-color);
 }
 
+.advertiseBtn {
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--primary-color);
+  color: var(--background-color);
+  border-radius: 8px;
+  font-size: var(--ft-lg);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.advertiseBtn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
 @media (max-width: 768px) {
   /* Mantendo altura consistente */
   .header {

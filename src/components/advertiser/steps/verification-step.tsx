@@ -115,7 +115,7 @@ export default function VerificationStep({
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h2 className={styles.title}>
+        <h2>
           Verificação de Identidade
           {substep === 2 ? (
             <button
@@ -139,7 +139,7 @@ export default function VerificationStep({
           )}
         </h2>
 
-        <p className={styles.subtitle}>
+        <p>
           {substep === 1
             ? "Envie fotos nítidas da frente e verso do seu documento."
             : "Agora uma selfie segurando o documento ao lado do rosto."}

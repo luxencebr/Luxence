@@ -2,34 +2,67 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/utils/prisma";
 import { uploadToSpaces } from "@/lib/uploadToSpaces";
 import { randomUUID } from "crypto";
+import { hash } from "bcryptjs";
 
 export async function POST(req: Request) {
   try {
     const formData = await req.formData();
 
-    const userId = formData.get("userId") as string;
+    // ========== EXTRAIR DADOS ==========
+    // Dados da conta
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const gender = formData.get("gender") as "MALE" | "FEMALE" | "TRANS";
+    const preferences = formData.getAll("preferences") as ("MALE" | "FEMALE" | "TRANS")[];
+
+    // Dados do perfil
     const birthday = formData.get("birthday") as string;
     const nationality = formData.get("nationality") as string;
     const document = formData.get("document") as string;
     const phone = formData.get("phone") as string;
 
+    // Arquivos de verificação
     const documentFrontFile = formData.get("documentFrontFile") as File | null;
     const documentBackFile = formData.get("documentBackFile") as File | null;
-    const selfieWithDocumentFile = formData.get(
-      "selfieWithDocumentFile",
-    ) as File | null;
+    const selfieWithDocumentFile = formData.get("selfieWithDocumentFile") as File | null;
 
-    if (!userId) {
+    // ========== VALIDAÇÕES ==========
+    if (!name || !email || !password || !gender || preferences.length === 0) {
       return NextResponse.json(
-        { error: "userId é obrigatório." },
+        { error: "Dados da conta incompletos." },
         { status: 400 },
       );
     }
 
-    const cleanDocument = document?.replace(/\D/g, "");
+    if (!birthday || !nationality || !document || !phone) {
+      return NextResponse.json(
+        { error: "Dados do perfil incompletos." },
+        { status: 400 },
+      );
+    }
+
+    if (!documentFrontFile || !documentBackFile || !selfieWithDocumentFile) {
+      return NextResponse.json(
+        { error: "Todas as fotos de documento são obrigatórias." },
+        { status: 400 },
+      );
+    }
+
+    // Verificar email duplicado
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) {
+      return NextResponse.json(
+        { error: "Este email já está cadastrado." },
+        { status: 400 },
+      );
+    }
+
+    // Verificar documento duplicado
+    const cleanDocument = document.replace(/\D/g, "");
     const existingProducer = await prisma.producer.findFirst({
       where: {
-        OR: [{ document: document }, { document: cleanDocument }],
+        OR: [{ document }, { document: cleanDocument }],
       },
     });
 
@@ -40,18 +73,26 @@ export async function POST(req: Request) {
       );
     }
 
+    // ========== CRIAR USUÁRIO ==========
+    const hashedPassword = await hash(password, 10);
     const [day, month, year] = birthday.split("/");
     const birthdayDate = new Date(`${year}-${month}-${day}`);
 
-    if (!documentFrontFile || !documentBackFile || !selfieWithDocumentFile) {
-      return NextResponse.json(
-        { error: "Todas as fotos de documento são obrigatórias." },
-        { status: 400 },
-      );
-    }
+    const user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+        gender,
+        preferences: {
+          create: preferences.map((pref) => ({ gender: pref })),
+        },
+        role: "ADVERTISER",
+      },
+    });
 
-    // Upload das imagens de verificação para o storage
-    const verificationFolder = `verification/${userId}`;
+    // ========== UPLOAD DE DOCUMENTOS ==========
+    const verificationFolder = `verification/${user.id}`;
     const uniqueId = randomUUID();
 
     let documentFrontPhoto: string;
@@ -59,28 +100,23 @@ export async function POST(req: Request) {
     let selfieWithDocument: string;
 
     try {
-      // Upload frente do documento
       const frontBuffer = Buffer.from(await documentFrontFile.arrayBuffer());
       documentFrontPhoto = await uploadToSpaces({
         buffer: frontBuffer,
-        filename: `${uniqueId}-document-front-${documentFrontFile.name}`,
+        filename: `${uniqueId}-front-${documentFrontFile.name}`,
         contentType: documentFrontFile.type,
         folder: verificationFolder,
       });
 
-      // Upload verso do documento
       const backBuffer = Buffer.from(await documentBackFile.arrayBuffer());
       documentBackPhoto = await uploadToSpaces({
         buffer: backBuffer,
-        filename: `${uniqueId}-document-back-${documentBackFile.name}`,
+        filename: `${uniqueId}-back-${documentBackFile.name}`,
         contentType: documentBackFile.type,
         folder: verificationFolder,
       });
 
-      // Upload selfie com documento
-      const selfieBuffer = Buffer.from(
-        await selfieWithDocumentFile.arrayBuffer(),
-      );
+      const selfieBuffer = Buffer.from(await selfieWithDocumentFile.arrayBuffer());
       selfieWithDocument = await uploadToSpaces({
         buffer: selfieBuffer,
         filename: `${uniqueId}-selfie-${selfieWithDocumentFile.name}`,
@@ -88,30 +124,23 @@ export async function POST(req: Request) {
         folder: verificationFolder,
       });
     } catch (uploadError: any) {
-      console.error("[v0] Upload error:", uploadError);
+      console.error("Upload error:", uploadError);
+      // Rollback: deletar usuário se upload falhar
+      await prisma.user.delete({ where: { id: user.id } });
       return NextResponse.json(
-        {
-          error:
-            "Erro ao fazer upload das imagens. Verifique se o serviço de armazenamento está configurado.",
-        },
+        { error: "Erro ao fazer upload das imagens." },
         { status: 500 },
       );
     }
 
-    // Buscar o nome do usuário
-    const user = await prisma.user.findUnique({
-      where: { id: Number(userId) },
-      select: { name: true },
-    });
-
-    // Buscar todas as opções de contato disponíveis
+    // ========== CRIAR PRODUCER E PERFIL ==========
     const contactOptions = await prisma.contactOption.findMany({
       select: { id: true },
     });
 
     const producer = await prisma.producer.create({
       data: {
-        name: user?.name || "",
+        name: "", // Perfil sem nome inicialmente
         birthday: birthdayDate,
         nationality,
         document,
@@ -121,9 +150,8 @@ export async function POST(req: Request) {
         selfieWithDocument,
         signature: "COPPER",
         user: {
-          connect: { id: Number(userId) },
+          connect: { id: user.id },
         },
-        // Create empty profile to ensure data consistency
         profile: {
           create: {
             slogan: "",
@@ -132,10 +160,11 @@ export async function POST(req: Request) {
             scholarity: "",
             languages: [],
             neighborhoods: [],
-            // Criar contatos vazios para todas as opções disponíveis
             contacts: {
               create: contactOptions.map((option, index) => ({
-                contactId: option.id,
+                option: {
+                  connect: { id: option.id },
+                },
                 value: "",
                 label: null,
                 isPrimary: false,
@@ -157,25 +186,19 @@ export async function POST(req: Request) {
       },
     });
 
-    // Update user with locality information (upsert para não dar erro se já existir)
-    const existingLocality = await prisma.locality.findUnique({
-      where: { userId: Number(userId) },
+    // Criar localidade padrão
+    await prisma.locality.create({
+      data: {
+        userId: user.id,
+        country: "Brasil",
+        state: "RJ",
+        city: "Rio de Janeiro",
+      },
     });
-
-    if (!existingLocality) {
-      await prisma.locality.create({
-        data: {
-          userId: Number(userId),
-          country: "Brasil",
-          state: "RJ",
-          city: "Rio de Janeiro",
-        },
-      });
-    }
 
     return NextResponse.json({ producer }, { status: 201 });
   } catch (error: any) {
-    console.error("[v0] Registration error:", error);
+    console.error("Registration error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

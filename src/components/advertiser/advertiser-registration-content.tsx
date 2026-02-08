@@ -1,38 +1,50 @@
 "use client";
 
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import styles from "@/app/advertiser/page.module.css";
 
 import StepIndicator from "@/components/advertiser/step-indicator";
+import AccountStep from "@/components/advertiser/steps/account-step";
 import ProfileStep from "@/components/advertiser/steps/profile-step";
 import VerificationStep from "@/components/advertiser/steps/verification-step";
 import ConfirmationStep from "@/components/advertiser/steps/confirmation-step";
 import StepNavigation from "@/components/advertiser/step-navigation";
 
-const TOTAL_STEPS = 3;
+const TOTAL_STEPS = 4;
 
 export default function AdvertiserRegistrationContent() {
   const { update: updateSession } = useSession();
   const [currentStep, setCurrentStep] = useState(1);
 
-  const searchParams = useSearchParams();
-  const userId = searchParams.get("uid");
-
   // Dados principais do formulário
   const [formData, setFormData] = useState<{
-    userId: string | null;
+    // Account (Step 1)
+    name: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+    gender: string;
+    preferences: string[];
+    // Profile (Step 2)
     birthday: string;
     nationality: string;
     document: string;
     phone: string;
+    // Verification (Step 3)
     documentFrontFile: File | null;
     documentBackFile: File | null;
     selfieWithDocumentFile: File | null;
+    // Confirmation (Step 4)
     agreed: boolean;
   }>({
-    userId,
+    // Account
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    gender: "",
+    preferences: [],
 
     // Profile
     birthday: "",
@@ -55,9 +67,10 @@ export default function AdvertiserRegistrationContent() {
 
   // 🔍 Controle de validade por etapa
   const [validSteps, setValidSteps] = useState<Record<number, boolean>>({
-    1: false, // Profile
-    2: false, // Verification
-    3: false, // Confirmation (sempre ok)
+    1: false, // Account
+    2: false, // Profile
+    3: false, // Verification
+    4: false, // Confirmation
   });
 
   const canProceed = () => validSteps[currentStep];
@@ -83,11 +96,19 @@ export default function AdvertiserRegistrationContent() {
     setIsSubmitting(true);
 
     try {
-      // Usar FormData para enviar arquivos
+      // Preparar FormData para enviar arquivos
       const submitData = new FormData();
 
-      // Dados básicos
-      submitData.append("userId", formData.userId || "");
+      // Dados da conta
+      submitData.append("name", formData.name);
+      submitData.append("email", formData.email);
+      submitData.append("password", formData.password);
+      submitData.append("gender", formData.gender);
+      formData.preferences.forEach((pref) => {
+        submitData.append("preferences", pref);
+      });
+
+      // Dados do perfil
       submitData.append("birthday", formData.birthday);
       submitData.append("nationality", formData.nationality);
       submitData.append("document", formData.document);
@@ -107,9 +128,10 @@ export default function AdvertiserRegistrationContent() {
         );
       }
 
+      // Criar conta e perfil
       const res = await fetch("/api/register/advertiser", {
         method: "POST",
-        body: submitData, // FormData - não definir Content-Type, o browser faz automaticamente
+        body: submitData,
       });
 
       if (!res.ok) {
@@ -119,18 +141,29 @@ export default function AdvertiserRegistrationContent() {
       }
 
       const data = await res.json();
-
-      // ID do producer criado
       const producerId = data.producer.id;
       const signature = data.producer.signature || "COPPER";
 
-      // Atualiza a sessão com o novo producerId
+      // Login automático
+      const signInResult = await signIn("credentials", {
+        redirect: false,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (signInResult?.error) {
+        alert("Cadastro realizado! Faça login para continuar.");
+        window.location.href = "/";
+        return;
+      }
+
+      // Atualizar sessão com producerId
       await updateSession({
         producerId: String(producerId),
         signature: signature,
       });
 
-      // Redireciona para a página do perfil
+      // Redirecionar para o perfil
       window.location.href = `/product/${producerId}`;
     } catch (e) {
       console.error(e);
@@ -156,7 +189,7 @@ export default function AdvertiserRegistrationContent() {
         <div className={styles.content}>
           <div className={styles.card}>
             {currentStep === 1 && (
-              <ProfileStep
+              <AccountStep
                 formData={formData}
                 onUpdate={handleUpdateFormData}
                 onValidate={(isValid) =>
@@ -166,7 +199,7 @@ export default function AdvertiserRegistrationContent() {
             )}
 
             {currentStep === 2 && (
-              <VerificationStep
+              <ProfileStep
                 formData={formData}
                 onUpdate={handleUpdateFormData}
                 onValidate={(isValid) =>
@@ -176,11 +209,21 @@ export default function AdvertiserRegistrationContent() {
             )}
 
             {currentStep === 3 && (
-              <ConfirmationStep
+              <VerificationStep
                 formData={formData}
                 onUpdate={handleUpdateFormData}
                 onValidate={(isValid) =>
                   setValidSteps((v) => ({ ...v, 3: isValid }))
+                }
+              />
+            )}
+
+            {currentStep === 4 && (
+              <ConfirmationStep
+                formData={formData}
+                onUpdate={handleUpdateFormData}
+                onValidate={(isValid) =>
+                  setValidSteps((v) => ({ ...v, 4: isValid }))
                 }
               />
             )}

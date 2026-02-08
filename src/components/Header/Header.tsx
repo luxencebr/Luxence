@@ -10,7 +10,6 @@ import { IoPerson } from "react-icons/io5";
 import LanguagesPopup from "@/components/LanguagesPopup/LanguagesPopup";
 import Dropdown from "@/components/ui/Dropdown/Dropdown";
 
-import SignUp from "@/components/Signup/Signup";
 import LogIn from "@/components/LogIn/LogIn";
 import { useSession, signOut } from "next-auth/react";
 
@@ -139,7 +138,9 @@ function Header() {
               </>
             ) : (
               <>
-                <SignUp />
+                <Link href="/advertiser" className={styles.advertiseBtn}>
+                  Anuncie Conosco
+                </Link>
                 <LogIn />
                 <LanguagesPopup />
               </>
@@ -265,7 +266,9 @@ function Header() {
                 </div>
               ) : (
                 <div className={styles.mobileAuthButtons}>
-                  <SignUp />
+                  <Link href="/advertiser" className={styles.advertiseBtn}>
+                    Anuncie Conosco
+                  </Link>
                   <LogIn />
                 </div>
               )}
