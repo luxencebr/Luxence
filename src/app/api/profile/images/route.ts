@@ -4,6 +4,7 @@ import { uploadToSpaces } from "@/lib/uploadToSpaces";
 import { randomUUID } from "crypto";
 import sharp from "sharp";
 import { SIGNATURE_LIMITS, type Signature } from "@/utils/signatureLimits";
+import { updateProducerVerificationStatus } from "@/lib/profile-verification";
 
 export async function POST(req: Request) {
   try {
@@ -24,6 +25,7 @@ export async function POST(req: Request) {
       where: { id: profileId },
       select: {
         images: true,
+        producerId: true,
         producer: {
           select: {
             signature: true,
@@ -112,6 +114,9 @@ export async function POST(req: Request) {
         images: [...images, newImage],
       },
     });
+
+    // Atualiza o status de verificação do perfil
+    await updateProducerVerificationStatus(profile.producerId);
 
     return NextResponse.json(newImage);
   } catch (err) {

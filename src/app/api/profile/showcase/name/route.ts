@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/utils/prisma";
+import { updateProducerVerificationStatus } from "@/lib/profile-verification";
 
 export async function POST(req: Request) {
   try {
@@ -13,6 +14,9 @@ export async function POST(req: Request) {
       where: { id: producerId },
       data: { name },
     });
+
+    // Atualiza o status de verificação do perfil
+    await updateProducerVerificationStatus(producerId);
 
     return NextResponse.json({ success: true });
   } catch (error) {

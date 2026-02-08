@@ -3,6 +3,7 @@ import { prisma } from "@/utils/prisma";
 import { deleteFromSpaces } from "@/lib/deleteFromSpaces";
 import { uploadToSpaces } from "@/lib/uploadToSpaces";
 import sharp from "sharp";
+import { updateProducerVerificationStatus } from "@/lib/profile-verification";
 
 interface ProfileImage {
   id: string;
@@ -70,6 +71,9 @@ export async function DELETE(req: Request, context: any) {
       where: { id: profile.id },
       data: { images: updatedImages as any },
     });
+
+    // Atualiza o status de verificação do perfil
+    await updateProducerVerificationStatus(profile.producerId);
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -176,6 +180,10 @@ export async function PATCH(req: Request, context: any) {
       where: { id: profile.id },
       data: { images: updatedImages as any },
     });
+
+    // Atualiza o status de verificação do perfil (apenas recrop, não muda completude)
+    // Mas mantemos para consistência
+    await updateProducerVerificationStatus(profile.producerId);
 
     return NextResponse.json(updatedImages[imageIndex]);
   } catch (error) {

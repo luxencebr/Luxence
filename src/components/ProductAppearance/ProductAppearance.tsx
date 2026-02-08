@@ -7,6 +7,7 @@ import { APPEARANCE_VALUE_TYPE } from "@prisma/client";
 import styles from "./ProductAppearance.module.css";
 import { HiOutlinePencil } from "react-icons/hi2";
 import Dropdown from "../ui/Dropdown/Dropdown";
+import { dispatchProfileUpdateEvent } from "@/utils/profileUpdateEvent";
 
 const ETHNICITY = [
   { id: 1, name: "oriental", label: "Oriental" },
@@ -247,6 +248,9 @@ export default function ProductAppearance({
       }
 
       setIsEditing(false);
+      
+      // Dispara evento de atualização
+      dispatchProfileUpdateEvent();
     } catch (err) {
       console.error("Erro inesperado ao salvar aparência:", err);
     } finally {

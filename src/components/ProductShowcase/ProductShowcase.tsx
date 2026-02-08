@@ -18,7 +18,7 @@ export default function ProductShowcase({
   const images = producer.profile.images;
 
   return (
-    <section className={styles.productShowcase}>
+    <section id="showcase" className={styles.productShowcase}>
       <Slider
         profileId={producer.profile.id}
         initialImages={images}

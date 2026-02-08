@@ -13,6 +13,7 @@ import ProductFetiches from "@/components/ProductFetiches/ProductFetiches";
 import ProductValues from "@/components/ProductValues/ProductValues";
 import ProductLocation from "@/components/ProductLocation/ProductLocation";
 import ProductReviews from "@/components/ProductReviews/ProductReviews";
+import ProfileCompletionChecklist from "@/components/ProfileCompletionChecklist/ProfileCompletionChecklist";
 
 import styles from "./page.module.css";
 import ProductAudience from "@/components/ProductAudience/ProductAudience";
@@ -44,6 +45,17 @@ export default function ProductPage({ params }: ProductPageProps) {
     };
 
     fetchProducer();
+
+    // Listener para atualizar o producer quando houver mudanças
+    const handleProfileUpdate = () => {
+      fetchProducer();
+    };
+
+    window.addEventListener('profileUpdated', handleProfileUpdate);
+
+    return () => {
+      window.removeEventListener('profileUpdated', handleProfileUpdate);
+    };
   }, [id]);
 
   useEffect(() => {
@@ -81,11 +93,19 @@ export default function ProductPage({ params }: ProductPageProps) {
 
   const canEdit = Number(session?.user?.producerId) === producer.id;
 
-  console.log("Contatods", producer.profile.contacts);
-
   return (
     <div className={styles.productPage}>
       <div className={styles.layout}>
+        {/* Checklist de completude - aparece apenas para o dono */}
+        {canEdit && (
+          <ProfileCompletionChecklist 
+            producerId={producer.id}
+            onComplete={() => {
+              console.log("Perfil completo!");
+            }}
+          />
+        )}
+
         <ProductShowcase producer={producer} canEdit={canEdit} />
         <ProductAbout producer={producer} canEdit={canEdit} />
         <ProductAppearance producer={producer} canEdit={canEdit} />

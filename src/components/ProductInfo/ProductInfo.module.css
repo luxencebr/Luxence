@@ -221,7 +221,7 @@
 }
 
 .editableCancel:hover {
-  color: var(--danger-color, #e54848);
+  color: #e54848;
 }
 
 .editableSave:disabled {
@@ -279,7 +279,7 @@
   gap: 6px;
 
   padding: 8px 10px;
-  font-size: var(--fs-xs);
+  font-size: var(--ft-xs);
   color: var(--contrast-complementary-color);
 
   background: var(--background-color);
@@ -316,7 +316,7 @@
 /* Hover: expande */
 .weeklyViews:hover {
   padding-right: 16px;
-  background: var(--background-soft-color, var(--background-color));
+  background: var(--background-color);
 }
 
 /* Revela o texto */
@@ -375,12 +375,12 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: var(--fs-xs);
+  font-size: var(--ft-sm);
   font-weight: normal;
 }
 
 .cardHeader h2 span {
-  font-size: var(--fs-lg);
+  font-size: var(--ft-lg);
 }
 
 .cardContent {
@@ -394,11 +394,11 @@
   font-family: Quicksand;
   display: flex;
   flex-direction: column;
-  font-size: var(--fs-xs);
+  font-size: var(--ft-sm);
 }
 
 .cardContent p span {
-  font-size: var(--fs-md);
+  font-size: var(--ft-lg);
   font-weight: bold;
   display: flex;
   flex-flow: row nowrap;
@@ -406,7 +406,7 @@
 }
 
 .cardContent p span span {
-  font-size: var(--fs-xs);
+  font-size: var(--ft-sm);
   font-weight: normal;
   align-items: end;
 }
@@ -420,7 +420,7 @@
 
 /* New styles for reviews display in infoCard */
 .reviewCount {
-  font-size: var(--fs-xs);
+  font-size: var(--ft-sm);
   color: var(--contrast-complementary-color);
   margin-bottom: 4px;
 }
@@ -445,16 +445,16 @@
   gap: 2px;
 
   color: var(--primary-color);
-  font-size: var(--fs-md);
+  font-size: var(--ft-md);
 }
 
 .ratingNumber {
-  font-size: var(--fs-xl);
+  font-size: var(--ft-xl);
   font-weight: 700;
 }
 
 .noData {
-  font-size: var(--fs-xs);
+  font-size: var(--ft-xs);
   color: var(--contrast-complementary-color);
   font-style: italic;
 }

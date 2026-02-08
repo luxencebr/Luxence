@@ -10,6 +10,7 @@ import {
   type Signature,
   canAddMoreImages,
 } from "@/utils/signatureLimits";
+import { dispatchProfileUpdateEvent } from "@/utils/profileUpdateEvent";
 
 import { GoUpload } from "react-icons/go";
 import {
@@ -199,6 +200,9 @@ export default function Slider({
 
       setImages((prev) => prev.filter((_, i) => i !== index));
       setCurrentSlide((prev) => Math.max(0, prev - 1));
+      
+      // Dispara evento de atualização
+      dispatchProfileUpdateEvent();
     } catch (err) {
       console.error(err);
     } finally {
@@ -476,6 +480,9 @@ export default function Slider({
                     setCrop({ x: 0, y: 0 });
                     setZoom(1);
                     setCroppedAreaPixels(null);
+                    
+                    // Dispara evento de atualização
+                    dispatchProfileUpdateEvent();
                   } catch (err) {
                     console.error(err);
                   } finally {

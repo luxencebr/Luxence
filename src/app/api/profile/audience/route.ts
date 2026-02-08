@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/utils/prisma";
+import { updateProducerVerificationStatus } from "@/lib/profile-verification";
 
 export async function PUT(req: Request) {
   try {
@@ -12,14 +13,19 @@ export async function PUT(req: Request) {
       );
     }
 
+    let producerId: number | null = null;
+
     await prisma.$transaction(async (tx) => {
       // 🔹 Atualiza idiomas (JSON no profile)
-      await tx.producerProfile.update({
+      const profile = await tx.producerProfile.update({
         where: { id: profileId },
         data: {
           languages: languages ?? [],
         },
+        select: { producerId: true },
       });
+
+      producerId = profile.producerId;
 
       // 🔹 Remove audience anterior
       await tx.producerAudience.deleteMany({
@@ -37,6 +43,11 @@ export async function PUT(req: Request) {
         });
       }
     });
+
+    // Atualiza o status de verificação do perfil
+    if (producerId) {
+      await updateProducerVerificationStatus(producerId);
+    }
 
     return NextResponse.json({ success: true });
   } catch (err) {

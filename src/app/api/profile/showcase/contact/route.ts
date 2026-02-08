@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/utils/prisma";
+import { updateProducerVerificationStatus } from "@/lib/profile-verification";
 
 export async function PUT(req: NextRequest) {
   try {
@@ -18,7 +19,7 @@ export async function PUT(req: NextRequest) {
       where: { id: contactId },
       include: {
         profile: {
-          select: { id: true },
+          select: { id: true, producerId: true },
         },
       },
     });
@@ -45,6 +46,9 @@ export async function PUT(req: NextRequest) {
         option: true,
       },
     });
+
+    // Atualiza o status de verificação do perfil
+    await updateProducerVerificationStatus(existingContact.profile.producerId);
 
     return NextResponse.json(updatedContact, { status: 200 });
   } catch (error) {

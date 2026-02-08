@@ -1,5 +1,6 @@
 import { prisma } from "@/utils/prisma";
 import { NextResponse } from "next/server";
+import { updateProducerVerificationStatus } from "@/lib/profile-verification";
 
 // POST - Upload new image
 export async function POST(req: Request) {
@@ -37,12 +38,16 @@ export async function POST(req: Request) {
     };
 
     // Add new image to array
-    await prisma.producerProfile.update({
+    const updatedProfile = await prisma.producerProfile.update({
       where: { id: profileId },
       data: {
         images: [...currentImages, newImage],
       },
+      include: { producer: true },
     });
+
+    // Atualiza o status de verificação do perfil
+    await updateProducerVerificationStatus(updatedProfile.producerId);
 
     return NextResponse.json({
       success: true,
@@ -98,10 +103,14 @@ export async function PUT(req: Request) {
     // Replace image at index
     currentImages[replaceIndex] = newImage;
 
-    await prisma.producerProfile.update({
+    const updatedProfile = await prisma.producerProfile.update({
       where: { id: profileId },
       data: { images: currentImages },
+      include: { producer: true },
     });
+
+    // Atualiza o status de verificação do perfil
+    await updateProducerVerificationStatus(updatedProfile.producerId);
 
     return NextResponse.json({
       success: true,
@@ -142,10 +151,14 @@ export async function DELETE(req: Request) {
     // Remove image at index
     currentImages.splice(imageIndex, 1);
 
-    await prisma.producerProfile.update({
+    const updatedProfile = await prisma.producerProfile.update({
       where: { id: profileId },
       data: { images: currentImages },
+      include: { producer: true },
     });
+
+    // Atualiza o status de verificação do perfil
+    await updateProducerVerificationStatus(updatedProfile.producerId);
 
     return NextResponse.json({ success: true });
   } catch (error) {

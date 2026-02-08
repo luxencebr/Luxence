@@ -6,6 +6,7 @@ import type { Producer } from "@/types/Producer";
 import { TbCoinFilled } from "react-icons/tb";
 import { FaMoneyBills, FaPix, FaCreditCard } from "react-icons/fa6";
 import { HiOutlinePencil } from "react-icons/hi2";
+import { dispatchProfileUpdateEvent } from "@/utils/profileUpdateEvent";
 
 interface ProductValuesProps {
   producer: Producer;
@@ -96,6 +97,12 @@ function ProductValues({ producer, canEdit }: ProductValuesProps) {
         paymentId: p.option.id,
       }));
 
+      // Validação: se houver preços, deve haver pelo menos um método de pagamento
+      if (pricesToSave.length > 0 && paymentsToSave.length === 0) {
+        alert("Você precisa selecionar pelo menos um método de pagamento quando adicionar valores.");
+        return;
+      }
+
       const res = await fetch("/api/profile/values", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -107,7 +114,8 @@ function ProductValues({ producer, canEdit }: ProductValuesProps) {
       });
 
       if (!res.ok) {
-        throw new Error("Erro ao salvar.");
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Erro ao salvar.");
       }
 
       setPrices((prev) =>
@@ -128,9 +136,12 @@ function ProductValues({ producer, canEdit }: ProductValuesProps) {
 
       // Sucesso: fecha edição
       setIsEditing(false);
+      
+      // Dispara evento de atualização
+      dispatchProfileUpdateEvent();
     } catch (err) {
       console.error("Erro ao salvar:", err);
-      alert("Ocorreu um erro ao salvar as informações. Tente novamente.");
+      alert(err instanceof Error ? err.message : "Ocorreu um erro ao salvar as informações. Tente novamente.");
     } finally {
       setIsSaving(false);
     }

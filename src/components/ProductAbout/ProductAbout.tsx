@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 import styles from "./ProductAbout.module.css";
 import { HiOutlinePencil } from "react-icons/hi";
 import { Sparkles } from "lucide-react";
 
 import type { Producer, ProducerAppearance } from "@/types/Producer";
+import { dispatchProfileUpdateEvent } from "@/utils/profileUpdateEvent";
 
 interface ProductAboutProps {
   producer: Producer;
@@ -24,6 +25,16 @@ interface OtherLanguage {
   level: string;
 }
 
+/**
+ * Gera sugestões de biografia baseadas na aparência e nome do perfil
+ * 
+ * IMPORTANTE: Esta função usa o NOME DO PERFIL (producer.name), 
+ * NUNCA o nome real do usuário (user.name).
+ * O nome do perfil é público, o nome real deve ser mantido em segredo.
+ * 
+ * @param appearance - Dados de aparência do perfil
+ * @param name - Nome do PERFIL (público), não o nome real do usuário
+ */
 function generateBioSuggestions(
   appearance: ProducerAppearance[],
   name: string,
@@ -148,9 +159,17 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
 
   const lastSuggestionIndexRef = useRef<number>(-1);
 
+  // Usa o nome do perfil (producer.name), NUNCA o nome real do usuário
+  const [profileName, setProfileName] = useState(producer.name);
+
+  // Atualiza o nome do perfil quando o producer mudar
+  useEffect(() => {
+    setProfileName(producer.name);
+  }, [producer.name]);
+
   const bioSuggestions = generateBioSuggestions(
     producer.profile.appearance || [],
-    producer.name,
+    profileName, // Usa o nome do perfil, não o nome real
   );
 
   const handleEdit = () => {
@@ -195,6 +214,9 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
       setBackup(null);
       setIsEditing(false);
       lastSuggestionIndexRef.current = -1;
+      
+      // Dispara evento de atualização
+      dispatchProfileUpdateEvent();
     } catch (err) {
       console.error("Erro ao salvar:", err);
       alert("Ocorreu um erro ao salvar as informações. Tente novamente.");

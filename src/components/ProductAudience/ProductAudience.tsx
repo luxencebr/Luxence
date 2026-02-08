@@ -9,6 +9,7 @@ import Dropdown from "../ui/Dropdown/Dropdown";
 import { HiOutlinePencil } from "react-icons/hi2";
 import { BsPeople } from "react-icons/bs";
 import { FaCheck, FaMinus, FaXmark } from "react-icons/fa6";
+import { dispatchProfileUpdateEvent } from "@/utils/profileUpdateEvent";
 
 interface ProductAudienceProps {
   producer: Producer;
@@ -102,6 +103,9 @@ function ProductAudience({ producer, canEdit }: ProductAudienceProps) {
 
       setBackup(null);
       setIsEditing(false);
+      
+      // Dispara evento de atualização
+      dispatchProfileUpdateEvent();
     } catch (err) {
       console.error("Erro ao salvar:", err);
       alert("Ocorreu um erro ao salvar as informações.");
@@ -168,7 +172,7 @@ function ProductAudience({ producer, canEdit }: ProductAudienceProps) {
   };
 
   return (
-    <section className={styles.container}>
+    <section id="audience" className={styles.container}>
       <div className={styles.header}>
         <h2 className={styles.title}>Audiência</h2>
 

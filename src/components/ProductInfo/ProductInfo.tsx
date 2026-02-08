@@ -20,6 +20,7 @@ import { HiOutlinePencil } from "react-icons/hi2";
 import type { Producer } from "@/types/Producer";
 import ScrollTo from "@/utils/ScrollTo";
 import Popup from "../ui/Popup/Popup";
+import { dispatchProfileUpdateEvent } from "@/utils/profileUpdateEvent";
 
 const formatWhatsAppNumber = (phone: string) => {
   const onlyNumbers = phone.replace(/\D/g, "");
@@ -89,6 +90,9 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
   const hasCustomSlogan = Boolean(producer.profile.slogan);
   const displayedSlogan = hasCustomSlogan ? slogan : fallbackSlogan;
 
+  // Estado local para dados que podem ser atualizados
+  const [localProducer, setLocalProducer] = useState(producer);
+
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -99,6 +103,14 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
 
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
+
+  useEffect(() => {
+    // Atualiza dados locais quando o producer prop mudar
+    setLocalProducer(producer);
+    setName(producer.name);
+    setOriginalName(producer.name);
+    setContacts(producer.profile.contacts || []);
+  }, [producer]);
 
   useEffect(() => {
     const el = contentRef.current;
@@ -152,6 +164,9 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
 
       setOriginalName(name);
       setIsEditingName(false);
+      
+      // Dispara evento de atualização
+      dispatchProfileUpdateEvent();
     } catch {
       setName(originalName);
     } finally {
@@ -185,6 +200,9 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
       if (response.ok) {
         setOriginalSlogan(slogan);
         setIsEditingSlogan(false);
+        
+        // Dispara evento de atualização
+        dispatchProfileUpdateEvent();
       } else {
         console.error("Erro ao salvar slogan");
         setSlogan(originalSlogan);
@@ -213,9 +231,12 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
     if (!res.ok) {
       throw new Error("Erro ao salvar contato");
     }
+    
+    // Dispara evento de atualização
+    dispatchProfileUpdateEvent();
   }
 
-  const reviews = producer.profile.reviews || [];
+  const reviews = localProducer.profile.reviews || [];
   const approvedReviews = reviews.filter((review) => review.isApproved);
   const hasReviews = approvedReviews.length > 0;
 
@@ -224,7 +245,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
       approvedReviews.length
     : 0;
 
-  const price = producer.profile.prices?.[0];
+  const price = localProducer.profile.prices?.[0];
 
   const whatsappMsg = encodeURIComponent(
     "Olá! Vi seu perfil na Luxence!\n\nFiquei interessado em seus serviços. Vamos conversar?",
@@ -319,7 +340,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
               )}
               <div className={styles.weeklyViews}>
                 <FaEye />
-                <strong>{producer.profile.views}</strong>
+                <strong>{localProducer.profile.views}</strong>
                 <span className={styles.label}>visualizações</span>
               </div>
             </div>
@@ -391,17 +412,17 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
             </div>
           </div>
 
-          {producer.verificationStatus === "GREEN" && (
+          {localProducer.verificationStatus === "GREEN" && (
             <div className={styles.verified} style={{ color: "green" }}>
               <GoShieldCheck />
             </div>
           )}
-          {producer.verificationStatus === "YELLOW" && (
+          {localProducer.verificationStatus === "YELLOW" && (
             <div className={styles.verified} style={{ color: "yellow" }}>
               <GoShield />
             </div>
           )}
-          {producer.verificationStatus === "RED" && (
+          {localProducer.verificationStatus === "RED" && (
             <div className={styles.verified} style={{ color: "red" }}>
               <GoShieldX />
             </div>
@@ -496,14 +517,14 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
               <IoIosArrowDown />
             </div>
             <div className={styles.cardContent}>
-              {producer.user.locality ? (
+              {localProducer.user.locality ? (
                 <p>
                   <span className={styles.neighborhood}>
-                    {producer.user.locality?.neighborhood}
+                    {localProducer.user.locality?.neighborhood}
                   </span>
-                  {producer.user.locality?.city} -{" "}
-                  {producer.user.locality?.state}
-                  {producer.profile.local ? (
+                  {localProducer.user.locality?.city} -{" "}
+                  {localProducer.user.locality?.state}
+                  {localProducer.profile.local ? (
                     <i>
                       <TbHomeCheck /> com local
                     </i>

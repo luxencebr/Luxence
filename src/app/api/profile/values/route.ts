@@ -1,5 +1,6 @@
 import { prisma } from "@/utils/prisma";
 import { NextResponse } from "next/server";
+import { updateProducerVerificationStatus } from "@/lib/profile-verification";
 
 export async function POST(req: Request) {
   try {
@@ -7,6 +8,14 @@ export async function POST(req: Request) {
 
     if (!profileId || !Array.isArray(prices) || !Array.isArray(payments)) {
       return NextResponse.json({ error: "Dados inválidos" }, { status: 400 });
+    }
+
+    // Validação: se houver preços, deve haver pelo menos um método de pagamento
+    if (prices.length > 0 && payments.length === 0) {
+      return NextResponse.json(
+        { error: "É necessário selecionar pelo menos um método de pagamento quando há valores cadastrados" },
+        { status: 400 }
+      );
     }
 
     await prisma.producerPrice.deleteMany({
@@ -31,6 +40,16 @@ export async function POST(req: Request) {
         paymentId: p.paymentId,
       })),
     });
+
+    // Busca o producerId para atualizar o status
+    const profile = await prisma.producerProfile.findUnique({
+      where: { id: profileId },
+      select: { producerId: true },
+    });
+
+    if (profile) {
+      await updateProducerVerificationStatus(profile.producerId);
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

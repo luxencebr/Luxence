@@ -11,6 +11,7 @@ import { HiOutlinePencil } from "react-icons/hi2";
 import Dropdown from "../ui/Dropdown/Dropdown";
 
 import type { Producer } from "@/types/Producer";
+import { dispatchProfileUpdateEvent } from "@/utils/profileUpdateEvent";
 
 function formatNeighborhood(name: string) {
   return name
@@ -297,6 +298,9 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
       });
 
       setIsEditing(false);
+      
+      // Dispara evento de atualização
+      dispatchProfileUpdateEvent();
     } catch (err) {
       console.error(err);
     } finally {

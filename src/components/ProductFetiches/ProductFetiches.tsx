@@ -6,6 +6,7 @@ import { FaCheck, FaXmark, FaMinus } from "react-icons/fa6";
 import { HiOutlinePencil } from "react-icons/hi2";
 
 import type { Producer } from "@/types/Producer";
+import { dispatchProfileUpdateEvent } from "@/utils/profileUpdateEvent";
 
 interface ProductFetichesProps {
   producer: Producer;
@@ -83,6 +84,9 @@ function ProductFetiches({ producer, canEdit }: ProductFetichesProps) {
 
       // Se tudo OK, sai do modo edição
       setIsEditing(false);
+      
+      // Dispara evento de atualização
+      dispatchProfileUpdateEvent();
     } catch (err) {
       console.error("Erro inesperado:", err);
     } finally {
