@@ -134,12 +134,12 @@ function applyFilters(producers: Producer[], filters: ActiveFilters, options: Re
           // booleanos (sim / não)
           if (typeof a.valueBoolean === "boolean") {
             const value = a.valueBoolean ? "sim" : "não";
-            return selectedValues.includes(value);
+            return (selectedValues as string[]).includes(value);
           }
 
           // strings
           if (a.valueString) {
-            return selectedValues.includes(a.valueString);
+            return (selectedValues as string[]).includes(a.valueString);
           }
 
           return false;
