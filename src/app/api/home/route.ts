@@ -10,9 +10,10 @@ export async function GET() {
     const userPreferences = session?.user?.preferences || [];
     
     // Se o usuário não tem preferências definidas, mostrar apenas mulheres (FEMALE)
-    const genderFilter = userPreferences.length > 0 
-      ? { in: userPreferences }
-      : "FEMALE";
+    const genderFilter: "FEMALE" | { in: ("MALE" | "FEMALE" | "TRANS")[] } = 
+      userPreferences.length > 0 
+        ? { in: userPreferences as ("MALE" | "FEMALE" | "TRANS")[] }
+        : "FEMALE";
 
     // Obter localidade do usuário para a row "Perto de Você"
     let userCity: string | undefined;
