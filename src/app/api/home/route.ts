@@ -121,7 +121,7 @@ export async function GET() {
     });
 
     // 4. Perto de Você - Perfis da mesma cidade/estado
-    let nearbyProducers = [];
+    let nearbyProducers: any[] = [];
     if (userCity && userState) {
       nearbyProducers = await prisma.producer.findMany({
         where: {
