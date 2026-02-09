@@ -15,8 +15,18 @@ export async function GET() {
       : "FEMALE";
 
     // Obter localidade do usuário para a row "Perto de Você"
-    const userCity = session?.user?.locality?.city;
-    const userState = session?.user?.locality?.state;
+    let userCity: string | undefined;
+    let userState: string | undefined;
+    
+    if (session?.user?.email) {
+      const user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+        include: { locality: true },
+      });
+      
+      userCity = user?.locality?.city;
+      userState = user?.locality?.state;
+    }
 
     // Filtro base para todos os produtores
     const baseWhere = {
