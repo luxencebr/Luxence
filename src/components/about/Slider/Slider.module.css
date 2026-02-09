@@ -1,6 +1,7 @@
 .slider {
   background: var(--background-complementary-color);
-  width: 640px;
+  width: 100%;
+  max-width: 640px;
   aspect-ratio: 21 / 9;
   margin: 0 auto;
 
@@ -310,5 +311,64 @@
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+  .slider {
+    width: calc(100vw - 32px);
+    max-width: none;
+    border-radius: var(--radius-sm);
+  }
+
+  .controls {
+    display: none;
+  }
+
+  .sliderActions {
+    padding: var(--space-xs);
+  }
+
+  .removeCurrentBtn,
+  .editCurrentBtn {
+    width: 28px;
+    height: 28px;
+    padding: 6px;
+    font-size: 14px;
+  }
+
+  .indicators {
+    padding: var(--space-xs);
+  }
+
+  .dot {
+    height: 10px;
+  }
+
+  .addBtn {
+    padding: 3px;
+    font-size: 10px;
+  }
+
+  .cropModal {
+    width: 90vw;
+    height: auto;
+    aspect-ratio: 21 / 9;
+  }
+
+  .cropContainer {
+    aspect-ratio: 21 / 9;
+  }
+
+  .cropActions,
+  .cropHeader {
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  .cropActions button {
+    font-size: 14px;
   }
 }

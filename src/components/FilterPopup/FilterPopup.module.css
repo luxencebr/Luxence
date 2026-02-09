@@ -244,6 +244,14 @@
   font-weight: bold !important;
 }
 
+.rangeThumb {
+  cursor: grab;
+}
+
+.rangeThumb:active {
+  cursor: grabbing;
+}
+
 @media (max-width: 768px) {
   .popup {
     height: auto;

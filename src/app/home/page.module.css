@@ -29,3 +29,18 @@
 .errorState {
   color: #ff6b6b;
 }
+
+/* Responsive */
+
+@media (max-width: 768px) {
+  .layout {
+    padding: 8px;
+    gap: 12px;
+  }
+
+  .loadingState,
+  .errorState {
+    font-size: 16px;
+    padding: 16px;
+  }
+}

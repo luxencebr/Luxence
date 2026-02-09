@@ -61,7 +61,7 @@ export interface ActiveFilters {
     max?: number;
   };
 
-  nationality?: number[];
+  nationality?: string[];
   durations?: number[];
   priceRange?: {
     min?: number;
@@ -70,7 +70,7 @@ export interface ActiveFilters {
   payments?: number[];
 
   audience?: number[];
-  languages?: number[];
+  languages?: string[];
   services?: number[];
   fetiches?: number[];
   locations?: number[];
@@ -111,14 +111,8 @@ export function extractFilterOptions(producers: Producer[]) {
   const locations = new Map<number, any>();
   const payments = new Map<number, any>();
   const durations = new Map<number, any>();
-  const nationalities = new Map<
-    number,
-    { id: number; label: string; value: string }
-  >();
-  const languages = new Map<
-    number,
-    { id: number; label: string; value: string }
-  >();
+  const nationalities = new Map<string, { value: string; label: string }>();
+  const languages = new Map<string, { value: string; label: string }>();
 
   const appearanceOptions = {
     ethnicity: new Set<string>(),
@@ -153,11 +147,10 @@ export function extractFilterOptions(producers: Producer[]) {
     if (p.nationality) {
       const key = p.nationality.toLowerCase();
 
-      if (!nationalities.has(key.length)) {
-        nationalities.set(key.length, {
-          id: key.length, // id estável (simples)
-          label: p.nationality, // exibido
-          value: key, // valor real
+      if (!nationalities.has(key)) {
+        nationalities.set(key, {
+          value: key,
+          label: p.nationality,
         });
       }
     }
@@ -166,13 +159,11 @@ export function extractFilterOptions(producers: Producer[]) {
       if (!lang.name) return;
 
       const key = lang.name.toLowerCase();
-      const id = key.length;
 
-      if (!languages.has(id)) {
-        languages.set(id, {
-          id,
-          label: lang.name,
+      if (!languages.has(key)) {
+        languages.set(key, {
           value: key,
+          label: lang.name,
         });
       }
     });
@@ -259,6 +250,7 @@ interface FilterPopupProps {
 export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [filters, setFilters] = useState<ActiveFilters>({});
+  const [appliedFilters, setAppliedFilters] = useState<ActiveFilters>({});
   const options = useMemo(() => extractFilterOptions(producers), [producers]);
 
   const [ageValues, setAgeValues] = useState<[number, number]>([0, 0]);
@@ -268,25 +260,59 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
   const [inputMinPrice, setInputMinPrice] = useState("");
   const [inputMaxPrice, setInputMaxPrice] = useState("");
 
+  // Sync age range with options on mount
   useEffect(() => {
     if (options.ageRange) {
       const { min, max } = options.ageRange;
-
       setAgeValues([min, max]);
       setInputMinAge(String(min));
       setInputMaxAge(String(max));
     }
   }, [options.ageRange]);
 
+  // Sync price range with options on mount
   useEffect(() => {
     if (options.priceRange) {
       const { min, max } = options.priceRange;
-
       setPriceValues([min, max]);
       setInputMinPrice(String(min));
       setInputMaxPrice(String(max));
     }
   }, [options.priceRange]);
+
+  // Sync local state with applied filters when popup opens
+  useEffect(() => {
+    if (isOpen) {
+      // Load applied filters into local state
+      setFilters(appliedFilters);
+      
+      if (appliedFilters.ageRange) {
+        setAgeValues([
+          appliedFilters.ageRange.min ?? options.ageRange?.min ?? 0,
+          appliedFilters.ageRange.max ?? options.ageRange?.max ?? 0
+        ]);
+        setInputMinAge(String(appliedFilters.ageRange.min ?? options.ageRange?.min ?? 0));
+        setInputMaxAge(String(appliedFilters.ageRange.max ?? options.ageRange?.max ?? 0));
+      } else if (options.ageRange) {
+        setAgeValues([options.ageRange.min, options.ageRange.max]);
+        setInputMinAge(String(options.ageRange.min));
+        setInputMaxAge(String(options.ageRange.max));
+      }
+      
+      if (appliedFilters.priceRange) {
+        setPriceValues([
+          appliedFilters.priceRange.min ?? options.priceRange?.min ?? 0,
+          appliedFilters.priceRange.max ?? options.priceRange?.max ?? 0
+        ]);
+        setInputMinPrice(String(appliedFilters.priceRange.min ?? options.priceRange?.min ?? 0));
+        setInputMaxPrice(String(appliedFilters.priceRange.max ?? options.priceRange?.max ?? 0));
+      } else if (options.priceRange) {
+        setPriceValues([options.priceRange.min, options.priceRange.max]);
+        setInputMinPrice(String(options.priceRange.min));
+        setInputMaxPrice(String(options.priceRange.max));
+      }
+    }
+  }, [isOpen, appliedFilters, options.ageRange, options.priceRange]);
 
   function toggleAppearanceOption(
     key: keyof NonNullable<ActiveFilters["appearance"]>,
@@ -311,14 +337,17 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
     });
   }
 
-  function toggleArrayFilter(key: keyof ActiveFilters, id: number) {
+  function toggleArrayFilter<T extends string | number>(
+    key: keyof ActiveFilters,
+    value: T
+  ) {
     setFilters((prev) => {
-      const current = (prev[key] as number[]) || [];
-      const exists = current.includes(id);
+      const current = (prev[key] as T[]) || [];
+      const exists = current.includes(value);
 
       return {
         ...prev,
-        [key]: exists ? current.filter((v) => v !== id) : [...current, id],
+        [key]: exists ? current.filter((v) => v !== value) : [...current, value],
       };
     });
   }
@@ -472,15 +501,6 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
                 setInputMinAge(String(vals[0]));
                 setInputMaxAge(String(vals[1]));
               }}
-              onFinalChange={(vals) => {
-                setFilters((prev) => ({
-                  ...prev,
-                  ageRange: {
-                    min: vals[0],
-                    max: vals[1],
-                  },
-                }));
-              }}
               renderTrack={({ props, children }) => (
                 <div
                   {...props}
@@ -502,24 +522,14 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
                   <div
                     key={key}
                     {...rest}
+                    className={styles.rangeThumb}
                     style={{
                       ...rest.style,
                       height: "20px",
                       width: "20px",
                       borderRadius: "50%",
                       backgroundColor: "var(--primary-color)",
-                      cursor: "grab",
                       boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
-                    }}
-                    onMouseDown={(e) => {
-                      if (rest.style) {
-                        (e.currentTarget.style as any).cursor = "grabbing";
-                      }
-                    }}
-                    onMouseUp={(e) => {
-                      if (rest.style) {
-                        (e.currentTarget.style as any).cursor = "grab";
-                      }
                     }}
                   />
                 );
@@ -627,15 +637,6 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
                 setInputMinPrice(String(vals[0]));
                 setInputMaxPrice(String(vals[1]));
               }}
-              onFinalChange={(vals) => {
-                setFilters((prev) => ({
-                  ...prev,
-                  priceRange: {
-                    min: vals[0],
-                    max: vals[1],
-                  },
-                }));
-              }}
               renderTrack={({ props, children }) => (
                 <div
                   {...props}
@@ -657,24 +658,14 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
                   <div
                     key={key}
                     {...rest}
+                    className={styles.rangeThumb}
                     style={{
                       ...rest.style,
                       height: "20px",
                       width: "20px",
                       borderRadius: "50%",
                       backgroundColor: "var(--primary-color)",
-                      cursor: "grab",
                       boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
-                    }}
-                    onMouseDown={(e) => {
-                      if (rest.style) {
-                        (e.currentTarget.style as any).cursor = "grabbing";
-                      }
-                    }}
-                    onMouseUp={(e) => {
-                      if (rest.style) {
-                        (e.currentTarget.style as any).cursor = "grab";
-                      }
                     }}
                   />
                 );
@@ -724,17 +715,37 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
             <CiFilter />
           </span>
           Filtros
-          {Object.values(filters).some((v) =>
-            Array.isArray(v) ? v.length > 0 : Boolean(v)
-          ) && (
-            <span className={styles.counter}>
-              {
-                Object.values(filters).filter((v) =>
-                  Array.isArray(v) ? v.length > 0 : Boolean(v)
-                ).length
+          {(() => {
+            let count = 0;
+            
+            // Count range filters
+            if (appliedFilters.ageRange && (appliedFilters.ageRange.min !== options.ageRange?.min || appliedFilters.ageRange.max !== options.ageRange?.max)) {
+              count++;
+            }
+            if (appliedFilters.priceRange && (appliedFilters.priceRange.min !== options.priceRange?.min || appliedFilters.priceRange.max !== options.priceRange?.max)) {
+              count++;
+            }
+            
+            // Count array filters
+            const arrayKeys: (keyof ActiveFilters)[] = ['nationality', 'durations', 'payments', 'audience', 'languages', 'services', 'fetiches', 'locations'];
+            arrayKeys.forEach(key => {
+              const value = appliedFilters[key];
+              if (Array.isArray(value) && value.length > 0) {
+                count++;
               }
-            </span>
-          )}
+            });
+            
+            // Count appearance filters
+            if (appliedFilters.appearance) {
+              Object.values(appliedFilters.appearance).forEach(arr => {
+                if (Array.isArray(arr) && arr.length > 0) {
+                  count++;
+                }
+              });
+            }
+            
+            return count > 0 ? <span className={styles.counter}>{count}</span> : null;
+          })()}
         </>
       }
       triggerClass={styles.trigger}
@@ -749,6 +760,7 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
           type="button"
           onClick={() => setIsOpen(false)}
           className={styles.close}
+          aria-label="Fechar"
         >
           <IoCloseOutline />
         </button>
@@ -760,11 +772,11 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
         <CheckboxList
           title="Nacionalidade"
           options={options.nationalities.map((n) => ({
-            value: n.id,
+            value: n.value,
             label: n.label,
           }))}
           selected={filters.nationality || []}
-          onToggle={(id) => toggleArrayFilter("nationality", id)}
+          onToggle={(value) => toggleArrayFilter("nationality", value)}
         />
 
         {APPEARANCE_KEYS.map((key) => (
@@ -793,11 +805,11 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
         <CheckboxList
           title="Idiomas"
           options={options.languages.map((l) => ({
-            value: l.id,
+            value: l.value,
             label: l.label,
           }))}
           selected={filters.languages || []}
-          onToggle={(id) => toggleArrayFilter("languages", id)}
+          onToggle={(value) => toggleArrayFilter("languages", value)}
         />
 
         <CheckboxList
@@ -859,6 +871,21 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
           onClick={() => {
             const cleared = {};
             setFilters(cleared);
+            setAppliedFilters(cleared);
+            
+            // Reset ranges to original values
+            if (options.ageRange) {
+              setAgeValues([options.ageRange.min, options.ageRange.max]);
+              setInputMinAge(String(options.ageRange.min));
+              setInputMaxAge(String(options.ageRange.max));
+            }
+            
+            if (options.priceRange) {
+              setPriceValues([options.priceRange.min, options.priceRange.max]);
+              setInputMinPrice(String(options.priceRange.min));
+              setInputMaxPrice(String(options.priceRange.max));
+            }
+            
             onApply(cleared);
             setIsOpen(false);
           }}
@@ -869,7 +896,29 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
         <button
           className={styles.apply}
           onClick={() => {
-            onApply(filters);
+            // Build final filters with current range values
+            const finalFilters: ActiveFilters = {
+              ...filters,
+            };
+            
+            // Add age range if it's different from defaults
+            if (options.ageRange && (ageValues[0] !== options.ageRange.min || ageValues[1] !== options.ageRange.max)) {
+              finalFilters.ageRange = {
+                min: ageValues[0],
+                max: ageValues[1],
+              };
+            }
+            
+            // Add price range if it's different from defaults
+            if (options.priceRange && (priceValues[0] !== options.priceRange.min || priceValues[1] !== options.priceRange.max)) {
+              finalFilters.priceRange = {
+                min: priceValues[0],
+                max: priceValues[1],
+              };
+            }
+            
+            setAppliedFilters(finalFilters);
+            onApply(finalFilters);
             setIsOpen(false);
           }}
         >

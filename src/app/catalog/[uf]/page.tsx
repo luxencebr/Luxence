@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
 import styles from "./page.module.css";
 
-import FilterPopup from "@/components/FilterPopup/FilterPopup";
+import FilterPopup, { extractFilterOptions } from "@/components/FilterPopup/FilterPopup";
 // import SortDropdown from "@/components/SortDropdown/SortDropdown";
 // import DistancePopup from "@/components/DistancePopup/DistancePopup";
 import ProductsCatalog from "@/components/ProductsCatalog/ProductsCatalog";
@@ -83,30 +83,28 @@ function orderBySignature(items: Producer[]): Producer[] {
 
 import { ActiveFilters } from "@/components/FilterPopup/FilterPopup";
 
-function applyFilters(producers: Producer[], filters: ActiveFilters) {
+function applyFilters(producers: Producer[], filters: ActiveFilters, options: ReturnType<typeof extractFilterOptions>) {
   return producers.filter((p) => {
     const profile = p.profile;
     if (!profile) return false;
 
     // 🔹 Idade
-    if (filters.ageRange) {
+    if (filters.ageRange && options.ageRange) {
       const age = calculateAge(p.birthday);
+      
+      const minAge = filters.ageRange.min ?? options.ageRange.min;
+      const maxAge = filters.ageRange.max ?? options.ageRange.max;
 
-      if (filters.ageRange.min !== undefined && age < filters.ageRange.min) {
-        return false;
-      }
-
-      if (filters.ageRange.max !== undefined && age > filters.ageRange.max) {
+      if (age < minAge || age > maxAge) {
         return false;
       }
     }
 
     // 🔹 Nacionalidade
     if (filters.nationality?.length) {
-      const nationalityKey = p.nationality.toLowerCase();
-      const nationalityId = nationalityKey.length;
-
-      if (!filters.nationality.includes(nationalityId)) {
+      const nationalityKey = p.nationality?.toLowerCase();
+      
+      if (!nationalityKey || !filters.nationality.includes(nationalityKey)) {
         return false;
       }
     }
@@ -114,10 +112,10 @@ function applyFilters(producers: Producer[], filters: ActiveFilters) {
     // 🔹 Idiomas
     if (filters.languages?.length) {
       const producerLanguages =
-        p.profile.languages?.map((l) => l.name.toLowerCase().length) || [];
+        p.profile.languages?.map((l) => l.name.toLowerCase()) || [];
 
-      const hasMatch = producerLanguages.some((id) =>
-        filters.languages!.includes(id)
+      const hasMatch = producerLanguages.some((lang) =>
+        filters.languages!.includes(lang)
       );
 
       if (!hasMatch) return false;
@@ -141,7 +139,7 @@ function applyFilters(producers: Producer[], filters: ActiveFilters) {
 
           // strings
           if (a.valueString) {
-            return selectedValues.includes(a.valueString as "sim" | "não");
+            return selectedValues.includes(a.valueString);
           }
 
           return false;
@@ -203,22 +201,22 @@ function applyFilters(producers: Producer[], filters: ActiveFilters) {
     }
 
     // 🔹 Preço
-    if (filters.priceRange) {
+    if (filters.priceRange && options.priceRange) {
       const prices = profile.prices?.map((p) => p.value).filter((v) => v > 0) || [];
       
-      // Se não há preços válidos, não filtra por preço
-      if (prices.length > 0) {
-        const minPrice = Math.min(...prices);
-        const maxPrice = Math.max(...prices);
-        
-        // Verifica se algum preço está dentro do range selecionado
-        if (filters.priceRange.min !== undefined && maxPrice < filters.priceRange.min) {
-          return false;
-        }
-        
-        if (filters.priceRange.max !== undefined && minPrice > filters.priceRange.max) {
-          return false;
-        }
+      // Se não há preços válidos, não passa no filtro
+      if (prices.length === 0) {
+        return false;
+      }
+      
+      const minPrice = filters.priceRange.min ?? options.priceRange.min;
+      const maxPrice = filters.priceRange.max ?? options.priceRange.max;
+      
+      // Verifica se há overlap entre o range do produtor e o range selecionado
+      const hasOverlap = prices.some(price => price >= minPrice && price <= maxPrice);
+      
+      if (!hasOverlap) {
+        return false;
       }
     }
 
@@ -255,6 +253,7 @@ export default function CatalogPage() {
   const hasInitializedGender = useRef(false);
 
   const [activeFilters, setActiveFilters] = useState<ActiveFilters>({});
+  const [filterOptions, setFilterOptions] = useState<ReturnType<typeof extractFilterOptions> | null>(null);
 
   useEffect(() => {
     if (status !== "authenticated") return;
@@ -293,6 +292,14 @@ export default function CatalogPage() {
     });
   }, [producers, selectedGender]);
 
+  // Extract filter options from current gender producers
+  useEffect(() => {
+    if (producersByGender.length > 0) {
+      const options = extractFilterOptions(producersByGender);
+      setFilterOptions(options);
+    }
+  }, [producersByGender]);
+
   // 🔹 Fetch simples
   useEffect(() => {
     async function fetchCatalog() {
@@ -314,9 +321,11 @@ export default function CatalogPage() {
 
   // 🔹 Filtro simples por gênero (FRONT)
   const visibleProducers = useMemo(() => {
-    const filtered = applyFilters(producersByGender, activeFilters);
+    if (!filterOptions) return orderBySignature(producersByGender);
+    
+    const filtered = applyFilters(producersByGender, activeFilters, filterOptions);
     return orderBySignature(filtered);
-  }, [producersByGender, activeFilters]);
+  }, [producersByGender, activeFilters, filterOptions]);
 
   if (loading) {
     return (
