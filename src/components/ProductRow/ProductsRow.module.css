@@ -5,7 +5,7 @@
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
-  gap: 8px;
+  gap: 20px;
 }
 
 .rowHeader {
@@ -15,7 +15,7 @@
   display: flex;
   flex-flow: row nowrap;
   align-items: end;
-  gap: 8px;
+  gap: 12px;
 
   align-self: center;
 }
@@ -24,8 +24,9 @@
   margin: 0;
 
   color: var(--contrast-color);
-  font-size: 20px;
+  font-size: 24px;
   font-weight: bold;
+  letter-spacing: -0.5px;
 }
 
 .headerButton {
@@ -38,7 +39,7 @@
   justify-content: center;
 
   color: var(--contrast-color);
-  font-size: 12px;
+  font-size: 13px;
   text-decoration: none;
 
   transition: 0.25s ease-in-out;
@@ -60,7 +61,7 @@
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
 
   z-index: 1;
 }
@@ -96,10 +97,15 @@
 }
 
 @media (max-width: 768px) {
+  .catalogTitle {
+    font-size: 20px;
+  }
+
   .catalogList {
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
+    gap: 16px;
   }
 
   .catalogList::-webkit-scrollbar {

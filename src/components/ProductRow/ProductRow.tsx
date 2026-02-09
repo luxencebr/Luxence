@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect, useCallback } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import styles from "./ProductsRow.module.css";
 
@@ -22,6 +22,7 @@ interface ProductRowProps {
   title: string;
   maxItems?: number;
   highlight?: boolean;
+  sortParam?: string;
 }
 
 function ProductRow({
@@ -29,7 +30,9 @@ function ProductRow({
   title,
   maxItems,
   highlight = false,
+  sortParam,
 }: ProductRowProps) {
+  const router = useRouter();
   const scrollContainerRef = useRef<HTMLUListElement>(null);
 
   const [itemsPerPage, setItemsPerPage] = useState(0);
@@ -98,6 +101,38 @@ function ProductRow({
     }
   }, [pageIndex, itemsPerPage, scrollToPage]);
 
+  const handleViewMore = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    
+    // Obter UF do localStorage
+    const storedUf = localStorage.getItem("selectedUf");
+    let uf = "rj"; // fallback
+    
+    if (storedUf) {
+      try {
+        const ufData = JSON.parse(storedUf);
+        uf = ufData.sigla.toLowerCase();
+      } catch (err) {
+        console.error("Erro ao ler UF do localStorage", err);
+      }
+    }
+    
+    // Salvar ordenação no sessionStorage
+    if (sortParam) {
+      try {
+        sessionStorage.setItem("catalog_sort", JSON.stringify({ 
+          sort: sortParam, 
+          direction: "desc" 
+        }));
+      } catch (err) {
+        console.error("Erro ao salvar ordenação", err);
+      }
+    }
+    
+    // Redirecionar sem parâmetros na URL
+    router.push(`/catalog/${uf}`);
+  };
+
   return (
     <section
       className={`${styles.ProducersCatalog} ${
@@ -106,9 +141,13 @@ function ProductRow({
     >
       <div className={styles.rowHeader}>
         <span className={styles.catalogTitle}>{title}</span>
-        <Link href="/catalog" className={styles.headerButton}>
+        <a 
+          href="#" 
+          onClick={handleViewMore}
+          className={styles.headerButton}
+        >
           Veja Mais
-        </Link>
+        </a>
       </div>
 
       <ul className={styles.catalogList} ref={scrollContainerRef}>

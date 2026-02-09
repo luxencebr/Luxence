@@ -8,19 +8,32 @@ export async function GET(
   try {
     const { uf } = await params;
     const state = uf.toUpperCase();
+    
+    // Parâmetros de paginação
+    const searchParams = request.nextUrl.searchParams;
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "15");
+    const skip = (page - 1) * limit;
 
-    const producers = await prisma.producer.findMany({
-      where: {
-        verificationStatus: "GREEN", // 👈 filtro novo
-        profile: {
-          isNot: null,
-        },
-        user: {
-          locality: {
-            state,
-          },
+    const whereClause = {
+      verificationStatus: "GREEN" as const,
+      profile: {
+        isNot: null,
+      },
+      user: {
+        locality: {
+          state,
         },
       },
+    };
+
+    // Buscar total de produtores para calcular se há mais páginas
+    const totalCount = await prisma.producer.count({
+      where: whereClause,
+    });
+
+    const producers = await prisma.producer.findMany({
+      where: whereClause,
       include: {
         user: {
           include: {
@@ -60,14 +73,29 @@ export async function GET(
               include: { option: true },
             },
             reviews: {
+              where: {
+                isApproved: true,
+              },
               include: { user: true },
             },
           },
         },
       },
+      skip,
+      take: limit,
     });
 
-    return NextResponse.json(producers, { status: 200 });
+    const hasMore = skip + producers.length < totalCount;
+
+    return NextResponse.json({
+      producers,
+      pagination: {
+        page,
+        limit,
+        total: totalCount,
+        hasMore,
+      },
+    }, { status: 200 });
   } catch (error) {
     console.error("[API CATALOG]", error);
     return NextResponse.json(

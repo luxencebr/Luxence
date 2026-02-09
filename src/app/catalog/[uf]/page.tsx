@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState, useRef } from "react";
+import { useEffect, useMemo, useState, useRef, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
 import styles from "./page.module.css";
 
 import FilterPopup, { extractFilterOptions } from "@/components/FilterPopup/FilterPopup";
-// import SortDropdown from "@/components/SortDropdown/SortDropdown";
+import SortDropdown, { SortOption, SortDirection } from "@/components/SortDropdown/SortDropdown";
 // import DistancePopup from "@/components/DistancePopup/DistancePopup";
 import ProductsCatalog from "@/components/ProductsCatalog/ProductsCatalog";
 
@@ -79,6 +79,33 @@ function orderBySignature(items: Producer[]): Producer[] {
   return priority.flatMap((level) =>
     shuffle(items.filter((item) => item.signature === level))
   );
+}
+
+// Nova função: ordena por critério, depois por plano, depois aleatoriamente
+function sortWithSignatureAndRandom<T extends Producer>(
+  items: T[],
+  compareFn: (a: T, b: T) => number
+): T[] {
+  const signaturePriority: Record<Signature, number> = {
+    DIAMOND: 0,
+    GOLD: 1,
+    SILVER: 2,
+    COPPER: 3,
+  };
+
+  return [...items].sort((a, b) => {
+    // 1. Primeiro critério: função de comparação fornecida
+    const primaryComparison = compareFn(a, b);
+    if (primaryComparison !== 0) return primaryComparison;
+
+    // 2. Segundo critério: plano (signature)
+    const signatureComparison =
+      signaturePriority[a.signature] - signaturePriority[b.signature];
+    if (signatureComparison !== 0) return signatureComparison;
+
+    // 3. Terceiro critério: aleatório (para desempate)
+    return Math.random() - 0.5;
+  });
 }
 
 import { ActiveFilters } from "@/components/FilterPopup/FilterPopup";
@@ -238,7 +265,10 @@ export default function CatalogPage() {
 
   const [producers, setProducers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
   const [selectedGender, setSelectedGender] = useState<
     "female" | "male" | "trans" | null
@@ -254,6 +284,8 @@ export default function CatalogPage() {
 
   const [activeFilters, setActiveFilters] = useState<ActiveFilters>({});
   const [filterOptions, setFilterOptions] = useState<ReturnType<typeof extractFilterOptions> | null>(null);
+  const [sortBy, setSortBy] = useState<SortOption>("default");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
   useEffect(() => {
     if (status !== "authenticated") return;
@@ -300,15 +332,17 @@ export default function CatalogPage() {
     }
   }, [producersByGender]);
 
-  // 🔹 Fetch simples
+  // 🔹 Fetch com paginação
   useEffect(() => {
     async function fetchCatalog() {
       try {
         setLoading(true);
-        const res = await fetch(`/api/catalog/${uf}`);
+        const res = await fetch(`/api/catalog/${uf}?page=1&limit=15`);
         if (!res.ok) throw new Error("Erro ao carregar catálogo");
         const data = await res.json();
-        setProducers(data);
+        setProducers(data.producers);
+        setHasMore(data.pagination.hasMore);
+        setPage(1);
       } catch (err) {
         setError("Não foi possível carregar os produtores");
       } finally {
@@ -319,13 +353,103 @@ export default function CatalogPage() {
     fetchCatalog();
   }, [uf]);
 
+  // 🔹 Carregar mais produtores
+  const loadMore = useCallback(async () => {
+    if (loadingMore || !hasMore) return;
+
+    try {
+      setLoadingMore(true);
+      const nextPage = page + 1;
+      const res = await fetch(`/api/catalog/${uf}?page=${nextPage}&limit=15`);
+      if (!res.ok) throw new Error("Erro ao carregar mais produtores");
+      const data = await res.json();
+      
+      setProducers(prev => [...prev, ...data.producers]);
+      setHasMore(data.pagination.hasMore);
+      setPage(nextPage);
+    } catch (err) {
+      console.error("Erro ao carregar mais produtores:", err);
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [uf, page, loadingMore, hasMore]);
+
+  // 🔹 Infinite scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (loading || loadingMore || !hasMore) return;
+
+      const scrollTop = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+
+      // Carregar mais quando estiver a 300px do final
+      if (scrollTop + windowHeight >= documentHeight - 300) {
+        loadMore();
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [loading, loadingMore, hasMore, loadMore]);
+
   // 🔹 Filtro simples por gênero (FRONT)
   const visibleProducers = useMemo(() => {
     if (!filterOptions) return orderBySignature(producersByGender);
     
     const filtered = applyFilters(producersByGender, activeFilters, filterOptions);
-    return orderBySignature(filtered);
-  }, [producersByGender, activeFilters, filterOptions]);
+    
+    // Aplicar ordenação
+    let sorted: Producer[];
+    
+    switch (sortBy) {
+      case "default":
+        // Ordenação padrão: apenas por plano (signature) + aleatoriedade
+        sorted = orderBySignature(filtered);
+        break;
+      
+      case "name":
+        sorted = sortWithSignatureAndRandom(filtered, (a, b) => {
+          const comparison = a.name.localeCompare(b.name);
+          return sortDirection === "desc" ? comparison : -comparison;
+        });
+        break;
+      
+      case "time":
+        sorted = sortWithSignatureAndRandom(filtered, (a, b) => {
+          const comparison = new Date(b.user.createdAt).getTime() - new Date(a.user.createdAt).getTime();
+          return sortDirection === "desc" ? comparison : -comparison;
+        });
+        break;
+      
+      case "views":
+        sorted = sortWithSignatureAndRandom(filtered, (a, b) => {
+          const comparison = (b.profile?.views || 0) - (a.profile?.views || 0);
+          return sortDirection === "desc" ? comparison : -comparison;
+        });
+        break;
+      
+      case "rating":
+        sorted = sortWithSignatureAndRandom(filtered, (a, b) => {
+          const getAvgRating = (producer: Producer) => {
+            const reviews = producer.profile?.reviews || [];
+            const approvedReviews = reviews.filter((r) => r.isApproved);
+            if (approvedReviews.length === 0) return 0;
+            const sum = approvedReviews.reduce((acc, r) => acc + r.rating, 0);
+            return sum / approvedReviews.length;
+          };
+          
+          const comparison = getAvgRating(b) - getAvgRating(a);
+          return sortDirection === "desc" ? comparison : -comparison;
+        });
+        break;
+      
+      default:
+        sorted = orderBySignature(filtered);
+    }
+    
+    return sorted;
+  }, [producersByGender, activeFilters, filterOptions, sortBy, sortDirection]);
 
   if (loading) {
     return (
@@ -408,7 +532,12 @@ export default function CatalogPage() {
                 producers={producersByGender}
                 onApply={setActiveFilters}
               />
-              {/* <SortDropdown /> */}
+              <SortDropdown 
+                onSortChange={(sort, direction) => {
+                  setSortBy(sort);
+                  setSortDirection(direction);
+                }} 
+              />
             </div>
             <div className={styles.right}>{/* <DistancePopup /> */}</div>
           </div>
@@ -420,6 +549,19 @@ export default function CatalogPage() {
             age: calculateAge(p.birthday),
           }))}
         />
+
+        {loadingMore && (
+          <div className={styles.loadingMore}>
+            <div className={styles.spinner}></div>
+            <p>Carregando mais produtores...</p>
+          </div>
+        )}
+
+        {!hasMore && visibleProducers.length > 0 && (
+          <div className={styles.endMessage}>
+            <p>Você chegou ao final da lista.</p>
+          </div>
+        )}
       </div>
     </div>
   );

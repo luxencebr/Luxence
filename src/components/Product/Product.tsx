@@ -64,6 +64,7 @@ function Product({ producer, variant }: ProductProps) {
   const hasLocal = producer.profile?.hasLocal || false;
   const images = producer.profile?.images || [];
   const reviews = producer.profile?.reviews || [];
+  const approvedReviews = reviews.filter((review) => review.isApproved);
 
   const firstImage =
     typeof images[0] === "string"
@@ -109,7 +110,7 @@ function Product({ producer, variant }: ProductProps) {
               <span>
                 <FaHeart />
               </span>
-              {reviews.length} Avaliações
+              {approvedReviews.length} Avaliações
             </span>
 
             {producer.profile?.prices && producer.profile.prices.length > 0 && (
