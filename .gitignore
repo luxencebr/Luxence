@@ -1,46 +1,150 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
+# ========================================
+# Dependencies
+# ========================================
 /node_modules
 /.pnp
 .pnp.js
 .yarn/install-state.gz
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
 
-# testing
-/coverage
+# ========================================
+# Environment Variables (SENSITIVE!)
+# ========================================
+.env
+.env.*
+!.env.example
 
-# next.js
+# ========================================
+# Next.js
+# ========================================
 /.next/
 /out/
+.next
 
-# production
+# ========================================
+# Production
+# ========================================
 /build
+/dist
 
-# misc
-.DS_Store
-*.pem
+# ========================================
+# Testing
+# ========================================
+/coverage
+*.test.js.snap
+.nyc_output
 
-# debug
+# ========================================
+# Logs & Debug
+# ========================================
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.log
 
-# environment variables
-.env*.local
-.env.development
-.env.production
+# ========================================
+# OS Files
+# ========================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
 
-# vercel
-.vercel
+# ========================================
+# IDE & Editors
+# ========================================
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
 
-# typescript
+# ========================================
+# Certificates & Keys (SENSITIVE!)
+# ========================================
+*.pem
+*.key
+*.cert
+*.crt
+*.p12
+*.pfx
+*.jks
+*.keystore
+
+# ========================================
+# Database (SENSITIVE!)
+# ========================================
+prisma/dev.db
+prisma/dev.db-journal
+*.sqlite
+*.sqlite3
+*.db
+
+# ========================================
+# Docker
+# ========================================
+docker-compose.override.yml
+.dockerignore
+
+# ========================================
+# TypeScript
+# ========================================
 *.tsbuildinfo
 next-env.d.ts
 
-# prisma
-prisma/dev.db
-prisma/dev.db-journal
+# ========================================
+# Vercel
+# ========================================
+.vercel
 
-# docker
-docker-compose.override.yml
+# ========================================
+# Temporary Files
+# ========================================
+*.tmp
+*.temp
+.cache
+.parcel-cache
+.turbo
+
+# ========================================
+# Backup Files
+# ========================================
+*.bak
+*.backup
+*.old
+*~
+
+# ========================================
+# Uploads & User Content (SENSITIVE!)
+# ========================================
+/uploads
+/public/uploads
+/storage
+/tmp
+
+# ========================================
+# Secrets & Credentials (SENSITIVE!)
+# ========================================
+secrets.json
+credentials.json
+service-account.json
+.secrets
+.credentials
 
