@@ -10,6 +10,13 @@ interface StepNavigationProps {
   onSubmit: () => void;
   canProceed: () => boolean;
   isSubmitting?: boolean;
+  isTransitioning?: boolean;
+  // Suporte para sub-etapas
+  substep?: number;
+  totalSubsteps?: number;
+  onNextSubstep?: () => void;
+  onPrevSubstep?: () => void;
+  canProceedSubstep?: () => boolean;
 }
 
 export default function StepNavigation({
@@ -20,8 +27,30 @@ export default function StepNavigation({
   onSubmit,
   canProceed,
   isSubmitting = false,
+  isTransitioning = false,
+  substep,
+  totalSubsteps,
+  onNextSubstep,
+  onPrevSubstep,
+  canProceedSubstep,
 }: StepNavigationProps) {
+  const hasSubsteps = substep !== undefined && totalSubsteps !== undefined && totalSubsteps > 1;
+  const isLastSubstep = hasSubsteps && substep === totalSubsteps;
+  const isFirstSubstep = hasSubsteps && substep === 1;
+
+  // Esconder navegação se estiver na sub-etapa 2 do step 1 (verificação de email)
+  const shouldHideNavigation = currentStep === 1 && substep === 2;
+
   const handleNextClick = () => {
+    // Se tem sub-etapas e não está na última
+    if (hasSubsteps && !isLastSubstep) {
+      if (canProceedSubstep?.()) {
+        onNextSubstep?.();
+      }
+      return;
+    }
+
+    // Comportamento normal
     if (currentStep === totalSteps) {
       if (canProceed()) {
         onSubmit();
@@ -33,9 +62,33 @@ export default function StepNavigation({
     }
   };
 
+  const handlePrevClick = () => {
+    // Se tem sub-etapas e não está na primeira
+    if (hasSubsteps && !isFirstSubstep) {
+      onPrevSubstep?.();
+      return;
+    }
+
+    // Comportamento normal
+    onPrev();
+  };
+
+  const showPrevButton = currentStep > 1 || (hasSubsteps && !isFirstSubstep);
+  const canProceedNow = hasSubsteps && !isLastSubstep 
+    ? canProceedSubstep?.() ?? false 
+    : canProceed();
+  
+  const isLoading = isSubmitting || isTransitioning;
+  const isDisabled = isLoading || !canProceedNow;
+
+  // Se deve esconder navegação, retornar null
+  if (shouldHideNavigation) {
+    return null;
+  }
+
   return (
     <div className={styles.container}>
-      {!canProceed() && (
+      {!canProceedNow && !isLoading && (
         <p
           style={{
             color: "orange",
@@ -48,29 +101,32 @@ export default function StepNavigation({
         </p>
       )}
 
-      {/* Botão Voltar (só aparece se não for o primeiro step) */}
-      {currentStep > 1 && (
+      {showPrevButton && (
         <button
-          onClick={onPrev}
+          onClick={handlePrevClick}
           className={`${styles.button} ${styles.buttonBack}`}
+          disabled={isLoading}
         >
           ← Voltar
         </button>
       )}
 
-      {/* Botão Próximo / Finalizar */}
-
       <button
         onClick={handleNextClick}
         className={`${styles.button} ${styles.buttonNext}`}
-        disabled={isSubmitting}
-        style={{ opacity: isSubmitting ? 0.7 : 1 }}
+        disabled={isDisabled}
+        style={{ opacity: isDisabled ? 0.5 : 1 }}
       >
-        {isSubmitting
-          ? "Enviando..."
-          : currentStep === totalSteps
+        {isLoading ? (
+          <>
+            <span className={styles.spinner}></span>
+            {isSubmitting ? "Enviando..." : "Carregando..."}
+          </>
+        ) : (
+          currentStep === totalSteps && (!hasSubsteps || isLastSubstep)
             ? "Finalizar"
-            : "Próximo →"}
+            : "Próximo →"
+        )}
       </button>
     </div>
   );

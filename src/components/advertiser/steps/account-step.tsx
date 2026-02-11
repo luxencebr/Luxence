@@ -8,7 +8,14 @@ interface AccountStepProps {
   formData: any;
   onUpdate: (data: any) => void;
   onValidate?: (isValid: boolean) => void;
+  // Controle de sub-etapas
+  substep?: number;
+  onSubstepChange?: (substep: number) => void;
+  // Callback para registrar função de envio de código
+  onSendVerificationCode?: (fn: () => Promise<boolean>) => void;
 }
+
+type Substep = 1 | 2;
 
 function PasswordRequirements({ password }: { password: string }) {
   const requirements = useMemo(
@@ -80,7 +87,27 @@ export default function AccountStep({
   formData,
   onUpdate,
   onValidate,
+  substep: externalSubstep,
+  onSubstepChange,
+  onSendVerificationCode,
 }: AccountStepProps) {
+  const [substep, setSubstep] = useState<Substep>(externalSubstep as Substep || 1);
+  
+  // Armazenar o email que foi verificado
+  const [verifiedEmail, setVerifiedEmail] = useState<string | null>(null);
+  
+  // Sincronizar substep interno com externo
+  useEffect(() => {
+    if (externalSubstep && externalSubstep !== substep) {
+      setSubstep(externalSubstep as Substep);
+    }
+  }, [externalSubstep]);
+
+  // Notificar mudanças de substep
+  useEffect(() => {
+    onSubstepChange?.(substep);
+  }, [substep, onSubstepChange]);
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
@@ -88,12 +115,29 @@ export default function AccountStep({
   const [emailChecking, setEmailChecking] = useState(false);
   const [emailExists, setEmailExists] = useState(false);
 
+  // Estados para verificação de email
+  const [verificationCode, setVerificationCode] = useState("");
+  const [sendingCode, setSendingCode] = useState(false);
+  const [verifyingCode, setVerifyingCode] = useState(false);
+  const [codeError, setCodeError] = useState<string | null>(null);
+  const [codeSent, setCodeSent] = useState(false);
+
   const [nameError, setNameError] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [confirmPasswordError, setConfirmPasswordError] = useState<string | null>(null);
   const [genderError, setGenderError] = useState<string | null>(null);
   const [preferencesError, setPreferencesError] = useState<string | null>(null);
+
+  // Detectar mudança no email e invalidar verificação
+  useEffect(() => {
+    if (verifiedEmail && formData.email !== verifiedEmail) {
+      onUpdate({ emailVerified: false });
+      setVerifiedEmail(null);
+      setCodeSent(false);
+      setVerificationCode("");
+    }
+  }, [formData.email, verifiedEmail]);
 
   const handleBlur = (field: string) => {
     setTouched((prev) => ({ ...prev, [field]: true }));
@@ -203,6 +247,7 @@ export default function AccountStep({
     const confirmPasswordValid = formData.password === formData.confirmPassword && formData.confirmPassword;
     const genderValid = !!formData.gender;
     const preferencesValid = formData.preferences && formData.preferences.length > 0;
+    const emailVerified = !!formData.emailVerified;
 
     return (
       nameValidation.valid &&
@@ -212,7 +257,8 @@ export default function AccountStep({
       passwordValidation.valid &&
       confirmPasswordValid &&
       genderValid &&
-      preferencesValid
+      preferencesValid &&
+      emailVerified
     );
   }, [formData, emailExists, emailChecking]);
 
@@ -238,14 +284,130 @@ export default function AccountStep({
     setTouched((prev) => ({ ...prev, preferences: true }));
   };
 
+  const handleSendVerificationCode = async () => {
+    const emailValidation = validateEmail(formData.email || "");
+    if (!emailValidation.valid) {
+      setEmailError(emailValidation.reason);
+      return false;
+    }
+
+    if (emailExists) {
+      setEmailError("Este email já está cadastrado");
+      return false;
+    }
+
+    setSendingCode(true);
+    setCodeError(null);
+
+    try {
+      const res = await fetch("/api/auth/send-verification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: formData.email }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Erro ao enviar código");
+      }
+
+      setCodeSent(true);
+      setSubstep(2);
+      return true;
+    } catch (err) {
+      setCodeError(err instanceof Error ? err.message : "Erro ao enviar código");
+      return false;
+    } finally {
+      setSendingCode(false);
+    }
+  };
+
+  const handleVerifyCode = async () => {
+    if (!verificationCode || verificationCode.length !== 6) {
+      setCodeError("Digite o código de 6 dígitos");
+      return;
+    }
+
+    setVerifyingCode(true);
+    setCodeError(null);
+
+    try {
+      const res = await fetch("/api/auth/verify-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: formData.email, code: verificationCode }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Código inválido");
+      }
+
+      onUpdate({ emailVerified: true });
+      setVerifiedEmail(formData.email);
+      
+      // Aguardar 1,5s para mostrar sucesso, depois avançar automaticamente
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('emailVerified'));
+      }, 1500);
+    } catch (err) {
+      setCodeError(err instanceof Error ? err.message : "Código inválido");
+    } finally {
+      setVerifyingCode(false);
+    }
+  };
+
+  // Auto-verificar quando o código for digitado completamente
+  useEffect(() => {
+    if (verificationCode.length === 6 && substep === 2 && !formData.emailVerified) {
+      handleVerifyCode();
+    }
+  }, [verificationCode]);
+
+  const canProceedToVerification = useMemo(() => {
+    const nameValidation = validateName(formData.name || "");
+    const emailValidation = validateEmail(formData.email || "");
+    const passwordValidation = validatePassword(formData.password || "");
+    const confirmPasswordValid = formData.password === formData.confirmPassword && formData.confirmPassword;
+    const genderValid = !!formData.gender;
+    const preferencesValid = formData.preferences && formData.preferences.length > 0;
+
+    return (
+      nameValidation.valid &&
+      emailValidation.valid &&
+      !emailExists &&
+      !emailChecking &&
+      passwordValidation.valid &&
+      confirmPasswordValid &&
+      genderValid &&
+      preferencesValid
+    );
+  }, [formData, emailExists, emailChecking]);
+
+  // Registrar função de envio de código no componente pai
+  useEffect(() => {
+    if (onSendVerificationCode) {
+      onSendVerificationCode(handleSendVerificationCode);
+    }
+  }, [onSendVerificationCode]);
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <h2>Criar Conta</h2>
-        <p>Preencha seus dados para começar a anunciar</p>
+        <p>
+          {substep === 1
+            ? "Preencha seus dados para começar a anunciar"
+            : formData.emailVerified
+            ? "Email verificado com sucesso!"
+            : "Digite o código enviado para seu email"}
+        </p>
       </div>
 
-      <div className={styles.section}>
+      {substep === 1 && (
+        <div className={styles.section}>
         <label className={styles.label}>
           Nome completo:
           <input
@@ -433,6 +595,92 @@ export default function AccountStep({
           )}
         </div>
       </div>
+      )}
+
+      {substep === 2 && (
+        <div className={styles.section}>
+          {!formData.emailVerified ? (
+            <>
+              <div className={styles.verificationInfo}>
+                <p>
+                  Enviamos um código de 6 dígitos para <strong>{formData.email}</strong>
+                </p>
+              </div>
+
+              <label className={styles.label}>
+                Código de verificação:
+                <input
+                  type="text"
+                  value={verificationCode}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, "").slice(0, 6);
+                    setVerificationCode(value);
+                    setCodeError(null);
+                  }}
+                  placeholder="000000"
+                  maxLength={6}
+                  className={codeError ? styles.inputError : ""}
+                  style={{ fontSize: "24px", letterSpacing: "8px", textAlign: "center" }}
+                  disabled={verifyingCode}
+                />
+                {verifyingCode && (
+                  <small className={styles.loading}>
+                    <span className={styles.spinner}></span>
+                    Verificando código...
+                  </small>
+                )}
+                {codeError && !verifyingCode && <small className={styles.error}>{codeError}</small>}
+              </label>
+
+              <div className={styles.verificationActions}>
+                <button
+                  type="button"
+                  onClick={handleSendVerificationCode}
+                  className={styles.resendButton}
+                  disabled={sendingCode}
+                >
+                  {sendingCode ? "Reenviando..." : "Reenviar código"}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSubstep(1);
+                    setVerificationCode("");
+                    setCodeError(null);
+                  }}
+                  className={styles.changeEmailButton}
+                >
+                  Mudar email
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className={styles.successContainer}>
+              <svg
+                className={styles.checkmark}
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 52 52"
+              >
+                <circle
+                  className={styles.checkmarkCircle}
+                  cx="26"
+                  cy="26"
+                  r="25"
+                  fill="none"
+                />
+                <path
+                  className={styles.checkmarkCheck}
+                  fill="none"
+                  d="M14 27l7 7 16-16"
+                />
+              </svg>
+              <h3>Email verificado!</h3>
+              <p>Redirecionando para a próxima etapa...</p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

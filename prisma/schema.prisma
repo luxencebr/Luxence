@@ -83,6 +83,19 @@ model PasswordResetToken {
   @@index([userId])
 }
 
+model EmailVerificationToken {
+  id        Int      @id @default(autoincrement())
+
+  email     String   // email a ser verificado
+  token     String   // código de 6 dígitos hasheado (sha256)
+  expiresAt DateTime
+
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([token])
+}
+
 
 model Review {
   id          String   @id @default(cuid())

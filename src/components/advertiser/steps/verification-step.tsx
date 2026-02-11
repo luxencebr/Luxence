@@ -9,14 +9,31 @@ interface VerificationStepProps {
   formData: any;
   onUpdate: (data: any) => void;
   onValidate?: (isValid: boolean) => void;
+  // Controle de sub-etapas
+  substep?: number;
+  onSubstepChange?: (substep: number) => void;
 }
 
 export default function VerificationStep({
   formData,
   onUpdate,
   onValidate,
+  substep: externalSubstep,
+  onSubstepChange,
 }: VerificationStepProps) {
-  const [substep, setSubstep] = useState<1 | 2>(1);
+  const [substep, setSubstep] = useState<1 | 2>(externalSubstep as 1 | 2 || 1);
+  
+  // Sincronizar substep interno com externo
+  useEffect(() => {
+    if (externalSubstep && externalSubstep !== substep) {
+      setSubstep(externalSubstep as 1 | 2);
+    }
+  }, [externalSubstep]);
+
+  // Notificar mudanças de substep
+  useEffect(() => {
+    onSubstepChange?.(substep);
+  }, [substep, onSubstepChange]);
 
   // Previews - usa as URLs salvas no formData ou cria novas para Files
   const [previewFront, setPreviewFront] = useState<string | null>(null);
@@ -58,14 +75,7 @@ export default function VerificationStep({
     }
   };
 
-  // 👉 AUTO-AVANÇO PARA SUBETAPA 2
-  useEffect(() => {
-    if (formData.documentFrontFile && formData.documentBackFile) {
-      setSubstep(2);
-    }
-  }, [formData.documentFrontFile, formData.documentBackFile]);
-
-  // 👉 AUTO-FINALIZAR QUANDO A SELFIE FOR ENVIADA
+  // 👉 Validação quando a selfie for enviada
   useEffect(() => {
     if (formData.selfieWithDocumentFile) {
       onValidate?.(true);
@@ -96,49 +106,11 @@ export default function VerificationStep({
     substep,
   ]);
 
-  const goToSelfie = () => {
-    const hasFront = !!formData.documentFrontFile;
-    const hasBack = !!formData.documentBackFile;
-
-    if (!hasFront) setFrontError("Envie a frente do documento.");
-    if (!hasBack) setBackError("Envie o verso do documento.");
-
-    if (hasFront && hasBack) {
-      setSubstep(2);
-    }
-  };
-
-  const canAdvance =
-    !!formData.documentFrontFile && !!formData.documentBackFile;
-
   // -------------------- RENDERIZAÇÃO --------------------
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h2>
-          Verificação de Identidade
-          {substep === 2 ? (
-            <button
-              type="button"
-              className={styles.backButton}
-              onClick={() => setSubstep(1)}
-            >
-              Voltar
-            </button>
-          ) : (
-            <button
-              type="button"
-              className={`${styles.backButton} ${
-                !canAdvance ? styles.disable : ""
-              }`}
-              onClick={goToSelfie}
-              disabled={!canAdvance}
-            >
-              Próximo
-            </button>
-          )}
-        </h2>
-
+        <h2>Verificação de Identidade</h2>
         <p>
           {substep === 1
             ? "Envie fotos nítidas da frente e verso do seu documento."

@@ -231,3 +231,140 @@
     grid-template-columns: 1fr;
   }
 }
+
+.backButton {
+  background: var(--primary-color);
+  color: var(--background-color);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  margin-left: auto;
+}
+
+.backButton:hover:not(.disable) {
+  opacity: 0.8;
+}
+
+.backButton.disable {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.verificationInfo {
+  padding: 16px;
+  background: var(--background-color);
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-color);
+  margin-bottom: 16px;
+}
+
+.verificationInfo p {
+  color: var(--contrast-color);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.verificationInfo strong {
+  color: var(--primary-color);
+}
+
+.verificationActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.resendButton {
+  flex: 1;
+  padding: 10px;
+  background: transparent;
+  color: var(--primary-color);
+  border: 1.5px solid var(--primary-color);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.resendButton:hover:not(:disabled) {
+  background: var(--primary-color);
+  color: var(--background-color);
+}
+
+.resendButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.changeEmailButton {
+  flex: 1;
+  padding: 10px;
+  background: transparent;
+  color: var(--contrast-complementary-color);
+  border: 1.5px solid var(--contrast-complementary-color);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.changeEmailButton:hover {
+  background: var(--background-color);
+  border-color: var(--contrast-color);
+  color: var(--contrast-color);
+}
+
+.successContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.checkmark {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 20px;
+}
+
+.checkmarkCircle {
+  stroke: var(--primary-color);
+  stroke-width: 2;
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.checkmarkCheck {
+  stroke: var(--primary-color);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.6s forwards;
+}
+
+@keyframes stroke {
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.successContainer h3 {
+  color: var(--primary-color);
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+}
+
+.successContainer p {
+  color: var(--contrast-complementary-color);
+  font-size: 14px;
+}
