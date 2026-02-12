@@ -55,7 +55,6 @@ const DEFAULT_SLOGANS = [
 
 function Product({ producer, variant }: ProductProps) {
   const name = producer.name || "Perfil sem nome";
-  const age = calculateAge(producer.birthday);
   const city = producer.user?.locality?.city || "";
   const neighborhood = producer.user?.locality?.neighborhood || "";
   const slogan =
@@ -128,12 +127,6 @@ function Product({ producer, variant }: ProductProps) {
               </div>
             )}
 
-            <span className={styles.defaultInfo}>
-              <span>
-                <BiIdCard />
-              </span>
-              {age} anos
-            </span>
             <span className={styles.defaultInfo}>
               {hasLocal ? (
                 <>
