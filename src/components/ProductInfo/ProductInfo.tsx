@@ -282,62 +282,65 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
       <div className={styles.layout} ref={contentRef}>
         <div className={styles.productHeader}>
           <div className={styles.productHighlight}>
-            <div className={`${styles.editable} ${styles.name}`}>
-              {isEditingName ? (
-                <div className={styles.editableEdit}>
-                  <input
-                    ref={nameInputRef}
-                    className={styles.editableInput}
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    disabled={isSavingName}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        !isSavingName && handleSaveName();
-                      }
-                      if (e.key === "Escape") {
-                        e.preventDefault();
-                        handleCancelName();
-                      }
-                    }}
-                  />
+            <div className={styles.nameAndViews}>
+              <div className={`${styles.editable} ${styles.name}`} data-field="producer-name">
+                {isEditingName ? (
+                  <div className={styles.editableEdit}>
+                    <input
+                      ref={nameInputRef}
+                      className={styles.editableInput}
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      disabled={isSavingName}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          !isSavingName && handleSaveName();
+                        }
+                        if (e.key === "Escape") {
+                          e.preventDefault();
+                          handleCancelName();
+                        }
+                      }}
+                    />
 
-                  {isSavingName ? (
-                    <div className={styles.loader} />
-                  ) : (
-                    <div className={styles.editActions}>
-                      <button
-                        type="button"
-                        className={styles.editableSave}
-                        onClick={handleSaveName}
-                        disabled={isSavingName}
-                        title="Salvar"
-                      >
-                        <IoCheckmark />
-                      </button>
+                    {isSavingName ? (
+                      <div className={styles.loader} />
+                    ) : (
+                      <div className={styles.editActions}>
+                        <button
+                          type="button"
+                          className={styles.editableSave}
+                          onClick={handleSaveName}
+                          disabled={isSavingName}
+                          title="Salvar"
+                        >
+                          <IoCheckmark />
+                        </button>
 
-                      <button
-                        type="button"
-                        className={styles.editableCancel}
-                        onClick={handleCancelName}
-                        title="Cancelar"
-                      >
-                        <IoClose />
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <h1
-                  className={styles.editableValue}
-                  onClick={canEdit ? handleEditName : undefined}
-                >
-                  {name || "Perfil sem nome"}
-                  {canEdit && <HiOutlinePencil className={styles.editIcon} />}
-                </h1>
-              )}
+                        <button
+                          type="button"
+                          className={styles.editableCancel}
+                          onClick={handleCancelName}
+                          title="Cancelar"
+                        >
+                          <IoClose />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <h1
+                    className={styles.editableValue}
+                    onClick={canEdit ? handleEditName : undefined}
+                  >
+                    {name || "Perfil sem nome"}
+                    {canEdit && <HiOutlinePencil className={styles.editIcon} />}
+                  </h1>
+                )}
+              </div>
+              
               <div className={styles.weeklyViews}>
                 <FaEye />
                 <strong>{localProducer.profile.views}</strong>
@@ -543,8 +546,8 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
           </button>
         </div>
 
-        <div className={styles.contactsLayout}>
-          {contacts.map((contact) => {
+        <div className={styles.contactsLayout} data-field="producer-contacts">
+          {contacts.map((contact, index) => {
             const key = contact.option.name as keyof typeof CONTACT_CONFIG;
             const config = CONTACT_CONFIG[key];
 
@@ -562,6 +565,8 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                   triggerClass={`${styles.contactButton} ${config.className} ${
                     isActive ? styles.active : styles.disabled
                   }`}
+                  triggerDataField={`producer-contact-${key}`}
+                  triggerDataIndex={index}
                   popupClass={styles.popup}
                   isOpen={editingContact === key}
                   onOpenChange={(open) => {

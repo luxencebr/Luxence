@@ -59,7 +59,7 @@ export async function verifyProfileCompletion(
     hasImages: Array.isArray(producer.profile.images) && producer.profile.images.length > 0,
     hasPrices: producer.profile.prices.length > 0 && producer.profile.payments.length > 0,
     hasLanguages: Array.isArray(producer.profile.languages) && producer.profile.languages.length > 0,
-    hasAudience: producer.profile.audience.length > 0,
+    hasAudience: producer.profile.audience.some(a => a.status === "yes"),
     hasContacts: producer.profile.contacts.some(contact => 
       contact.value && contact.value.trim().length > 0
     ),

@@ -10,6 +10,8 @@ interface PopupProps {
   popupClass?: string;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  triggerDataField?: string;
+  triggerDataIndex?: number;
 }
 
 export default function Popup({
@@ -19,6 +21,8 @@ export default function Popup({
   popupClass,
   isOpen,
   onOpenChange,
+  triggerDataField,
+  triggerDataIndex,
 }: PopupProps) {
   useEffect(() => {
     if (isOpen) {
@@ -51,6 +55,8 @@ export default function Popup({
       <div
         onClick={() => onOpenChange(!isOpen)}
         className={`${styles.trigger} ${triggerClass || ""}`}
+        data-field={triggerDataField}
+        data-index={triggerDataIndex}
       >
         {trigger}
       </div>

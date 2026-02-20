@@ -24,15 +24,15 @@ interface StepItem {
 
 const STEPS: StepItem[] = [
   {
-    id: "Nome",
-    title: "Nome",
-    description: "Adicione seu nome profissional que será exibido no catálogo",
-    anchor: "showcase",
-  },
-  {
     id: "Ao menos 1 imagem",
     title: "Imagem",
     description: "Adicione pelo menos uma foto para atrair mais visualizações",
+    anchor: "showcase",
+  },
+  {
+    id: "Nome",
+    title: "Nome",
+    description: "Adicione seu nome profissional que será exibido no catálogo",
     anchor: "showcase",
   },
   {
@@ -61,6 +61,30 @@ const STEPS: StepItem[] = [
   },
 ];
 
+// Mapeamento de campos para seletores de destaque
+const FIELD_SELECTORS: Record<string, string | string[]> = {
+  "Nome": "[data-field='producer-name']",
+  "Ao menos 1 imagem": "[data-field='producer-images']",
+  "Ao menos 1 contato": "[data-field='producer-contacts']",
+  "Público que atende": "[data-field='producer-audience']",
+  "Idiomas falados": "[data-field='producer-languages']",
+  "Ao menos 1 preço e forma de pagamento": "[data-field='producer-values']",
+};
+
+// Mapeamento específico para animações (pode ser diferente do destaque)
+const ANIMATION_SELECTORS: Record<string, string | string[]> = {
+  "Nome": "[data-field='producer-name']",
+  "Ao menos 1 imagem": "[data-field='producer-images']",
+  "Ao menos 1 contato": [
+    "[data-field='producer-contact-whatsapp']",
+    "[data-field='producer-contact-telegram']",
+    "[data-field='producer-contact-instagram']"
+  ],
+  "Público que atende": "[data-field='producer-audience']",
+  "Idiomas falados": "[data-field='producer-languages']",
+  "Ao menos 1 preço e forma de pagamento": "[data-field='producer-values']",
+};
+
 export default function ProfileCompletionChecklist({
   producerId,
   onComplete,
@@ -81,10 +105,23 @@ export default function ProfileCompletionChecklist({
       }, 800);
     };
 
+    // Remove destaque quando o usuário interagir com campos
+    const handleFieldInteraction = (e: Event) => {
+      const target = e.target as HTMLElement;
+      const field = target.closest('[data-field]');
+      if (field && field.classList.contains('field-incomplete')) {
+        field.classList.remove('field-incomplete');
+      }
+    };
+
     window.addEventListener('profileUpdated', handleProfileUpdate);
+    document.addEventListener('click', handleFieldInteraction);
+    document.addEventListener('focus', handleFieldInteraction, true);
 
     return () => {
       window.removeEventListener('profileUpdated', handleProfileUpdate);
+      document.removeEventListener('click', handleFieldInteraction);
+      document.removeEventListener('focus', handleFieldInteraction, true);
       clearTimeout(debounceTimer);
     };
   }, [producerId]);
@@ -104,6 +141,9 @@ export default function ProfileCompletionChecklist({
       if (data.isComplete && onComplete) {
         onComplete();
       }
+
+      // Aplica classes de destaque aos campos incompletos
+      applyIncompleteFieldsHighlight(data.missingFields);
     } catch (error) {
       console.error("Erro ao buscar status de verificação:", error);
     } finally {
@@ -114,14 +154,105 @@ export default function ProfileCompletionChecklist({
     }
   }, [producerId, onComplete]);
 
-  const handleStepClick = useCallback((anchor: string) => {
+  const applyIncompleteFieldsHighlight = useCallback((missingFields: string[]) => {
+    // Remove todas as classes de destaque primeiro
+    document.querySelectorAll('[data-field]').forEach(el => {
+      el.classList.remove('field-incomplete');
+    });
+
+    // Aplica destaque apenas aos campos incompletos
+    missingFields.forEach(fieldId => {
+      const selector = FIELD_SELECTORS[fieldId];
+      
+      if (selector) {
+        if (Array.isArray(selector)) {
+          // Para arrays (contatos), aplica em todos
+          selector.forEach(sel => {
+            const field = document.querySelector(sel);
+            if (field) {
+              field.classList.add('field-incomplete');
+            }
+          });
+        } else {
+          // Seletor único
+          const field = document.querySelector(selector);
+          if (field) {
+            field.classList.add('field-incomplete');
+          }
+        }
+      }
+    });
+  }, []);
+
+  const handleStepClick = useCallback((anchor: string, stepId: string) => {
     const element = document.getElementById(anchor);
-    if (element) {
-      element.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-    }
+    if (!element) return;
+
+    // Remove apenas a animação de outros campos
+    document.querySelectorAll('[data-field]').forEach(el => {
+      el.classList.remove('field-bounce');
+    });
+
+    // Inicia o scroll
+    element.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+
+    // Detecta quando o scroll termina
+    let scrollTimeout: NodeJS.Timeout;
+    let lastScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    
+    const checkScrollEnd = () => {
+      const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      
+      // Se a posição mudou, continua verificando
+      if (currentScrollTop !== lastScrollTop) {
+        lastScrollTop = currentScrollTop;
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(checkScrollEnd, 50);
+      } else {
+        // Scroll parou, aplica a animação
+        applyAnimation();
+      }
+    };
+
+    const applyAnimation = () => {
+      const selector = ANIMATION_SELECTORS[stepId];
+      
+      if (selector) {
+        // Se for um array de seletores (contatos), aplica com delay
+        if (Array.isArray(selector)) {
+          selector.forEach((sel, index) => {
+            const field = document.querySelector(sel);
+            if (field) {
+              setTimeout(() => {
+                field.classList.add('field-bounce');
+                
+                // Remove a animação após completar
+                setTimeout(() => {
+                  field.classList.remove('field-bounce');
+                }, 600);
+              }, index * 100); // Delay de 100ms entre cada item
+            }
+          });
+        } else {
+          // Seletor único
+          const field = document.querySelector(selector);
+          if (field) {
+            field.classList.add('field-bounce');
+            
+            // Remove a animação após completar
+            setTimeout(() => {
+              field.classList.remove('field-bounce');
+            }, 600);
+          }
+        }
+      }
+    };
+
+    // Inicia a verificação após um pequeno delay
+    scrollTimeout = setTimeout(checkScrollEnd, 100);
   }, []);
 
   const isStepComplete = useCallback((stepId: string): boolean => {
@@ -178,7 +309,7 @@ export default function ProfileCompletionChecklist({
             <button
               key={step.id}
               className={`${styles.step} ${isComplete ? styles.stepComplete : styles.stepIncomplete}`}
-              onClick={() => !isComplete && handleStepClick(step.anchor)}
+              onClick={() => !isComplete && handleStepClick(step.anchor, step.id)}
               disabled={isComplete}
               type="button"
               title={step.description}

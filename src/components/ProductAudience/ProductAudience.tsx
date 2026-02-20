@@ -79,6 +79,14 @@ function ProductAudience({ producer, canEdit }: ProductAudienceProps) {
   };
 
   const handleSave = async () => {
+    // Validação: pelo menos um público deve estar com status "yes"
+    const hasAtLeastOneYes = audience.some((a) => a.status === "yes");
+    
+    if (!hasAtLeastOneYes) {
+      alert("Você precisa selecionar pelo menos um tipo de público que atende.");
+      return;
+    }
+
     setIsSaving(true);
 
     const payload = {
@@ -209,7 +217,7 @@ function ProductAudience({ producer, canEdit }: ProductAudienceProps) {
         </div>
       ) : (
         <div className={styles.grid}>
-          <div className={styles.card}>
+          <div className={styles.card} data-field="producer-audience">
             <div className={styles.cardHeader}>
               <BsPeople className={styles.icon} />
               <h3 className={styles.cardTitle}>Público</h3>
@@ -315,7 +323,7 @@ function ProductAudience({ producer, canEdit }: ProductAudienceProps) {
             )}
           </div>
 
-          <div className={styles.card}>
+          <div className={styles.card} data-field="producer-languages">
             <div className={styles.cardHeader}>
               <Languages className={styles.icon} />
               <h3 className={styles.cardTitle}>Idiomas</h3>

@@ -157,7 +157,7 @@ function ProductValues({ producer, canEdit }: ProductValuesProps) {
   });
 
   return (
-    <section id="values" className={styles.producerValues}>
+    <section id="values" className={styles.producerValues} data-field="producer-values">
       <div className={styles.layout}>
         <div className={styles.header}>
           <h2>

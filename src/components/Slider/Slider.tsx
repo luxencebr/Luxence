@@ -216,7 +216,7 @@ export default function Slider({
     <>
       {images.length === 0 ? (
         canEdit ? (
-          <section className={styles.slider}>
+          <section className={styles.slider} data-field="producer-images">
             <div className={styles.emptyState}>
               <label
                 htmlFor="addImageInput"
@@ -247,14 +247,14 @@ export default function Slider({
             </div>
           </section>
         ) : (
-          <section className={styles.slider}>
+          <section className={styles.slider} data-field="producer-images">
             <div className={styles.noImages}>
               <span>Perfil sem imagens...</span>
             </div>
           </section>
         )
       ) : (
-        <section className={styles.slider}>
+        <section className={styles.slider} data-field="producer-images">
           <div
             className={styles.sliderContainer}
             onTouchStart={handleTouchStart}
