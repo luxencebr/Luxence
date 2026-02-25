@@ -88,6 +88,11 @@ export interface ActiveFilters {
     silicone_busto?: ("sim" | "não")[];
     silicone_quadril?: ("sim" | "não")[];
   };
+
+  doteRange?: {
+    min?: number;
+    max?: number;
+  };
 }
 
 function getAge(birthday: Date) {
@@ -134,6 +139,9 @@ export function extractFilterOptions(producers: Producer[]) {
   let minAge = Number.POSITIVE_INFINITY;
   let maxAge = 0;
 
+  let minDote = Number.POSITIVE_INFINITY;
+  let maxDote = 0;
+
   producers.forEach((p) => {
     const profile = p.profile;
     if (!profile) return;
@@ -172,7 +180,14 @@ export function extractFilterOptions(producers: Producer[]) {
       const key = a.option.name as keyof typeof appearanceOptions;
       const target = appearanceOptions[key];
 
-      if (!target) return;
+      if (!target) {
+        // Tratar dote separadamente
+        if (a.option.name === "dote" && typeof a.valueNumber === "number" && a.valueNumber > 0) {
+          minDote = Math.min(minDote, a.valueNumber);
+          maxDote = Math.max(maxDote, a.valueNumber);
+        }
+        return;
+      }
 
       if (typeof a.valueBoolean === "boolean") {
         target.add(a.valueBoolean ? "sim" : "não");
@@ -239,6 +254,10 @@ export function extractFilterOptions(producers: Producer[]) {
       minPrice !== Number.POSITIVE_INFINITY
         ? { min: minPrice, max: maxPrice }
         : null,
+    doteRange:
+      minDote !== Number.POSITIVE_INFINITY
+        ? { min: minDote, max: maxDote }
+        : null,
   };
 }
 
@@ -255,10 +274,13 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
 
   const [ageValues, setAgeValues] = useState<[number, number]>([0, 0]);
   const [priceValues, setPriceValues] = useState<[number, number]>([0, 0]);
+  const [doteValues, setDoteValues] = useState<[number, number]>([0, 0]);
   const [inputMinAge, setInputMinAge] = useState("");
   const [inputMaxAge, setInputMaxAge] = useState("");
   const [inputMinPrice, setInputMinPrice] = useState("");
   const [inputMaxPrice, setInputMaxPrice] = useState("");
+  const [inputMinDote, setInputMinDote] = useState("");
+  const [inputMaxDote, setInputMaxDote] = useState("");
 
   // Sync age range with options on mount
   useEffect(() => {
@@ -279,6 +301,16 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
       setInputMaxPrice(String(max));
     }
   }, [options.priceRange]);
+
+  // Sync dote range with options on mount
+  useEffect(() => {
+    if (options.doteRange) {
+      const { min, max } = options.doteRange;
+      setDoteValues([min, max]);
+      setInputMinDote(String(min));
+      setInputMaxDote(String(max));
+    }
+  }, [options.doteRange]);
 
   // Sync local state with applied filters when popup opens
   useEffect(() => {
@@ -311,8 +343,21 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
         setInputMinPrice(String(options.priceRange.min));
         setInputMaxPrice(String(options.priceRange.max));
       }
+
+      if (appliedFilters.doteRange) {
+        setDoteValues([
+          appliedFilters.doteRange.min ?? options.doteRange?.min ?? 0,
+          appliedFilters.doteRange.max ?? options.doteRange?.max ?? 0
+        ]);
+        setInputMinDote(String(appliedFilters.doteRange.min ?? options.doteRange?.min ?? 0));
+        setInputMaxDote(String(appliedFilters.doteRange.max ?? options.doteRange?.max ?? 0));
+      } else if (options.doteRange) {
+        setDoteValues([options.doteRange.min, options.doteRange.max]);
+        setInputMinDote(String(options.doteRange.min));
+        setInputMaxDote(String(options.doteRange.max));
+      }
     }
-  }, [isOpen, appliedFilters, options.ageRange, options.priceRange]);
+  }, [isOpen, appliedFilters, options.ageRange, options.priceRange, options.doteRange]);
 
   function toggleAppearanceOption(
     key: keyof NonNullable<ActiveFilters["appearance"]>,
@@ -677,6 +722,142 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
     }
   }
 
+  function DoteRange() {
+    if (!options.doteRange) return null;
+
+    const { min, max } = options.doteRange;
+
+    function commitMin() {
+      const v = Number(inputMinDote);
+
+      if (isNaN(v)) {
+        setInputMinDote(String(doteValues[0]));
+        return;
+      }
+
+      const clamped = Math.min(Math.max(v, min), doteValues[1]);
+      setDoteValues([clamped, doteValues[1]]);
+      setInputMinDote(String(clamped));
+      
+      setFilters((prev) => ({
+        ...prev,
+        doteRange: {
+          min: clamped,
+          max: doteValues[1],
+        },
+      }));
+    }
+
+    function commitMax() {
+      const v = Number(inputMaxDote);
+
+      if (isNaN(v)) {
+        setInputMaxDote(String(doteValues[1]));
+        return;
+      }
+
+      const clamped = Math.max(Math.min(v, max), doteValues[0]);
+      setDoteValues([doteValues[0], clamped]);
+      setInputMaxDote(String(clamped));
+      
+      setFilters((prev) => ({
+        ...prev,
+        doteRange: {
+          min: doteValues[0],
+          max: clamped,
+        },
+      }));
+    }
+
+    if (min != max) {
+      return (
+        <section className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <h4>Dote (cm)</h4>
+          </div>
+          <div className={styles.range}>
+            <div className={styles.inputs}>
+              <input
+                type="number"
+                value={inputMinDote}
+                onChange={(e) => setInputMinDote(e.target.value)}
+                onBlur={commitMin}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    commitMin();
+                    e.currentTarget.blur();
+                  }
+                }}
+              />
+
+              <input
+                type="number"
+                value={inputMaxDote}
+                onChange={(e) => setInputMaxDote(e.target.value)}
+                onBlur={commitMax}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    commitMax();
+                    e.currentTarget.blur();
+                  }
+                }}
+              />
+            </div>
+            <Range
+              step={1}
+              min={min}
+              max={max}
+              values={[
+                Math.max(doteValues[0], min),
+                Math.min(doteValues[1], max),
+              ]}
+              onChange={(vals) => {
+                setDoteValues(vals as [number, number]);
+                setInputMinDote(String(vals[0]));
+                setInputMaxDote(String(vals[1]));
+              }}
+              renderTrack={({ props, children }) => (
+                <div
+                  {...props}
+                  style={{
+                    ...props.style,
+                    height: "6px",
+                    width: "100%",
+                    backgroundColor: "var(--contrast-color)",
+                    borderRadius: "3px",
+                  }}
+                >
+                  {children}
+                </div>
+              )}
+              renderThumb={({ props }) => {
+                const { key, ...rest } = props;
+
+                return (
+                  <div
+                    key={key}
+                    {...rest}
+                    className={styles.rangeThumb}
+                    style={{
+                      ...rest.style,
+                      height: "20px",
+                      width: "20px",
+                      borderRadius: "50%",
+                      backgroundColor: "var(--primary-color)",
+                      boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+                    }}
+                  />
+                );
+              }}
+            />
+          </div>
+        </section>
+      );
+    }
+  }
+
   const APPEARANCE_KEYS = [
     "ethnicity",
     "hair_color",
@@ -723,6 +904,9 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
               count++;
             }
             if (appliedFilters.priceRange && (appliedFilters.priceRange.min !== options.priceRange?.min || appliedFilters.priceRange.max !== options.priceRange?.max)) {
+              count++;
+            }
+            if (appliedFilters.doteRange && (appliedFilters.doteRange.min !== options.doteRange?.min || appliedFilters.doteRange.max !== options.doteRange?.max)) {
               count++;
             }
             
@@ -854,6 +1038,8 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
 
         <PriceRange />
 
+        <DoteRange />
+
         <CheckboxList
           title="Pagamentos"
           options={options.payments.map((p) => ({
@@ -885,6 +1071,12 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
               setInputMinPrice(String(options.priceRange.min));
               setInputMaxPrice(String(options.priceRange.max));
             }
+
+            if (options.doteRange) {
+              setDoteValues([options.doteRange.min, options.doteRange.max]);
+              setInputMinDote(String(options.doteRange.min));
+              setInputMaxDote(String(options.doteRange.max));
+            }
             
             onApply(cleared);
             setIsOpen(false);
@@ -914,6 +1106,14 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
               finalFilters.priceRange = {
                 min: priceValues[0],
                 max: priceValues[1],
+              };
+            }
+
+            // Add dote range if it's different from defaults
+            if (options.doteRange && (doteValues[0] !== options.doteRange.min || doteValues[1] !== options.doteRange.max)) {
+              finalFilters.doteRange = {
+                min: doteValues[0],
+                max: doteValues[1],
               };
             }
             

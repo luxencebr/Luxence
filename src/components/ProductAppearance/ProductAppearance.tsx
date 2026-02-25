@@ -85,6 +85,8 @@ export default function ProductAppearance({
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
+  const gender = producer.user.gender;
+
   const APPEARANCE_OPTIONS = [
     {
       id: 1,
@@ -170,12 +172,29 @@ export default function ProductAppearance({
       label: "Silicone no Quadril",
       valueType: APPEARANCE_VALUE_TYPE.BOOLEAN,
     },
+    {
+      id: 15,
+      name: "dote",
+      label: "Dote (cm)",
+      valueType: APPEARANCE_VALUE_TYPE.NUMBER,
+    },
   ];
 
   // IDs que não serão renderizados separadamente (serão exibidos junto com outro campo)
   const HIDDEN_IDS = [13, 14]; // silicone_busto e silicone_quadril
 
-  const initialStates: AppearanceState[] = APPEARANCE_OPTIONS.map((opt) => {
+  // Filtrar opções baseado no gênero
+  const filteredOptions = APPEARANCE_OPTIONS.filter((opt) => {
+    // breast_size (8): não mostrar para MALE
+    if (opt.id === 8 && gender === "MALE") return false;
+    
+    // dote (15): não mostrar para FEMALE
+    if (opt.id === 15 && gender === "FEMALE") return false;
+    
+    return true;
+  });
+
+  const initialStates: AppearanceState[] = filteredOptions.map((opt) => {
     const found = producer.profile.appearance?.find(
       (a) => a.option.id === opt.id
     );
@@ -365,7 +384,16 @@ export default function ProductAppearance({
         <div className={styles.content}>
           <ul className={styles.list}>
             {appearance
-              .filter((a) => !HIDDEN_IDS.includes(a.id))
+              .filter((a) => {
+                // Filtrar IDs ocultos (silicone)
+                if (HIDDEN_IDS.includes(a.id)) return false;
+                
+                // Filtrar breast_size para MALE e dote para FEMALE
+                if (a.id === 8 && gender === "MALE") return false;
+                if (a.id === 15 && gender === "FEMALE") return false;
+                
+                return true;
+              })
               .map((a) => (
                 <li key={a.id} className={styles.item}>
                   <div className={styles.itemContent}>
@@ -455,14 +483,31 @@ export default function ProductAppearance({
                             type="number"
                             className={styles.number}
                             value={typeof a.value === "number" ? a.value : ""}
-                            onChange={(e) =>
-                              updateAppearanceValue(
-                                a.id,
-                                e.target.value === ""
-                                  ? null
-                                  : Number(e.target.value)
-                              )
-                            }
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              
+                              // Validação especial para dote (id 15)
+                              if (a.id === 15) {
+                                if (val === "") {
+                                  updateAppearanceValue(a.id, null);
+                                  return;
+                                }
+                                
+                                const num = Number(val);
+                                // Limitar entre 0 e 99, máximo 2 caracteres
+                                if (num >= 0 && num <= 99 && val.length <= 2) {
+                                  updateAppearanceValue(a.id, num);
+                                }
+                              } else {
+                                updateAppearanceValue(
+                                  a.id,
+                                  val === "" ? null : Number(val)
+                                );
+                              }
+                            }}
+                            min={a.id === 15 ? 0 : undefined}
+                            max={a.id === 15 ? 99 : undefined}
+                            maxLength={a.id === 15 ? 2 : undefined}
                           />
                         )}
 

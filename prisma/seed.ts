@@ -92,6 +92,12 @@ const APPEARANCE_OPTIONS = [
     label: "Silicone no Quadril",
     valueType: APPEARANCE_VALUE_TYPE.BOOLEAN,
   },
+  {
+    id: 15,
+    name: "dote",
+    label: "Dote",
+    valueType: APPEARANCE_VALUE_TYPE.NUMBER,
+  },
 ];
 
 const LOCATIONS_OPTIONS = [

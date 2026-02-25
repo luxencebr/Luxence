@@ -178,6 +178,24 @@ function applyFilters(producers: Producer[], filters: ActiveFilters, options: Re
       }
     }
 
+    // 🔹 Dote
+    if (filters.doteRange && options.doteRange) {
+      const doteAppearance = profile.appearance?.find(
+        (a) => a.option.name === "dote"
+      );
+
+      if (!doteAppearance || typeof doteAppearance.valueNumber !== "number" || doteAppearance.valueNumber <= 0) {
+        return false;
+      }
+
+      const minDote = filters.doteRange.min ?? options.doteRange.min;
+      const maxDote = filters.doteRange.max ?? options.doteRange.max;
+
+      if (doteAppearance.valueNumber < minDote || doteAppearance.valueNumber > maxDote) {
+        return false;
+      }
+    }
+
     // 🔹 Audiência
     if (filters.audience?.length) {
       const ids = profile.audience?.map((a) => a.option.id) || [];

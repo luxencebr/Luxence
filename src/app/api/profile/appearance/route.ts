@@ -13,13 +13,25 @@ export async function POST(req: Request) {
       where: { profileId },
     });
 
-    const dataToCreate = appearance.map((a: any) => ({
-      profileId,
-      appearanceId: a.appearanceId,
-      valueBoolean: a.valueBoolean ?? null,
-      valueNumber: typeof a.valueNumber === "number" ? a.valueNumber : null,
-      valueString: typeof a.valueString === "string" ? a.valueString : null,
-    }));
+    const dataToCreate = appearance.map((a: any) => {
+      let valueNumber = typeof a.valueNumber === "number" ? a.valueNumber : null;
+      
+      // Validação especial para dote (appearanceId 15)
+      if (a.appearanceId === 15 && valueNumber !== null) {
+        // Desconsiderar valor zero ou fora do range 0-99
+        if (valueNumber <= 0 || valueNumber > 99) {
+          valueNumber = null;
+        }
+      }
+
+      return {
+        profileId,
+        appearanceId: a.appearanceId,
+        valueBoolean: a.valueBoolean ?? null,
+        valueNumber,
+        valueString: typeof a.valueString === "string" ? a.valueString : null,
+      };
+    });
 
     if (dataToCreate.length > 0) {
       await prisma.producerAppearance.createMany({
