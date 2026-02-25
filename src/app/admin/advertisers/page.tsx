@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import styles from "./advertisers.module.css";
-import { ArrowUpDown, Eye, User } from "lucide-react";
+import { ArrowUpDown, Eye, User, MessageCircle } from "lucide-react";
 import Dropdown from "@/components/ui/Dropdown/Dropdown";
 
 interface Advertiser {
@@ -177,6 +177,58 @@ export default function AdvertisersPage() {
       alert("Erro ao atualizar");
     } finally {
       setUpdating(null);
+    }
+  };
+
+  const sendWhatsAppMessage = async (advertiserId: number, phone: string, producerName: string) => {
+    try {
+      const response = await fetch(
+        `/api/admin/advertisers/profile-check?producerId=${advertiserId}`,
+      );
+
+      if (!response.ok) throw new Error("Falha ao verificar perfil");
+
+      const data = await response.json();
+
+      if (data.missing.length === 0) {
+        alert("Perfil está completo! Não há pendências.");
+        return;
+      }
+
+      // Dicas específicas para cada campo
+      const fieldTips: Record<string, string> = {
+        "Nome do perfil": "Preencha o nome artístico/profissional que aparecerá no seu perfil público. O campo para alteração fica logo abaixo das imagens do perfil, basta clicar sobre ele para editar.",
+        "Idade do perfil": "Informe sua idade (entre 18 e 99 anos) no campo específico do perfil. O campo para alteração fica logo ao lado no Nome.",
+        "Ao menos 1 imagem": "Adicione pelo menos uma foto ao seu perfil na seção de Imagens.",
+        "Ao menos 1 preço e forma de pagamento": "Cadastre seus valores e selecione as formas de pagamento aceitas.",
+        "Idiomas falados": "Selecione os idiomas que você fala na seção de Idiomas.",
+        "Público que atende": "Indique qual público você atende na seção de Público.",
+        "Ao menos 1 contato": "Na parte inferior da tela, você encontrará os ícones do WhatsApp, Telegram e Instagram. Ao clicar em cada um deles, é possível preencher o respectivo campo com suas informações.",
+      };
+
+      // Gerar mensagem
+      const firstName = producerName.split(" ")[0];
+      let message = `Olá, ${firstName}!\n\n`;
+      message += `Percebemos que você está com algumas pendências no seu perfil. Gostaríamos de ajudá-la(o) a completar o cadastro!\n\n`;
+      message += `Segue um breve passo a passo dos campos que ainda precisam ser preenchidos:\n\n`;
+
+      data.missing.forEach((item: string, index: number) => {
+        const tip = fieldTips[item] || "Preencha este campo no seu perfil.";
+        message += `*${index + 1}. ${item}*\n${tip}\n\n`;
+      });
+
+      message += `Caso ainda tenha dúvidas, ficamos à disposição para ajudar!\n\n`;
+      message += `A Luxence agradece sua confiança e preferência.`;
+
+      // Formatar telefone para WhatsApp (remover caracteres especiais)
+      const cleanPhone = phone.replace(/\D/g, "");
+
+      // Abrir WhatsApp Web - usar encodeURI para preservar emojis
+      const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURI(message)}`;
+      window.open(whatsappUrl, "_blank");
+    } catch (error) {
+      console.error("Erro ao gerar mensagem:", error);
+      alert("Erro ao gerar mensagem do WhatsApp");
     }
   };
 
@@ -575,6 +627,19 @@ export default function AdvertisersPage() {
                               title="Ver perfil"
                             >
                               <Eye size={16} />
+                            </button>
+                            <button
+                              className={styles.whatsappBtn}
+                              onClick={() =>
+                                sendWhatsAppMessage(
+                                  advertiser.id,
+                                  advertiser.phone,
+                                  advertiser.name,
+                                )
+                              }
+                              title="Enviar mensagem WhatsApp"
+                            >
+                              <MessageCircle size={16} />
                             </button>
                             <button
                               className={styles.detailBtn}

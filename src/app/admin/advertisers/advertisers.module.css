@@ -385,6 +385,7 @@
 }
 
 .viewBtn,
+.whatsappBtn,
 .detailBtn {
   background: var(--primary-color);
   border: none;
@@ -399,6 +400,7 @@
 }
 
 .viewBtn:hover,
+.whatsappBtn:hover,
 .detailBtn:hover {
   opacity: 0.8;
 }
@@ -407,6 +409,10 @@
   background: var(--light-complementary-color);
   cursor: not-allowed;
   opacity: 0.5;
+}
+
+.whatsappBtn {
+  background: #25d366;
 }
 
 .detailBtn {
