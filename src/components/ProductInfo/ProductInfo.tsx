@@ -64,11 +64,18 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
   const [atBottom, setAtBottom] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  const [name, setName] = useState(producer.name);
-  const [originalName, setOriginalName] = useState(producer.name);
+  const [name, setName] = useState(producer.profile.name || producer.name);
+  const [originalName, setOriginalName] = useState(producer.profile.name || producer.name);
   const [isEditingName, setIsEditingName] = useState(false);
   const [isSavingName, setIsSavingName] = useState(false);
   const nameInputRef = useRef<HTMLInputElement | null>(null);
+
+  const [age, setAge] = useState(producer.profile.age?.toString() || "");
+  const [originalAge, setOriginalAge] = useState(producer.profile.age?.toString() || "");
+  const [isEditingAge, setIsEditingAge] = useState(false);
+  const [isSavingAge, setIsSavingAge] = useState(false);
+  const [ageError, setAgeError] = useState<string | null>(null);
+  const ageInputRef = useRef<HTMLInputElement | null>(null);
 
   type ContactKey = "whatsapp" | "telegram" | "instagram";
   const [editingContact, setEditingContact] = useState<
@@ -107,8 +114,10 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
   useEffect(() => {
     // Atualiza dados locais quando o producer prop mudar
     setLocalProducer(producer);
-    setName(producer.name);
-    setOriginalName(producer.name);
+    setName(producer.profile.name || producer.name);
+    setOriginalName(producer.profile.name || producer.name);
+    setAge(producer.profile.age?.toString() || "");
+    setOriginalAge(producer.profile.age?.toString() || "");
     setContacts(producer.profile.contacts || []);
   }, [producer]);
 
@@ -130,6 +139,12 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
       nameInputRef.current?.focus();
     }
   }, [isEditingName]);
+
+  useEffect(() => {
+    if (isEditingAge) {
+      ageInputRef.current?.focus();
+    }
+  }, [isEditingAge]);
 
   useEffect(() => {
     if (isEditingSlogan) {
@@ -155,7 +170,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          producerId: producer.id,
+          profileId: producer.profile.id,
           name,
         }),
       });
@@ -171,6 +186,64 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
       setName(originalName);
     } finally {
       setIsSavingName(false);
+    }
+  };
+
+  const handleEditAge = () => {
+    setOriginalAge(age);
+    setAgeError(null);
+    setIsEditingAge(true);
+  };
+
+  const handleCancelAge = () => {
+    setAge(originalAge);
+    setAgeError(null);
+    setIsEditingAge(false);
+  };
+
+  const handleSaveAge = async () => {
+    try {
+      // Valida antes de salvar
+      if (age) {
+        const numValue = parseInt(age);
+        if (isNaN(numValue)) {
+          setAgeError("Digite um número válido");
+          return;
+        }
+        if (numValue < 18) {
+          setAgeError("Idade mínima: 18 anos");
+          return;
+        }
+        if (numValue > 99) {
+          setAgeError("Idade máxima: 99 anos");
+          return;
+        }
+      }
+
+      setAgeError(null);
+      setIsSavingAge(true);
+
+      const res = await fetch("/api/profile/showcase/age", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          profileId: producer.profile.id,
+          age: age ? parseInt(age) : null,
+        }),
+      });
+
+      if (!res.ok) throw new Error();
+
+      setOriginalAge(age);
+      setIsEditingAge(false);
+      
+      // Dispara evento de atualização
+      dispatchProfileUpdateEvent();
+    } catch {
+      setAge(originalAge);
+      setAgeError("Erro ao salvar. Tente novamente.");
+    } finally {
+      setIsSavingAge(false);
     }
   };
 
@@ -283,63 +356,156 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
         <div className={styles.productHeader}>
           <div className={styles.productHighlight}>
             <div className={styles.nameAndViews}>
-              <div className={`${styles.editable} ${styles.name}`} data-field="producer-name">
-                {isEditingName ? (
-                  <div className={styles.editableEdit}>
-                    <input
-                      ref={nameInputRef}
-                      className={styles.editableInput}
-                      type="text"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      disabled={isSavingName}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          !isSavingName && handleSaveName();
-                        }
-                        if (e.key === "Escape") {
-                          e.preventDefault();
-                          handleCancelName();
-                        }
-                      }}
-                    />
+              <p className={styles.nameAgeContainer}>
+                <span className={`${styles.editable} ${styles.nameSpan}`} data-field="producer-name">
+                  {isEditingName ? (
+                    <span className={styles.editableEdit}>
+                      <input
+                        ref={nameInputRef}
+                        className={styles.editableInput}
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        disabled={isSavingName}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            !isSavingName && handleSaveName();
+                          }
+                          if (e.key === "Escape") {
+                            e.preventDefault();
+                            handleCancelName();
+                          }
+                        }}
+                      />
 
-                    {isSavingName ? (
-                      <div className={styles.loader} />
-                    ) : (
-                      <div className={styles.editActions}>
-                        <button
-                          type="button"
-                          className={styles.editableSave}
-                          onClick={handleSaveName}
-                          disabled={isSavingName}
-                          title="Salvar"
-                        >
-                          <IoCheckmark />
-                        </button>
+                      {isSavingName ? (
+                        <div className={styles.loader} />
+                      ) : (
+                        <span className={styles.editActions}>
+                          <button
+                            type="button"
+                            className={styles.editableSave}
+                            onClick={handleSaveName}
+                            disabled={isSavingName}
+                            title="Salvar"
+                          >
+                            <IoCheckmark />
+                          </button>
 
-                        <button
-                          type="button"
-                          className={styles.editableCancel}
-                          onClick={handleCancelName}
-                          title="Cancelar"
+                          <button
+                            type="button"
+                            className={styles.editableCancel}
+                            onClick={handleCancelName}
+                            title="Cancelar"
+                          >
+                            <IoClose />
+                          </button>
+                        </span>
+                      )}
+                    </span>
+                  ) : (
+                    <span
+                      className={styles.editableValue}
+                      onClick={canEdit ? handleEditName : undefined}
+                    >
+                      {name || "Adicionar Nome"}
+                      {canEdit && <HiOutlinePencil className={styles.editIcon} />}
+                    </span>
+                  )}
+                </span>
+                {(age || canEdit) && (
+                  <>
+                    <span className={styles.separator}>, </span>
+                    <span className={`${styles.editable} ${styles.ageSpan}`} data-field="producer-age">
+                      {isEditingAge ? (
+                        <span className={styles.editableEdit}>
+                          <div className={styles.ageInputWrapper}>
+                            <input
+                              ref={ageInputRef}
+                              className={`${styles.editableInput} ${ageError ? styles.inputError : ''}`}
+                              type="number"
+                              value={age}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                // Limita a 2 caracteres
+                                if (value.length <= 2) {
+                                  setAge(value);
+                                  setAgeError(null);
+                                }
+                              }}
+                              disabled={isSavingAge}
+                              placeholder="18"
+                              min="18"
+                              max="99"
+                              maxLength={2}
+                              onBlur={(e) => {
+                                // Valida ao sair do campo
+                                const numValue = parseInt(e.target.value);
+                                if (e.target.value) {
+                                  if (isNaN(numValue)) {
+                                    setAgeError("Número inválido");
+                                  } else if (numValue < 18) {
+                                    setAgeError("Mínimo: 18 anos");
+                                  } else if (numValue > 99) {
+                                    setAgeError("Máximo: 99 anos");
+                                  }
+                                }
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                  !isSavingAge && handleSaveAge();
+                                }
+                                if (e.key === "Escape") {
+                                  e.preventDefault();
+                                  handleCancelAge();
+                                }
+                              }}
+                            />
+                            {ageError && (
+                              <span className={styles.errorMessage}>{ageError}</span>
+                            )}
+                          </div>
+
+                          {isSavingAge ? (
+                            <div className={styles.loader} />
+                          ) : (
+                            <span className={styles.editActions}>
+                              <button
+                                type="button"
+                                className={styles.editableSave}
+                                onClick={handleSaveAge}
+                                disabled={isSavingAge}
+                                title="Salvar"
+                              >
+                                <IoCheckmark />
+                              </button>
+
+                              <button
+                                type="button"
+                                className={styles.editableCancel}
+                                onClick={handleCancelAge}
+                                title="Cancelar"
+                              >
+                                <IoClose />
+                              </button>
+                            </span>
+                          )}
+                        </span>
+                      ) : (
+                        <span
+                          className={styles.editableValue}
+                          onClick={canEdit ? handleEditAge : undefined}
                         >
-                          <IoClose />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <h1
-                    className={styles.editableValue}
-                    onClick={canEdit ? handleEditName : undefined}
-                  >
-                    {name || "Perfil sem nome"}
-                    {canEdit && <HiOutlinePencil className={styles.editIcon} />}
-                  </h1>
+                          {age || (canEdit ? "Adicionar Idade" : "")}
+                          {canEdit && <HiOutlinePencil className={styles.editIcon} />}
+                        </span>
+                      )}
+                    </span>
+                  </>
                 )}
-              </div>
+              </p>
               
               <div className={styles.weeklyViews}>
                 <FaEye />

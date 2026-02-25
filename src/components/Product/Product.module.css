@@ -87,6 +87,10 @@
   font-size: 16px;
 }
 
+.producerAge {
+  font-weight: normal;
+}
+
 .productLoc.hidden {
   display: none;
 }

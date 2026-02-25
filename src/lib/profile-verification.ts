@@ -9,7 +9,8 @@ export interface ProfileVerificationResult {
 }
 
 export interface ProfileVerificationChecks {
-  hasName: boolean;
+  hasProfileName: boolean;
+  hasProfileAge: boolean;
   hasImages: boolean;
   hasPrices: boolean;
   hasLanguages: boolean;
@@ -21,12 +22,13 @@ export interface ProfileVerificationChecks {
  * Verifica se o perfil do produtor está completo e retorna o status apropriado
  * 
  * Critérios para status GREEN (aprovado):
- * 1. Nome preenchido
- * 2. Ao menos 1 imagem
- * 3. Ao menos 1 preço & Forma de pagamento
- * 4. Idiomas falados
- * 5. Público que atende
- * 6. Ao menos 1 contato
+ * 1. Nome do perfil preenchido
+ * 2. Idade do perfil preenchida
+ * 3. Ao menos 1 imagem
+ * 4. Ao menos 1 preço & Forma de pagamento
+ * 5. Idiomas falados
+ * 6. Público que atende
+ * 7. Ao menos 1 contato
  */
 export async function verifyProfileCompletion(
   producerId: number
@@ -55,7 +57,8 @@ export async function verifyProfileCompletion(
   }
 
   const checks: ProfileVerificationChecks = {
-    hasName: !!producer.name && producer.name.trim().length > 0,
+    hasProfileName: !!producer.profile.name && producer.profile.name.trim().length > 0,
+    hasProfileAge: !!producer.profile.age && producer.profile.age >= 18 && producer.profile.age <= 99,
     hasImages: Array.isArray(producer.profile.images) && producer.profile.images.length > 0,
     hasPrices: producer.profile.prices.length > 0 && producer.profile.payments.length > 0,
     hasLanguages: Array.isArray(producer.profile.languages) && producer.profile.languages.length > 0,
@@ -68,10 +71,16 @@ export async function verifyProfileCompletion(
   const missingFields: string[] = [];
   const completedFields: string[] = [];
 
-  if (checks.hasName) {
-    completedFields.push("Nome");
+  if (checks.hasProfileName) {
+    completedFields.push("Nome do perfil");
   } else {
-    missingFields.push("Nome");
+    missingFields.push("Nome do perfil");
+  }
+
+  if (checks.hasProfileAge) {
+    completedFields.push("Idade do perfil");
+  } else {
+    missingFields.push("Idade do perfil");
   }
 
   if (checks.hasImages) {

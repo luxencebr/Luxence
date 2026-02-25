@@ -160,6 +160,8 @@ model ProducerProfile {
   producerId  Int        @unique
   producer    Producer   @relation("ProducerProfileRelation", fields: [producerId], references: [id], onDelete: Cascade)
 
+  name        String?
+  age         Int?
   slogan      String
   description String     @db.Text
   images      Json

@@ -54,7 +54,8 @@ const DEFAULT_SLOGANS = [
 ];
 
 function Product({ producer, variant }: ProductProps) {
-  const name = producer.name || "Perfil sem nome";
+  const name = producer.profile?.name || producer.name || "Perfil sem nome";
+  const age = producer.profile?.age;
   const city = producer.user?.locality?.city || "";
   const neighborhood = producer.user?.locality?.neighborhood || "";
   const slogan =
@@ -83,7 +84,10 @@ function Product({ producer, variant }: ProductProps) {
 
         <div className={styles.itemInfo}>
           <div className={styles.infoHeader}>
-            <h3 className={styles.producerName}>{name}</h3>
+            <h3 className={styles.producerName}>
+              {name}
+              {age && <span className={styles.producerAge}>, {age}</span>}
+            </h3>
             <span
               className={`${styles.productLoc} ${
                 variant === undefined ? styles.hidden : ""

@@ -11,13 +11,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
-    const { profileId, name } = await request.json();
+    const { profileId, age } = await request.json();
 
-    if (!profileId || !name) {
+    if (!profileId) {
       return NextResponse.json(
         { error: "Dados inválidos" },
         { status: 400 }
       );
+    }
+
+    // Valida a idade se fornecida
+    if (age !== null && age !== undefined) {
+      const ageNum = parseInt(age);
+      if (isNaN(ageNum) || ageNum < 18 || ageNum > 99) {
+        return NextResponse.json(
+          { error: "Idade deve estar entre 18 e 99 anos" },
+          { status: 400 }
+        );
+      }
     }
 
     // Verifica se o perfil pertence ao usuário
@@ -37,10 +48,10 @@ export async function POST(request: Request) {
       );
     }
 
-    // Atualiza o nome do perfil
+    // Atualiza a idade do perfil
     await prisma.producerProfile.update({
       where: { id: profileId },
-      data: { name },
+      data: { age: age ? parseInt(age) : null },
     });
 
     // Atualiza o status de verificação do perfil
@@ -48,9 +59,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Erro ao atualizar nome:", error);
+    console.error("Erro ao atualizar idade:", error);
     return NextResponse.json(
-      { error: "Erro ao atualizar nome" },
+      { error: "Erro ao atualizar idade" },
       { status: 500 }
     );
   }

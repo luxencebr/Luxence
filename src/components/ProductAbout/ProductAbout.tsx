@@ -28,7 +28,7 @@ interface OtherLanguage {
 /**
  * Gera sugestões de biografia baseadas na aparência e nome do perfil
  * 
- * IMPORTANTE: Esta função usa o NOME DO PERFIL (producer.name), 
+ * IMPORTANTE: Esta função usa o NOME DO PERFIL (producer.profile.name ou producer.name), 
  * NUNCA o nome real do usuário (user.name).
  * O nome do perfil é público, o nome real deve ser mantido em segredo.
  * 
@@ -159,13 +159,13 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
 
   const lastSuggestionIndexRef = useRef<number>(-1);
 
-  // Usa o nome do perfil (producer.name), NUNCA o nome real do usuário
-  const [profileName, setProfileName] = useState(producer.name);
+  // Usa o nome do perfil (producer.profile.name ou producer.name), NUNCA o nome real do usuário
+  const [profileName, setProfileName] = useState(producer.profile.name || producer.name);
 
   // Atualiza o nome do perfil quando o producer mudar
   useEffect(() => {
-    setProfileName(producer.name);
-  }, [producer.name]);
+    setProfileName(producer.profile.name || producer.name);
+  }, [producer.profile.name, producer.name]);
 
   const bioSuggestions = generateBioSuggestions(
     producer.profile.appearance || [],

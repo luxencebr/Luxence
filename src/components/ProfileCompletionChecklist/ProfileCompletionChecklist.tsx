@@ -30,9 +30,15 @@ const STEPS: StepItem[] = [
     anchor: "showcase",
   },
   {
-    id: "Nome",
-    title: "Nome",
-    description: "Adicione seu nome profissional que será exibido no catálogo",
+    id: "Nome do perfil",
+    title: "Nome do Perfil",
+    description: "Adicione seu nome artístico que será exibido no catálogo",
+    anchor: "showcase",
+  },
+  {
+    id: "Idade do perfil",
+    title: "Idade do Perfil",
+    description: "Adicione a idade que será exibida no seu perfil",
     anchor: "showcase",
   },
   {
@@ -63,7 +69,8 @@ const STEPS: StepItem[] = [
 
 // Mapeamento de campos para seletores de destaque
 const FIELD_SELECTORS: Record<string, string | string[]> = {
-  "Nome": "[data-field='producer-name']",
+  "Nome do perfil": "[data-field='producer-name']",
+  "Idade do perfil": "[data-field='producer-age']",
   "Ao menos 1 imagem": "[data-field='producer-images']",
   "Ao menos 1 contato": "[data-field='producer-contacts']",
   "Público que atende": "[data-field='producer-audience']",
@@ -73,7 +80,8 @@ const FIELD_SELECTORS: Record<string, string | string[]> = {
 
 // Mapeamento específico para animações (pode ser diferente do destaque)
 const ANIMATION_SELECTORS: Record<string, string | string[]> = {
-  "Nome": "[data-field='producer-name']",
+  "Nome do perfil": "[data-field='producer-name']",
+  "Idade do perfil": "[data-field='producer-age']",
   "Ao menos 1 imagem": "[data-field='producer-images']",
   "Ao menos 1 contato": [
     "[data-field='producer-contact-whatsapp']",

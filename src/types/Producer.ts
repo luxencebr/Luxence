@@ -46,6 +46,8 @@ export interface Producer {
 export interface ProducerProfile {
   id: number;
   producerId: number;
+  name?: string | null;
+  age?: number | null;
   slogan: string;
   description: string;
   images: Array<{ id: string; name: string; url: string }>;
