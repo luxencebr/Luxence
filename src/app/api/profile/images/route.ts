@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { auth } from "@/auth";
 import { prisma } from "@/utils/prisma";
 import { uploadToSpaces } from "@/lib/uploadToSpaces";
 import { randomUUID } from "crypto";
@@ -8,6 +9,15 @@ import { updateProducerVerificationStatus } from "@/lib/profile-verification";
 
 export async function POST(req: Request) {
   try {
+    const session = await auth();
+    
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "Não autorizado" },
+        { status: 401 }
+      );
+    }
+
     const formData = await req.formData();
     const file = formData.get("file") as File;
     const profileId = Number(formData.get("profileId"));
@@ -21,8 +31,13 @@ export async function POST(req: Request) {
     const cropData = JSON.parse(cropDataStr);
 
     // Buscar o perfil com informações do produtor e assinatura
-    const profile = await prisma.producerProfile.findUnique({
-      where: { id: profileId },
+    const profile = await prisma.producerProfile.findFirst({
+      where: { 
+        id: profileId,
+        producer: {
+          userId: parseInt(session.user.id)
+        }
+      },
       select: {
         images: true,
         producerId: true,
@@ -36,7 +51,7 @@ export async function POST(req: Request) {
 
     if (!profile) {
       return NextResponse.json(
-        { error: "Perfil não encontrado" },
+        { error: "Perfil não encontrado ou não autorizado" },
         { status: 404 },
       );
     }
@@ -120,7 +135,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(newImage);
   } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Erro no upload" }, { status: 500 });
+    console.error("Erro no upload:", err);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   }
 }

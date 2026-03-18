@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { auth } from "@/auth";
+import { prisma } from "@/utils/prisma";
 import { verifyProfileCompletion, updateProducerVerificationStatus } from "@/lib/profile-verification";
 
 /**
@@ -6,6 +8,15 @@ import { verifyProfileCompletion, updateProducerVerificationStatus } from "@/lib
  */
 export async function GET(req: Request) {
   try {
+    const session = await auth();
+    
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "Não autorizado" },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(req.url);
     const producerId = Number(searchParams.get("producerId"));
 
@@ -16,13 +27,28 @@ export async function GET(req: Request) {
       );
     }
 
+    // Verificar se o producer pertence ao usuário logado
+    const producer = await prisma.producer.findFirst({
+      where: {
+        id: producerId,
+        userId: parseInt(session.user.id)
+      }
+    });
+
+    if (!producer) {
+      return NextResponse.json(
+        { error: "Producer não encontrado ou não autorizado" },
+        { status: 404 }
+      );
+    }
+
     const verification = await verifyProfileCompletion(producerId);
 
     return NextResponse.json(verification);
   } catch (error) {
     console.error("[PROFILE VERIFICATION GET ERROR]", error);
     return NextResponse.json(
-      { error: "Erro ao verificar perfil" },
+      { error: "Erro interno do servidor" },
       { status: 500 }
     );
   }
@@ -33,6 +59,15 @@ export async function GET(req: Request) {
  */
 export async function POST(req: Request) {
   try {
+    const session = await auth();
+    
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "Não autorizado" },
+        { status: 401 }
+      );
+    }
+
     const { producerId } = await req.json();
 
     if (!producerId) {
@@ -42,13 +77,28 @@ export async function POST(req: Request) {
       );
     }
 
+    // Verificar se o producer pertence ao usuário logado
+    const producer = await prisma.producer.findFirst({
+      where: {
+        id: producerId,
+        userId: parseInt(session.user.id)
+      }
+    });
+
+    if (!producer) {
+      return NextResponse.json(
+        { error: "Producer não encontrado ou não autorizado" },
+        { status: 404 }
+      );
+    }
+
     const verification = await updateProducerVerificationStatus(producerId);
 
     return NextResponse.json(verification);
   } catch (error) {
     console.error("[PROFILE VERIFICATION POST ERROR]", error);
     return NextResponse.json(
-      { error: "Erro ao atualizar status do perfil" },
+      { error: "Erro interno do servidor" },
       { status: 500 }
     );
   }

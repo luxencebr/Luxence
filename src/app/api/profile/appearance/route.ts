@@ -1,12 +1,39 @@
 import { NextResponse } from "next/server";
+import { auth } from "@/auth";
 import { prisma } from "@/utils/prisma";
 
-export async function POST(req: Request) {
+export async function PATCH(req: Request) {
   try {
+    const session = await auth();
+    
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "Não autorizado" },
+        { status: 401 }
+      );
+    }
+
     const { profileId, appearance } = await req.json();
 
     if (!profileId || !Array.isArray(appearance)) {
       return NextResponse.json({ error: "Payload inválido" }, { status: 400 });
+    }
+
+    // Validar se o perfil pertence ao usuário logado
+    const profile = await prisma.producerProfile.findFirst({
+      where: { 
+        id: profileId,
+        producer: {
+          userId: parseInt(session.user.id)
+        }
+      },
+    });
+
+    if (!profile) {
+      return NextResponse.json(
+        { error: "Perfil não encontrado ou não autorizado" },
+        { status: 404 }
+      );
     }
 
     await prisma.producerAppearance.deleteMany({
@@ -44,7 +71,7 @@ export async function POST(req: Request) {
     console.error("Erro ao salvar aparência:", error);
 
     return NextResponse.json(
-      { error: "Erro interno ao salvar aparência" },
+      { error: "Erro interno do servidor" },
       { status: 500 }
     );
   }

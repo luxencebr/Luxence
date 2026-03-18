@@ -1,0 +1,132 @@
+.header {
+  display: block;
+  padding: var(--space-lg);
+  background-color: var(--dark-color);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.headerContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.left,
+.right {
+  display: none;
+}
+
+.title {
+  font-size: var(--ft-xl);
+  font-weight: 600;
+  color: var(--light-color);
+  margin: 0;
+}
+
+.subtitle {
+  font-size: var(--ft-sm);
+  color: var(--text-secondary-color);
+  margin: 0;
+  opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    gap: var(--space-sm);
+    border-bottom: none;
+  }
+
+  .headerContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    text-align: left;
+    gap: var(--space-xs);
+    min-width: 0;
+  }
+
+  .left,
+  .right {
+    display: block;
+    width: 40px;
+    flex-shrink: 0;
+  }
+
+  .iconButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: transparent;
+    border: none;
+    border-radius: var(--radius-sm);
+    color: var(--light-color);
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .iconButton:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .iconButton:active {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .logoButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: transparent;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background-color 0.2s;
+    padding: 0;
+  }
+
+  .logoButton:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .logoButton:active {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .logo {
+    height: 32px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .title {
+    font-size: var(--ft-md);
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+  }
+
+  .subtitle {
+    font-size: var(--ft-xs);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+  }
+}

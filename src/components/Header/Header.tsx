@@ -122,6 +122,9 @@ function Header() {
                   >
                     Ver Perfil
                   </Link>
+                  <Link href="/profile" className={styles.menuItem}>
+                    Painel de Controle
+                  </Link>
                   {session.user.signature !== "COPPER" ? (
                     <Link href={""} className={styles.menuItem}>
                       Minha Assinatura
@@ -236,6 +239,13 @@ function Header() {
                         return `${first} ${last}`;
                       })()}
                     </span>
+                  </Link>
+                  <Link
+                    href="/profile"
+                    className={styles.mobileMenuItem}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Painel de Controle
                   </Link>
                   {session.user.signature !== "COPPER" ? (
                     <Link

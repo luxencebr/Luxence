@@ -1,0 +1,441 @@
+.container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: var(--space-xl);
+}
+
+.currentPlanContent {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: var(--space-xl);
+}
+
+.currentPlanHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+
+.currentPlanInfo {
+  text-align: left;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: var(--space-xs);
+}
+
+.currentPlanBenefits {
+  flex: 1;
+}
+
+.currentBenefitsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-flow: row nowrap;
+  gap: var(--space-sm);
+  justify-content: space-between;
+  width: 100%;
+}
+
+.currentBenefit {
+  background: var(--dark-color);
+  padding: var(--space-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  font-size: 12px;
+  text-align: center;
+  border-radius: var(--radius-md);
+  flex: 1;
+  min-height: 80px;
+}
+
+.currentBenefit.deny {
+  opacity: 0.4;
+}
+
+.benefitIconWrapper {
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.benefitContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.benefitName {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-secondary-color);
+  line-height: 1.2;
+  display: none;
+}
+
+.benefitValue {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.benefitIcon {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.currentPlanTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.currentPlanDetails {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: end;
+  gap: var(--space-sm);
+}
+
+.planName {
+  font-size: var(--ft-xl);
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.planPrice {
+  font-size: var(--ft-sm);
+  color: var(--text-secondary-color);
+}
+
+.planDescription {
+  font-size: 14px;
+  color: var(--text-secondary-color);
+  margin: 0;
+}
+
+.plansSection {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: var(--space-xl);
+}
+
+.plansTitle {
+  font-size: var(--ft-xl);
+  font-weight: 700;
+  color: var(--text-color);
+  text-align: center;
+}
+
+.plansGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.planCard {
+  position: relative;
+}
+
+.planCard.popular {
+  border: 2px solid var(--primary-color);
+}
+
+.planContent {
+  height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: var(--space-md);
+}
+
+.popularBadge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: var(--primary-color);
+  color: var(--background-color);
+  padding: 6px 16px;
+  border-bottom-left-radius: var(--radius-md);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.planHeader {
+  display: flex;
+  align-items: end;
+  gap: var(--space-sm);
+}
+
+.planHeader .planName {
+  font-size: var(--ft-lg);
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.planHeader .planPrice {
+  border-bottom: 1px solid transparent;
+
+  font-size: 12px;
+  font-weight: normal;
+
+  transition: 0.2s;
+}
+
+.planCard:hover .planPrice {
+  border-bottom: 1px solid var(--primary-color);
+}
+
+.planDescription {
+  opacity: 0.8;
+  font-size: var(--ft-sm);
+  margin: 0;
+}
+
+.benefits {
+  padding: 0;
+  margin: 0 12px;
+
+  list-style: none;
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 8px;
+
+  font-size: 14px;
+}
+
+.benefit {
+  padding: 8px 16px;
+
+  border-radius: 12px;
+  box-shadow: 0 0 0 1px var(--contrast-complementary-color);
+
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.deny {
+  opacity: 0.6;
+}
+
+.upgradeButton {
+  background-color: var(--primary-color);
+  width: 100%;
+  padding: 12px 24px;
+
+  border: none;
+  border-radius: 8px;
+
+  color: var(--background-color);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.upgradeButton:hover {
+  opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .currentPlanContent {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--space-lg);
+    align-items: center;
+  }
+
+  .currentPlanHeader {
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .currentPlanBenefits {
+    width: 100%;
+  }
+
+  .currentBenefitsList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    align-items: stretch;
+  }
+
+  .currentBenefit {
+    flex-direction: row;
+    justify-content: flex-start;
+    text-align: left;
+    min-height: auto;
+    padding: var(--space-md);
+    gap: var(--space-md);
+  }
+
+  .benefitContent {
+    width: 100%;
+    flex-flow: row-reverse nowrap;
+    align-items: center;
+    justify-content: start;
+    text-align: left;
+    flex: 1;
+  }
+
+  .benefitName {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-color);
+  }
+
+  .benefitValue {
+    font-size: 16px;
+    justify-content: flex-start;
+  }
+
+  .benefitIconWrapper {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .plansGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .feature {
+    font-size: 13px;
+  }
+}
+.maxPlanMessage {
+  text-align: center;
+}
+
+.maxPlanContent {
+  padding: 32px 24px;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: var(--space-md);
+  align-items: center;
+}
+
+.maxPlanContent h3 {
+  font-size: var(--ft-lg);
+  font-weight: 600;
+  color: var(--primary-color);
+  margin: 0;
+}
+
+.maxPlanContent p {
+  font-size: var(--ft-sm);
+  color: var(--text-secondary-color);
+  margin: 0;
+  max-width: 400px;
+}
+
+.benefitLucideIcon {
+  flex-shrink: 0;
+}
+
+.numberValue {
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.checkIcon {
+  color: var(--success-color);
+}
+
+.xmarkIcon {
+  color: var(--error-color);
+}
+
+/* Dropdown Styles */
+.dropdownWrapper {
+  width: auto;
+  display: inline-block;
+}
+
+.dropdownTrigger {
+  background: var(--dark-color);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 8px;
+  color: var(--text-color);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  width: auto !important;
+}
+
+.dropdownTrigger:hover {
+  opacity: 0.8;
+}
+
+.dropdownMenuCustom {
+  background: var(--dark-color);
+  border: 1px solid var(--contrast-complementary-color);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  min-width: 180px;
+  overflow: hidden;
+  right: 0;
+  left: auto;
+}
+
+.dropdownItem {
+  width: 100%;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  color: var(--text-color);
+  font-family: inherit;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.dropdownItem:hover {
+  background: var(--contrast-complementary-color);
+}
+
+.dropdownItem:not(:last-child) {
+  border-bottom: 1px solid var(--contrast-complementary-color);
+}
+
+
