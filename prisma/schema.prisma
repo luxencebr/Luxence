@@ -40,10 +40,14 @@ model Locality {
   userId      Int     @unique
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  cep         String?
   country     String
   state       String
   city        String
-  neighborhood String?  
+  neighborhood String?
+  street      String?
+  number      String?
+  complement  String?
 }
 
 model User {
@@ -56,9 +60,18 @@ model User {
   updatedAt   DateTime @updatedAt
 
   name        String
+  phone       String?
   gender      GENDER
   preferences UserPreference[]
   locality    Locality?
+
+  // Configurações de notificação
+  emailNotifications    Boolean @default(true)
+  whatsappNotifications Boolean @default(false)
+
+  // Soft delete
+  isDeleted   Boolean  @default(false)
+  deletedAt   DateTime?
 
   producer    Producer? @relation("UserProducer")
 

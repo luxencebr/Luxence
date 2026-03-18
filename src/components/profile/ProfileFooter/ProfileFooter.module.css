@@ -1,0 +1,30 @@
+.footer {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .footer {
+    display: block;
+    background-color: var(--dark-color);
+    border-top: 1px solid var(--border-color);
+    padding: var(--space-md);
+    margin-top: auto;
+  }
+
+  .content {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .title {
+    font-size: var(--ft-sm);
+    font-weight: 600;
+    color: var(--text-secondary-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+  }
+}

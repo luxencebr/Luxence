@@ -36,11 +36,11 @@ function ProductAudience({ producer, canEdit }: ProductAudienceProps) {
   } | null>(null);
 
   const AUDIENCE_OPTIONS = [
-    { id: 1, name: "men", label: "Homens" },
-    { id: 2, name: "women", label: "Mulheres" },
+    { id: 1, name: "masculino", label: "Homens" },
+    { id: 2, name: "feminino", label: "Mulheres" },
     { id: 3, name: "trans", label: "Trans" },
-    { id: 4, name: "couple", label: "Casal" },
-    { id: 5, name: "group", label: "Grupo" },
+    { id: 4, name: "casais", label: "Casal" },
+    { id: 5, name: "grupos", label: "Grupo" },
   ];
 
   const initialStates = AUDIENCE_OPTIONS.map((opt) => {
@@ -100,7 +100,7 @@ function ProductAudience({ producer, canEdit }: ProductAudienceProps) {
 
     try {
       const res = await fetch("/api/profile/audience", {
-        method: "PUT",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });

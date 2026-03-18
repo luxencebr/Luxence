@@ -19,7 +19,10 @@ export default async function connector(
   password: string
 ): Promise<User | null> {
   const user = await prisma.user.findFirst({
-    where: { email },
+    where: { 
+      email,
+      isDeleted: false // Não permitir login de usuários excluídos
+    },
     include: {
       producer: true,
       preferences: true,

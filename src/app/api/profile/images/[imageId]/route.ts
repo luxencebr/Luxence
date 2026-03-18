@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { auth } from "@/auth";
 import { prisma } from "@/utils/prisma";
 import { deleteFromSpaces } from "@/lib/deleteFromSpaces";
 import { uploadToSpaces } from "@/lib/uploadToSpaces";
@@ -30,9 +31,24 @@ function isImageArray(value: unknown): value is ProfileImage[] {
 
 export async function DELETE(req: Request, context: any) {
   try {
+    const session = await auth();
+    
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "Não autorizado" },
+        { status: 401 }
+      );
+    }
+
     const { imageId } = context.params;
 
-    const profiles = await prisma.producerProfile.findMany();
+    const profiles = await prisma.producerProfile.findMany({
+      where: {
+        producer: {
+          userId: parseInt(session.user.id)
+        }
+      }
+    });
 
     const profile = profiles.find(
       (p) =>
@@ -41,7 +57,7 @@ export async function DELETE(req: Request, context: any) {
 
     if (!profile || !isImageArray(profile.images)) {
       return NextResponse.json(
-        { error: "Imagem não encontrada" },
+        { error: "Imagem não encontrada ou não autorizada" },
         { status: 404 }
       );
     }
@@ -89,6 +105,15 @@ export async function DELETE(req: Request, context: any) {
 
 export async function PATCH(req: Request, context: any) {
   try {
+    const session = await auth();
+    
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "Não autorizado" },
+        { status: 401 }
+      );
+    }
+
     const { imageId } = context.params;
     const { cropData, zoom } = await req.json();
 
@@ -99,7 +124,13 @@ export async function PATCH(req: Request, context: any) {
       );
     }
 
-    const profiles = await prisma.producerProfile.findMany();
+    const profiles = await prisma.producerProfile.findMany({
+      where: {
+        producer: {
+          userId: parseInt(session.user.id)
+        }
+      }
+    });
 
     const profile = profiles.find(
       (p) =>
