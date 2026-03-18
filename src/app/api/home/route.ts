@@ -37,6 +37,7 @@ export async function GET() {
       },
       user: {
         gender: genderFilter,
+        isDeleted: false, // Excluir usuários com soft delete
       },
     };
 

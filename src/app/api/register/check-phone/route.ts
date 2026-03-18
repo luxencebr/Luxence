@@ -16,7 +16,7 @@ export async function GET(req: Request) {
     // Remove formatting for comparison
     const cleanPhone = phone.replace(/\D/g, "");
 
-    // Check if phone exists
+    // Check if phone exists (excluindo usuários com soft delete)
     const existingProducer = await prisma.producer.findFirst({
       where: {
         OR: [
@@ -24,6 +24,7 @@ export async function GET(req: Request) {
           { phone: cleanPhone },
           { phone: { contains: cleanPhone } },
         ],
+        user: { isDeleted: false }, // Excluir usuários com soft delete
       },
       select: { id: true },
     });

@@ -43,6 +43,7 @@ export async function GET(
             email: true,
             gender: true,
             locality: true,
+            isDeleted: true, // Incluir para verificar soft delete
           },
         },
         profile: {
@@ -86,7 +87,7 @@ export async function GET(
       },
     });
 
-    if (!producer) {
+    if (!producer || producer.user.isDeleted) {
       return NextResponse.json(
         { error: "Perfil não encontrado" },
         { status: 404 },

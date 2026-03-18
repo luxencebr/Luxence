@@ -57,7 +57,7 @@ export async function POST(req: Request) {
   const { email } = await req.json();
 
   const user = await prisma.user.findUnique({
-    where: { email },
+    where: { email, isDeleted: false }, // Não permitir reset de senha para usuários excluídos
   });
 
   // Segurança: nunca revela se existe

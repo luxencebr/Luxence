@@ -27,6 +27,7 @@ export async function GET(request: NextRequest) {
       where: {
         user: { 
           role: "ADVERTISER",
+          isDeleted: false, // Excluir usuários com soft delete
           ...(genderFilter && { gender: genderFilter as any }),
         },
         ...(statusFilter && { verificationStatus: statusFilter as any }),

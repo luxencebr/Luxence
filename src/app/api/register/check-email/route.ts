@@ -14,7 +14,7 @@ export async function GET(req: Request) {
     }
 
     const existingUser = await prisma.user.findUnique({
-      where: { email },
+      where: { email, isDeleted: false }, // Permitir reutilização de email de usuários excluídos
     });
 
     return NextResponse.json({ exists: !!existingUser });

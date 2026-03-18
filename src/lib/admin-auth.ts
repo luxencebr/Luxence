@@ -16,11 +16,12 @@ export async function getAdminSession(): Promise<AdminUser | null> {
       return null;
     }
 
-    // Verificar se o usuário ainda existe e tem role ADMIN
+    // Verificar se o usuário ainda existe, não foi excluído e tem role ADMIN
     const user = await prisma.user.findFirst({
       where: {
         id: parseInt(session.user.id),
         role: "ADMIN",
+        isDeleted: false,
       },
     });
 

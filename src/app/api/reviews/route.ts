@@ -110,9 +110,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verifica se o usuário existe
+    // Verifica se o usuário existe e não foi excluído
     const user = await prisma.user.findUnique({
-      where: { id: parsedUserId },
+      where: { id: parsedUserId, isDeleted: false },
     });
 
     if (!user) {
@@ -223,6 +223,7 @@ export async function GET(request: NextRequest) {
     const allReviews = await prisma.review.findMany({
       where: {
         profileId: Number.parseInt(profileId),
+        user: { isDeleted: false }, // Excluir reviews de usuários excluídos
         ...(isProfileOwner ? {} : { isApproved: true }),
       },
       include: {

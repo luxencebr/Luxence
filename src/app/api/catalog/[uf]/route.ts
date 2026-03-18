@@ -24,6 +24,7 @@ export async function GET(
         locality: {
           state,
         },
+        isDeleted: false, // Excluir usuários com soft delete
       },
     };
 
@@ -76,7 +77,19 @@ export async function GET(
               where: {
                 isApproved: true,
               },
-              include: { user: true },
+              include: { 
+                user: { 
+                  select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    role: true,
+                    gender: true,
+                    createdAt: true,
+                    updatedAt: true,
+                  }
+                } 
+              },
             },
           },
         },
