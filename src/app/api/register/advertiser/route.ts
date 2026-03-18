@@ -49,8 +49,10 @@ export async function POST(req: Request) {
       );
     }
 
-    // Verificar email duplicado
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    // Verificar email duplicado (excluindo usuários com soft delete)
+    const existingUser = await prisma.user.findUnique({ 
+      where: { email, isDeleted: false } 
+    });
     if (existingUser) {
       return NextResponse.json(
         { error: "Este email já está cadastrado." },
@@ -58,11 +60,12 @@ export async function POST(req: Request) {
       );
     }
 
-    // Verificar documento duplicado
+    // Verificar documento duplicado (excluindo usuários com soft delete)
     const cleanDocument = document.replace(/\D/g, "");
     const existingProducer = await prisma.producer.findFirst({
       where: {
         OR: [{ document }, { document: cleanDocument }],
+        user: { isDeleted: false }, // Excluir usuários com soft delete
       },
     });
 

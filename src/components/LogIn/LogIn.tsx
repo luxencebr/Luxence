@@ -11,7 +11,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Popup from "../ui/Popup/Popup";
 import action from "./action";
 
-type PopupView = "login" | "forgot-password";
+type PopupView = "login" | "forgot-password" | "account-deleted";
 
 export default function LogIn() {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,6 +30,13 @@ export default function LogIn() {
   const [forgotSuccess, setForgotSuccess] = useState(false);
   const [forgotLoading, setForgotLoading] = useState(false);
 
+  // Estados para reativação de conta
+  const [deletedAccountEmail, setDeletedAccountEmail] = useState("");
+  const [reactivatePassword, setReactivatePassword] = useState("");
+  const [reactivateError, setReactivateError] = useState("");
+  const [reactivateLoading, setReactivateLoading] = useState(false);
+  const [reactivateSuccess, setReactivateSuccess] = useState(false);
+
   const formRef = useRef<HTMLFormElement>(null);
   const forgotFormRef = useRef<HTMLFormElement>(null);
 
@@ -44,6 +51,11 @@ export default function LogIn() {
       setForgotError("");
       setForgotSuccess(false);
       setForgotLoading(false);
+      setDeletedAccountEmail("");
+      setReactivatePassword("");
+      setReactivateError("");
+      setReactivateLoading(false);
+      setReactivateSuccess(false);
       formRef.current?.reset();
       forgotFormRef.current?.reset();
     }
@@ -59,6 +71,10 @@ export default function LogIn() {
     setForgotEmail("");
     setForgotError("");
     setForgotSuccess(false);
+    setDeletedAccountEmail("");
+    setReactivatePassword("");
+    setReactivateError("");
+    setReactivateSuccess(false);
   };
 
   const handleForgotSubmit = async (e: React.FormEvent) => {
@@ -82,6 +98,40 @@ export default function LogIn() {
       setForgotError("Ocorreu um erro. Tente novamente mais tarde.");
     } finally {
       setForgotLoading(false);
+    }
+  };
+
+  const handleAccountDeleted = (email: string) => {
+    setDeletedAccountEmail(email);
+    setCurrentView("account-deleted");
+  };
+
+  const handleReactivateAccount = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setReactivateError("");
+    setReactivateLoading(true);
+
+    try {
+      const res = await fetch("/api/auth/reactivate-account", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          email: deletedAccountEmail, 
+          password: reactivatePassword 
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Erro ao reativar conta");
+      }
+
+      setReactivateSuccess(true);
+    } catch (error: any) {
+      setReactivateError(error.message || "Ocorreu um erro. Tente novamente.");
+    } finally {
+      setReactivateLoading(false);
     }
   };
 
@@ -111,7 +161,13 @@ export default function LogIn() {
               onSubmit={async (e) => {
                 e.preventDefault();
                 const formData = new FormData(e.currentTarget);
-                await action({ formData, setErrors, setSuccess, setIsLoading });
+                await action({ 
+                  formData, 
+                  setErrors, 
+                  setSuccess, 
+                  setIsLoading,
+                  onAccountDeleted: handleAccountDeleted
+                });
               }}
               className={`${styles.form} ${
                 isFormDisabled ? styles.disabled : ""
@@ -191,7 +247,7 @@ export default function LogIn() {
           )}
           {errors.form && <p className={styles.error}>{errors.form}</p>}
         </>
-      ) : (
+      ) : currentView === "forgot-password" ? (
         <>
           {forgotSuccess ? (
             <div className={styles.successContainer}>
@@ -282,6 +338,121 @@ export default function LogIn() {
               </form>
 
               {forgotError && <p className={styles.error}>{forgotError}</p>}
+            </div>
+          )}
+        </>
+      ) : (
+        <>
+          {reactivateSuccess ? (
+            <div className={styles.successContainer}>
+              <svg
+                className={styles.checkmark}
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 52 52"
+              >
+                <circle
+                  className={styles.checkmarkCircle}
+                  cx="26"
+                  cy="26"
+                  r="25"
+                  fill="none"
+                />
+                <path
+                  className={styles.checkmarkCheck}
+                  fill="none"
+                  d="M14 27l7 7 16-16"
+                />
+              </svg>
+              <p>Conta reativada!</p>
+              <span className={styles.successMessage}>
+                Sua conta foi reativada com sucesso. Você pode fazer login normalmente agora.
+              </span>
+              <button
+                onClick={() => {
+                  setCurrentView("login");
+                  setReactivateSuccess(false);
+                }}
+                className={styles.submit}
+              >
+                Fazer Login
+              </button>
+            </div>
+          ) : (
+            <div className={styles.formContent}>
+              <div className={styles.formHeader}>
+                <div className={styles.left}>
+                  <button
+                    onClick={handleBackToLogin}
+                    className={styles.backButton}
+                  >
+                    <IoArrowBack />
+                  </button>
+                  <h1>Conta Excluída</h1>
+                </div>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className={styles.closeButton}
+                >
+                  <IoClose />
+                </button>
+              </div>
+
+              <p className={styles.description}>
+                Esta conta foi excluída. Você pode reativá-la inserindo sua senha abaixo.
+              </p>
+
+              <form
+                onSubmit={handleReactivateAccount}
+                className={`${styles.form} ${
+                  reactivateLoading ? styles.disabled : ""
+                }`}
+              >
+                <label htmlFor="reactivate-email">
+                  Email:
+                  <input
+                    id="reactivate-email"
+                    type="email"
+                    value={deletedAccountEmail}
+                    disabled
+                    className={styles.disabledInput}
+                  />
+                </label>
+
+                <label htmlFor="reactivate-password">
+                  Senha:
+                  <div className={styles.passwordWrapper}>
+                    <input
+                      name="password"
+                      id="reactivate-password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Sua senha..."
+                      value={reactivatePassword}
+                      onChange={(e) => {
+                        setReactivatePassword(e.target.value);
+                        setReactivateError("");
+                      }}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className={styles.showPasswordBtn}
+                    >
+                      {showPassword ? <FaEye /> : <FaEyeSlash />}
+                    </button>
+                  </div>
+                </label>
+
+                <button type="submit" className={styles.submit}>
+                  {reactivateLoading ? (
+                    <span className={styles.spinner}></span>
+                  ) : (
+                    "Reativar Conta"
+                  )}
+                </button>
+              </form>
+
+              {reactivateError && <p className={styles.error}>{reactivateError}</p>}
             </div>
           )}
         </>

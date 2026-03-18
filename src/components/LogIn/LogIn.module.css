@@ -147,6 +147,11 @@
   color: var(--contrast-color);
 }
 
+.disabledInput {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .passwordWrapper {
   display: flex;
   flex-flow: row nowrap;

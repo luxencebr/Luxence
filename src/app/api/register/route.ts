@@ -7,7 +7,9 @@ export async function POST(req: Request) {
     const { name, email, password, gender, preferences, role } =
       await req.json();
 
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    const existingUser = await prisma.user.findUnique({ 
+      where: { email, isDeleted: false } // Permitir reutilização de email de usuários excluídos
+    });
     if (existingUser) {
       return NextResponse.json(
         { error: "Email já cadastrado." },

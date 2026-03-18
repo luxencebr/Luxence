@@ -64,9 +64,9 @@ export async function POST(req: Request) {
       );
     }
 
-    // Verificar se email já está cadastrado
+    // Verificar se email já está cadastrado (excluindo usuários com soft delete)
     const existingUser = await prisma.user.findUnique({
-      where: { email },
+      where: { email, isDeleted: false },
     });
 
     if (existingUser) {

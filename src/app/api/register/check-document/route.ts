@@ -16,7 +16,7 @@ export async function GET(req: Request) {
     // Remove formatting for comparison
     const cleanDocument = document.replace(/\D/g, "");
 
-    // Check if document exists - search both with and without formatting
+    // Check if document exists - search both with and without formatting (excluindo usuários com soft delete)
     const existingProducer = await prisma.producer.findFirst({
       where: {
         OR: [
@@ -25,6 +25,7 @@ export async function GET(req: Request) {
           // Also check formatted versions
           { document: { contains: cleanDocument } },
         ],
+        user: { isDeleted: false }, // Excluir usuários com soft delete
       },
       select: { id: true },
     });
