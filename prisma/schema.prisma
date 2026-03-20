@@ -79,6 +79,7 @@ model User {
   comments Comment[]
 
   passwordResetTokens PasswordResetToken[]
+  sessions    UserSession[]
 }
 
 model PasswordResetToken {
@@ -107,6 +108,33 @@ model EmailVerificationToken {
 
   @@index([email])
   @@index([token])
+}
+
+model UserSession {
+  id          String   @id @default(cuid())
+  
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  sessionToken String  @unique
+  ipAddress    String?
+  userAgent    String?
+  country      String?
+  state        String?
+  city         String?
+  device       String?
+  browser      String?
+  os           String?
+  
+  lastActivity DateTime @default(now())
+  createdAt    DateTime @default(now())
+  expiresAt    DateTime
+  
+  isActive     Boolean  @default(true)
+  
+  @@index([userId])
+  @@index([sessionToken])
+  @@index([lastActivity])
 }
 
 

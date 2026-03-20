@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { FaEye, FaEyeSlash, FaTimes } from "react-icons/fa";
+import { Monitor, Smartphone, MapPin, Clock, LogOut } from "lucide-react";
 import Card from "@/components/ui/Card/Card";
 import LoadingContainer from "@/components/ui/LoadingContainer/LoadingContainer";
 import styles from "./security.module.css";
@@ -84,14 +85,32 @@ export default function SecurityPage() {
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
-  // Carregar configurações de notificação
+  // Estados para sessões ativas
+  const [sessions, setSessions] = useState([]);
+  const [isLoggingOut, setIsLoggingOut] = useState<string | null>(null);
+
+  // Carregar configurações de notificação e sessões
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
       try {
+        // Primeiro registrar a sessão atual
+        if (session?.sessionToken) {
+          await fetch("/api/profile/security/sessions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              sessionToken: session.sessionToken,
+            }),
+          });
+        }
+
         // Delay mínimo para evitar flickering em conexões rápidas
-        const [notificationResponse] = await Promise.all([
+        const [notificationResponse, sessionsResponse] = await Promise.all([
           fetch("/api/profile/security/notifications"),
+          fetch("/api/profile/security/sessions"),
           new Promise((resolve) => setTimeout(resolve, 300)),
         ]);
 
@@ -101,6 +120,11 @@ export default function SecurityPage() {
             email: data.emailNotifications,
             whatsapp: data.whatsappNotifications,
           });
+        }
+
+        if (sessionsResponse.ok) {
+          const sessionsData = await sessionsResponse.json();
+          setSessions(sessionsData.sessions || []);
         }
       } catch (error) {
         console.error("Erro ao carregar configurações:", error);
@@ -296,6 +320,58 @@ export default function SecurityPage() {
     setDeletePassword("");
     setShowDeletePassword(false);
     setDeleteError(null);
+  };
+
+  // Funções para gerenciar sessões
+  const handleLogoutSession = async (sessionId: string, isCurrent: boolean) => {
+    setIsLoggingOut(sessionId);
+    
+    try {
+      const response = await fetch("/api/profile/security/sessions", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ sessionId }),
+      });
+
+      if (response.ok) {
+        if (isCurrent) {
+          // Se for a sessão atual, redirecionar para login
+          window.location.href = "/auth/signin";
+        } else {
+          // Remover da lista
+          setSessions(prev => prev.filter(s => s.id !== sessionId));
+        }
+      }
+    } catch (error) {
+      console.error("Erro ao fazer logout da sessão:", error);
+    } finally {
+      setIsLoggingOut(null);
+    }
+  };
+
+  const handleLogoutAll = async () => {
+    setIsLoggingOut("all");
+    
+    try {
+      const response = await fetch("/api/profile/security/sessions", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ logoutAll: true }),
+      });
+
+      if (response.ok) {
+        // Redirecionar para login após logout de todas as sessões
+        window.location.href = "/auth/signin";
+      }
+    } catch (error) {
+      console.error("Erro ao fazer logout de todas as sessões:", error);
+    } finally {
+      setIsLoggingOut(null);
+    }
   };
 
   return (
@@ -507,6 +583,105 @@ export default function SecurityPage() {
                     </div>
                   </div>
                 </div>
+              </div>
+            </Card>
+
+            {/* Card de Sessões Ativas */}
+            <Card backgroundColor="var(--dark-complementary-color)">
+              <div className={styles.cardContent}>
+                <div className={styles.cardHeader}>
+                  <div className={styles.cardTitleSection}>
+                    <div>
+                      <h3 className={styles.cardTitle}>Sessões Ativas</h3>
+                      <p className={styles.cardDescription}>
+                        Gerencie os dispositivos conectados à sua conta
+                      </p>
+                    </div>
+                  </div>
+                  {sessions.length > 1 && (
+                    <div className={styles.actions}>
+                      <button
+                        onClick={handleLogoutAll}
+                        disabled={isLoggingOut === "all"}
+                        className={styles.dangerButton}
+                      >
+                        {isLoggingOut === "all" ? "Desconectando..." : "Desconectar Todos"}
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {sessions.length > 0 ? (
+                  <div className={styles.sessionsList}>
+                    {sessions.map((sessionItem) => (
+                      <div
+                        key={sessionItem.id}
+                        className={`${styles.sessionItem} ${sessionItem.isCurrent ? styles.currentSession : ""}`}
+                      >
+                        {sessionItem.isCurrent && (
+                          <div className={styles.currentBadge}>Sessão Atual</div>
+                        )}
+                        
+                        <div className={styles.sessionContent}>
+                          <div className={styles.sessionInfo}>
+                            <div className={styles.deviceIcon}>
+                              {sessionItem.device === "Mobile" ? (
+                                <Smartphone size={24} />
+                              ) : (
+                                <Monitor size={24} />
+                              )}
+                            </div>
+                            
+                            <div className={styles.sessionDetails}>
+                              <div className={styles.deviceName}>
+                                {sessionItem.browser} em {sessionItem.os}
+                              </div>
+                              
+                              <div className={styles.sessionMeta}>
+                                <div className={styles.locationInfo}>
+                                  <MapPin size={14} />
+                                  <span>{sessionItem.city}, {sessionItem.state}</span>
+                                </div>
+                                
+                                <div className={styles.activityInfo}>
+                                  <Clock size={14} />
+                                  <span>
+                                    {new Date(sessionItem.lastActivity).toLocaleString('pt-BR', {
+                                      day: '2-digit',
+                                      month: '2-digit',
+                                      year: 'numeric',
+                                      hour: '2-digit',
+                                      minute: '2-digit'
+                                    })}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {!sessionItem.isCurrent && (
+                            <button
+                              onClick={() => handleLogoutSession(sessionItem.id, sessionItem.isCurrent)}
+                              disabled={isLoggingOut === sessionItem.id}
+                              className={styles.logoutButton}
+                              title="Desconectar sessão"
+                            >
+                              {isLoggingOut === sessionItem.id ? (
+                                <div className={styles.spinner} />
+                              ) : (
+                                <LogOut size={16} />
+                              )}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className={styles.noSessions}>
+                    <p>Nenhuma sessão ativa encontrada</p>
+                  </div>
+                )}
               </div>
             </Card>
 
