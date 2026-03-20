@@ -12,6 +12,7 @@ declare module "next-auth" {
       preferences?: ("MALE" | "FEMALE" | "TRANS")[];
       producerId?: string | null;
     };
+    sessionToken?: string;
   }
 
   interface User {
@@ -32,5 +33,6 @@ declare module "next-auth/jwt" {
     signature?: string | null;
     preferences?: ("MALE" | "FEMALE" | "TRANS")[];
     producerId?: string | null;
+    sessionToken?: string;
   }
 }

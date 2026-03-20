@@ -1,28 +1,31 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { auth } from "@/auth";
+import { updateSessionActivity } from "@/lib/session-manager";
 
-export function middleware(request: NextRequest) {
-  // Continue with the request without analytics tracking
-  const response = NextResponse.next();
+export async function middleware(request: NextRequest) {
+  // Verificar se é uma rota protegida
+  const protectedPaths = ['/profile', '/admin', '/advertiser'];
+  const isProtectedPath = protectedPaths.some(path => 
+    request.nextUrl.pathname.startsWith(path)
+  );
 
-  // Set session cookie if it doesn't exist
-  const shouldTrack =
-    !request.nextUrl.pathname.startsWith("/api") &&
-    !request.nextUrl.pathname.startsWith("/_next") &&
-    !request.nextUrl.pathname.startsWith("/admin") &&
-    !request.nextUrl.pathname.includes("favicon");
-
-  if (shouldTrack && !request.cookies.get("session-id")) {
-    const sessionId = `sess_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-    response.cookies.set("session-id", sessionId, {
-      maxAge: 30 * 24 * 60 * 60, // 30 days
-      httpOnly: false, // Allow JavaScript access
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-    });
+  if (isProtectedPath) {
+    try {
+      const session = await auth();
+      
+      if (session?.sessionToken) {
+        // Atualizar atividade da sessão de forma assíncrona
+        updateSessionActivity(session.sessionToken).catch(error => {
+          console.error("Erro ao atualizar atividade da sessão:", error);
+        });
+      }
+    } catch (error) {
+      console.error("Erro no middleware de sessão:", error);
+    }
   }
 
-  return response;
+  return NextResponse.next();
 }
 
 export const config = {
@@ -34,6 +37,6 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      */
-    "/((?!_next/static|_next/image|favicon.ico).*)",
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 };

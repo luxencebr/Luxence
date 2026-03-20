@@ -52,6 +52,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.signature = user.signature;
         token.preferences = user.preferences;
         token.producerId = user.producerId;
+        
+        // Gerar um token de sessão único
+        const sessionToken = `session-${user.id}-${Date.now()}-${Math.random().toString(36).substring(2)}`;
+        token.sessionToken = sessionToken;
       }
 
       // Handle session update (e.g., after advertiser registration)
@@ -77,6 +81,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           | ("MALE" | "FEMALE" | "TRANS")[]
           | undefined;
         session.user.producerId = token.producerId as string | null;
+        session.sessionToken = token.sessionToken as string;
       }
       return session;
     },
