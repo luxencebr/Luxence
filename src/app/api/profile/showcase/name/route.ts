@@ -20,6 +20,15 @@ export async function POST(request: Request) {
       );
     }
 
+    // Validação: apenas letras, espaços e acentos são permitidos
+    const nameRegex = /^[a-zA-ZÀ-ÿ\s]+$/;
+    if (!nameRegex.test(name.trim())) {
+      return NextResponse.json(
+        { error: "O nome deve conter apenas letras" },
+        { status: 400 }
+      );
+    }
+
     // Verifica se o perfil pertence ao usuário
     const producer = await prisma.producer.findFirst({
       where: {

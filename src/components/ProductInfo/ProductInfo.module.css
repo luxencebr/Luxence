@@ -221,6 +221,13 @@
   position: relative;
 }
 
+.nameInputWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+}
+
 .inputError {
   border: 1px solid #e54848 !important;
   background: rgba(229, 72, 72, 0.1) !important;

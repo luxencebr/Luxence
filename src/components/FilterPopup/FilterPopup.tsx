@@ -32,11 +32,17 @@ const APPEARANCE_VALUE_LABELS: Record<string, Record<string, string>> = {
     verde: "Verde",
   },
   body_type: {
+    // Opções para mulheres e trans
     madura: "Madura",
     magra: "Magra",
     mignon: "Mignon",
     ninfeta: "Ninfeta",
     plus_size: "Plus Size",
+    // Opções para homens
+    atletico: "Atlético",
+    magro: "Magro",
+    musculoso: "Musculoso",
+    sarado: "Sarado",
   },
   breast_size: {
     pequeno: "Pequeno",

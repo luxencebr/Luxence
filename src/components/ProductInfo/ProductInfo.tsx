@@ -68,6 +68,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
   const [originalName, setOriginalName] = useState(producer.profile.name || producer.name);
   const [isEditingName, setIsEditingName] = useState(false);
   const [isSavingName, setIsSavingName] = useState(false);
+  const [nameError, setNameError] = useState<string | null>(null);
   const nameInputRef = useRef<HTMLInputElement | null>(null);
 
   const [age, setAge] = useState(producer.profile.age?.toString() || "");
@@ -154,16 +155,26 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
 
   const handleEditName = () => {
     setOriginalName(name);
+    setNameError(null);
     setIsEditingName(true);
   };
 
   const handleCancelName = () => {
     setName(originalName);
+    setNameError(null);
     setIsEditingName(false);
   };
 
   const handleSaveName = async () => {
     try {
+      // Validação no frontend
+      const nameRegex = /^[a-zA-ZÀ-ÿ\s]+$/;
+      if (!nameRegex.test(name.trim())) {
+        setNameError("O nome deve conter apenas letras");
+        return;
+      }
+
+      setNameError(null);
       setIsSavingName(true);
 
       const res = await fetch("/api/profile/showcase/name", {
@@ -171,18 +182,23 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           profileId: producer.profile.id,
-          name,
+          name: name.trim(),
         }),
       });
 
-      if (!res.ok) throw new Error();
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Erro ao salvar nome");
+      }
 
-      setOriginalName(name);
+      setOriginalName(name.trim());
+      setName(name.trim());
       setIsEditingName(false);
       
       // Dispara evento de atualização
       dispatchProfileUpdateEvent();
-    } catch {
+    } catch (error: any) {
+      setNameError(error.message || "Erro ao salvar nome");
       setName(originalName);
     } finally {
       setIsSavingName(false);
@@ -360,24 +376,38 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                 <span className={`${styles.editable} ${styles.nameSpan}`} data-field="producer-name">
                   {isEditingName ? (
                     <span className={styles.editableEdit}>
-                      <input
-                        ref={nameInputRef}
-                        className={styles.editableInput}
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        disabled={isSavingName}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
-                            !isSavingName && handleSaveName();
-                          }
-                          if (e.key === "Escape") {
-                            e.preventDefault();
-                            handleCancelName();
-                          }
-                        }}
-                      />
+                      <div className={styles.nameInputWrapper}>
+                        <input
+                          ref={nameInputRef}
+                          className={`${styles.editableInput} ${nameError ? styles.inputError : ''}`}
+                          type="text"
+                          value={name}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            // Permite apenas letras, espaços e acentos
+                            const nameRegex = /^[a-zA-ZÀ-ÿ\s]*$/;
+                            if (nameRegex.test(value)) {
+                              setName(value);
+                              setNameError(null);
+                            }
+                          }}
+                          disabled={isSavingName}
+                          placeholder="Digite apenas letras"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              !isSavingName && handleSaveName();
+                            }
+                            if (e.key === "Escape") {
+                              e.preventDefault();
+                              handleCancelName();
+                            }
+                          }}
+                        />
+                        {nameError && (
+                          <span className={styles.errorMessage}>{nameError}</span>
+                        )}
+                      </div>
 
                       {isSavingName ? (
                         <div className={styles.loader} />

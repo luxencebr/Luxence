@@ -33,11 +33,19 @@ const EYE_COLORS = [
   { id: 5, name: "verde", label: "Verde" },
 ];
 
-const BODY_TYPE = [
+const BODY_TYPE_FEMALE_TRANS = [
   { id: 1, name: "madura", label: "Madura" },
   { id: 2, name: "magra", label: "Magra" },
   { id: 3, name: "mignon", label: "Mignon" },
   { id: 4, name: "ninfeta", label: "Ninfeta" },
+  { id: 5, name: "plus_size", label: "Plus Size" },
+];
+
+const BODY_TYPE_MALE = [
+  { id: 1, name: "atletico", label: "Atlético" },
+  { id: 2, name: "magro", label: "Magro" },
+  { id: 3, name: "musculoso", label: "Musculoso" },
+  { id: 4, name: "sarado", label: "Sarado" },
   { id: 5, name: "plus_size", label: "Plus Size" },
 ];
 
@@ -60,7 +68,7 @@ const OPTION_MAP: Record<
   ethnicity: ETHNICITY,
   hair_color: HAIR_COLORS,
   eye_color: EYE_COLORS,
-  body_type: BODY_TYPE,
+  body_type: [], // Será definido dinamicamente baseado no gênero
   breast_size: SIZES,
   butt_size: SIZES,
   pubis: PUBIS, // Adicionado pubis ao mapa de opções
@@ -86,6 +94,9 @@ export default function ProductAppearance({
   const [isSaving, setIsSaving] = useState(false);
 
   const gender = producer.user.gender;
+
+  // Definir opções de corpo baseado no gênero
+  OPTION_MAP.body_type = gender === "MALE" ? BODY_TYPE_MALE : BODY_TYPE_FEMALE_TRANS;
 
   const APPEARANCE_OPTIONS = [
     {
