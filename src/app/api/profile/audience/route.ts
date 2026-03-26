@@ -58,14 +58,14 @@ export async function PATCH(req: Request) {
 
     // Verificar se os IDs de audiência existem
     if (audience && audience.length > 0) {
-      const audienceIds = audience.map(a => a.audienceId);
+      const audienceIds = audience.map((a: any) => a.audienceId);
       const existingOptions = await prisma.audienceOption.findMany({
         where: { id: { in: audienceIds } },
         select: { id: true }
       });
       
       const existingIds = existingOptions.map(opt => opt.id);
-      const invalidIds = audienceIds.filter(id => !existingIds.includes(id));
+      const invalidIds = audienceIds.filter((id: any) => !existingIds.includes(id));
       
       if (invalidIds.length > 0) {
         return NextResponse.json(

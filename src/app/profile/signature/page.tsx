@@ -3,7 +3,6 @@
 import { useState, useEffect, memo } from "react";
 import { useSession } from "next-auth/react";
 import Card from "@/components/ui/Card/Card";
-import Dropdown from "@/components/ui/Dropdown/Dropdown";
 import { SIGNATURE_LABELS, type Signature } from "@/utils/signatureLimits";
 import { FaCheck, FaXmark } from "react-icons/fa6";
 import {
@@ -14,7 +13,11 @@ import {
   Mic,
   Zap,
   Star,
-  MoreHorizontal,
+  Calendar,
+  Clock,
+  TrendingUp,
+  ArrowUp,
+  Crown,
 } from "lucide-react";
 import LoadingContainer from "@/components/ui/LoadingContainer/LoadingContainer";
 import styles from "./signature.module.css";
@@ -32,6 +35,34 @@ interface Plan {
   description: string;
   popular?: boolean;
   benefits: Record<number, number | string | boolean>;
+}
+
+interface SubscriptionInfo {
+  signature: string;
+  status: string;
+  limits: {
+    maxPhotos: number;
+    maxVideos: number;
+    maxProfileUpdates: number;
+    hasCommentControl: boolean;
+    hasVoiceDemo: boolean;
+    priority: string;
+    hasFeaturedProfile: boolean;
+  };
+  usage: {
+    photosUsed: number;
+    videosUsed: number;
+    profileUpdatesUsed: number;
+  };
+  startDate: string;
+  endDate: string;
+  daysRemaining: number;
+  isExpired: boolean;
+  canUpload: {
+    photos: boolean;
+    videos: boolean;
+  };
+  canUpdateProfile: boolean;
 }
 
 const benefitList: BenefitBase[] = [
@@ -118,9 +149,13 @@ const plans: Plan[] = [
   },
 ];
 
-const isActiveBenefit = (benefit: BenefitBase, value: number | string | boolean): boolean => {
+const isActiveBenefit = (
+  benefit: BenefitBase,
+  value: number | string | boolean,
+): boolean => {
   if (benefit.type === "number") return typeof value === "number" && value > 0;
-  if (benefit.type === "string") return typeof value === "string" && value !== "";
+  if (benefit.type === "string")
+    return typeof value === "string" && value !== "";
   return Boolean(value);
 };
 
@@ -130,20 +165,25 @@ const renderBenefitValue = (
 ) => {
   if (benefit.type === "number") {
     const numValue = value as number;
-    if (numValue === Infinity) return { icon: <FaCheck className={styles.checkIcon} />, text: "Ilimitados" };
-    if (numValue === 0) return { icon: <FaXmark className={styles.xmarkIcon} />, text: "" };
+    if (numValue === Infinity)
+      return {
+        icon: <FaCheck className={styles.checkIcon} />,
+        text: "Ilimitados",
+      };
+    if (numValue === 0)
+      return { icon: <FaXmark className={styles.xmarkIcon} />, text: "" };
     return { icon: null, text: numValue.toString() };
   }
-  
+
   if (benefit.type === "string") {
     const strValue = value as string;
-    return strValue && strValue !== "" 
+    return strValue && strValue !== ""
       ? { icon: <FaCheck className={styles.checkIcon} />, text: strValue }
       : { icon: <FaXmark className={styles.xmarkIcon} />, text: "" };
   }
-  
+
   const boolValue = value as boolean;
-  return boolValue 
+  return boolValue
     ? { icon: <FaCheck className={styles.checkIcon} />, text: "" }
     : { icon: <FaXmark className={styles.xmarkIcon} />, text: "" };
 };
@@ -151,21 +191,27 @@ const renderBenefitValue = (
 const SignaturePage = memo(function SignaturePage() {
   const { data: session } = useSession();
   const [currentSignature, setCurrentSignature] = useState<Signature>("COPPER");
+  const [subscriptionInfo, setSubscriptionInfo] =
+    useState<SubscriptionInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchSignatureData = async () => {
       setIsLoading(true);
       try {
-        // Delay mínimo para evitar flickering em conexões rápidas
-        const [response] = await Promise.all([
+        const [signatureResponse, subscriptionResponse] = await Promise.all([
           fetch("/api/profile/signature"),
-          new Promise((resolve) => setTimeout(resolve, 300)),
+          fetch("/api/subscriptions"),
         ]);
 
-        if (response.ok) {
-          const data = await response.json();
-          setCurrentSignature(data.signature || "COPPER");
+        if (signatureResponse.ok) {
+          const signatureData = await signatureResponse.json();
+          setCurrentSignature(signatureData.signature || "COPPER");
+        }
+
+        if (subscriptionResponse.ok) {
+          const subscriptionData = await subscriptionResponse.json();
+          setSubscriptionInfo(subscriptionData);
         }
       } catch (error) {
         console.error("Erro ao carregar dados da assinatura:", error);
@@ -186,11 +232,35 @@ const SignaturePage = memo(function SignaturePage() {
     );
   };
 
+  const scrollToPlans = () => {
+    const plansSection = document.getElementById("plans-section");
+    if (plansSection) {
+      plansSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("pt-BR");
+  };
+
+  const getUsagePercentage = (used: number, max: number) => {
+    if (max === -1) return 0; // Ilimitado
+    return Math.min((used / max) * 100, 100);
+  };
+
+  const getStatusColor = () => {
+    if (!subscriptionInfo) return "var(--success-color)";
+    if (subscriptionInfo.isExpired) return "var(--error-color)";
+    if (subscriptionInfo.daysRemaining <= 7) return "var(--warning-color)";
+    return "var(--success-color)";
+  };
+
   if (isLoading) {
     return <LoadingContainer message="Carregando dados da assinatura..." />;
   }
 
   const currentPlan = plans.find((p) => p.id === currentSignature);
+  const isFreePlan = currentSignature === "COPPER";
 
   // Filtrar planos para mostrar apenas os superiores ao atual
   const planOrder = ["COPPER", "SILVER", "GOLD", "DIAMOND"];
@@ -222,85 +292,173 @@ const SignaturePage = memo(function SignaturePage() {
                   </p>
                 )}
               </div>
-              
-              <Dropdown
-                trigger={<MoreHorizontal size={20} />}
-                triggerClassName={styles.dropdownTrigger}
-                menuClassName={styles.dropdownMenuCustom}
-                containerClassName={styles.dropdownWrapper}
-              >
-                {(close) => (
-                  <>
-                    <button 
-                      className={styles.dropdownItem}
-                      onClick={() => {
-                        // Implementar ver histórico
-                        close();
-                      }}
-                    >
-                      Ver histórico
-                    </button>
-                    <button 
-                      className={styles.dropdownItem}
-                      onClick={() => {
-                        // Implementar gerenciar assinatura
-                        close();
-                      }}
-                    >
-                      Gerenciar assinatura
-                    </button>
-                    <button 
-                      className={styles.dropdownItem}
-                      onClick={() => {
-                        // Implementar suporte
-                        close();
-                      }}
-                    >
-                      Suporte
-                    </button>
-                  </>
+
+              <div className={styles.subscriptionInfo}>
+                {isFreePlan ? (
+                  <button
+                    className={styles.upgradeButton}
+                    onClick={scrollToPlans}
+                  >
+                    <ArrowUp size={16} />
+                    Fazer Upgrade
+                  </button>
+                ) : (
+                  subscriptionInfo && (
+                    <div className={styles.dateInfo}>
+                      <div className={styles.dateItem}>
+                        <Calendar size={16} />
+                        <span>
+                          Início: {formatDate(subscriptionInfo.startDate)}
+                        </span>
+                      </div>
+                      <div className={styles.dateItem}>
+                        <Calendar size={16} />
+                        <span>Fim: {formatDate(subscriptionInfo.endDate)}</span>
+                      </div>
+                      <div className={styles.dateItem}>
+                        <Clock size={16} />
+                        <span style={{ color: getStatusColor() }}>
+                          {subscriptionInfo.isExpired
+                            ? "Expirada"
+                            : `${subscriptionInfo.daysRemaining} dias restantes`}
+                        </span>
+                      </div>
+                    </div>
+                  )
                 )}
-              </Dropdown>
+              </div>
             </div>
 
-            <div className={styles.currentPlanBenefits}>
-              <ul className={styles.currentBenefitsList}>
-                {benefitList.map((benefit) => {
-                  const value = currentPlan?.benefits[benefit.id];
-                  const IconComponent = BENEFIT_ICONS[benefit.id as keyof typeof BENEFIT_ICONS] || Camera;
-                  const isActive = isActiveBenefit(benefit, value ?? false);
-                  const benefitDisplay = renderBenefitValue(benefit, value ?? false);
+            {subscriptionInfo && (
+              <>
+                <div className={styles.usageSection}>
+                  <h4 className={styles.sectionTitle}>
+                    <TrendingUp size={20} />
+                    Uso dos Recursos
+                  </h4>
 
-                  return (
-                    <li
-                      key={benefit.id}
-                      className={`${styles.currentBenefit} ${!isActive ? styles.deny : ""}`}
+                  <div className={styles.usageGrid}>
+                    <div className={styles.usageItem}>
+                      <div className={styles.usageHeader}>
+                        <span>Fotos</span>
+                        <span>
+                          {subscriptionInfo.usage.photosUsed} /{" "}
+                          {subscriptionInfo.limits.maxPhotos === -1
+                            ? "∞"
+                            : subscriptionInfo.limits.maxPhotos}
+                        </span>
+                      </div>
+                      {subscriptionInfo.limits.maxPhotos !== -1 && (
+                        <div className={styles.progressBar}>
+                          <div
+                            className={styles.progressFill}
+                            style={{
+                              width: `${getUsagePercentage(
+                                subscriptionInfo.usage.photosUsed,
+                                subscriptionInfo.limits.maxPhotos,
+                              )}%`,
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    {subscriptionInfo.limits.maxVideos > 0 && (
+                      <div className={styles.usageItem}>
+                        <div className={styles.usageHeader}>
+                          <span>Vídeos</span>
+                          <span>
+                            {subscriptionInfo.usage.videosUsed} /{" "}
+                            {subscriptionInfo.limits.maxVideos === -1
+                              ? "∞"
+                              : subscriptionInfo.limits.maxVideos}
+                          </span>
+                        </div>
+                        {subscriptionInfo.limits.maxVideos !== -1 && (
+                          <div className={styles.progressBar}>
+                            <div
+                              className={styles.progressFill}
+                              style={{
+                                width: `${getUsagePercentage(
+                                  subscriptionInfo.usage.videosUsed,
+                                  subscriptionInfo.limits.maxVideos,
+                                )}%`,
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    <div className={styles.usageItem}>
+                      <div className={styles.usageHeader}>
+                        <span>Atualizações de Perfil</span>
+                        <span>
+                          {subscriptionInfo.usage.profileUpdatesUsed} /{" "}
+                          {subscriptionInfo.limits.maxProfileUpdates === -1
+                            ? "∞"
+                            : subscriptionInfo.limits.maxProfileUpdates}
+                        </span>
+                      </div>
+                      {subscriptionInfo.limits.maxProfileUpdates !== -1 && (
+                        <div className={styles.progressBar}>
+                          <div
+                            className={styles.progressFill}
+                            style={{
+                              width: `${getUsagePercentage(
+                                subscriptionInfo.usage.profileUpdatesUsed,
+                                subscriptionInfo.limits.maxProfileUpdates,
+                              )}%`,
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className={styles.limitsSection}>
+                  <h4 className={styles.sectionTitle}>
+                    <Crown size={20} /> Recursos Disponíveis
+                  </h4>
+                  <div className={styles.limitsList}>
+                    <div
+                      className={`${styles.limitItem} ${subscriptionInfo.limits.maxVideos > 0 ? styles.available : styles.unavailable}`}
                     >
-                      <div className={styles.benefitIconWrapper}>
-                        <IconComponent
-                          size={24}
-                          className={styles.benefitLucideIcon}
-                        />
+                      Vídeos no Perfil
+                    </div>
+                    <div
+                      className={`${styles.limitItem} ${subscriptionInfo.limits.hasCommentControl ? styles.available : styles.unavailable}`}
+                    >
+                      Controle de Comentários
+                    </div>
+                    <div
+                      className={`${styles.limitItem} ${subscriptionInfo.limits.hasVoiceDemo ? styles.available : styles.unavailable}`}
+                    >
+                      Demonstração de Voz
+                    </div>
+                    <div
+                      className={`${styles.limitItem} ${subscriptionInfo.limits.hasFeaturedProfile ? styles.available : styles.unavailable}`}
+                    >
+                      Perfil em Destaque
+                    </div>
+                    {subscriptionInfo.limits.priority && (
+                      <div
+                        className={`${styles.limitItem} ${styles.available}`}
+                      >
+                        Prioridade: {subscriptionInfo.limits.priority}
                       </div>
-                      <div className={styles.benefitContent}>
-                        <span className={styles.benefitName}>
-                          {benefit.name}
-                        </span>
-                        <span className={styles.benefitValue}>
-                          {benefitDisplay.icon}
-                          {benefitDisplay.text && <span className={styles.numberValue}>{benefitDisplay.text}</span>}
-                        </span>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </Card>
       </div>
+
       {availablePlans.length > 0 && (
-        <div className={styles.plansSection}>
+        <div id="plans-section" className={styles.plansSection}>
           <h3 className={styles.plansTitle}>Faça Upgrade do seu Plano</h3>
           <div className={styles.plansGrid}>
             {availablePlans.map((plan: Plan) => (
@@ -335,7 +493,9 @@ const SignaturePage = memo(function SignaturePage() {
                           className={`${styles.benefit} ${!isActive ? styles.deny : ""}`}
                         >
                           {benefitDisplay.icon}
-                          {benefitDisplay.text && <span>{benefitDisplay.text}</span>}
+                          {benefitDisplay.text && (
+                            <span>{benefitDisplay.text}</span>
+                          )}
                           <span>{benefit.name}</span>
                         </li>
                       );

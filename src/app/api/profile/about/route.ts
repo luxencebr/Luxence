@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/utils/prisma";
+import { canUpdateProfile, logSubscriptionUsage } from "@/lib/subscription";
 
 export async function PATCH(req: Request) {
   try {
@@ -19,6 +20,16 @@ export async function PATCH(req: Request) {
       return NextResponse.json(
         { error: "profileId não fornecido." },
         { status: 400 }
+      );
+    }
+
+    // Verificar limitações de assinatura
+    const { canUpdate, reason } = await canUpdateProfile(parseInt(session.user.id));
+    
+    if (!canUpdate) {
+      return NextResponse.json(
+        { error: reason || 'Não é possível atualizar o perfil' },
+        { status: 403 }
       );
     }
 
@@ -52,6 +63,12 @@ export async function PATCH(req: Request) {
       data: {
         description: bio || null,
       },
+    });
+
+    // Registrar uso da assinatura
+    await logSubscriptionUsage(parseInt(session.user.id), 'profile_update', `bio-${profileId}`, {
+      field: 'description',
+      value: bio,
     });
 
     return NextResponse.json({ success: true });

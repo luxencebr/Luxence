@@ -80,6 +80,7 @@ model User {
 
   passwordResetTokens PasswordResetToken[]
   sessions    UserSession[]
+  subscriptions Subscription[]
 }
 
 model PasswordResetToken {
@@ -135,6 +136,139 @@ model UserSession {
   @@index([userId])
   @@index([sessionToken])
   @@index([lastActivity])
+}
+
+// ========== SISTEMA DE ASSINATURAS ==========
+
+enum SUBSCRIPTION_STATUS {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+  PENDING
+  SUSPENDED
+}
+
+enum PAYMENT_STATUS {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+  CANCELLED
+}
+
+enum PAYMENT_METHOD {
+  CREDIT_CARD
+  PIX
+  BOLETO
+  PAYPAL
+}
+
+model SubscriptionPlan {
+  id          Int      @id @default(autoincrement())
+  
+  signature   SIGNATURE @unique
+  name        String
+  description String?
+  price       Decimal  @db.Decimal(10,2)
+  
+  // Benefícios do plano
+  maxPhotos   Int      @default(0)
+  maxVideos   Int      @default(0)
+  maxProfileUpdates Int @default(0)
+  hasCommentControl Boolean @default(false)
+  hasVoiceDemo Boolean @default(false)
+  priority    String?  // "", "Alta", "Máxima"
+  hasFeaturedProfile Boolean @default(false)
+  
+  // Configurações
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  subscriptions Subscription[]
+  
+  @@index([signature])
+}
+
+model Subscription {
+  id          String   @id @default(cuid())
+  
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  planId      Int
+  plan        SubscriptionPlan @relation(fields: [planId], references: [id])
+  
+  status      SUBSCRIPTION_STATUS @default(PENDING)
+  
+  startDate   DateTime
+  endDate     DateTime
+  
+  // Controle de uso
+  photosUsed  Int      @default(0)
+  videosUsed  Int      @default(0)
+  profileUpdatesUsed Int @default(0)
+  
+  // Renovação automática
+  autoRenew   Boolean  @default(true)
+  
+  // Metadados
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  cancelledAt DateTime?
+  
+  payments    Payment[]
+  usageLogs   SubscriptionUsageLog[]
+  
+  @@index([userId])
+  @@index([status])
+  @@index([endDate])
+  @@index([planId])
+}
+
+model Payment {
+  id            String   @id @default(cuid())
+  
+  subscriptionId String
+  subscription  Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  
+  amount        Decimal  @db.Decimal(10,2)
+  currency      String   @default("BRL")
+  
+  method        PAYMENT_METHOD
+  status        PAYMENT_STATUS @default(PENDING)
+  
+  // Dados do pagamento
+  externalId    String?  // ID do gateway de pagamento
+  gatewayData   Json?    // Dados específicos do gateway
+  
+  // Datas
+  dueDate       DateTime?
+  paidAt        DateTime?
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@index([subscriptionId])
+  @@index([status])
+  @@index([externalId])
+}
+
+model SubscriptionUsageLog {
+  id            Int      @id @default(autoincrement())
+  
+  subscriptionId String
+  subscription  Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  
+  action        String   // "photo_upload", "video_upload", "profile_update"
+  resourceId    String?  // ID do recurso afetado
+  metadata      Json?    // Dados adicionais
+  
+  createdAt     DateTime @default(now())
+  
+  @@index([subscriptionId])
+  @@index([action])
+  @@index([createdAt])
 }
 
 

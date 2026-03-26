@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/utils/prisma";
+import { getUserSubscriptionInfo } from "@/lib/subscription-helpers";
 
 export async function GET() {
   try {
@@ -23,9 +24,13 @@ export async function GET() {
       },
     });
 
+    // Buscar informações completas da assinatura
+    const subscriptionInfo = await getUserSubscriptionInfo(userId);
+
     return NextResponse.json({
       signature: producer?.signature || "COPPER",
       hasProducerProfile: !!producer,
+      subscriptionInfo,
     });
   } catch (error) {
     console.error("Erro ao buscar dados da assinatura:", error);

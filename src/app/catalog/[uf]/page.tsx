@@ -198,7 +198,9 @@ function applyFilters(producers: Producer[], filters: ActiveFilters, options: Re
 
     // 🔹 Audiência
     if (filters.audience?.length) {
-      const ids = profile.audience?.map((a) => a.option.id) || [];
+      const ids = profile.audience
+        ?.filter((a) => a.status === "yes")
+        .map((a) => a.option.id) || [];
 
       if (!filters.audience.some((id) => ids.includes(id))) {
         return false;

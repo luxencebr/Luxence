@@ -68,8 +68,15 @@ export async function PATCH(request: NextRequest) {
       },
     });
 
+    // Desativar todas as sessões do usuário
+    await prisma.userSession.updateMany({
+      where: { userId },
+      data: { isActive: false },
+    });
+
     return NextResponse.json({
       message: "Conta excluída com sucesso",
+      forceLogout: true,
     });
   } catch (error) {
     console.error("Erro ao excluir conta:", error);

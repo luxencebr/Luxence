@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/utils/prisma";
+import { canUpdateProfile, logSubscriptionUsage } from "@/lib/subscription";
 
 export async function PATCH(req: Request) {
   try {
@@ -17,6 +18,16 @@ export async function PATCH(req: Request) {
 
     if (!profileId || !Array.isArray(appearance)) {
       return NextResponse.json({ error: "Payload inválido" }, { status: 400 });
+    }
+
+    // Verificar limitações de assinatura
+    const { canUpdate, reason } = await canUpdateProfile(parseInt(session.user.id));
+    
+    if (!canUpdate) {
+      return NextResponse.json(
+        { error: reason || 'Não é possível atualizar o perfil' },
+        { status: 403 }
+      );
     }
 
     // Validar se o perfil pertence ao usuário logado
@@ -65,6 +76,12 @@ export async function PATCH(req: Request) {
         data: dataToCreate,
       });
     }
+
+    // Registrar uso da assinatura
+    await logSubscriptionUsage(parseInt(session.user.id), 'profile_update', `appearance-${profileId}`, {
+      field: 'appearance',
+      itemCount: dataToCreate.length,
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {

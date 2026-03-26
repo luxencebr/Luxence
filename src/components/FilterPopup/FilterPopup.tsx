@@ -216,7 +216,11 @@ export function extractFilterOptions(producers: Producer[]) {
       }
     });
 
-    profile.audience?.forEach((a) => audiences.set(a.option.id, a.option));
+    profile.audience?.forEach((a) => {
+      if (a.status === "yes") {
+        audiences.set(a.option.id, a.option);
+      }
+    });
 
     profile.locations?.forEach((l) => locations.set(l.option.id, l.option));
 

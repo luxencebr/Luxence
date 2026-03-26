@@ -14,11 +14,32 @@ export async function middleware(request: NextRequest) {
     try {
       const session = await auth();
       
-      if (session?.sessionToken) {
-        // Atualizar atividade da sessão de forma assíncrona
-        updateSessionActivity(session.sessionToken).catch(error => {
-          console.error("Erro ao atualizar atividade da sessão:", error);
+      if (session?.user?.id) {
+        // Verificar se a conta foi excluída via API call para evitar importar Prisma
+        const checkUrl = new URL('/api/auth/check-account-status', request.url);
+        const response = await fetch(checkUrl, {
+          headers: {
+            'Cookie': request.headers.get('cookie') || '',
+          },
         });
+
+        if (response.ok) {
+          const { isDeleted } = await response.json();
+          
+          if (isDeleted) {
+            // Redirecionar para logout se a conta foi excluída
+            const logoutUrl = new URL('/api/auth/signout', request.url);
+            logoutUrl.searchParams.set('callbackUrl', '/');
+            return NextResponse.redirect(logoutUrl);
+          }
+        }
+
+        if (session?.sessionToken) {
+          // Atualizar atividade da sessão de forma assíncrona
+          updateSessionActivity(session.sessionToken).catch(error => {
+            console.error("Erro ao atualizar atividade da sessão:", error);
+          });
+        }
       }
     } catch (error) {
       console.error("Erro no middleware de sessão:", error);

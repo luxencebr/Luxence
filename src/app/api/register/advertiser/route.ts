@@ -3,6 +3,7 @@ import { prisma } from "@/utils/prisma";
 import { uploadToSpaces } from "@/lib/uploadToSpaces";
 import { randomUUID } from "crypto";
 import { hash } from "bcryptjs";
+import { createFreeSubscription } from "@/lib/subscription-helpers";
 
 export async function POST(req: Request) {
   try {
@@ -198,6 +199,9 @@ export async function POST(req: Request) {
         city: "Rio de Janeiro",
       },
     });
+
+    // Criar assinatura gratuita COPPER
+    await createFreeSubscription(user.id);
 
     return NextResponse.json({ producer }, { status: 201 });
   } catch (error: any) {

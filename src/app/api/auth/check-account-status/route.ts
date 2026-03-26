@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/utils/prisma";
 import { compareSync } from "bcryptjs";
+import { auth } from "@/auth";
 
 export async function POST(request: NextRequest) {
   try {
@@ -41,5 +42,27 @@ export async function POST(request: NextRequest) {
       { error: "Erro interno do servidor" },
       { status: 500 }
     );
+  }
+}
+
+export async function GET(request: NextRequest) {
+  try {
+    const session = await auth();
+    
+    if (!session?.user?.id) {
+      return NextResponse.json({ isDeleted: false });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: parseInt(session.user.id) },
+      select: { isDeleted: true },
+    });
+
+    return NextResponse.json({ 
+      isDeleted: user?.isDeleted || false 
+    });
+  } catch (error) {
+    console.error("Erro ao verificar status da conta:", error);
+    return NextResponse.json({ isDeleted: false });
   }
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { FaEye, FaEyeSlash, FaTimes } from "react-icons/fa";
 import { Monitor, Smartphone, MapPin, Clock, LogOut } from "lucide-react";
 import Card from "@/components/ui/Card/Card";
@@ -86,7 +86,7 @@ export default function SecurityPage() {
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
   // Estados para sessões ativas
-  const [sessions, setSessions] = useState([]);
+  const [sessions, setSessions] = useState<any[]>([]);
   const [isLoggingOut, setIsLoggingOut] = useState<string | null>(null);
 
   // Carregar configurações de notificação e sessões
@@ -304,8 +304,8 @@ export default function SecurityPage() {
         throw new Error(data.error || "Erro ao excluir conta");
       }
 
-      // Redirecionar para logout ou página inicial
-      window.location.href = "/";
+      // Fazer logout imediatamente após exclusão
+      await signOut({ callbackUrl: "/" });
     } catch (error) {
       setDeleteError(
         error instanceof Error ? error.message : "Erro ao excluir conta",

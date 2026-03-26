@@ -4,8 +4,9 @@ import { prisma } from "@/utils/prisma";
 import { uploadToSpaces } from "@/lib/uploadToSpaces";
 import { randomUUID } from "crypto";
 import sharp from "sharp";
-import { SIGNATURE_LIMITS, type Signature } from "@/utils/signatureLimits";
+import { type Signature } from "@/utils/signatureLimits";
 import { updateProducerVerificationStatus } from "@/lib/profile-verification";
+import { canUploadPhotos, logSubscriptionUsage } from "@/lib/subscription";
 
 export async function POST(req: Request) {
   try {
@@ -58,17 +59,15 @@ export async function POST(req: Request) {
 
     const images = Array.isArray(profile.images) ? profile.images : [];
     const currentImageCount = images.length;
-    const signature = profile.producer.signature as Signature;
-    const maxImages = SIGNATURE_LIMITS[signature];
-
-    // Verificar se já atingiu o limite
-    if (currentImageCount >= maxImages) {
+    
+    // Usar novo sistema de verificação de assinatura
+    const { canUpload, reason } = await canUploadPhotos(parseInt(session.user.id));
+    
+    if (!canUpload) {
       return NextResponse.json(
         {
-          error: `Limite de imagens atingido. Seu plano ${signature} permite até ${maxImages} imagens.`,
-          limit: maxImages,
+          error: reason || 'Não é possível fazer upload de fotos',
           current: currentImageCount,
-          signature,
         },
         { status: 403 },
       );
@@ -128,6 +127,12 @@ export async function POST(req: Request) {
       data: {
         images: [...images, newImage],
       },
+    });
+
+    // Registrar uso da assinatura
+    await logSubscriptionUsage(parseInt(session.user.id), 'photo_upload', imageId, {
+      fileName: file.name,
+      fileSize: buffer.length,
     });
 
     // Atualiza o status de verificação do perfil

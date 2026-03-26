@@ -372,7 +372,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
         <div className={styles.productHeader}>
           <div className={styles.productHighlight}>
             <div className={styles.nameAndViews}>
-              <p className={styles.nameAgeContainer}>
+              <div className={styles.nameAgeContainer}>
                 <span className={`${styles.editable} ${styles.nameSpan}`} data-field="producer-name">
                   {isEditingName ? (
                     <span className={styles.editableEdit}>
@@ -535,7 +535,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                     </span>
                   </>
                 )}
-              </p>
+              </div>
               
               <div className={styles.weeklyViews}>
                 <FaEye />

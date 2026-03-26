@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/utils/prisma";
 import { updateProducerVerificationStatus } from "@/lib/profile-verification";
+import { canUpdateProfile, logSubscriptionUsage } from "@/lib/subscription";
 
 export async function POST(request: Request) {
   try {
@@ -17,6 +18,16 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: "Dados inválidos" },
         { status: 400 }
+      );
+    }
+
+    // Verificar limitações de assinatura
+    const { canUpdate, reason } = await canUpdateProfile(parseInt(session.user.id));
+    
+    if (!canUpdate) {
+      return NextResponse.json(
+        { error: reason || 'Não é possível atualizar o perfil' },
+        { status: 403 }
       );
     }
 
@@ -50,6 +61,12 @@ export async function POST(request: Request) {
     await prisma.producerProfile.update({
       where: { id: profileId },
       data: { name },
+    });
+
+    // Registrar uso da assinatura
+    await logSubscriptionUsage(parseInt(session.user.id), 'profile_update', `name-${profileId}`, {
+      field: 'name',
+      value: name,
     });
 
     // Atualiza o status de verificação do perfil

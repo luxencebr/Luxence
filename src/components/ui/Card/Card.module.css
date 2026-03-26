@@ -1,7 +1,6 @@
 .card {
   background: var(--card-bg, var(--light-complementary-color));
   flex: 1;
-  overflow: hidden;
 }
 
 .animated {

@@ -1,4 +1,4 @@
-import { prisma } from "@/utils/prisma";
+import { prismaAuth as prisma } from "@/utils/prisma-auth";
 import { compareSync } from "bcryptjs";
 
 type User = {

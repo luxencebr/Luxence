@@ -13,6 +13,9 @@ import { HiOutlinePencil } from "react-icons/hi2";
 import styles from "./page.module.css";
 import type { Post } from "@/types/Posts";
 
+// Esta página é dinâmica e não precisa de generateStaticParams
+export const dynamic = 'force-dynamic';
+
 export default function PostPage() {
   const { id } = useParams();
   const [post, setPost] = useState<Post | null>(null);
