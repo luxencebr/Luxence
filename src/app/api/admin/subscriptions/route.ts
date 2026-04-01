@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { PrismaClient } from '@prisma/client';
 import { getSubscriptionStats } from '@/lib/subscription';
+import { sendWelcomeSubscriptionEmail } from '@/lib/subscription-notifications';
 
 const prisma = new PrismaClient();
 
@@ -130,6 +131,7 @@ export async function POST(request: NextRequest) {
         include: {
           user: {
             select: {
+              id: true,
               email: true,
               name: true,
             },
@@ -142,6 +144,11 @@ export async function POST(request: NextRequest) {
       await prisma.producer.updateMany({
         where: { userId },
         data: { signature: plan.signature },
+      });
+
+      // Enviar email de boas-vindas (não bloquear a resposta)
+      sendWelcomeSubscriptionEmail(subscription as any).catch(error => {
+        console.error('Erro ao enviar email de boas-vindas:', error);
       });
 
       return NextResponse.json({ subscription });

@@ -219,6 +219,7 @@ model Subscription {
   
   payments    Payment[]
   usageLogs   SubscriptionUsageLog[]
+  notifications SubscriptionNotification[]
   
   @@index([userId])
   @@index([status])
@@ -269,6 +270,30 @@ model SubscriptionUsageLog {
   @@index([subscriptionId])
   @@index([action])
   @@index([createdAt])
+}
+
+enum NOTIFICATION_TYPE {
+  WELCOME
+  REMINDER
+  LAST_DAY
+  EXPIRED
+}
+
+model SubscriptionNotification {
+  id            String   @id @default(cuid())
+  
+  subscriptionId String
+  subscription  Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  
+  type          NOTIFICATION_TYPE
+  sentAt        DateTime @default(now())
+  emailSent     Boolean  @default(true)
+  metadata      Json?    // Dados adicionais como dias restantes
+  
+  @@unique([subscriptionId, type])
+  @@index([subscriptionId])
+  @@index([type])
+  @@index([sentAt])
 }
 
 
