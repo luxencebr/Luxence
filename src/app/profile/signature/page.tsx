@@ -194,6 +194,7 @@ const SignaturePage = memo(function SignaturePage() {
   const [subscriptionInfo, setSubscriptionInfo] =
     useState<SubscriptionInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingPlan, setLoadingPlan] = useState<Signature | null>(null);
 
   useEffect(() => {
     const fetchSignatureData = async () => {
@@ -225,11 +226,47 @@ const SignaturePage = memo(function SignaturePage() {
     }
   }, [session]);
 
-  const handleUpgrade = (planId: Signature) => {
-    // Aqui você implementaria a lógica de upgrade/pagamento
-    alert(
-      `Funcionalidade de upgrade para ${SIGNATURE_LABELS[planId]} será implementada em breve!`,
-    );
+  const handleUpgrade = async (planId: Signature) => {
+    try {
+      setLoadingPlan(planId);
+      
+      const response = await fetch('/api/payments/pix', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          planSignature: planId,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        // Mostrar erro específico para dados faltantes
+        if (result.error && (
+          result.error.includes('telefone') || 
+          result.error.includes('documento') ||
+          result.error.includes('CPF') ||
+          result.error.includes('CNPJ')
+        )) {
+          return;
+        }
+        
+        throw new Error(result.error || 'Erro ao criar cobrança');
+      }
+
+      if (result.success && result.payment) {
+        // Redirecionar para a página de pagamento da AbacatePay
+        window.open(result.payment.paymentUrl, '_blank');
+      } else {
+        throw new Error('Resposta inválida do servidor');
+      }
+    } catch (error) {
+      console.error('Erro ao processar upgrade:', error);
+    } finally {
+      setLoadingPlan(null);
+    }
   };
 
   const scrollToPlans = () => {
@@ -298,6 +335,7 @@ const SignaturePage = memo(function SignaturePage() {
                   <button
                     className={styles.upgradeButton}
                     onClick={scrollToPlans}
+                    disabled={loadingPlan !== null}
                   >
                     <ArrowUp size={16} />
                     Fazer Upgrade
@@ -506,8 +544,9 @@ const SignaturePage = memo(function SignaturePage() {
                     <button
                       className={styles.upgradeButton}
                       onClick={() => handleUpgrade(plan.id)}
+                      disabled={loadingPlan !== null}
                     >
-                      Fazer Upgrade
+                      {loadingPlan === plan.id ? 'Processando...' : 'Fazer Upgrade'}
                     </button>
                   </div>
                 </div>
