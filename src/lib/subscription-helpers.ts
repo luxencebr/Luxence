@@ -34,6 +34,46 @@ export async function countUserPhotos(userId: number): Promise<number> {
 }
 
 /**
+ * Cria uma nova assinatura inicializando os contadores corretamente
+ */
+export async function createSubscriptionWithCorrectCounters(
+  userId: number,
+  planId: number,
+  startDate: Date,
+  endDate: Date
+) {
+  // Contar recursos reais do usuário
+  const currentPhotosCount = await countUserPhotos(userId);
+  
+  // TODO: Implementar contagem de vídeos e atualizações de perfil quando necessário
+  const currentVideosCount = 0;
+  const currentProfileUpdatesCount = 0;
+
+  return await prisma.subscription.create({
+    data: {
+      userId,
+      planId,
+      status: 'ACTIVE',
+      startDate,
+      endDate,
+      photosUsed: currentPhotosCount,
+      videosUsed: currentVideosCount,
+      profileUpdatesUsed: currentProfileUpdatesCount,
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          email: true,
+          name: true,
+        },
+      },
+      plan: true,
+    },
+  });
+}
+
+/**
  * Obtém informações completas da assinatura do usuário
  */
 export async function getUserSubscriptionInfo(userId: number) {

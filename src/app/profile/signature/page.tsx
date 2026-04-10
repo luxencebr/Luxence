@@ -229,11 +229,11 @@ const SignaturePage = memo(function SignaturePage() {
   const handleUpgrade = async (planId: Signature) => {
     try {
       setLoadingPlan(planId);
-      
-      const response = await fetch('/api/payments/pix', {
-        method: 'POST',
+
+      const response = await fetch("/api/payments/pix", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           planSignature: planId,
@@ -244,26 +244,27 @@ const SignaturePage = memo(function SignaturePage() {
 
       if (!response.ok) {
         // Mostrar erro específico para dados faltantes
-        if (result.error && (
-          result.error.includes('telefone') || 
-          result.error.includes('documento') ||
-          result.error.includes('CPF') ||
-          result.error.includes('CNPJ')
-        )) {
+        if (
+          result.error &&
+          (result.error.includes("telefone") ||
+            result.error.includes("documento") ||
+            result.error.includes("CPF") ||
+            result.error.includes("CNPJ"))
+        ) {
           return;
         }
-        
-        throw new Error(result.error || 'Erro ao criar cobrança');
+
+        throw new Error(result.error || "Erro ao criar cobrança");
       }
 
       if (result.success && result.payment) {
         // Redirecionar para a página de pagamento da AbacatePay
-        window.open(result.payment.paymentUrl, '_blank');
+        window.open(result.payment.paymentUrl, "_blank");
       } else {
-        throw new Error('Resposta inválida do servidor');
+        throw new Error("Resposta inválida do servidor");
       }
     } catch (error) {
-      console.error('Erro ao processar upgrade:', error);
+      console.error("Erro ao processar upgrade:", error);
     } finally {
       setLoadingPlan(null);
     }
@@ -319,15 +320,12 @@ const SignaturePage = memo(function SignaturePage() {
                   <span className={styles.planName}>
                     {currentPlan?.title || "Cobre"}
                   </span>
-                  <span className={styles.planPrice}>
-                    {currentPlan?.price || "Gratuito"}
-                  </span>
+                  {currentPlan?.title == "Cobre" && (
+                    <span className={styles.planPrice}>
+                      {currentPlan?.price || "Gratuito"}
+                    </span>
+                  )}
                 </div>
-                {currentPlan?.description && (
-                  <p className={styles.planDescription}>
-                    {currentPlan.description}
-                  </p>
-                )}
               </div>
 
               <div className={styles.subscriptionInfo}>
@@ -343,22 +341,17 @@ const SignaturePage = memo(function SignaturePage() {
                 ) : (
                   subscriptionInfo && (
                     <div className={styles.dateInfo}>
-                      <div className={styles.dateItem}>
-                        <Calendar size={16} />
-                        <span>
-                          Início: {formatDate(subscriptionInfo.startDate)}
-                        </span>
-                      </div>
-                      <div className={styles.dateItem}>
-                        <Calendar size={16} />
-                        <span>Fim: {formatDate(subscriptionInfo.endDate)}</span>
-                      </div>
-                      <div className={styles.dateItem}>
-                        <Clock size={16} />
+                      <div className={styles.remainingTime}>
                         <span style={{ color: getStatusColor() }}>
                           {subscriptionInfo.isExpired
                             ? "Expirada"
                             : `${subscriptionInfo.daysRemaining} dias restantes`}
+                        </span>
+                      </div>
+                      <div className={styles.dateItem}>
+                        <span>
+                          {formatDate(subscriptionInfo.startDate)} -{" "}
+                          {formatDate(subscriptionInfo.endDate)}
                         </span>
                       </div>
                     </div>
@@ -546,7 +539,9 @@ const SignaturePage = memo(function SignaturePage() {
                       onClick={() => handleUpgrade(plan.id)}
                       disabled={loadingPlan !== null}
                     >
-                      {loadingPlan === plan.id ? 'Processando...' : 'Fazer Upgrade'}
+                      {loadingPlan === plan.id
+                        ? "Processando..."
+                        : "Fazer Upgrade"}
                     </button>
                   </div>
                 </div>

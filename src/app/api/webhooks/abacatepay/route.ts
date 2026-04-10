@@ -6,6 +6,7 @@ import {
 } from '@/lib/abacatepay';
 import { PrismaClient } from '@prisma/client';
 import { sendWelcomeSubscriptionEmail } from '@/lib/subscription-notifications';
+import { countUserPhotos } from '@/lib/subscription-helpers';
 
 const prisma = new PrismaClient();
 
@@ -110,6 +111,9 @@ async function handlePaymentConfirmed(event: AbacatePayWebhookPayload<BillingWeb
     const endDate = new Date();
     endDate.setMonth(endDate.getMonth() + 1); // 1 mês
 
+    // Contar fotos reais do usuário para inicializar corretamente
+    const currentPhotosCount = await countUserPhotos(userId);
+
     const subscription = await prisma.subscription.create({
       data: {
         userId,
@@ -117,7 +121,7 @@ async function handlePaymentConfirmed(event: AbacatePayWebhookPayload<BillingWeb
         status: 'ACTIVE',
         startDate,
         endDate,
-        photosUsed: 0,
+        photosUsed: currentPhotosCount, // Inicializar com contagem real
         videosUsed: 0,
         profileUpdatesUsed: 0,
       },

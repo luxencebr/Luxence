@@ -17,6 +17,8 @@
     "db:push": "npx prisma db push",
     "create-admin": "ts-node --project tsconfig.scripts.json scripts/create-admin.ts",
     "create-test-user": "ts-node --project tsconfig.scripts.json scripts/create-test-user.ts",
+    "upgrade-arthur": "ts-node --project tsconfig.scripts.json scripts/upgrade-arthur-to-silver.ts",
+    "fix-arthur-photos": "ts-node --project tsconfig.scripts.json scripts/fix-arthur-photo-counter.ts",
     "process-notifications": "ts-node --project tsconfig.scripts.json scripts/process-subscription-notifications.ts",
     "test:subscription-flow": "ts-node --project tsconfig.scripts.json scripts/test-subscription-flow.ts",
     "test:notifications": "ts-node --project tsconfig.scripts.json scripts/test-notifications.ts",

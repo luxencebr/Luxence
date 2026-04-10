@@ -17,7 +17,7 @@
 .currentPlanHeader {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--space-xl);
 }
 
@@ -28,7 +28,7 @@
 
 .currentPlanTitle {
   font-size: var(--ft-md);
-  font-weight: 600;
+  font-weight: 400;
   color: var(--light-color);
   margin: 0;
 }
@@ -84,10 +84,20 @@
 }
 
 .dateInfo {
+  background: var(--dark-color);
+  padding: var(--space-sm) var(--space-lg);
+
+  border-radius: var(--radius-sm);
+
   display: flex;
+  align-items: center;
   flex-direction: column;
   gap: var(--space-xs);
-  align-items: flex-end;
+}
+
+.remainingTime {
+  font-size: var(--ft-md);
+  font-weight: bold;
 }
 
 .dateItem {
