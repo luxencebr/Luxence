@@ -1,15 +1,23 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { analyticsMonitor } from "@/lib/analytics-monitor";
 
-export async function GET() {
-  try {
-    const metrics = analyticsMonitor.getAllMetrics();
+// Force Node.js runtime to avoid edge runtime issues
+export const runtime = 'nodejs';
 
-    console.log("📊 Metrics requested:", {
-      totalPageViews: metrics.summary.totalPageViews,
-      totalSessions: metrics.summary.totalSessions,
-      activeSessions: metrics.summary.activeSessions,
-    });
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const period = (searchParams.get("period") || "24h") as "24h" | "7d" | "30d";
+
+    // Validate period parameter
+    if (!["24h", "7d", "30d"].includes(period)) {
+      return NextResponse.json(
+        { error: "Invalid period. Use 24h, 7d, or 30d" },
+        { status: 400 },
+      );
+    }
+
+    const metrics = analyticsMonitor.getAllMetrics(period);
 
     return NextResponse.json({
       ...metrics,
