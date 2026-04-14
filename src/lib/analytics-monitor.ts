@@ -960,7 +960,230 @@ class AnalyticsMonitor {
   }
 
   /**
-   * Get all metrics
+   * Get all metrics with database integration
+   */
+  async getAllMetricsWithDB(period: "24h" | "7d" | "30d" = "24h", prisma?: any) {
+    const now = Date.now();
+
+    // Limpar sessões antigas periodicamente
+    this.cleanupInactiveSessions();
+
+    // Update session active status based on timeout
+    this.sessions.forEach((session: UserSession) => {
+      session.isActive = session.lastActivity > now - this.sessionTimeout;
+    });
+
+    const activeSessions = Array.from(this.sessions.values()).filter(
+      (s: UserSession) => s.isActive,
+    );
+
+    const baseMetrics = {
+      users: this.getUserMetrics(period),
+      devices: this.getDeviceMetrics(period),
+      location: this.getLocationMetrics(period),
+      navigation: this.getNavigationMetrics(period),
+      summary: {
+        totalPageViews: this.pageViews.size,
+        totalSessions: this.sessions.size,
+        activeSessions: activeSessions.length,
+      },
+    };
+
+    // Se o Prisma foi fornecido, adicionar dados de cadastros
+    if (prisma) {
+      try {
+        const today = new Date();
+        const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+        const lastWeek = new Date(today.getTime() - 14 * 24 * 60 * 60 * 1000);
+        const lastMonth = new Date(today.getTime() - 60 * 24 * 60 * 60 * 1000);
+
+        const [
+          usersThisWeek,
+          usersLastWeek,
+          usersThisMonth,
+          usersLastMonth,
+        ] = await Promise.all([
+          prisma.user.count({ where: { createdAt: { gte: weekAgo }, isDeleted: false } }),
+          prisma.user.count({ where: { createdAt: { gte: lastWeek, lt: weekAgo }, isDeleted: false } }),
+          prisma.user.count({ where: { createdAt: { gte: monthAgo }, isDeleted: false } }),
+          prisma.user.count({ where: { createdAt: { gte: lastMonth, lt: monthAgo }, isDeleted: false } }),
+        ]);
+
+        // Calcular crescimento
+        const weekGrowth = usersLastWeek > 0 ? ((usersThisWeek - usersLastWeek) / usersLastWeek) * 100 : 0;
+        const monthGrowth = usersLastMonth > 0 ? ((usersThisMonth - usersLastMonth) / usersLastMonth) * 100 : 0;
+
+        // Adicionar dados de cadastros aos usuários
+        baseMetrics.users = {
+          ...baseMetrics.users,
+          registrations: {
+            thisWeek: usersThisWeek,
+            lastWeek: usersLastWeek,
+            thisMonth: usersThisMonth,
+            lastMonth: usersLastMonth,
+            weekGrowth: Math.round(weekGrowth * 100) / 100,
+            monthGrowth: Math.round(monthGrowth * 100) / 100,
+          }
+        };
+      } catch (error) {
+        console.warn("Error fetching registration data:", error);
+      }
+    }
+
+    return baseMetrics;
+  }
+  // Método para obter sessões únicas agrupadas por data
+  getSessionsByDateRange(days: number): Array<{ date: string; views: number; label: string }> {
+    const now = Date.now();
+    const result: Array<{ date: string; views: number; label: string }> = [];
+
+    // Obter todas as sessões do período
+    const periodStart = now - (days * 24 * 60 * 60 * 1000);
+    const sessionsInPeriod = Array.from(this.sessions.values()).filter(
+      (session: UserSession) => session.startTime > periodStart
+    );
+
+    if (days === 7) {
+      // 7 dias: dados diários
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date(now - i * 24 * 60 * 60 * 1000);
+        const dayStart = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+        const dayEnd = dayStart + 24 * 60 * 60 * 1000;
+
+        const daySessions = sessionsInPeriod.filter(
+          session => session.startTime >= dayStart && session.startTime < dayEnd
+        ).length;
+
+        result.push({
+          date: date.toISOString().split("T")[0],
+          views: daySessions,
+          label: date.toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+          }),
+        });
+      }
+    } else if (days === 30) {
+      // 30 dias: agrupar de 3 em 3 dias, 10 pontos
+      for (let i = 9; i >= 0; i--) {
+        const endDate = new Date(now - i * 3 * 24 * 60 * 60 * 1000);
+        const startDate = new Date(endDate.getTime() - 3 * 24 * 60 * 60 * 1000);
+
+        const periodSessions = sessionsInPeriod.filter(
+          session => session.startTime >= startDate.getTime() && session.startTime < endDate.getTime()
+        ).length;
+
+        result.push({
+          date: endDate.toISOString().split("T")[0],
+          views: periodSessions,
+          label: endDate.toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+          }),
+        });
+      }
+    } else {
+      // 365 dias: agrupar por mês (30 dias), 12 pontos
+      for (let i = 11; i >= 0; i--) {
+        const endDate = new Date(now - i * 30 * 24 * 60 * 60 * 1000);
+        const startDate = new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+        const monthSessions = sessionsInPeriod.filter(
+          session => session.startTime >= startDate.getTime() && session.startTime < endDate.getTime()
+        ).length;
+
+        result.push({
+          date: endDate.toISOString().split("T")[0],
+          views: monthSessions,
+          label: endDate
+            .toLocaleDateString("pt-BR", {
+              month: "short",
+            })
+            .replace(".", ""),
+        });
+      }
+    }
+
+    return result;
+  }
+  // Método para obter visualizações agrupadas por data
+  // Método para obter sessões únicas agrupadas por data
+    getSessionsByDateRange(days: number): Array<{ date: string; views: number; label: string }> {
+      const now = Date.now();
+      const result: Array<{ date: string; views: number; label: string }> = [];
+
+      // Obter todas as sessões do período
+      const periodStart = now - (days * 24 * 60 * 60 * 1000);
+      const sessionsInPeriod = Array.from(this.sessions.values()).filter(
+        (session: UserSession) => session.startTime > periodStart
+      );
+
+      if (days === 7) {
+        // 7 dias: dados diários
+        for (let i = 6; i >= 0; i--) {
+          const date = new Date(now - i * 24 * 60 * 60 * 1000);
+          const dayStart = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+          const dayEnd = dayStart + 24 * 60 * 60 * 1000;
+
+          const daySessions = sessionsInPeriod.filter(
+            session => session.startTime >= dayStart && session.startTime < dayEnd
+          ).length;
+
+          result.push({
+            date: date.toISOString().split("T")[0],
+            views: daySessions,
+            label: date.toLocaleDateString("pt-BR", {
+              day: "2-digit",
+              month: "2-digit",
+            }),
+          });
+        }
+      } else if (days === 30) {
+        // 30 dias: agrupar de 3 em 3 dias, 10 pontos
+        for (let i = 9; i >= 0; i--) {
+          const endDate = new Date(now - i * 3 * 24 * 60 * 60 * 1000);
+          const startDate = new Date(endDate.getTime() - 3 * 24 * 60 * 60 * 1000);
+
+          const periodSessions = sessionsInPeriod.filter(
+            session => session.startTime >= startDate.getTime() && session.startTime < endDate.getTime()
+          ).length;
+
+          result.push({
+            date: endDate.toISOString().split("T")[0],
+            views: periodSessions,
+            label: endDate.toLocaleDateString("pt-BR", {
+              day: "2-digit",
+              month: "2-digit",
+            }),
+          });
+        }
+      } else {
+        // 365 dias: agrupar por mês (30 dias), 12 pontos
+        for (let i = 11; i >= 0; i--) {
+          const endDate = new Date(now - i * 30 * 24 * 60 * 60 * 1000);
+          const startDate = new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+          const monthSessions = sessionsInPeriod.filter(
+            session => session.startTime >= startDate.getTime() && session.startTime < endDate.getTime()
+          ).length;
+
+          result.push({
+            date: endDate.toISOString().split("T")[0],
+            views: monthSessions,
+            label: endDate
+              .toLocaleDateString("pt-BR", {
+                month: "short",
+              })
+              .replace(".", ""),
+          });
+        }
+      }
+
+  }
+
+  /**
+   * Get all metrics (backward compatibility)
    */
   getAllMetrics(period: "24h" | "7d" | "30d" = "24h") {
     const now = Date.now();
@@ -1032,6 +1255,80 @@ class AnalyticsMonitor {
     }
 
     this.lastCleanup = now;
+  }
+  // Método para obter sessões únicas agrupadas por data
+  getSessionsByDateRange(days: number): Array<{ date: string; views: number; label: string }> {
+    const now = Date.now();
+    const result: Array<{ date: string; views: number; label: string }> = [];
+
+    // Obter todas as sessões do período
+    const periodStart = now - (days * 24 * 60 * 60 * 1000);
+    const sessionsInPeriod = Array.from(this.sessions.values()).filter(
+      (session: UserSession) => session.startTime > periodStart
+    );
+
+    if (days === 7) {
+      // 7 dias: dados diários
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date(now - i * 24 * 60 * 60 * 1000);
+        const dayStart = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+        const dayEnd = dayStart + 24 * 60 * 60 * 1000;
+
+        const daySessions = sessionsInPeriod.filter(
+          session => session.startTime >= dayStart && session.startTime < dayEnd
+        ).length;
+
+        result.push({
+          date: date.toISOString().split("T")[0],
+          views: daySessions,
+          label: date.toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+          }),
+        });
+      }
+    } else if (days === 30) {
+      // 30 dias: agrupar de 3 em 3 dias, 10 pontos
+      for (let i = 9; i >= 0; i--) {
+        const endDate = new Date(now - i * 3 * 24 * 60 * 60 * 1000);
+        const startDate = new Date(endDate.getTime() - 3 * 24 * 60 * 60 * 1000);
+
+        const periodSessions = sessionsInPeriod.filter(
+          session => session.startTime >= startDate.getTime() && session.startTime < endDate.getTime()
+        ).length;
+
+        result.push({
+          date: endDate.toISOString().split("T")[0],
+          views: periodSessions,
+          label: endDate.toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+          }),
+        });
+      }
+    } else {
+      // 365 dias: agrupar por mês (30 dias), 12 pontos
+      for (let i = 11; i >= 0; i--) {
+        const endDate = new Date(now - i * 30 * 24 * 60 * 60 * 1000);
+        const startDate = new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+        const monthSessions = sessionsInPeriod.filter(
+          session => session.startTime >= startDate.getTime() && session.startTime < endDate.getTime()
+        ).length;
+
+        result.push({
+          date: endDate.toISOString().split("T")[0],
+          views: monthSessions,
+          label: endDate
+            .toLocaleDateString("pt-BR", {
+              month: "short",
+            })
+            .replace(".", ""),
+        });
+      }
+    }
+
+    return result;
   }
 }
 

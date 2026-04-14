@@ -338,9 +338,10 @@
 .cardValue {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-end;
   gap: var(--space-xs);
   flex: 1;
+  align-items: flex-start;
 }
 
 .primaryValue {
@@ -356,6 +357,10 @@
 
 .primaryValue.anonymous {
   color: var(--warning-color);
+}
+
+.primaryValue.neutral {
+  color: var(--light-complementary-color);
 }
 
 .cardDescription {

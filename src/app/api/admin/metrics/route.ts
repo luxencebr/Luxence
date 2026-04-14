@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { analyticsMonitor } from "@/lib/analytics-monitor";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 // Force Node.js runtime to avoid edge runtime issues
 export const runtime = 'nodejs';
@@ -17,7 +20,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const metrics = analyticsMonitor.getAllMetrics(period);
+    const metrics = await analyticsMonitor.getAllMetricsWithDB(period, prisma);
 
     return NextResponse.json({
       ...metrics,

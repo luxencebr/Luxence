@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, ReactElement } from "react";
 import styles from "./dashboard.module.css";
 import {
   Users,
@@ -11,16 +11,24 @@ import {
   Eye,
   Heart,
   Server,
+  Globe,
+  LogIn,
+  HatGlasses,
+  User,
+  Smartphone,
 } from "lucide-react";
 
 // Esta página é dinâmica e não precisa de generateStaticParams
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 interface DashboardData {
   activeUsers: {
     today: number;
     week: number;
     month: number;
+    now: number; // Usuários online agora
+    authenticated: number; // Usuários logados
+    anonymous: number; // Usuários anônimos
   };
   growth: {
     week: {
@@ -38,6 +46,14 @@ interface DashboardData {
     active: number;
     inactive: number;
     total: number;
+    verified: number;
+    pending: number;
+  };
+  platform: {
+    totalSessions: number;
+    totalPageViews: number;
+    bounceRate: number;
+    avgSessionTime: number;
   };
   planDistribution: Array<{
     plan: string;
@@ -94,10 +110,17 @@ export default function DashboardPage() {
   const [chartLoading, setChartLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [chartPeriod, setChartPeriod] = useState("7");
+  const [autoRefresh, setAutoRefresh] = useState(true);
 
   useEffect(() => {
     fetchDashboardData();
   }, []);
+
+  useEffect(() => {
+    if (!autoRefresh) return;
+    const interval = setInterval(() => fetchDashboardData(), 60000);
+    return () => clearInterval(interval);
+  }, [autoRefresh, chartPeriod]);
 
   const fetchDashboardData = async (period?: string) => {
     try {
@@ -187,361 +210,404 @@ export default function DashboardPage() {
           <h1 className={styles.title}>Dashboard</h1>
           <p className={styles.subtitle}>Visão geral do sistema</p>
         </div>
-        <button
-          onClick={refreshDashboard}
-          className={styles.refreshButton}
-          disabled={loading}
-        >
-          <Activity size={16} className={loading ? styles.spinning : ""} />
-          {loading ? "Atualizando..." : "Atualizar"}
-        </button>
+        <div className={styles.controls}>
+          <label className={styles.autoRefreshLabel}>
+            <input
+              type="checkbox"
+              checked={autoRefresh}
+              onChange={(e) => setAutoRefresh(e.target.checked)}
+            />
+            Auto-refresh (1min)
+          </label>
+          <button
+            onClick={refreshDashboard}
+            className={styles.refreshButton}
+            disabled={loading}
+          >
+            <Activity size={16} className={loading ? styles.spinning : ""} />
+            {loading ? "Atualizando..." : "Atualizar"}
+          </button>
+        </div>
       </header>
 
       <div className={styles.content}>
-        {/* Cards principais */}
-        <div className={styles.cardsGrid}>
-          {/* Usuários ativos */}
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              <Users className={styles.cardIcon} />
-              <h3>Usuários Ativos</h3>
-            </div>
-            <div className={styles.cardContent}>
-              <div className={styles.metric}>
-                <span className={styles.value}>{data.activeUsers.today}</span>
-                <span className={styles.label}>Hoje</span>
-              </div>
-              <div className={styles.metric}>
-                <span className={styles.value}>{data.activeUsers.week}</span>
-                <span className={styles.label}>Esta semana</span>
-              </div>
-              <div className={styles.metric}>
-                <span className={styles.value}>{data.activeUsers.month}</span>
-                <span className={styles.label}>Este mês</span>
-              </div>
+        {/* Resumo Geral */}
+
+        {/* Seção Usuários */}
+        <section className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <div className={styles.sectionTitle}>
+              <Users className={styles.sectionIcon} />
+              <h3>Usuários</h3>
             </div>
           </div>
 
-          {/* Crescimento */}
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              <TrendingUp className={styles.cardIcon} />
-              <h3>Novos Usuários</h3>
-            </div>
-            <div className={styles.cardContent}>
-              <div className={styles.metric}>
-                <span
-                  className={`${styles.value} ${getGrowthColor(data.growth.week.percentage)}`}
-                >
-                  {data.growth.week.percentage > 0 ? "+" : ""}
-                  {data.growth.week.percentage}%
-                </span>
-                <span className={styles.label}>
-                  crescimento semanal ({data.growth.week.current} novos)
-                </span>
+          <div className={styles.summaryGrid}>
+            <div className={styles.summaryGrid}>
+              <div className={styles.summaryCard}>
+                <div className={styles.cardHeader}>
+                  <Globe className={styles.cardIcon} />
+                  <span className={styles.cardLabel}>Visualizações</span>
+                </div>
+                <div className={styles.cardValue}>
+                  <span className={styles.primaryValue}>
+                    {data.platform.totalSessions}
+                  </span>
+                  <span className={styles.cardDescription}>
+                    Sessões registradas
+                  </span>
+                </div>
               </div>
-              <div className={styles.metric}>
-                <span
-                  className={`${styles.value} ${getGrowthColor(data.growth.month.percentage)}`}
-                >
-                  {data.growth.month.percentage > 0 ? "+" : ""}
-                  {data.growth.month.percentage}%
-                </span>
-                <span className={styles.label}>
-                  crescimento mensal ({data.growth.month.current} novos)
-                </span>
+
+              <div className={styles.summaryCard}>
+                <div className={styles.cardHeader}>
+                  <Activity className={styles.cardIcon} />
+                  <span className={styles.cardLabel}>Usuários Online</span>
+                </div>
+                <div className={styles.cardValue}>
+                  <span className={styles.primaryValue}>
+                    {data.activeUsers.now}
+                  </span>
+                  <span className={styles.cardDescription}>
+                    Usuários ativos agora
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.summaryCard}>
+              <div className={styles.chartHeader}>
+                <h3>Acessos por Período</h3>
+                <div className={styles.periodButtons}>
+                  <button
+                    className={`${styles.periodButton} ${chartPeriod === "7" ? styles.periodActive : ""}`}
+                    onClick={() => handlePeriodChange("7")}
+                  >
+                    7 dias
+                  </button>
+                  <button
+                    className={`${styles.periodButton} ${chartPeriod === "30" ? styles.periodActive : ""}`}
+                    onClick={() => handlePeriodChange("30")}
+                  >
+                    30 dias
+                  </button>
+                  <button
+                    className={`${styles.periodButton} ${chartPeriod === "365" ? styles.periodActive : ""}`}
+                    onClick={() => handlePeriodChange("365")}
+                  >
+                    1 ano
+                  </button>
+                </div>
+              </div>
+              <div className={styles.lineChart}>
+                {chartLoading ? (
+                  <div className={styles.chartLoading}>
+                    <div className={styles.spinner}></div>
+                    <span>Carregando dados...</span>
+                  </div>
+                ) : (
+                  <>
+                    <svg className={styles.chartSvg} viewBox="0 0 400 200">
+                      {/* Grid lines */}
+                      <defs>
+                        <pattern
+                          id="grid"
+                          width="40"
+                          height="20"
+                          patternUnits="userSpaceOnUse"
+                        >
+                          <path
+                            d="M 40 0 L 0 0 0 20"
+                            fill="none"
+                            stroke="var(--dark-color)"
+                            strokeWidth="0.5"
+                            opacity="0.3"
+                          />
+                        </pattern>
+                      </defs>
+                      <rect width="100%" height="100%" fill="url(#grid)" />
+
+                      {/* Chart line */}
+                      {(() => {
+                        if (!data.dailyAccess.length) return null;
+
+                        const maxViews = Math.max(
+                          ...data.dailyAccess.map((d) => d.views),
+                          1,
+                        );
+                        const stepX =
+                          350 / Math.max(data.dailyAccess.length - 1, 1);
+
+                        const points = data.dailyAccess
+                          .map((day, index) => {
+                            const x = 25 + index * stepX;
+                            const y = 180 - (day.views / maxViews) * 140;
+                            return `${x},${y}`;
+                          })
+                          .join(" ");
+
+                        return (
+                          <>
+                            <polyline
+                              fill="none"
+                              stroke="var(--primary-color)"
+                              strokeWidth="3"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              points={points}
+                            />
+                            {/* Data points */}
+                            {data.dailyAccess.map((day, index) => {
+                              const x = 25 + index * stepX;
+                              const y = 180 - (day.views / maxViews) * 140;
+                              return (
+                                <g key={index}>
+                                  <circle
+                                    cx={x}
+                                    cy={y}
+                                    r="4"
+                                    fill="var(--primary-color)"
+                                    stroke="var(--dark-color)"
+                                    strokeWidth="2"
+                                  />
+                                  <text
+                                    x={x}
+                                    y={y - 10}
+                                    textAnchor="middle"
+                                    fontSize="12"
+                                    fill="var(--primary-color)"
+                                    fontWeight="600"
+                                  >
+                                    {day.views}
+                                  </text>
+                                </g>
+                              );
+                            })}
+                          </>
+                        );
+                      })()}
+                    </svg>
+
+                    {/* X-axis labels */}
+                    <div className={styles.chartLabels}>
+                      {data.dailyAccess.map((day, index) => {
+                        // Mostrar apenas algumas labels para evitar sobreposição
+                        const showLabel =
+                          data.dailyAccess.length <= 10 ||
+                          index % Math.ceil(data.dailyAccess.length / 8) ===
+                            0 ||
+                          index === data.dailyAccess.length - 1;
+
+                        return (
+                          <span
+                            key={index}
+                            className={styles.chartLabel}
+                            style={{
+                              opacity: showLabel ? 1 : 0,
+                              flex: `0 0 ${100 / data.dailyAccess.length}%`,
+                            }}
+                          >
+                            {day.label}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
+        </section>
 
-          {/* Anunciantes */}
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              <UserCheck className={styles.cardIcon} />
+        {/* Seção Anunciantes */}
+        <section className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <div className={styles.sectionTitle}>
+              <UserCheck className={styles.sectionIcon} />
               <h3>Anunciantes</h3>
             </div>
-            <div className={styles.cardContent}>
-              <div className={styles.metric}>
-                <span className={`${styles.value} ${styles.positive}`}>
+          </div>
+
+          <div className={styles.userMetricsGrid}>
+            <div className={styles.summaryCard}>
+              <div className={styles.cardHeader}>
+                <Users className={styles.cardIcon} />
+                <span className={styles.cardLabel}>Total de Anunciantes</span>
+              </div>
+              <div className={styles.cardValue}>
+                <span className={styles.primaryValue}>
+                  {data.advertisers.total}
+                </span>
+                <span className={styles.cardDescription}>
+                  Todos os anunciantes cadastrados
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.summaryCard}>
+              <div className={styles.cardHeader}>
+                <UserCheck className={styles.cardIcon} />
+                <span className={styles.cardLabel}>Anunciantes Ativos</span>
+              </div>
+              <div className={styles.cardValue}>
+                <span className={`${styles.primaryValue} ${styles.positive}`}>
                   {data.advertisers.active}
                 </span>
-                <span className={styles.label}>Ativos</span>
+                <span className={styles.cardDescription}>
+                  Verificados e operando
+                </span>
               </div>
-              <div className={styles.metric}>
-                <span className={`${styles.value} ${styles.warning}`}>
+            </div>
+
+            <div className={styles.summaryCard}>
+              <div className={styles.cardHeader}>
+                <AlertTriangle className={styles.cardIcon} />
+                <span className={styles.cardLabel}>Anunciantes Inativos</span>
+              </div>
+              <div className={styles.cardValue}>
+                <span className={`${styles.primaryValue} ${styles.warning}`}>
                   {data.advertisers.inactive}
                 </span>
-                <span className={styles.label}>Inativos</span>
-              </div>
-              <div className={styles.metric}>
-                <span className={styles.value}>{data.advertisers.total}</span>
-                <span className={styles.label}>Total</span>
+                <span className={styles.cardDescription}>
+                  Pendentes ou com problemas
+                </span>
               </div>
             </div>
           </div>
 
-          {/* Performance do Sistema */}
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              <Server className={styles.cardIcon} />
-              <h3>Performance</h3>
+          {/* Top Performers */}
+          <div className={styles.chartsGrid}>
+            <div className={styles.summaryCard}>
+              <div className={styles.cardHeader}>
+                <Heart className={styles.cardIcon} fill="currentColor" />
+                <span className={styles.cardLabel}>Top Reviews</span>
+              </div>
+              <div className={styles.cardValue}>
+                <div className={styles.topPerformers}>
+                  {data.topReviews.slice(0, 3).map((performer, index) => (
+                    <div key={index} className={styles.performerItem}>
+                      <div className={styles.performerRank}>#{index + 1}</div>
+                      <div className={styles.performerInfo}>
+                        <span className={styles.performerName}>
+                          {performer.name}
+                        </span>
+                        <span className={styles.performerProducerName}>
+                          ({performer.producerName})
+                        </span>
+                      </div>
+                      <div className={styles.performerStats}>
+                        <div className={styles.performerRating}>
+                          {performer.avgRating.toFixed(1)}
+                        </div>
+                        <div className={styles.performerCount}>
+                          {performer.approvedReviews} reviews
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
-            <div className={styles.cardContent}>
-              <div className={styles.metric}>
+
+            <div className={styles.summaryCard}>
+              <div className={styles.cardHeader}>
+                <Eye className={styles.cardIcon} />
+                <span className={styles.cardLabel}>Top Views</span>
+              </div>
+              <div className={styles.cardValue}>
+                <div className={styles.topPerformers}>
+                  {data.topViews.slice(0, 3).map((performer, index) => (
+                    <div key={index} className={styles.performerItem}>
+                      <div className={styles.performerRank}>#{index + 1}</div>
+                      <div className={styles.performerInfo}>
+                        <span className={styles.performerName}>
+                          {performer.name}
+                        </span>
+                        <span className={styles.performerProducerName}>
+                          ({performer.producerName})
+                        </span>
+                      </div>
+                      <div className={styles.performerViews}>
+                        {performer.views.toLocaleString()} views
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Seção Plataforma */}
+        <section className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <div className={styles.sectionTitle}>
+              <Server className={styles.sectionIcon} />
+              <h3>Plataforma</h3>
+            </div>
+          </div>
+
+          <div className={styles.userMetricsGrid}>
+            <div className={styles.summaryCard}>
+              <div className={styles.cardHeader}>
+                <Activity className={styles.cardIcon} />
+                <span className={styles.cardLabel}>Uptime do Sistema</span>
+              </div>
+              <div className={styles.cardValue}>
+                <span className={styles.primaryValue}>
+                  {data.systemPerformance.uptime.formatted}
+                </span>
+                <span className={styles.cardDescription}>
+                  Tempo online ininterrupto
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.summaryCard}>
+              <div className={styles.cardHeader}>
+                <Server className={styles.cardIcon} />
+                <span className={styles.cardLabel}>Memória do Sistema</span>
+              </div>
+              <div className={styles.cardValue}>
                 <span
-                  className={`${styles.value} ${getPerformanceColor(data.systemPerformance.memory.percentage)}`}
+                  className={`${styles.primaryValue} ${getPerformanceColor(data.systemPerformance.memory.percentage)}`}
                 >
                   {data.systemPerformance.memory.used}MB
                 </span>
-                <span className={styles.label}>
-                  Memória ({data.systemPerformance.memory.percentage}%)
+                <span className={styles.cardDescription}>
+                  {data.systemPerformance.memory.percentage}% em uso
                 </span>
               </div>
-              <div className={styles.metric}>
-                <span className={styles.value}>
-                  {data.systemPerformance.uptime.formatted}
-                </span>
-                <span className={styles.label}>Uptime</span>
+            </div>
+
+            <div className={styles.summaryCard}>
+              <div className={styles.cardHeader}>
+                <Globe className={styles.cardIcon} />
+                <span className={styles.cardLabel}>Resposta do Banco</span>
               </div>
-              <div className={styles.metric}>
+              <div className={styles.cardValue}>
                 <span
-                  className={`${styles.value} ${getDbStatusColor(data.systemPerformance.database.status)}`}
+                  className={`${styles.primaryValue} ${getDbStatusColor(data.systemPerformance.database.status)}`}
                 >
                   {data.systemPerformance.database.responseTime}ms
                 </span>
-                <span className={styles.label}>DB Response</span>
+                <span className={styles.cardDescription}>
+                  Status:{" "}
+                  {data.systemPerformance.database.status === "connected"
+                    ? "Conectado"
+                    : "Erro"}
+                </span>
               </div>
             </div>
           </div>
+        </section>
+      </div>
 
-          {/* Top Reviews */}
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              <Heart className={styles.cardIcon} fill="currentColor" />
-              <h3>Top Reviews</h3>
-            </div>
-            <div className={styles.cardContent}>
-              <div className={styles.topPerformers}>
-                {data.topReviews.slice(0, 3).map((performer, index) => (
-                  <div key={index} className={styles.performerItem}>
-                    <div className={styles.performerRank}>#{index + 1}</div>
-                    <div className={styles.performerInfo}>
-                      <span className={styles.performerName}>
-                        {performer.name}
-                      </span>
-                      <span className={styles.performerProducerName}>
-                        ({performer.producerName})
-                      </span>
-                    </div>
-                    <div className={styles.performerStats}>
-                      <div className={styles.performerRating}>
-                        {performer.avgRating.toFixed(1)}
-                      </div>
-                      <div className={styles.performerCount}>
-                        {performer.approvedReviews} reviews
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Top Views */}
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              <Eye className={styles.cardIcon} />
-              <h3>Top Views</h3>
-            </div>
-            <div className={styles.cardContent}>
-              <div className={styles.topPerformers}>
-                {data.topViews.slice(0, 3).map((performer, index) => (
-                  <div key={index} className={styles.performerItem}>
-                    <div className={styles.performerRank}>#{index + 1}</div>
-                    <div className={styles.performerInfo}>
-                      <span className={styles.performerName}>
-                        {performer.name}
-                      </span>
-                      <span className={styles.performerProducerName}>
-                        ({performer.producerName})
-                      </span>
-                    </div>
-                    <div className={styles.performerViews}>
-                      {performer.views.toLocaleString()} views
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Gráficos */}
-        <div className={styles.chartsGrid}>
-          {/* Acessos por dia */}
-          <div className={styles.chartCard}>
-            <div className={styles.chartHeader}>
-              <h3>Acessos por Período</h3>
-              <div className={styles.periodButtons}>
-                <button
-                  className={`${styles.periodButton} ${chartPeriod === "7" ? styles.periodActive : ""}`}
-                  onClick={() => handlePeriodChange("7")}
-                >
-                  7 dias
-                </button>
-                <button
-                  className={`${styles.periodButton} ${chartPeriod === "30" ? styles.periodActive : ""}`}
-                  onClick={() => handlePeriodChange("30")}
-                >
-                  30 dias
-                </button>
-                <button
-                  className={`${styles.periodButton} ${chartPeriod === "365" ? styles.periodActive : ""}`}
-                  onClick={() => handlePeriodChange("365")}
-                >
-                  1 ano
-                </button>
-              </div>
-            </div>
-            <div className={styles.lineChart}>
-              {chartLoading ? (
-                <div className={styles.chartLoading}>
-                  <div className={styles.spinner}></div>
-                  <span>Carregando dados...</span>
-                </div>
-              ) : (
-                <>
-                  <svg className={styles.chartSvg} viewBox="0 0 400 200">
-                    {/* Grid lines */}
-                    <defs>
-                      <pattern
-                        id="grid"
-                        width="40"
-                        height="20"
-                        patternUnits="userSpaceOnUse"
-                      >
-                        <path
-                          d="M 40 0 L 0 0 0 20"
-                          fill="none"
-                          stroke="var(--dark-complementary-color)"
-                          strokeWidth="0.5"
-                          opacity="0.3"
-                        />
-                      </pattern>
-                    </defs>
-                    <rect width="100%" height="100%" fill="url(#grid)" />
-
-                    {/* Chart line */}
-                    {(() => {
-                      if (!data.dailyAccess.length) return null;
-
-                      const maxViews = Math.max(
-                        ...data.dailyAccess.map((d) => d.views),
-                        1,
-                      );
-                      const stepX =
-                        350 / Math.max(data.dailyAccess.length - 1, 1);
-
-                      const points = data.dailyAccess
-                        .map((day, index) => {
-                          const x = 25 + index * stepX;
-                          const y = 180 - (day.views / maxViews) * 140;
-                          return `${x},${y}`;
-                        })
-                        .join(" ");
-
-                      return (
-                        <>
-                          <polyline
-                            fill="none"
-                            stroke="var(--primary-color)"
-                            strokeWidth="3"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            points={points}
-                          />
-                          {/* Data points */}
-                          {data.dailyAccess.map((day, index) => {
-                            const x = 25 + index * stepX;
-                            const y = 180 - (day.views / maxViews) * 140;
-                            return (
-                              <g key={index}>
-                                <circle
-                                  cx={x}
-                                  cy={y}
-                                  r="4"
-                                  fill="var(--primary-color)"
-                                  stroke="var(--dark-color)"
-                                  strokeWidth="2"
-                                />
-                                <text
-                                  x={x}
-                                  y={y - 10}
-                                  textAnchor="middle"
-                                  fontSize="12"
-                                  fill="var(--primary-color)"
-                                  fontWeight="600"
-                                >
-                                  {day.views}
-                                </text>
-                              </g>
-                            );
-                          })}
-                        </>
-                      );
-                    })()}
-                  </svg>
-
-                  {/* X-axis labels */}
-                  <div className={styles.chartLabels}>
-                    {data.dailyAccess.map((day, index) => {
-                      // Mostrar apenas algumas labels para evitar sobreposição
-                      const showLabel =
-                        data.dailyAccess.length <= 10 ||
-                        index % Math.ceil(data.dailyAccess.length / 8) === 0 ||
-                        index === data.dailyAccess.length - 1;
-
-                      return (
-                        <span
-                          key={index}
-                          className={styles.chartLabel}
-                          style={{
-                            opacity: showLabel ? 1 : 0,
-                            flex: `0 0 ${100 / data.dailyAccess.length}%`,
-                          }}
-                        >
-                          {day.label}
-                        </span>
-                      );
-                    })}
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* Distribuição de planos */}
-          <div className={styles.chartCard}>
-            <h3>Distribuição de Planos</h3>
-            <div className={styles.planChart}>
-              {data.planDistribution.map((plan, index) => (
-                <div key={index} className={styles.planItem}>
-                  <div
-                    className={styles.planColor}
-                    style={{
-                      backgroundColor:
-                        PLAN_COLORS[plan.plan as keyof typeof PLAN_COLORS],
-                    }}
-                  ></div>
-                  <span className={styles.planLabel}>
-                    {PLAN_LABELS[plan.plan as keyof typeof PLAN_LABELS]}
-                  </span>
-                  <span className={styles.planCount}>{plan.count}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+      <div className={styles.footer}>
+        <small>
+          Última atualização: {new Date().toLocaleString()} | Dados coletados em
+          tempo real da aplicação
+        </small>
       </div>
     </div>
   );
