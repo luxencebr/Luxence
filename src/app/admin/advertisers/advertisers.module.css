@@ -1,3 +1,4 @@
+/* Layout Principal */
 .container {
   height: 100vh;
   display: flex;
@@ -11,7 +12,6 @@
   border-bottom: 1px solid var(--dark-complementary-color);
   background: var(--dark-color);
   box-shadow: var(--shadow-sm);
-
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -45,8 +45,12 @@
   flex-direction: column;
   gap: var(--space-sm);
   min-height: 0;
+  /* Permite que dropdowns apareçam fora do container */
+  position: relative;
+  z-index: 1;
 }
 
+/* Busca */
 .searchContainer {
   display: flex;
   justify-content: center;
@@ -61,7 +65,6 @@
   background: var(--dark-color);
   color: var(--light-color);
   font-size: var(--ft-sm);
-
   transition: var(--transition-normal);
 }
 
@@ -75,6 +78,7 @@
   color: var(--light-complementary-color);
 }
 
+/* Tabela - Container e Estrutura */
 .tableWrapper {
   flex: 1;
   overflow: auto;
@@ -83,11 +87,9 @@
   background: var(--dark-color);
   box-shadow: var(--shadow-md);
   min-height: 0;
-  max-height: 100%;
   position: relative;
 }
 
-/* Scrollbar personalizada */
 .tableWrapper::-webkit-scrollbar {
   width: 4px;
   height: 4px;
@@ -106,87 +108,77 @@
   background: var(--primary-complementary-color);
 }
 
-.tableWrapper::-webkit-scrollbar-corner {
-  background: transparent;
-}
-
 .table {
   width: 100%;
   border-collapse: collapse;
   font-size: var(--ft-sm);
-  table-layout: auto;
+  table-layout: fixed;
 }
 
+/* Cabeçalho da Tabela */
 .table th {
   background: var(--background-complementary-color);
-  padding: 12px;
+  padding: 8px;
   text-align: left;
   font-weight: 600;
   border-bottom: 1px solid var(--dark-complementary-color);
   position: sticky;
   top: 0;
-  z-index: 5;
+  z-index: 1000;
   white-space: nowrap;
+  overflow: visible;
 }
 
+/* Células da Tabela */
 .table td {
   padding: 12px;
   border-bottom: 1px solid var(--dark-complementary-color);
   vertical-align: middle;
+  overflow: visible;
+  position: relative;
 }
 
-/* Larguras específicas das colunas */
+/* Larguras das Colunas */
 .table th:nth-child(1),
 .table td:nth-child(1) {
-  width: 1%;
-  white-space: nowrap;
+  width: 90px;
 }
-
 .table th:nth-child(2),
 .table td:nth-child(2) {
-  width: 1%;
-  white-space: nowrap;
+  width: 100px;
 }
-
 .table th:nth-child(3),
 .table td:nth-child(3) {
-  width: 40%;
-  max-width: 300px;
+  width: auto;
+  min-width: 250px;
 }
-
 .table th:nth-child(4),
 .table td:nth-child(4) {
-  width: 1%;
-  white-space: nowrap;
+  width: 110px;
 }
-
 .table th:nth-child(5),
 .table td:nth-child(5) {
-  width: 1%;
-  white-space: nowrap;
+  width: 110px;
 }
-
 .table th:nth-child(6),
 .table td:nth-child(6) {
-  width: 1%;
-  white-space: nowrap;
+  width: 110px;
 }
-
 .table th:nth-child(7),
 .table td:nth-child(7) {
-  width: 1%;
-  white-space: nowrap;
+  width: 120px;
 }
 
+/* Hover da Linha */
 .table tbody tr {
-  transition: background-color 0.15s;
+  transition: background-color 0.15s ease;
 }
 
 .table tbody tr:hover {
   background: var(--background-complementary-color);
 }
 
-/* Estilos dos botões de cabeçalho */
+/* Botões de Cabeçalho e Filtros */
 .sortButton {
   background: none;
   border: none;
@@ -200,27 +192,96 @@
   align-items: center;
   gap: 6px;
   padding: 0;
-  transition: color 0.15s;
+  transition: color 0.15s ease;
 }
 
 .sortButton:hover {
   color: var(--primary-color);
 }
 
-.sortIcon,
-.sortActive {
-  flex-shrink: 0;
-  transition: opacity 0.15s;
-}
-
 .sortIcon {
   color: var(--light-complementary-color);
   opacity: 0.3;
+  transition: opacity 0.15s ease;
 }
 
 .sortActive {
   color: var(--primary-color);
   opacity: 1;
+}
+
+/* Novos estilos para cabeçalhos padronizados */
+.headerSortButton {
+  background: none;
+  width: 100%;
+  border: none;
+  color: var(--light-color);
+  font-weight: 600;
+  font-size: 10px;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 3px;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-width: 0;
+}
+
+.headerSortButton:hover {
+  color: var(--primary-color);
+}
+
+.headerText {
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.sortArrows {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+
+.sortArrow {
+  color: var(--light-complementary-color);
+  opacity: 0.3;
+  transition: all 0.15s ease;
+}
+
+.sortArrowActive {
+  color: var(--primary-color);
+  opacity: 1;
+}
+
+/* Novo estilo para trigger do cabeçalho */
+.headerDropdownTrigger {
+  width: 100%;
+  padding: 6px 20px 6px 8px;
+  background: var(--background-complementary-color);
+  border: 1px solid var(--dark-complementary-color);
+  border-radius: 3px;
+  color: var(--light-color);
+  font-size: 10px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  display: block;
+  min-width: 0;
+  flex: 1;
+}
+
+.headerDropdownTrigger:hover {
+  color: var(--primary-color);
 }
 
 .filterIndicator {
@@ -235,7 +296,7 @@
   margin-left: 6px;
 }
 
-/* Estilos das células de dados */
+/* Conteúdo das Células */
 .advertiserInfo {
   overflow: hidden;
 }
@@ -253,9 +314,6 @@
   font-weight: 400;
   color: var(--primary-color);
   font-size: 11px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .advertiserEmail {
@@ -266,46 +324,13 @@
   text-overflow: ellipsis;
 }
 
-.advertiserDocument {
+.advertiserPhone {
   font-size: 11px;
   color: var(--light-complementary-color);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-family: monospace;
   margin-top: 2px;
-}
-
-.documentInfo {
-  font-weight: 500;
-  color: var(--light-color);
-  white-space: nowrap;
-  font-family: monospace;
-  font-size: 12px;
-}
-
-.genderBadge {
-  padding: 4px 8px;
-  border-radius: 3px;
-  font-size: 11px;
-  font-weight: 600;
-  white-space: nowrap;
-  display: inline-block;
-}
-
-.genderBadge.male {
-  background: #3b82f6;
-  color: white;
-}
-
-.genderBadge.female {
-  background: #ec4899;
-  color: white;
-}
-
-.genderBadge.trans {
-  background: linear-gradient(135deg, #5eead4, #a78bfa, #f472b6);
-  color: white;
 }
 
 .dateInfo {
@@ -329,7 +354,44 @@
   color: var(--light-complementary-color);
 }
 
-/* Badges de plano e status */
+/* Badges e Status */
+.genderBadge {
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.genderDisplay {
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  display: block;
+  text-align: center;
+}
+
+.genderBadge.male,
+.genderDisplay.male {
+  background: #3b82f6;
+  color: white;
+}
+
+.genderBadge.female,
+.genderDisplay.female {
+  background: #ec4899;
+  color: white;
+}
+
+.genderBadge.trans,
+.genderDisplay.trans {
+  background: linear-gradient(135deg, #5eead4, #a78bfa, #f472b6);
+  color: white;
+}
+
 .signature {
   padding: 4px 8px;
   border-radius: 3px;
@@ -338,8 +400,10 @@
   text-transform: uppercase;
   cursor: pointer;
   white-space: nowrap;
-  display: inline-block;
-  transition: opacity 0.15s;
+  display: block;
+  width: 100%;
+  text-align: center;
+  transition: opacity 0.15s ease;
 }
 
 .signature:hover {
@@ -370,14 +434,33 @@
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
-  transition: opacity 0.15s;
+  transition: opacity 0.15s ease;
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  display: block;
+  width: 100%;
+  text-align: center;
+  color: var(--dark-color);
 }
 
 .status:hover {
   opacity: 0.8;
 }
 
-/* Ações */
+.status.red {
+  background: var(--danger-color);
+}
+
+.status.yellow {
+  background: var(--warning-color);
+}
+
+.status.green {
+  background: var(--success-color);
+}
+
+/* Botões de Ação */
 .actions {
   display: flex;
   gap: 6px;
@@ -396,7 +479,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.15s;
+  transition: opacity 0.15s ease;
 }
 
 .viewBtn:hover,
@@ -419,7 +502,7 @@
   background: var(--contrast-color);
 }
 
-/* Loading States */
+/* Estados de Loading e Erro */
 .loadingCell,
 .emptyCell,
 .errorCell,
@@ -430,8 +513,7 @@
 }
 
 .loadingContent,
-.errorContent,
-.updatingContent {
+.errorContent {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -441,8 +523,10 @@
 }
 
 .updatingContent {
+  display: flex;
   flex-direction: row;
-  min-height: auto;
+  align-items: center;
+  justify-content: center;
   gap: 8px;
 }
 
@@ -486,14 +570,30 @@
   opacity: 0.8;
 }
 
-/* Dropdown Styling */
+/* Dropdowns */
 .dropdownTrigger,
 .dropdownHeaderTrigger {
   background: none !important;
   border: none !important;
   padding: 0 !important;
+  margin: 0 !important;
   cursor: pointer !important;
-  display: inline-block !important;
+  display: flex !important;
+  position: relative !important;
+  z-index: 1 !important;
+  width: 100% !important;
+  align-items: center !important;
+  min-width: 0 !important;
+}
+
+/* Estilos específicos para dropdowns em células da tabela */
+.table td .dropdownTrigger {
+  z-index: 50 !important;
+}
+
+/* Estilos específicos para dropdowns no cabeçalho - z-index mais alto */
+.table th .dropdownHeaderTrigger {
+  z-index: 999999 !important;
 }
 
 .dropdownMenu,
@@ -502,8 +602,26 @@
   border: 1px solid var(--dark-complementary-color) !important;
   border-radius: 6px !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
-  min-width: 150px !important;
-  z-index: 9999 !important;
+  z-index: 99999 !important;
+  position: absolute !important;
+  /* Garante que o dropdown sempre apareça acima de tudo */
+}
+
+/* Dropdown específico para cabeçalhos - z-index mais alto de todos */
+.dropdownHeaderMenu {
+  z-index: 1000000 !important;
+  /* Menu ocupa apenas o espaço da coluna */
+  min-width: 130px !important;
+  max-width: 130px !important;
+  width: 130px !important;
+}
+
+/* Força o posicionamento correto dos menus */
+.table .dropdownMenu,
+.table .dropdownHeaderMenu {
+  position: absolute !important;
+  top: 100% !important;
+  left: 0 !important;
 }
 
 .filterOptions,
@@ -517,13 +635,15 @@
   background: none;
   border: none;
   border-radius: 3px;
-  padding: 8px 12px;
+  padding: 6px 8px;
   text-align: left;
   cursor: pointer;
   color: var(--light-color);
-  font-size: var(--ft-sm);
+  font-size: 10px;
   white-space: nowrap;
-  transition: background-color 0.15s;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: background-color 0.15s ease;
 }
 
 .filterOptions button:hover,
