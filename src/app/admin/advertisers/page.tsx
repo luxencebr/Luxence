@@ -2,13 +2,18 @@
 
 import { useState, useEffect } from "react";
 import styles from "./advertisers.module.css";
+import commonStyles from "../admin-common.module.css";
 import {
-  ArrowUpDown,
   Eye,
   User,
   MessageCircle,
   ChevronUp,
   ChevronDown,
+  ChevronRight,
+  Search,
+  X,
+  ArrowUpAZ,
+  Calendar,
 } from "lucide-react";
 import Dropdown from "@/components/ui/Dropdown/Dropdown";
 
@@ -75,6 +80,12 @@ const STATUS_OPTIONS = [
   { key: "GREEN", label: "Status Aprovado" },
 ] as const;
 
+const SORT_OPTIONS = [
+  { key: "createdAt", label: "Cadastro", icon: Calendar },
+  { key: "views", label: "Visualizações", icon: Eye },
+  { key: "name", label: "Alfabético", icon: ArrowUpAZ },
+] as const;
+
 export default function AdvertisersPage() {
   const [advertisers, setAdvertisers] = useState<Advertiser[]>([]);
   const [loading, setLoading] = useState(true);
@@ -124,10 +135,22 @@ export default function AdvertisersPage() {
   }, [searchQuery]);
 
   const handleSort = (key: SortKey) => {
-    setSort((prev) => ({
-      key,
-      direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
-    }));
+    setSort((prev) => {
+      if (prev.key === key) {
+        // Se é a mesma chave, alterna a direção
+        return {
+          key,
+          direction: prev.direction === "asc" ? "desc" : "asc",
+        };
+      } else {
+        // Nova chave: cadastro e views começam decrescente, alfabético crescente
+        const defaultDirection = key === "createdAt" || key === "views" ? "desc" : "asc";
+        return {
+          key,
+          direction: defaultDirection,
+        };
+      }
+    });
   };
 
   const handleFilterChange = (
@@ -152,6 +175,11 @@ export default function AdvertisersPage() {
           ? "Todos os Status"
           : "Todos os Gêneros")
     );
+  };
+
+  const getSortLabel = () => {
+    const option = SORT_OPTIONS.find((opt) => opt.key === sort.key);
+    return option?.label || "Data de Cadastro";
   };
 
   const formatDate = (dateString: string) => {
@@ -348,25 +376,91 @@ export default function AdvertisersPage() {
   });
 
   return (
-    <div className={styles.container}>
-      <header className={styles.header}>
-        <div className={styles.left}>
-          <h1 className={styles.title}>Anunciantes</h1>
-          <h2 className={styles.subtitle}>
+    <div className={commonStyles.container}>
+      <header className={commonStyles.header}>
+        <div className={commonStyles.headerContent}>
+          <h1 className={commonStyles.title}>Anunciantes</h1>
+          <p className={commonStyles.subtitle}>
             Gerenciamento de perfis de anunciantes
-          </h2>
+          </p>
         </div>
       </header>
 
-      <div className={styles.content}>
+      <div className={commonStyles.content}>
         <div className={styles.searchContainer}>
-          <input
-            type="text"
-            placeholder="Buscar por nome real, nome do perfil, email, telefone ou documento..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className={styles.searchInput}
-          />
+          <div className={styles.searchWrapper}>
+            <Search className={styles.searchIcon} size={18} />
+            <input
+              type="text"
+              placeholder="Buscar anunciante..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className={styles.searchInput}
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className={styles.clearButton}
+                title="Limpar busca"
+              >
+                <X size={16} />
+              </button>
+            )}
+          </div>
+
+          <div className={styles.mobileSortDropdown}>
+            <Dropdown
+              trigger={
+                <>
+                  <div className={styles.sortArrows}>
+                    <ChevronUp
+                      size={10}
+                      className={
+                        sort.direction === "asc"
+                          ? styles.sortArrowActive
+                          : styles.sortArrow
+                      }
+                    />
+                    <ChevronDown
+                      size={10}
+                      className={
+                        sort.direction === "desc"
+                          ? styles.sortArrowActive
+                          : styles.sortArrow
+                      }
+                    />
+                  </div>
+                  <span>{getSortLabel()}</span>
+                </>
+              }
+              triggerClassName={styles.sortDropdownTrigger}
+              menuClassName={styles.sortDropdownMenu}
+            >
+              {(close) => (
+                <div className={styles.sortOptions}>
+                  {SORT_OPTIONS.map((option) => {
+                    const IconComponent = option.icon;
+                    return (
+                      <button
+                        key={option.key}
+                        onClick={() => {
+                          handleSort(option.key);
+                          close();
+                        }}
+                        className={
+                          sort.key === option.key ? styles.optionActive : ""
+                        }
+                      >
+                        <IconComponent size={16} />
+                        <span>{option.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </Dropdown>
+          </div>
         </div>
 
         <div className={styles.tableWrapper}>
@@ -773,6 +867,72 @@ export default function AdvertisersPage() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Cards List */}
+        <div className={styles.mobileCardsList}>
+          {loading ? (
+            <div className={styles.mobileLoading}>
+              <span className={styles.spinner}></span>
+              <span>Carregando anunciantes...</span>
+            </div>
+          ) : error ? (
+            <div className={styles.mobileError}>
+              <div className={styles.errorMessage}>Erro: {error}</div>
+              <button onClick={fetchAdvertisers} className={styles.retryButton}>
+                Tentar novamente
+              </button>
+            </div>
+          ) : sortedAdvertisers.length > 0 ? (
+            sortedAdvertisers.map((advertiser) => (
+              <div
+                key={advertiser.id}
+                className={styles.mobileCard}
+                onClick={() => {
+                  // TODO: Implementar visão individual (equivalente ao botão desabilitado)
+                  alert("Visão individual em desenvolvimento");
+                }}
+              >
+                <div className={styles.cardContent}>
+                  <button
+                    className={styles.cardViewBtn}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(
+                        `/product/${advertiser.profile?.id}`,
+                        "_blank",
+                      );
+                    }}
+                    disabled={!advertiser.profile}
+                    title="Ver perfil"
+                  >
+                    <Eye size={16} />
+                    <span>Ver perfil</span>
+                  </button>
+                  <div className={styles.cardInfo}>
+                    <div className={styles.cardName}>
+                      {advertiser.name}
+                      {advertiser.producerName && (
+                        <span className={styles.cardProfileName}>
+                          ({advertiser.producerName})
+                        </span>
+                      )}
+                    </div>
+                    <div className={styles.cardEmail}>{advertiser.email}</div>
+                    <div className={styles.cardPhone}>
+                      {formatPhone(advertiser.phone)}
+                    </div>
+                  </div>
+
+                  <ChevronRight className={styles.cardChevron} size={20} />
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className={styles.mobileEmpty}>
+              <p>Nenhum anunciante encontrado</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

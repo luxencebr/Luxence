@@ -1,6 +1,5 @@
 .nav {
   padding: var(--space-lg);
-
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
@@ -8,18 +7,14 @@
 
 .link {
   padding: var(--space-md);
-
   border-radius: var(--radius-sm);
-
   display: flex;
   align-items: center;
   gap: var(--space-lg);
-
   color: inherit;
   font-size: var(--ft-md);
   font-weight: 400;
   text-decoration: none;
-
   transition: var(--transition-normal);
 }
 
@@ -36,11 +31,58 @@
 .icon {
   height: 16px;
   width: 16px;
-
   transition: var(--transition-normal);
 }
 
 .active > .icon {
   height: 20px;
   width: 20px;
+}
+
+/* Mobile Bottom Bar Styles */
+@media (max-width: 768px) {
+  .nav {
+    padding: 0;
+    flex-direction: row;
+    justify-content: space-around;
+    gap: 0;
+  }
+
+  .link {
+    flex: 1;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: var(--space-sm);
+    text-align: center;
+    border-radius: 0;
+    min-height: 60px;
+    justify-content: center;
+  }
+
+  .link span {
+    font-size: var(--ft-xs);
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .icon {
+    height: 20px;
+    width: 20px;
+  }
+
+  .active > .icon {
+    height: 24px;
+    width: 24px;
+    color: var(--primary-color);
+  }
+
+  .active {
+    background: transparent;
+    box-shadow: none;
+    color: var(--primary-color);
+  }
+
+  .link:hover {
+    background: var(--dark-complementary-color);
+  }
 }

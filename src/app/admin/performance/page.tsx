@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import styles from "./performance.module.css";
+import commonStyles from "../admin-common.module.css";
 import {
   Activity,
   AlertTriangle,
@@ -9,7 +10,9 @@ import {
   Database,
   Cpu,
   HardDrive,
+  RotateCw,
 } from "lucide-react";
+import Card from "@/components/ui/Card/Card";
 
 interface PerformanceData {
   infrastructure: {
@@ -144,9 +147,9 @@ export default function PerformancePage() {
 
   if (loading) {
     return (
-      <div className={styles.container}>
-        <div className={styles.loading}>
-          <div className={styles.spinner}></div>
+      <div className={commonStyles.container}>
+        <div className={commonStyles.loading}>
+          <div className={commonStyles.spinner}></div>
           <span>Carregando performance...</span>
         </div>
       </div>
@@ -155,12 +158,12 @@ export default function PerformancePage() {
 
   if (error) {
     return (
-      <div className={styles.container}>
-        <div className={styles.error}>
+      <div className={commonStyles.container}>
+        <div className={commonStyles.error}>
           <AlertTriangle size={48} />
           <h2>Erro ao carregar performance</h2>
           <p>{error}</p>
-          <button onClick={refreshPerformance} className={styles.retryButton}>
+          <button onClick={refreshPerformance} className={commonStyles.retryButton}>
             Tentar novamente
           </button>
         </div>
@@ -171,90 +174,108 @@ export default function PerformancePage() {
   if (!data) return null;
 
   return (
-    <div className={styles.container}>
-      <header className={styles.header}>
-        <div className={styles.headerContent}>
-          <h1 className={styles.title}>Performance</h1>
-          <p className={styles.subtitle}>Monitoramento do sistema</p>
+    <div className={commonStyles.container}>
+      <header className={commonStyles.header}>
+        <div className={commonStyles.headerContent}>
+          <h1 className={commonStyles.title}>Performance</h1>
+          <p className={commonStyles.subtitle}>Monitoramento do sistema</p>
         </div>
-        <div className={styles.controls}>
-          <label className={styles.autoRefreshLabel}>
-            <input
-              type="checkbox"
-              checked={autoRefresh}
-              onChange={(e) => setAutoRefresh(e.target.checked)}
-            />
-            Auto-refresh (30s)
-          </label>
+        <div className={commonStyles.controls}>
           <button
             onClick={refreshPerformance}
-            className={styles.refreshButton}
+            className={commonStyles.refreshButton}
             disabled={loading}
           >
-            <Activity size={16} className={loading ? styles.spinning : ""} />
-            {loading ? "Atualizando..." : "Atualizar"}
+            <RotateCw size={16} className={loading ? commonStyles.spinning : ""} />
+            <span className={commonStyles.refreshText}>
+              {loading ? "Atualizando..." : "Atualizar"}
+            </span>
           </button>
         </div>
       </header>
 
-      <div className={styles.content}>
+      {/* Mobile timestamp */}
+      <div className={commonStyles.mobileTimestamp}>
+        <small>
+          Última atualização: {new Date(data?.timestamp || Date.now()).toLocaleString()}
+        </small>
+      </div>
+
+      <div className={commonStyles.content}>
         {/* Infraestrutura */}
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Infraestrutura</h2>
-          <div className={styles.metricsGrid}>
-            <div className={styles.metric}>
-              <h3>CPU</h3>
-              <div className={styles.metricValue}>
-                <span className={getStatusColor(data.infrastructure.cpu.usage)}>
+        <section className={commonStyles.section}>
+          <div className={commonStyles.sectionHeader}>
+            <div className={commonStyles.sectionTitle}>
+              <Server className={commonStyles.sectionIcon} />
+              <h3>Infraestrutura</h3>
+            </div>
+          </div>
+          <div className={commonStyles.summaryGrid}>
+            <Card className={commonStyles.summaryCard}>
+              <div className={commonStyles.cardHeader}>
+                <Cpu className={commonStyles.cardIcon} />
+                <span className={commonStyles.cardLabel}>CPU</span>
+              </div>
+              <div className={commonStyles.cardValue}>
+                <span className={`${commonStyles.primaryValue} ${getStatusColor(data.infrastructure.cpu.usage)}`}>
                   {data.infrastructure.cpu.usage}%
                 </span>
-                <small>
+                <span className={commonStyles.cardDescription}>
                   User: {data.infrastructure.cpu.user}% | System:{" "}
                   {data.infrastructure.cpu.system}%
-                </small>
+                </span>
               </div>
-            </div>
+            </Card>
 
-            <div className={styles.metric}>
-              <h3>RAM do Sistema</h3>
-              <div className={styles.metricValue}>
+            <Card className={commonStyles.summaryCard}>
+              <div className={commonStyles.cardHeader}>
+                <HardDrive className={commonStyles.cardIcon} />
+                <span className={commonStyles.cardLabel}>RAM do Sistema</span>
+              </div>
+              <div className={commonStyles.cardValue}>
                 <span
-                  className={getStatusColor(
+                  className={`${commonStyles.primaryValue} ${getStatusColor(
                     data.infrastructure.memory.system.usagePercentage,
-                  )}
+                  )}`}
                 >
                   {data.infrastructure.memory.system.usagePercentage}%
                 </span>
-                <small>
+                <span className={commonStyles.cardDescription}>
                   {data.infrastructure.memory.system.formatted.used} /{" "}
                   {data.infrastructure.memory.system.formatted.total}
-                </small>
+                </span>
               </div>
-            </div>
+            </Card>
 
-            <div className={styles.metric}>
-              <h3>RAM Disponível</h3>
-              <div className={styles.metricValue}>
+            <Card className={commonStyles.summaryCard}>
+              <div className={commonStyles.cardHeader}>
+                <HardDrive className={commonStyles.cardIcon} />
+                <span className={commonStyles.cardLabel}>RAM Disponível</span>
+              </div>
+              <div className={commonStyles.cardValue}>
                 <span
-                  className={
+                  className={`${commonStyles.primaryValue} ${
                     data.infrastructure.memory.system.usagePercentage < 80
-                      ? styles.good
-                      : styles.warning
-                  }
+                      ? commonStyles.good
+                      : commonStyles.warning
+                  }`}
                 >
                   {data.infrastructure.memory.system.formatted.available}
                 </span>
-                <small>Memória livre do sistema</small>
+                <span className={commonStyles.cardDescription}>Memória livre do sistema</span>
               </div>
-            </div>
+            </Card>
 
-            <div className={styles.metric}>
-              <h3>Uptime</h3>
-              <div className={styles.metricValue}>
-                <span>{data.infrastructure.uptime.formatted}</span>
-                <small>{data.infrastructure.uptime.seconds} segundos</small>
+            <Card className={commonStyles.summaryCard}>
+              <div className={commonStyles.cardHeader}>
+                <Activity className={commonStyles.cardIcon} />
+                <span className={commonStyles.cardLabel}>Uptime</span>
               </div>
-            </div>
+              <div className={commonStyles.cardValue}>
+                <span className={commonStyles.primaryValue}>{data.infrastructure.uptime.formatted}</span>
+                <span className={commonStyles.cardDescription}>{data.infrastructure.uptime.seconds} segundos</span>
+              </div>
+            </Card>
           </div>
 
           {/* Seção de Memória do Processo */}
@@ -731,6 +752,7 @@ export default function PerformancePage() {
         </section>
       </div>
 
+      {/* Desktop footer */}
       <div className={styles.footer}>
         <small>
           Última atualização: {new Date(data.timestamp).toLocaleString()} |

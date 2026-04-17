@@ -18,6 +18,7 @@ export default function AdminLayout({
   return (
     <AdminAuthWrapper>
       <div className={styles.container}>
+        {/* Desktop Sidebar */}
         <aside className={styles.sidebar}>
           <div className={styles.top}>
             <div className={styles.header}>
@@ -34,6 +35,16 @@ export default function AdminLayout({
         </aside>
 
         <main className={styles.content}>{children}</main>
+
+        {/* Mobile Bottom Navigation */}
+        <div className={styles.mobileBottom}>
+          <div className={styles.mobileUserLink}>
+            <UserLink />
+          </div>
+          <nav className={styles.bottomBar}>
+            <NavLinks />
+          </nav>
+        </div>
       </div>
     </AdminAuthWrapper>
   );

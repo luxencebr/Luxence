@@ -82,3 +82,39 @@
     transform: rotate(360deg);
   }
 }
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .container {
+    margin: 0;
+    border-radius: var(--radius-sm);
+    box-shadow: none;
+    background: var(--dark-complementary-color);
+  }
+
+  .user {
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .name {
+    font-size: var(--ft-xs);
+  }
+
+  .email {
+    font-size: 10px;
+  }
+
+  .logout {
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .icon {
+    height: 14px;
+    width: 14px;
+  }
+}

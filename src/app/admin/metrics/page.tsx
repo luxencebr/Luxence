@@ -2,6 +2,7 @@
 
 import { useState, useEffect, ReactElement } from "react";
 import styles from "./metrics.module.css";
+import commonStyles from "../admin-common.module.css";
 import {
   Activity,
   AlertTriangle,
@@ -15,7 +16,10 @@ import {
   User,
   LogIn,
   HatGlasses,
+  RotateCw,
 } from "lucide-react";
+import Dropdown from "@/components/ui/Dropdown/Dropdown";
+import Card from "@/components/ui/Card/Card";
 
 interface MetricsData {
   users: {
@@ -410,9 +414,9 @@ export default function MetricsPage() {
 
   if (loading) {
     return (
-      <div className={styles.container}>
-        <div className={styles.loading}>
-          <div className={styles.spinner}></div>
+      <div className={commonStyles.container}>
+        <div className={commonStyles.loading}>
+          <div className={commonStyles.spinner}></div>
           <span>Carregando métricas...</span>
         </div>
       </div>
@@ -421,12 +425,12 @@ export default function MetricsPage() {
 
   if (error) {
     return (
-      <div className={styles.container}>
-        <div className={styles.error}>
+      <div className={commonStyles.container}>
+        <div className={commonStyles.error}>
           <AlertTriangle size={48} />
           <h2>Erro ao carregar métricas</h2>
           <p>{error}</p>
-          <button onClick={refreshMetrics} className={styles.retryButton}>
+          <button onClick={refreshMetrics} className={commonStyles.retryButton}>
             Tentar novamente
           </button>
         </div>
@@ -437,120 +441,160 @@ export default function MetricsPage() {
   if (!data) return null;
 
   return (
-    <div className={styles.container}>
-      <header className={styles.header}>
-        <div className={styles.headerContent}>
-          <h1 className={styles.title}>Métricas</h1>
-          <p className={styles.subtitle}>Análise de uso da aplicação</p>
+    <div className={commonStyles.container}>
+      <header className={commonStyles.header}>
+        <div className={commonStyles.headerContent}>
+          <h1 className={commonStyles.title}>Métricas</h1>
+          <p className={commonStyles.subtitle}>Análise de uso da aplicação</p>
         </div>
-        <div className={styles.controls}>
-          <div className={styles.periodSelector}>
-            <button
-              className={`${styles.periodButton} ${selectedPeriod === "24h" ? styles.periodActive : ""}`}
-              onClick={() => handlePeriodChange("24h")}
-            >
-              24h
-            </button>
-            <button
-              className={`${styles.periodButton} ${selectedPeriod === "7d" ? styles.periodActive : ""}`}
-              onClick={() => handlePeriodChange("7d")}
-            >
-              7 dias
-            </button>
-            <button
-              className={`${styles.periodButton} ${selectedPeriod === "30d" ? styles.periodActive : ""}`}
-              onClick={() => handlePeriodChange("30d")}
-            >
-              30 dias
-            </button>
+        <div className={commonStyles.controls}>
+          <div className={commonStyles.periodSelector}>
+            <div className={commonStyles.periodDropdown}>
+              <Dropdown
+                trigger={
+                  <div className={commonStyles.dropdownTrigger}>
+                    {selectedPeriod === "24h" 
+                      ? "24h" 
+                      : selectedPeriod === "7d" 
+                      ? "7 dias" 
+                      : "30 dias"}
+                  </div>
+                }
+                containerClassName={commonStyles.dropdownContainer}
+                triggerClassName={commonStyles.dropdownTriggerStyle}
+                menuClassName={commonStyles.dropdownMenu}
+              >
+                <button
+                  type="button"
+                  onClick={() => handlePeriodChange("24h")}
+                  className={`${commonStyles.dropdownOption} ${selectedPeriod === "24h" ? commonStyles.dropdownOptionSelected : ""}`}
+                >
+                  24h
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handlePeriodChange("7d")}
+                  className={`${commonStyles.dropdownOption} ${selectedPeriod === "7d" ? commonStyles.dropdownOptionSelected : ""}`}
+                >
+                  7 dias
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handlePeriodChange("30d")}
+                  className={`${commonStyles.dropdownOption} ${selectedPeriod === "30d" ? commonStyles.dropdownOptionSelected : ""}`}
+                >
+                  30 dias
+                </button>
+              </Dropdown>
+            </div>
+            <div className={commonStyles.periodButtons}>
+              <button
+                className={`${commonStyles.periodButton} ${selectedPeriod === "24h" ? commonStyles.periodActive : ""}`}
+                onClick={() => handlePeriodChange("24h")}
+              >
+                24h
+              </button>
+              <button
+                className={`${commonStyles.periodButton} ${selectedPeriod === "7d" ? commonStyles.periodActive : ""}`}
+                onClick={() => handlePeriodChange("7d")}
+              >
+                7 dias
+              </button>
+              <button
+                className={`${commonStyles.periodButton} ${selectedPeriod === "30d" ? commonStyles.periodActive : ""}`}
+                onClick={() => handlePeriodChange("30d")}
+              >
+                30 dias
+              </button>
+            </div>
           </div>
-          <label className={styles.autoRefreshLabel}>
-            <input
-              type="checkbox"
-              checked={autoRefresh}
-              onChange={(e) => setAutoRefresh(e.target.checked)}
-            />
-            Auto-refresh (1min)
-          </label>
           <button
             onClick={refreshMetrics}
-            className={styles.refreshButton}
+            className={commonStyles.refreshButton}
             disabled={loading}
           >
-            <Activity size={16} className={loading ? styles.spinning : ""} />
-            {loading ? "Atualizando..." : "Atualizar"}
+            <RotateCw size={16} className={loading ? commonStyles.spinning : ""} />
+            <span className={commonStyles.refreshText}>
+              {loading ? "Atualizando..." : "Atualizar"}
+            </span>
           </button>
         </div>
       </header>
 
-      <div className={styles.content}>
-        {/* Dados Agora */}
+      {/* Mobile timestamp */}
+      <div className={commonStyles.mobileTimestamp}>
+        <small>
+          Última atualização: {new Date(data?.timestamp || Date.now()).toLocaleString()}
+        </small>
+      </div>
 
-        <div className={styles.summaryGrid}>
-          <div className={styles.summaryCard}>
-            <div className={styles.cardHeader}>
-              <Globe className={styles.cardIcon} />
-              <span className={styles.cardLabel}>Visualizações</span>
+      <div className={commonStyles.content}>
+        {/* Dados Agora */}
+        <div className={commonStyles.summaryGrid}>
+          <Card className={commonStyles.summaryCard}>
+            <div className={commonStyles.cardHeader}>
+              <Globe className={commonStyles.cardIcon} />
+              <span className={commonStyles.cardLabel}>Visualizações</span>
             </div>
-            <div className={styles.cardValue}>
-              <span className={styles.primaryValue}>
+            <div className={commonStyles.cardValue}>
+              <span className={commonStyles.primaryValue}>
                 {data.summary.totalSessions}
               </span>
-              <span className={styles.cardDescription}>
+              <span className={commonStyles.cardDescription}>
                 Sessões únicas registradas
               </span>
             </div>
-          </div>
+          </Card>
 
-          <div className={styles.summaryCard}>
-            <div className={styles.cardHeader}>
-              <TrendingUp className={styles.cardIcon} />
-              <span className={styles.cardLabel}>Taxa de Retenção</span>
+          <Card className={commonStyles.summaryCard}>
+            <div className={commonStyles.cardHeader}>
+              <TrendingUp className={commonStyles.cardIcon} />
+              <span className={commonStyles.cardLabel}>Taxa de Retenção</span>
             </div>
-            <div className={styles.cardValue}>
+            <div className={commonStyles.cardValue}>
               <span
-                className={`${styles.primaryValue} ${
-                  data.users.retention.rate > 50 ? styles.good : styles.warning
+                className={`${commonStyles.primaryValue} ${
+                  data.users.retention.rate > 50 ? commonStyles.good : commonStyles.warning
                 }`}
               >
                 {data.users.retention.rate}%
               </span>
-              <span className={styles.cardDescription}>
+              <span className={commonStyles.cardDescription}>
                 {data.users.retention.retained} de {data.users.retention.total}{" "}
                 usuários retornaram
               </span>
             </div>
-          </div>
+          </Card>
 
-          <div className={styles.summaryCard}>
-            <div className={styles.cardHeader}>
-              <TrendingDown className={styles.cardIcon} />
-              <span className={styles.cardLabel}>Taxa de Rejeição</span>
+          <Card className={commonStyles.summaryCard}>
+            <div className={commonStyles.cardHeader}>
+              <TrendingDown className={commonStyles.cardIcon} />
+              <span className={commonStyles.cardLabel}>Taxa de Rejeição</span>
             </div>
-            <div className={styles.cardValue}>
+            <div className={commonStyles.cardValue}>
               <span
-                className={`${styles.primaryValue} ${
+                className={`${commonStyles.primaryValue} ${
                   data.navigation.bounceRate < 40
-                    ? styles.good
+                    ? commonStyles.good
                     : data.navigation.bounceRate < 70
-                      ? styles.warning
-                      : styles.critical
+                      ? commonStyles.warning
+                      : commonStyles.critical
                 }`}
               >
                 {data.navigation.bounceRate}%
               </span>
-              <span className={styles.cardDescription}>
+              <span className={commonStyles.cardDescription}>
                 Usuários que saíram após 1 página
               </span>
             </div>
-          </div>
+          </Card>
         </div>
 
         {/* Análise de Usuários */}
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <div className={styles.sectionTitle}>
-              <Users className={styles.sectionIcon} />
+        <section className={commonStyles.section}>
+          <div className={commonStyles.sectionHeader}>
+            <div className={commonStyles.sectionTitle}>
+              <Users className={commonStyles.sectionIcon} />
               <h3>
                 Análise de Usuários
                 <span className={styles.periodIndicator}>
@@ -566,86 +610,113 @@ export default function MetricsPage() {
             </div>
           </div>
 
-          <div className={styles.userMetricsGrid}>
-            <div className={styles.summaryCard}>
-              <div className={styles.cardHeader}>
-                <Users className={styles.cardIcon} />
-                <span className={styles.cardLabel}>Sessões Ativas</span>
+          <div className={commonStyles.summaryGrid}>
+            <Card className={commonStyles.summaryCard}>
+              <div className={commonStyles.cardHeader}>
+                <Users className={commonStyles.cardIcon} />
+                <span className={commonStyles.cardLabel}>Sessões Ativas</span>
               </div>
-              <div className={styles.cardValue}>
-                <span className={styles.primaryValue}>
+              <div className={commonStyles.cardValue}>
+                <span className={commonStyles.primaryValue}>
                   {data.summary.activeSessions}
                 </span>
-                <span className={styles.cardDescription}>
+                <span className={commonStyles.cardDescription}>
                   Usuários online agora
                 </span>
               </div>
-            </div>
+            </Card>
 
-            <div className={styles.summaryCard}>
-              <div className={styles.cardHeader}>
-                <LogIn className={styles.cardIcon} />
-                <span className={styles.cardLabel}>Usuários Logados</span>
+            <Card className={commonStyles.summaryCard}>
+              <div className={commonStyles.cardHeader}>
+                <LogIn className={commonStyles.cardIcon} />
+                <span className={commonStyles.cardLabel}>Usuários Logados</span>
               </div>
-              <div className={styles.cardValue}>
+              <div className={commonStyles.cardValue}>
                 <span
-                  className={`${styles.primaryValue} ${styles.authenticated}`}
+                  className={`${commonStyles.primaryValue} ${commonStyles.authenticated}`}
                 >
-                  {data.users.authenticatedUsers}
+                  {data.users.breakdown.authenticated}
                 </span>
-                <span className={styles.cardDescription}>
+                <span className={commonStyles.cardDescription}>
                   Usuários online com login ativo
                 </span>
               </div>
-            </div>
+            </Card>
 
-            <div className={styles.summaryCard}>
-              <div className={styles.cardHeader}>
-                <HatGlasses className={styles.cardIcon} />
-                <span className={styles.cardLabel}>Usuários Anônimos</span>
+            <Card className={commonStyles.summaryCard}>
+              <div className={commonStyles.cardHeader}>
+                <HatGlasses className={commonStyles.cardIcon} />
+                <span className={commonStyles.cardLabel}>Usuários Anônimos</span>
               </div>
-              <div className={styles.cardValue}>
-                <span className={`${styles.primaryValue} ${styles.anonymous}`}>
+              <div className={commonStyles.cardValue}>
+                <span className={`${commonStyles.primaryValue} ${commonStyles.anonymous}`}>
                   {data.users.breakdown.anonymous}
                 </span>
-                <span className={styles.cardDescription}>
+                <span className={commonStyles.cardDescription}>
                   Usuários online sem login
                 </span>
               </div>
-            </div>
+            </Card>
           </div>
 
           {/* Distribuição de Usuários - Linha Inteira */}
-          <div className={styles.fullWidthCard}>
-            <div className={styles.summaryCard}>
-              <div className={styles.cardHeader}>
-                <Activity className={styles.cardIcon} />
-                <span className={styles.cardLabel}>
+          <div className={commonStyles.fullWidthCard}>
+            <Card className={commonStyles.summaryCard}>
+              <div className={commonStyles.cardHeader}>
+                <Activity className={commonStyles.cardIcon} />
+                <span className={commonStyles.cardLabel}>
                   Distribuição de Usuários Ativos
                 </span>
               </div>
-              <div className={styles.cardValue}>
-                <div className={styles.breakdownBar}>
-                  <div
-                    className={styles.authenticatedBar}
-                    style={{
-                      width: `${data.summary.activeSessions > 0 ? (data.users.authenticatedUsers / data.summary.activeSessions) * 100 : 0}%`,
-                    }}
-                  ></div>
-                  <div
-                    className={styles.anonymousBar}
-                    style={{
-                      width: `${data.summary.activeSessions > 0 ? (data.users.breakdown.anonymous / data.summary.activeSessions) * 100 : 0}%`,
-                    }}
-                  ></div>
-                </div>
+              <div className={commonStyles.cardValue}>
+                {(() => {
+                  const totalUsers = data.users.breakdown.authenticated + data.users.breakdown.anonymous;
+                  const authenticatedPercentage = totalUsers > 0 ? (data.users.breakdown.authenticated / totalUsers) * 100 : 0;
+                  const anonymousPercentage = totalUsers > 0 ? (data.users.breakdown.anonymous / totalUsers) * 100 : 0;
+                  
+                  // Debug log temporário
+                  console.log('BreakdownBar Debug:', {
+                    authenticated: data.users.breakdown.authenticated,
+                    anonymous: data.users.breakdown.anonymous,
+                    totalUsers,
+                    authenticatedPercentage,
+                    anonymousPercentage
+                  });
+                  
+                  return (
+                    <>
+                      <div className={styles.breakdownBar}>
+                        {totalUsers > 0 ? (
+                          <>
+                            <div
+                              className={styles.authenticatedBar}
+                              style={{
+                                width: `${authenticatedPercentage}%`,
+                              }}
+                            ></div>
+                            <div
+                              className={styles.anonymousBar}
+                              style={{
+                                width: `${anonymousPercentage}%`,
+                              }}
+                            ></div>
+                          </>
+                        ) : (
+                          <div className={styles.noDataBar}>
+                            Nenhum usuário ativo no momento
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  );
+                })()}
                 <div className={styles.breakdownLegend}>
                   <div className={styles.legendItem}>
                     <div
                       className={styles.legendColor}
                       style={{ backgroundColor: "var(--success-color)" }}
                     ></div>
-                    <span>Logados ({data.users.authenticatedUsers})</span>
+                    <span>Logados ({data.users.breakdown.authenticated})</span>
                   </div>
                   <div className={styles.legendItem}>
                     <div
@@ -661,40 +732,40 @@ export default function MetricsPage() {
                         backgroundColor: "var(--light-complementary-color)",
                       }}
                     ></div>
-                    <span>Total Ativo ({data.summary.activeSessions})</span>
+                    <span>Total Ativo ({data.users.breakdown.authenticated + data.users.breakdown.anonymous})</span>
                   </div>
                 </div>
               </div>
-            </div>
+            </Card>
           </div>
 
           {/* Novos vs Recorrentes */}
-          <div className={styles.newVsReturningGrid}>
-            <div className={styles.summaryCard}>
-              <div className={styles.cardHeader}>
-                <User className={styles.cardIcon} />
-                <span className={styles.cardLabel}>Usuários Únicos</span>
+          <div className={commonStyles.summaryGrid}>
+            <Card className={commonStyles.summaryCard}>
+              <div className={commonStyles.cardHeader}>
+                <User className={commonStyles.cardIcon} />
+                <span className={commonStyles.cardLabel}>Usuários Únicos</span>
               </div>
-              <div className={styles.cardValue}>
-                <span className={styles.primaryValue}>
+              <div className={commonStyles.cardValue}>
+                <span className={commonStyles.primaryValue}>
                   {data.users.uniqueUsers}
                 </span>
-                <span className={styles.cardDescription}>
+                <span className={commonStyles.cardDescription}>
                   Identificação por fingerprint + IP
                 </span>
               </div>
-            </div>
+            </Card>
 
-            <div className={styles.summaryCard}>
-              <div className={styles.cardHeader}>
-                <LogIn className={styles.cardIcon} />
-                <span className={styles.cardLabel}>Usuários Cadastrados</span>
+            <Card className={commonStyles.summaryCard}>
+              <div className={commonStyles.cardHeader}>
+                <LogIn className={commonStyles.cardIcon} />
+                <span className={commonStyles.cardLabel}>Usuários Cadastrados</span>
               </div>
-              <div className={styles.cardValue}>
-                <span className={styles.primaryValue}>
+              <div className={commonStyles.cardValue}>
+                <span className={commonStyles.primaryValue}>
                   {data.users.newVsReturning.returning}
                 </span>
-                <span className={styles.cardDescription}>
+                <span className={commonStyles.cardDescription}>
                   {Math.round(
                     (data.users.newVsReturning.returning /
                       data.users.newVsReturning.total) *
@@ -703,18 +774,18 @@ export default function MetricsPage() {
                   % do total
                 </span>
               </div>
-            </div>
+            </Card>
 
-            <div className={styles.summaryCard}>
-              <div className={styles.cardHeader}>
-                <HatGlasses className={styles.cardIcon} />
-                <span className={styles.cardLabel}>Usuários Anônimos</span>
+            <Card className={commonStyles.summaryCard}>
+              <div className={commonStyles.cardHeader}>
+                <HatGlasses className={commonStyles.cardIcon} />
+                <span className={commonStyles.cardLabel}>Usuários Anônimos</span>
               </div>
-              <div className={styles.cardValue}>
-                <span className={styles.primaryValue}>
+              <div className={commonStyles.cardValue}>
+                <span className={commonStyles.primaryValue}>
                   {data.users.newVsReturning.new}
                 </span>
-                <span className={styles.cardDescription}>
+                <span className={commonStyles.cardDescription}>
                   {Math.round(
                     (data.users.newVsReturning.new /
                       data.users.newVsReturning.total) *
@@ -723,17 +794,17 @@ export default function MetricsPage() {
                   % do total
                 </span>
               </div>
-            </div>
+            </Card>
           </div>
         </section>
 
         {/* Análise de Dispositivos e Localização */}
-        <div className={styles.chartsGrid}>
+        <div className={commonStyles.cardsGrid}>
           {/* Dispositivos */}
-          <section className={styles.section}>
-            <div className={styles.sectionHeader}>
-              <div className={styles.sectionTitle}>
-                <Smartphone className={styles.sectionIcon} />
+          <section className={commonStyles.section}>
+            <div className={commonStyles.sectionHeader}>
+              <div className={commonStyles.sectionTitle}>
+                <Smartphone className={commonStyles.sectionIcon} />
                 <h3>
                   Dispositivos
                   <span className={styles.periodIndicator}>
@@ -750,9 +821,9 @@ export default function MetricsPage() {
             </div>
 
             {data.devices.deviceTypes.length > 0 ? (
-              <div className={styles.chartContainer}>
-                <div className={styles.pieChart}>
-                  <svg viewBox="0 0 200 200" className={styles.pieSvg}>
+              <div className={styles.cardContainer}>
+                <div className={styles.chartContainer}>
+                  <svg viewBox="0 0 200 200" className={styles.chartSvg}>
                     {renderPieSegments(data.devices.deviceTypes, [
                       "#3b82f6",
                       "#10b981",
@@ -778,10 +849,10 @@ export default function MetricsPage() {
           </section>
 
           {/* Localização */}
-          <section className={styles.section}>
-            <div className={styles.sectionHeader}>
-              <div className={styles.sectionTitle}>
-                <Globe className={styles.sectionIcon} />
+          <section className={commonStyles.section}>
+            <div className={commonStyles.sectionHeader}>
+              <div className={commonStyles.sectionTitle}>
+                <Globe className={commonStyles.sectionIcon} />
                 <h3>
                   Localização
                   <span className={styles.periodIndicator}>
@@ -798,9 +869,9 @@ export default function MetricsPage() {
             </div>
 
             {data.location.countries.length > 0 ? (
-              <div className={styles.chartContainer}>
-                <div className={styles.pieChart}>
-                  <svg viewBox="0 0 200 200" className={styles.pieSvg}>
+              <div className={styles.cardContainer}>
+                <div className={styles.chartContainer}>
+                  <svg viewBox="0 0 200 200" className={styles.chartSvg}>
                     {renderPieSegments(
                       data.location.countries.slice(0, 5).map((country) => ({
                         ...country,
@@ -847,7 +918,8 @@ export default function MetricsPage() {
         />
       )}
 
-      <div className={styles.footer}>
+      {/* Desktop footer */}
+      <div className={commonStyles.footer}>
         <small>
           Última atualização: {new Date(data.timestamp).toLocaleString()} |
           Dados coletados em tempo real da aplicação

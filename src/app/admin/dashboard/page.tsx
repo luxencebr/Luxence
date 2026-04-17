@@ -2,6 +2,7 @@
 
 import { useState, useEffect, ReactElement } from "react";
 import styles from "./dashboard.module.css";
+import commonStyles from "../admin-common.module.css";
 import {
   Users,
   TrendingUp,
@@ -16,7 +17,10 @@ import {
   HatGlasses,
   User,
   Smartphone,
+  RotateCw,
 } from "lucide-react";
+import Dropdown from "@/components/ui/Dropdown/Dropdown";
+import Card from "@/components/ui/Card/Card";
 
 // Esta página é dinâmica e não precisa de generateStaticParams
 export const dynamic = "force-dynamic";
@@ -107,9 +111,9 @@ const PLAN_COLORS = {
 export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [chartLoading, setChartLoading] = useState(false);
+  const [cardLoading, setCardLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [chartPeriod, setChartPeriod] = useState("7");
+  const [cardPeriod, setCardPeriod] = useState("7");
   const [autoRefresh, setAutoRefresh] = useState(true);
 
   useEffect(() => {
@@ -120,18 +124,18 @@ export default function DashboardPage() {
     if (!autoRefresh) return;
     const interval = setInterval(() => fetchDashboardData(), 60000);
     return () => clearInterval(interval);
-  }, [autoRefresh, chartPeriod]);
+  }, [autoRefresh, cardPeriod]);
 
   const fetchDashboardData = async (period?: string) => {
     try {
-      const isChartUpdate = !!period;
-      if (isChartUpdate) {
-        setChartLoading(true);
+      const isCardUpdate = !!period;
+      if (isCardUpdate) {
+        setCardLoading(true);
       } else {
         setLoading(true);
       }
 
-      const periodParam = period || chartPeriod;
+      const periodParam = period || cardPeriod;
       const response = await fetch(
         `/api/admin/dashboard?period=${periodParam}`,
       );
@@ -144,7 +148,7 @@ export default function DashboardPage() {
       setError(err instanceof Error ? err.message : "Erro desconhecido");
     } finally {
       setLoading(false);
-      setChartLoading(false);
+      setCardLoading(false);
     }
   };
 
@@ -153,8 +157,8 @@ export default function DashboardPage() {
   };
 
   const handlePeriodChange = (period: string) => {
-    if (period === chartPeriod) return;
-    setChartPeriod(period);
+    if (period === cardPeriod) return;
+    setCardPeriod(period);
     fetchDashboardData(period);
   };
 
@@ -177,9 +181,9 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className={styles.container}>
-        <div className={styles.loading}>
-          <div className={styles.spinner}></div>
+      <div className={commonStyles.container}>
+        <div className={commonStyles.loading}>
+          <div className={commonStyles.spinner}></div>
           <span>Carregando dashboard...</span>
         </div>
       </div>
@@ -188,12 +192,15 @@ export default function DashboardPage() {
 
   if (error) {
     return (
-      <div className={styles.container}>
-        <div className={styles.error}>
+      <div className={commonStyles.container}>
+        <div className={commonStyles.error}>
           <AlertTriangle size={48} />
           <h2>Erro ao carregar dashboard</h2>
           <p>{error}</p>
-          <button onClick={refreshDashboard} className={styles.retryButton}>
+          <button
+            onClick={refreshDashboard}
+            className={commonStyles.retryButton}
+          >
             Tentar novamente
           </button>
         </div>
@@ -204,110 +211,154 @@ export default function DashboardPage() {
   if (!data) return null;
 
   return (
-    <div className={styles.container}>
-      <header className={styles.header}>
-        <div className={styles.headerContent}>
-          <h1 className={styles.title}>Dashboard</h1>
-          <p className={styles.subtitle}>Visão geral do sistema</p>
+    <div className={commonStyles.container}>
+      <header className={commonStyles.header}>
+        <div className={commonStyles.headerContent}>
+          <h1 className={commonStyles.title}>Dashboard</h1>
+          <p className={commonStyles.subtitle}>Visão geral do sistema</p>
         </div>
-        <div className={styles.controls}>
-          <label className={styles.autoRefreshLabel}>
-            <input
-              type="checkbox"
-              checked={autoRefresh}
-              onChange={(e) => setAutoRefresh(e.target.checked)}
-            />
-            Auto-refresh (1min)
-          </label>
+        <div className={commonStyles.controls}>
           <button
             onClick={refreshDashboard}
-            className={styles.refreshButton}
+            className={commonStyles.refreshButton}
             disabled={loading}
           >
-            <Activity size={16} className={loading ? styles.spinning : ""} />
-            {loading ? "Atualizando..." : "Atualizar"}
+            <RotateCw
+              size={16}
+              className={loading ? commonStyles.spinning : ""}
+            />
+            <span className={commonStyles.refreshText}>
+              {loading ? "Atualizando..." : "Atualizar"}
+            </span>
           </button>
         </div>
       </header>
 
-      <div className={styles.content}>
+      {/* Mobile timestamp */}
+      <div className={commonStyles.mobileTimestamp}>
+        <small>Última atualização: {new Date().toLocaleString()}</small>
+      </div>
+
+      <div className={commonStyles.content}>
         {/* Resumo Geral */}
 
         {/* Seção Usuários */}
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <div className={styles.sectionTitle}>
-              <Users className={styles.sectionIcon} />
+        <section className={commonStyles.section}>
+          <div className={commonStyles.sectionHeader}>
+            <div className={commonStyles.sectionTitle}>
+              <Users className={commonStyles.sectionIcon} />
               <h3>Usuários</h3>
             </div>
           </div>
 
-          <div className={styles.summaryGrid}>
-            <div className={styles.summaryGrid}>
-              <div className={styles.summaryCard}>
-                <div className={styles.cardHeader}>
-                  <Globe className={styles.cardIcon} />
-                  <span className={styles.cardLabel}>Visualizações</span>
+          <div className={commonStyles.summaryGrid}>
+            <div className={commonStyles.summaryGrid}>
+              <Card className={commonStyles.summaryCard}>
+                <div className={commonStyles.cardHeader}>
+                  <Globe className={commonStyles.cardIcon} />
+                  <span className={commonStyles.cardLabel}>Visualizações</span>
                 </div>
-                <div className={styles.cardValue}>
-                  <span className={styles.primaryValue}>
+                <div className={commonStyles.cardValue}>
+                  <span className={commonStyles.primaryValue}>
                     {data.platform.totalSessions}
                   </span>
-                  <span className={styles.cardDescription}>
+                  <span className={commonStyles.cardDescription}>
                     Sessões registradas
                   </span>
                 </div>
-              </div>
+              </Card>
 
-              <div className={styles.summaryCard}>
-                <div className={styles.cardHeader}>
-                  <Activity className={styles.cardIcon} />
-                  <span className={styles.cardLabel}>Usuários Online</span>
+              <Card className={commonStyles.summaryCard}>
+                <div className={commonStyles.cardHeader}>
+                  <Activity className={commonStyles.cardIcon} />
+                  <span className={commonStyles.cardLabel}>
+                    Usuários Online
+                  </span>
                 </div>
-                <div className={styles.cardValue}>
-                  <span className={styles.primaryValue}>
+                <div className={commonStyles.cardValue}>
+                  <span className={commonStyles.primaryValue}>
                     {data.activeUsers.now}
                   </span>
-                  <span className={styles.cardDescription}>
+                  <span className={commonStyles.cardDescription}>
                     Usuários ativos agora
                   </span>
                 </div>
-              </div>
+              </Card>
             </div>
 
-            <div className={styles.summaryCard}>
-              <div className={styles.chartHeader}>
+            <Card className={commonStyles.summaryCard}>
+              <div className={styles.cardHeader}>
                 <h3>Acessos por Período</h3>
-                <div className={styles.periodButtons}>
-                  <button
-                    className={`${styles.periodButton} ${chartPeriod === "7" ? styles.periodActive : ""}`}
-                    onClick={() => handlePeriodChange("7")}
-                  >
-                    7 dias
-                  </button>
-                  <button
-                    className={`${styles.periodButton} ${chartPeriod === "30" ? styles.periodActive : ""}`}
-                    onClick={() => handlePeriodChange("30")}
-                  >
-                    30 dias
-                  </button>
-                  <button
-                    className={`${styles.periodButton} ${chartPeriod === "365" ? styles.periodActive : ""}`}
-                    onClick={() => handlePeriodChange("365")}
-                  >
-                    1 ano
-                  </button>
+                <div className={styles.cardPeriodSelector}>
+                  <div className={styles.cardPeriodDropdown}>
+                    <Dropdown
+                      trigger={
+                        <div className={commonStyles.dropdownTrigger}>
+                          {cardPeriod === "7"
+                            ? "7 dias"
+                            : cardPeriod === "30"
+                              ? "30 dias"
+                              : "1 ano"}
+                        </div>
+                      }
+                      containerClassName={commonStyles.dropdownContainer}
+                      triggerClassName={commonStyles.dropdownTriggerStyle}
+                      menuClassName={commonStyles.dropdownMenu}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => handlePeriodChange("7")}
+                        className={`${commonStyles.dropdownOption} ${cardPeriod === "7" ? commonStyles.dropdownOptionSelected : ""}`}
+                      >
+                        7 dias
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handlePeriodChange("30")}
+                        className={`${commonStyles.dropdownOption} ${cardPeriod === "30" ? commonStyles.dropdownOptionSelected : ""}`}
+                      >
+                        30 dias
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handlePeriodChange("365")}
+                        className={`${commonStyles.dropdownOption} ${cardPeriod === "365" ? commonStyles.dropdownOptionSelected : ""}`}
+                      >
+                        1 ano
+                      </button>
+                    </Dropdown>
+                  </div>
+                  <div className={styles.cardPeriodButtons}>
+                    <button
+                      className={`${commonStyles.periodButton} ${cardPeriod === "7" ? commonStyles.periodActive : ""}`}
+                      onClick={() => handlePeriodChange("7")}
+                    >
+                      7 dias
+                    </button>
+                    <button
+                      className={`${commonStyles.periodButton} ${cardPeriod === "30" ? commonStyles.periodActive : ""}`}
+                      onClick={() => handlePeriodChange("30")}
+                    >
+                      30 dias
+                    </button>
+                    <button
+                      className={`${commonStyles.periodButton} ${cardPeriod === "365" ? commonStyles.periodActive : ""}`}
+                      onClick={() => handlePeriodChange("365")}
+                    >
+                      1 ano
+                    </button>
+                  </div>
                 </div>
               </div>
-              <div className={styles.lineChart}>
-                {chartLoading ? (
+              <div className={styles.chartContainer}>
+                {cardLoading ? (
                   <div className={styles.chartLoading}>
-                    <div className={styles.spinner}></div>
+                    <div className={commonStyles.spinner}></div>
                     <span>Carregando dados...</span>
                   </div>
                 ) : (
                   <>
-                    <svg className={styles.chartSvg} viewBox="0 0 400 200">
+                    <svg className={styles.chartSvg} viewBox="0 0 400 240">
                       {/* Grid lines */}
                       <defs>
                         <pattern
@@ -327,7 +378,7 @@ export default function DashboardPage() {
                       </defs>
                       <rect width="100%" height="100%" fill="url(#grid)" />
 
-                      {/* Chart line */}
+                      {/* Chart content */}
                       {(() => {
                         if (!data.dailyAccess.length) return null;
 
@@ -348,6 +399,78 @@ export default function DashboardPage() {
 
                         return (
                           <>
+                            {/* Data points with hover effects */}
+                            {data.dailyAccess.map((day, index) => {
+                              const x = 25 + index * stepX;
+                              const y = 180 - (day.views / maxViews) * 140;
+                              return (
+                                <g
+                                  key={`point-${index}`}
+                                  className={styles.chartPointGroup}
+                                >
+                                  {/* Extended hover area (covers entire vertical line) */}
+                                  <rect
+                                    x={x - 15}
+                                    y={40}
+                                    width="30"
+                                    height="200"
+                                    fill="transparent"
+                                    className={styles.chartHoverArea}
+                                  />
+
+                                  {/* Vertical dashed line (highlighted on hover) */}
+                                  <line
+                                    x1={x}
+                                    y1={40}
+                                    x2={x}
+                                    y2={180}
+                                    stroke="var(--dark-complementary-color)"
+                                    strokeWidth="1"
+                                    strokeDasharray="4,4"
+                                    className={styles.chartVerticalLine}
+                                  />
+
+                                  {/* Actual data point */}
+                                  <circle
+                                    cx={x}
+                                    cy={y}
+                                    r="4"
+                                    fill="var(--primary-color)"
+                                    stroke="var(--dark-color)"
+                                    strokeWidth="2"
+                                    className={styles.chartPoint}
+                                  />
+
+                                  {/* Value label (always visible) */}
+                                  <text
+                                    x={x}
+                                    y={y - 15}
+                                    textAnchor="middle"
+                                    fontSize="12"
+                                    fill="var(--primary-color)"
+                                    fontWeight="600"
+                                    className={styles.chartPointValue}
+                                  >
+                                    {day.views}
+                                  </text>
+
+                                  {/* Date/Month label below the chart */}
+                                  <text
+                                    x={x}
+                                    y={200}
+                                    textAnchor="middle"
+                                    fontSize="10"
+                                    fill="var(--light-complementary-color)"
+                                    fontWeight="500"
+                                    className={styles.chartDateLabel}
+                                  >
+                                    {day.label}
+                                  </text>
+                                </g>
+                              );
+                            })}
+
+                            {/* Chart line */}
                             <polyline
                               fill="none"
                               stroke="var(--primary-color)"
@@ -356,133 +479,91 @@ export default function DashboardPage() {
                               strokeLinejoin="round"
                               points={points}
                             />
-                            {/* Data points */}
-                            {data.dailyAccess.map((day, index) => {
-                              const x = 25 + index * stepX;
-                              const y = 180 - (day.views / maxViews) * 140;
-                              return (
-                                <g key={index}>
-                                  <circle
-                                    cx={x}
-                                    cy={y}
-                                    r="4"
-                                    fill="var(--primary-color)"
-                                    stroke="var(--dark-color)"
-                                    strokeWidth="2"
-                                  />
-                                  <text
-                                    x={x}
-                                    y={y - 10}
-                                    textAnchor="middle"
-                                    fontSize="12"
-                                    fill="var(--primary-color)"
-                                    fontWeight="600"
-                                  >
-                                    {day.views}
-                                  </text>
-                                </g>
-                              );
-                            })}
                           </>
                         );
                       })()}
                     </svg>
-
-                    {/* X-axis labels */}
-                    <div className={styles.chartLabels}>
-                      {data.dailyAccess.map((day, index) => {
-                        // Mostrar apenas algumas labels para evitar sobreposição
-                        const showLabel =
-                          data.dailyAccess.length <= 10 ||
-                          index % Math.ceil(data.dailyAccess.length / 8) ===
-                            0 ||
-                          index === data.dailyAccess.length - 1;
-
-                        return (
-                          <span
-                            key={index}
-                            className={styles.chartLabel}
-                            style={{
-                              opacity: showLabel ? 1 : 0,
-                              flex: `0 0 ${100 / data.dailyAccess.length}%`,
-                            }}
-                          >
-                            {day.label}
-                          </span>
-                        );
-                      })}
-                    </div>
                   </>
                 )}
               </div>
-            </div>
+            </Card>
           </div>
         </section>
 
         {/* Seção Anunciantes */}
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <div className={styles.sectionTitle}>
-              <UserCheck className={styles.sectionIcon} />
+        <section className={commonStyles.section}>
+          <div className={commonStyles.sectionHeader}>
+            <div className={commonStyles.sectionTitle}>
+              <UserCheck className={commonStyles.sectionIcon} />
               <h3>Anunciantes</h3>
             </div>
           </div>
 
-          <div className={styles.userMetricsGrid}>
-            <div className={styles.summaryCard}>
-              <div className={styles.cardHeader}>
-                <Users className={styles.cardIcon} />
-                <span className={styles.cardLabel}>Total de Anunciantes</span>
+          <div className={commonStyles.summaryGrid}>
+            <Card className={commonStyles.summaryCard}>
+              <div className={commonStyles.cardHeader}>
+                <Users className={commonStyles.cardIcon} />
+                <span className={commonStyles.cardLabel}>
+                  Total de Anunciantes
+                </span>
               </div>
-              <div className={styles.cardValue}>
-                <span className={styles.primaryValue}>
+              <div className={commonStyles.cardValue}>
+                <span className={commonStyles.primaryValue}>
                   {data.advertisers.total}
                 </span>
-                <span className={styles.cardDescription}>
+                <span className={commonStyles.cardDescription}>
                   Todos os anunciantes cadastrados
                 </span>
               </div>
-            </div>
+            </Card>
 
-            <div className={styles.summaryCard}>
-              <div className={styles.cardHeader}>
-                <UserCheck className={styles.cardIcon} />
-                <span className={styles.cardLabel}>Anunciantes Ativos</span>
+            <Card className={commonStyles.summaryCard}>
+              <div className={commonStyles.cardHeader}>
+                <UserCheck className={commonStyles.cardIcon} />
+                <span className={commonStyles.cardLabel}>
+                  Anunciantes Ativos
+                </span>
               </div>
-              <div className={styles.cardValue}>
-                <span className={`${styles.primaryValue} ${styles.positive}`}>
+              <div className={commonStyles.cardValue}>
+                <span
+                  className={`${commonStyles.primaryValue} ${commonStyles.good}`}
+                >
                   {data.advertisers.active}
                 </span>
-                <span className={styles.cardDescription}>
+                <span className={commonStyles.cardDescription}>
                   Verificados e operando
                 </span>
               </div>
-            </div>
+            </Card>
 
-            <div className={styles.summaryCard}>
-              <div className={styles.cardHeader}>
-                <AlertTriangle className={styles.cardIcon} />
-                <span className={styles.cardLabel}>Anunciantes Inativos</span>
+            <Card className={commonStyles.summaryCard}>
+              <div className={commonStyles.cardHeader}>
+                <AlertTriangle className={commonStyles.cardIcon} />
+                <span className={commonStyles.cardLabel}>
+                  Anunciantes Inativos
+                </span>
               </div>
-              <div className={styles.cardValue}>
-                <span className={`${styles.primaryValue} ${styles.warning}`}>
+              <div className={commonStyles.cardValue}>
+                <span
+                  className={`${commonStyles.primaryValue} ${commonStyles.warning}`}
+                >
                   {data.advertisers.inactive}
                 </span>
-                <span className={styles.cardDescription}>
+                <span className={commonStyles.cardDescription}>
                   Pendentes ou com problemas
                 </span>
               </div>
-            </div>
+            </Card>
           </div>
 
           {/* Top Performers */}
-          <div className={styles.chartsGrid}>
-            <div className={styles.summaryCard}>
-              <div className={styles.cardHeader}>
-                <Heart className={styles.cardIcon} fill="currentColor" />
-                <span className={styles.cardLabel}>Top Reviews</span>
+          <div className={commonStyles.cardsGrid}>
+            <Card className={commonStyles.summaryCard}>
+              <div className={commonStyles.cardHeader}>
+                <Heart className={commonStyles.cardIcon} fill="currentColor" />
+                <span className={commonStyles.cardLabel}>Top Reviews</span>
               </div>
-              <div className={styles.cardValue}>
+              <div className={commonStyles.cardValue}>
                 <div className={styles.topPerformers}>
                   {data.topReviews.slice(0, 3).map((performer, index) => (
                     <div key={index} className={styles.performerItem}>
@@ -507,14 +588,14 @@ export default function DashboardPage() {
                   ))}
                 </div>
               </div>
-            </div>
+            </Card>
 
-            <div className={styles.summaryCard}>
-              <div className={styles.cardHeader}>
-                <Eye className={styles.cardIcon} />
-                <span className={styles.cardLabel}>Top Views</span>
+            <Card className={commonStyles.summaryCard}>
+              <div className={commonStyles.cardHeader}>
+                <Eye className={commonStyles.cardIcon} />
+                <span className={commonStyles.cardLabel}>Top Views</span>
               </div>
-              <div className={styles.cardValue}>
+              <div className={commonStyles.cardValue}>
                 <div className={styles.topPerformers}>
                   {data.topViews.slice(0, 3).map((performer, index) => (
                     <div key={index} className={styles.performerItem}>
@@ -534,76 +615,83 @@ export default function DashboardPage() {
                   ))}
                 </div>
               </div>
-            </div>
+            </Card>
           </div>
         </section>
 
         {/* Seção Plataforma */}
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <div className={styles.sectionTitle}>
-              <Server className={styles.sectionIcon} />
+        <section className={commonStyles.section}>
+          <div className={commonStyles.sectionHeader}>
+            <div className={commonStyles.sectionTitle}>
+              <Server className={commonStyles.sectionIcon} />
               <h3>Plataforma</h3>
             </div>
           </div>
 
-          <div className={styles.userMetricsGrid}>
-            <div className={styles.summaryCard}>
-              <div className={styles.cardHeader}>
-                <Activity className={styles.cardIcon} />
-                <span className={styles.cardLabel}>Uptime do Sistema</span>
+          <div className={commonStyles.summaryGrid}>
+            <Card className={commonStyles.summaryCard}>
+              <div className={commonStyles.cardHeader}>
+                <Activity className={commonStyles.cardIcon} />
+                <span className={commonStyles.cardLabel}>
+                  Uptime do Sistema
+                </span>
               </div>
-              <div className={styles.cardValue}>
-                <span className={styles.primaryValue}>
+              <div className={commonStyles.cardValue}>
+                <span className={commonStyles.primaryValue}>
                   {data.systemPerformance.uptime.formatted}
                 </span>
-                <span className={styles.cardDescription}>
+                <span className={commonStyles.cardDescription}>
                   Tempo online ininterrupto
                 </span>
               </div>
-            </div>
+            </Card>
 
-            <div className={styles.summaryCard}>
-              <div className={styles.cardHeader}>
-                <Server className={styles.cardIcon} />
-                <span className={styles.cardLabel}>Memória do Sistema</span>
+            <Card className={commonStyles.summaryCard}>
+              <div className={commonStyles.cardHeader}>
+                <Server className={commonStyles.cardIcon} />
+                <span className={commonStyles.cardLabel}>
+                  Memória do Sistema
+                </span>
               </div>
-              <div className={styles.cardValue}>
+              <div className={commonStyles.cardValue}>
                 <span
-                  className={`${styles.primaryValue} ${getPerformanceColor(data.systemPerformance.memory.percentage)}`}
+                  className={`${commonStyles.primaryValue} ${getPerformanceColor(data.systemPerformance.memory.percentage)}`}
                 >
                   {data.systemPerformance.memory.used}MB
                 </span>
-                <span className={styles.cardDescription}>
+                <span className={commonStyles.cardDescription}>
                   {data.systemPerformance.memory.percentage}% em uso
                 </span>
               </div>
-            </div>
+            </Card>
 
-            <div className={styles.summaryCard}>
-              <div className={styles.cardHeader}>
-                <Globe className={styles.cardIcon} />
-                <span className={styles.cardLabel}>Resposta do Banco</span>
+            <Card className={commonStyles.summaryCard}>
+              <div className={commonStyles.cardHeader}>
+                <Globe className={commonStyles.cardIcon} />
+                <span className={commonStyles.cardLabel}>
+                  Resposta do Banco
+                </span>
               </div>
-              <div className={styles.cardValue}>
+              <div className={commonStyles.cardValue}>
                 <span
-                  className={`${styles.primaryValue} ${getDbStatusColor(data.systemPerformance.database.status)}`}
+                  className={`${commonStyles.primaryValue} ${getDbStatusColor(data.systemPerformance.database.status)}`}
                 >
                   {data.systemPerformance.database.responseTime}ms
                 </span>
-                <span className={styles.cardDescription}>
+                <span className={commonStyles.cardDescription}>
                   Status:{" "}
                   {data.systemPerformance.database.status === "connected"
                     ? "Conectado"
                     : "Erro"}
                 </span>
               </div>
-            </div>
+            </Card>
           </div>
         </section>
       </div>
 
-      <div className={styles.footer}>
+      {/* Desktop footer */}
+      <div className={commonStyles.footer}>
         <small>
           Última atualização: {new Date().toLocaleString()} | Dados coletados em
           tempo real da aplicação
