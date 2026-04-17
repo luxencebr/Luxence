@@ -211,7 +211,7 @@ export default function PerformancePage() {
             </div>
           </div>
           <div className={commonStyles.summaryGrid}>
-            <Card className={commonStyles.summaryCard}>
+            <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
               <div className={commonStyles.cardHeader}>
                 <Cpu className={commonStyles.cardIcon} />
                 <span className={commonStyles.cardLabel}>CPU</span>
@@ -227,7 +227,7 @@ export default function PerformancePage() {
               </div>
             </Card>
 
-            <Card className={commonStyles.summaryCard}>
+            <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
               <div className={commonStyles.cardHeader}>
                 <HardDrive className={commonStyles.cardIcon} />
                 <span className={commonStyles.cardLabel}>RAM do Sistema</span>
@@ -247,7 +247,7 @@ export default function PerformancePage() {
               </div>
             </Card>
 
-            <Card className={commonStyles.summaryCard}>
+            <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
               <div className={commonStyles.cardHeader}>
                 <HardDrive className={commonStyles.cardIcon} />
                 <span className={commonStyles.cardLabel}>RAM Disponível</span>
@@ -266,7 +266,7 @@ export default function PerformancePage() {
               </div>
             </Card>
 
-            <Card className={commonStyles.summaryCard}>
+            <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
               <div className={commonStyles.cardHeader}>
                 <Activity className={commonStyles.cardIcon} />
                 <span className={commonStyles.cardLabel}>Uptime</span>

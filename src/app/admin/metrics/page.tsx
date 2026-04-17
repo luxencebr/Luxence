@@ -531,7 +531,7 @@ export default function MetricsPage() {
       <div className={commonStyles.content}>
         {/* Dados Agora */}
         <div className={commonStyles.summaryGrid}>
-          <Card className={commonStyles.summaryCard}>
+          <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
             <div className={commonStyles.cardHeader}>
               <Globe className={commonStyles.cardIcon} />
               <span className={commonStyles.cardLabel}>Visualizações</span>
@@ -546,7 +546,7 @@ export default function MetricsPage() {
             </div>
           </Card>
 
-          <Card className={commonStyles.summaryCard}>
+          <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
             <div className={commonStyles.cardHeader}>
               <TrendingUp className={commonStyles.cardIcon} />
               <span className={commonStyles.cardLabel}>Taxa de Retenção</span>
@@ -566,7 +566,7 @@ export default function MetricsPage() {
             </div>
           </Card>
 
-          <Card className={commonStyles.summaryCard}>
+          <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
             <div className={commonStyles.cardHeader}>
               <TrendingDown className={commonStyles.cardIcon} />
               <span className={commonStyles.cardLabel}>Taxa de Rejeição</span>
@@ -611,7 +611,7 @@ export default function MetricsPage() {
           </div>
 
           <div className={commonStyles.summaryGrid}>
-            <Card className={commonStyles.summaryCard}>
+            <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
               <div className={commonStyles.cardHeader}>
                 <Users className={commonStyles.cardIcon} />
                 <span className={commonStyles.cardLabel}>Sessões Ativas</span>
@@ -626,7 +626,7 @@ export default function MetricsPage() {
               </div>
             </Card>
 
-            <Card className={commonStyles.summaryCard}>
+            <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
               <div className={commonStyles.cardHeader}>
                 <LogIn className={commonStyles.cardIcon} />
                 <span className={commonStyles.cardLabel}>Usuários Logados</span>
@@ -643,7 +643,7 @@ export default function MetricsPage() {
               </div>
             </Card>
 
-            <Card className={commonStyles.summaryCard}>
+            <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
               <div className={commonStyles.cardHeader}>
                 <HatGlasses className={commonStyles.cardIcon} />
                 <span className={commonStyles.cardLabel}>Usuários Anônimos</span>
@@ -661,7 +661,7 @@ export default function MetricsPage() {
 
           {/* Distribuição de Usuários - Linha Inteira */}
           <div className={commonStyles.fullWidthCard}>
-            <Card className={commonStyles.summaryCard}>
+            <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
               <div className={commonStyles.cardHeader}>
                 <Activity className={commonStyles.cardIcon} />
                 <span className={commonStyles.cardLabel}>
@@ -741,7 +741,7 @@ export default function MetricsPage() {
 
           {/* Novos vs Recorrentes */}
           <div className={commonStyles.summaryGrid}>
-            <Card className={commonStyles.summaryCard}>
+            <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
               <div className={commonStyles.cardHeader}>
                 <User className={commonStyles.cardIcon} />
                 <span className={commonStyles.cardLabel}>Usuários Únicos</span>
@@ -756,7 +756,7 @@ export default function MetricsPage() {
               </div>
             </Card>
 
-            <Card className={commonStyles.summaryCard}>
+            <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
               <div className={commonStyles.cardHeader}>
                 <LogIn className={commonStyles.cardIcon} />
                 <span className={commonStyles.cardLabel}>Usuários Cadastrados</span>
@@ -776,7 +776,7 @@ export default function MetricsPage() {
               </div>
             </Card>
 
-            <Card className={commonStyles.summaryCard}>
+            <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
               <div className={commonStyles.cardHeader}>
                 <HatGlasses className={commonStyles.cardIcon} />
                 <span className={commonStyles.cardLabel}>Usuários Anônimos</span>

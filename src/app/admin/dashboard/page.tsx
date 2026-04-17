@@ -253,7 +253,7 @@ export default function DashboardPage() {
 
           <div className={commonStyles.summaryGrid}>
             <div className={commonStyles.summaryGrid}>
-              <Card className={commonStyles.summaryCard}>
+              <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
                 <div className={commonStyles.cardHeader}>
                   <Globe className={commonStyles.cardIcon} />
                   <span className={commonStyles.cardLabel}>Visualizações</span>
@@ -268,7 +268,7 @@ export default function DashboardPage() {
                 </div>
               </Card>
 
-              <Card className={commonStyles.summaryCard}>
+              <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
                 <div className={commonStyles.cardHeader}>
                   <Activity className={commonStyles.cardIcon} />
                   <span className={commonStyles.cardLabel}>
@@ -286,7 +286,7 @@ export default function DashboardPage() {
               </Card>
             </div>
 
-            <Card className={commonStyles.summaryCard}>
+            <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
               <div className={styles.cardHeader}>
                 <h3>Acessos por Período</h3>
                 <div className={styles.cardPeriodSelector}>
@@ -500,7 +500,7 @@ export default function DashboardPage() {
           </div>
 
           <div className={commonStyles.summaryGrid}>
-            <Card className={commonStyles.summaryCard}>
+            <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
               <div className={commonStyles.cardHeader}>
                 <Users className={commonStyles.cardIcon} />
                 <span className={commonStyles.cardLabel}>
@@ -517,7 +517,7 @@ export default function DashboardPage() {
               </div>
             </Card>
 
-            <Card className={commonStyles.summaryCard}>
+            <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
               <div className={commonStyles.cardHeader}>
                 <UserCheck className={commonStyles.cardIcon} />
                 <span className={commonStyles.cardLabel}>
@@ -536,7 +536,7 @@ export default function DashboardPage() {
               </div>
             </Card>
 
-            <Card className={commonStyles.summaryCard}>
+            <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
               <div className={commonStyles.cardHeader}>
                 <AlertTriangle className={commonStyles.cardIcon} />
                 <span className={commonStyles.cardLabel}>
@@ -558,7 +558,7 @@ export default function DashboardPage() {
 
           {/* Top Performers */}
           <div className={commonStyles.cardsGrid}>
-            <Card className={commonStyles.summaryCard}>
+            <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
               <div className={commonStyles.cardHeader}>
                 <Heart className={commonStyles.cardIcon} fill="currentColor" />
                 <span className={commonStyles.cardLabel}>Top Reviews</span>
@@ -590,7 +590,7 @@ export default function DashboardPage() {
               </div>
             </Card>
 
-            <Card className={commonStyles.summaryCard}>
+            <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
               <div className={commonStyles.cardHeader}>
                 <Eye className={commonStyles.cardIcon} />
                 <span className={commonStyles.cardLabel}>Top Views</span>
@@ -629,7 +629,7 @@ export default function DashboardPage() {
           </div>
 
           <div className={commonStyles.summaryGrid}>
-            <Card className={commonStyles.summaryCard}>
+            <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
               <div className={commonStyles.cardHeader}>
                 <Activity className={commonStyles.cardIcon} />
                 <span className={commonStyles.cardLabel}>
@@ -646,7 +646,7 @@ export default function DashboardPage() {
               </div>
             </Card>
 
-            <Card className={commonStyles.summaryCard}>
+            <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
               <div className={commonStyles.cardHeader}>
                 <Server className={commonStyles.cardIcon} />
                 <span className={commonStyles.cardLabel}>
@@ -665,7 +665,7 @@ export default function DashboardPage() {
               </div>
             </Card>
 
-            <Card className={commonStyles.summaryCard}>
+            <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
               <div className={commonStyles.cardHeader}>
                 <Globe className={commonStyles.cardIcon} />
                 <span className={commonStyles.cardLabel}>
