@@ -161,10 +161,16 @@
   gap: 4px;
   padding: 4px 6px;
   cursor: pointer;
+  min-height: 20px; /* Altura mínima consistente */
 
   white-space: normal;
   word-break: break-word;
   hyphens: auto;
+}
+
+/* Desabilita cursor quando outro campo está sendo editado */
+.editableValue:not([onclick]) {
+  cursor: default;
 }
 
 .editable.isSuggestion .editableValue {
@@ -199,10 +205,11 @@
   font-weight: inherit;
 }
 
-/* Input do nome - herda o tamanho do nome */
+/* Input do nome - largura consistente */
 .nameSpan .editableInput {
-  min-width: 150px;
-  width: auto;
+  min-width: 120px;
+  width: 100%;
+  max-width: 200px;
 }
 
 /* Input da idade - tamanho fixo pequeno para 2 dígitos */
@@ -249,7 +256,7 @@
 }
 
 .errorMessage::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -4px;
   left: 10px;
@@ -315,11 +322,34 @@
   cursor: not-allowed;
 }
 
-.editable.slogan .editableValue,
-.editable.slogan .editableInput {
-  font-size: clamp(11px, 1.6vw, 13px);
+.editable.slogan {
+  flex: 1 1 auto;
+
+  min-width: 0;
+  max-width: 100%;
+}
+
+.editable.slogan .editableValue {
+  display: block;
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+
+  font-size: clamp(10px, 1.6vw, 12px);
   font-style: italic;
   color: var(--contrast-complementary-color);
+  line-height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.editable.slogan .editableEdit {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
 }
 
 .editIcon {
@@ -365,11 +395,12 @@
 .nameAgeContainer {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap; /* Evita quebra de linha */
   gap: 0;
   font-size: clamp(16px, 2vw, 20px);
   font-weight: 600;
   margin: 0;
+  min-height: 28px; /* Altura mínima consistente */
 }
 
 .nameSpan,
@@ -379,8 +410,13 @@
 }
 
 .nameSpan {
-  flex: 1;
-  min-width: 0;
+  min-width: 120px; /* Largura mínima para evitar flicker */
+}
+
+.nameSpan .editableValue,
+.nameSpan .editableEdit {
+  font-size: var(--ft-md);
+  min-width: 120px; /* Mantém largura consistente */
 }
 
 .nameSpan .editableEdit {
@@ -390,6 +426,13 @@
 
 .ageSpan {
   flex-shrink: 0;
+  min-width: 60px; /* Largura mínima para evitar flicker */
+}
+
+.ageSpan .editableValue,
+.ageSpan .editableEdit {
+  font-size: var(--ft-md);
+  min-width: 60px; /* Mantém largura consistente */
 }
 
 .ageSpan .editableEdit {
@@ -401,17 +444,22 @@
   white-space: pre;
 }
 
-.nameAndViews .weeklyViews {
-  flex-shrink: 0;
+.subName {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
 }
 
-/* Adicionado estilos para contador de visitas semanais */
+/* Visualizações movidas para baixo do nome */
 .weeklyViews {
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   gap: 6px;
 
-  padding: 8px 10px;
+  padding: var(--space-xs) var(--space-sm);
   font-size: var(--ft-xs);
   color: var(--contrast-complementary-color);
 
@@ -430,7 +478,7 @@
 
 /* Ícone */
 .weeklyViews svg {
-  font-size: 16px;
+  font-size: 12px;
   color: var(--primary-color);
   flex-shrink: 0;
 }
