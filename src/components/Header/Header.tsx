@@ -240,13 +240,13 @@ function Header() {
                     })()}
                   </span>
                 </Link>
-                <Link
+                {/* <Link
                   href="/profile"
                   className={styles.mobileMenuItem}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Painel de Controle
-                </Link>
+                </Link> */}
                 {session.user.signature !== "COPPER" ? (
                   <Link
                     href={""}

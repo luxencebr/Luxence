@@ -18,12 +18,6 @@ const navItems = [
     icon: Lock,
   },
   {
-    href: "/profile/payment",
-    label: "Métodos de Pagamento",
-    description: "Gerencie seus meios de pagamento",
-    icon: CreditCard,
-  },
-  {
     href: "/profile/signature",
     label: "Assinatura",
     description: "Gerencie seu plano",
