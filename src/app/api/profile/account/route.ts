@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/utils/prisma";
+import { canUpdateProfile, logSubscriptionUsage } from "@/lib/subscription";
 
 export async function GET() {
   try {
@@ -59,6 +60,16 @@ export async function PATCH(request: NextRequest) {
 
     const body = await request.json();
     const userId = parseInt(session.user.id);
+
+    // Verificar limitações de assinatura para atualizações de perfil
+    // const { canUpdate, reason } = await canUpdateProfile(userId);
+    
+    // if (!canUpdate) {
+    //   return NextResponse.json(
+    //     { error: reason || 'Não é possível atualizar o perfil' },
+    //     { status: 403 }
+    //   );
+    // }
 
     // Validar dados recebidos
     const allowedFields = ['name', 'email', 'phone', 'address'];
@@ -145,6 +156,13 @@ export async function PATCH(request: NextRequest) {
         });
       }
     }
+
+    // Registrar uso da assinatura
+    // await logSubscriptionUsage(userId, 'profile_update', `account-${userId}`, {
+    //   field: 'account',
+    //   updatedFields: Object.keys(updates).concat(Object.keys(producerUpdates)),
+    //   addressUpdated: !!body.address,
+    // });
 
     return NextResponse.json({ success: true });
   } catch (error) {

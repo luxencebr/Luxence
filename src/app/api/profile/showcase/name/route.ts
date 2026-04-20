@@ -22,14 +22,14 @@ export async function POST(request: Request) {
     }
 
     // Verificar limitações de assinatura
-    const { canUpdate, reason } = await canUpdateProfile(parseInt(session.user.id));
+    // const { canUpdate, reason } = await canUpdateProfile(parseInt(session.user.id));
     
-    if (!canUpdate) {
-      return NextResponse.json(
-        { error: reason || 'Não é possível atualizar o perfil' },
-        { status: 403 }
-      );
-    }
+    // if (!canUpdate) {
+    //   return NextResponse.json(
+    //     { error: reason || 'Não é possível atualizar o perfil' },
+    //     { status: 403 }
+    //   );
+    // }
 
     // Validação: apenas letras, espaços e acentos são permitidos
     const nameRegex = /^[a-zA-ZÀ-ÿ\s]+$/;
@@ -64,10 +64,10 @@ export async function POST(request: Request) {
     });
 
     // Registrar uso da assinatura
-    await logSubscriptionUsage(parseInt(session.user.id), 'profile_update', `name-${profileId}`, {
-      field: 'name',
-      value: name,
-    });
+    // await logSubscriptionUsage(parseInt(session.user.id), 'profile_update', `name-${profileId}`, {
+    //   field: 'name',
+    //   value: name,
+    // });
 
     // Atualiza o status de verificação do perfil
     await updateProducerVerificationStatus(producer.id);

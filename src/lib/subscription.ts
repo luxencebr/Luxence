@@ -46,8 +46,13 @@ export async function canUploadVideos(userId: number): Promise<{ canUpload: bool
 
 /**
  * Verifica se o usuário pode atualizar o perfil
+ * TEMPORARIAMENTE DESABILITADO - Sem limite de atualizações de perfil
  */
 export async function canUpdateProfile(userId: number): Promise<{ canUpdate: boolean; reason?: string }> {
+  // Sempre permitir atualizações de perfil por enquanto
+  return { canUpdate: true };
+  
+  /* LÓGICA ORIGINAL COMENTADA:
   const { getUserSubscriptionInfo } = await import('./subscription-helpers');
   const info = await getUserSubscriptionInfo(userId);
   
@@ -63,6 +68,7 @@ export async function canUpdateProfile(userId: number): Promise<{ canUpdate: boo
   }
   
   return { canUpdate: true };
+  */
 }
 
 /**
@@ -99,25 +105,31 @@ export async function logSubscriptionUsage(
       },
     });
 
-    // Atualizar contadores na assinatura
+    // Atualizar contadores na assinatura (exceto fotos que usam contagem real)
     const updateData: any = {};
     
     switch (action) {
       case 'photo_upload':
-        updateData.photosUsed = { increment: 1 };
+        // Para fotos, sincronizar com contagem real em vez de incrementar
+        const { countUserPhotos } = await import('./subscription-helpers');
+        const realPhotosCount = await countUserPhotos(userId);
+        updateData.photosUsed = realPhotosCount;
         break;
       case 'video_upload':
         updateData.videosUsed = { increment: 1 };
         break;
       case 'profile_update':
-        updateData.profileUpdatesUsed = { increment: 1 };
+        // TEMPORARIAMENTE DESABILITADO - Não incrementar contador de atualizações de perfil
+        // updateData.profileUpdatesUsed = { increment: 1 };
         break;
     }
 
-    await (prisma as any).subscription.update({
-      where: { id: activeSubscription.id },
-      data: updateData,
-    });
+    if (Object.keys(updateData).length > 0) {
+      await (prisma as any).subscription.update({
+        where: { id: activeSubscription.id },
+        data: updateData,
+      });
+    }
   } catch (error) {
     console.error('Erro ao registrar uso da assinatura:', error);
   }

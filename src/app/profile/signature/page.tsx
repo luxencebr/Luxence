@@ -69,7 +69,7 @@ const benefitList: BenefitBase[] = [
   { id: 1, name: "Fotos no Perfil", type: "number" },
   { id: 2, name: "Vídeos no Perfil", type: "number" },
   { id: 3, name: "Controle de Comentários", type: "boolean" },
-  { id: 4, name: "Atualizações de Perfil", type: "number" },
+  // { id: 4, name: "Atualizações de Perfil", type: "number" }, // Temporariamente desabilitado
   { id: 5, name: "Demonstração de Voz", type: "boolean" },
   { id: 6, name: "Prioridade", type: "string" },
   { id: 7, name: "Perfil em Destaque", type: "boolean" },
@@ -79,7 +79,7 @@ const BENEFIT_ICONS = {
   1: Camera,
   2: Video,
   3: MessageSquare,
-  4: RefreshCw,
+  // 4: RefreshCw, // Temporariamente desabilitado
   5: Mic,
   6: Zap,
   7: Star,
@@ -95,7 +95,7 @@ const plans: Plan[] = [
       1: 3, // Fotos
       2: 0, // Vídeos
       3: false, // Controle comentários
-      4: 2, // Atualizações perfil
+      // 4: 2, // Atualizações perfil - Temporariamente desabilitado
       5: false, // Voz
       6: "", // Prioridade
       7: false, // Destaque
@@ -110,7 +110,7 @@ const plans: Plan[] = [
       1: 5, // Fotos
       2: 1, // Vídeos
       3: true, // Controle comentários
-      4: 5, // Atualizações perfil
+      // 4: 5, // Atualizações perfil - Temporariamente desabilitado
       5: false, // Voz
       6: "", // Prioridade
       7: false, // Destaque
@@ -126,7 +126,7 @@ const plans: Plan[] = [
       1: 10,
       2: 2,
       3: true,
-      4: 10,
+      // 4: 10, // Temporariamente desabilitado
       5: true,
       6: "Alta",
       7: false,
@@ -141,7 +141,7 @@ const plans: Plan[] = [
       1: 20,
       2: 5,
       3: true,
-      4: Infinity,
+      // 4: Infinity, // Temporariamente desabilitado
       5: true,
       6: "Máxima",
       7: true,
@@ -421,7 +421,8 @@ const SignaturePage = memo(function SignaturePage() {
                       </div>
                     )}
 
-                    <div className={styles.usageItem}>
+                    {/* Temporariamente desabilitado - Atualizações de Perfil */}
+                    {/* <div className={styles.usageItem}>
                       <div className={styles.usageHeader}>
                         <span>Atualizações de Perfil</span>
                         <span>
@@ -444,7 +445,7 @@ const SignaturePage = memo(function SignaturePage() {
                           />
                         </div>
                       )}
-                    </div>
+                    </div> */}
                   </div>
                 </div>
 

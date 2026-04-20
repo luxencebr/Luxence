@@ -24,14 +24,14 @@ export async function PATCH(req: Request) {
     }
 
     // Verificar limitações de assinatura
-    const { canUpdate, reason } = await canUpdateProfile(parseInt(session.user.id));
+    // const { canUpdate, reason } = await canUpdateProfile(parseInt(session.user.id));
     
-    if (!canUpdate) {
-      return NextResponse.json(
-        { error: reason || 'Não é possível atualizar o perfil' },
-        { status: 403 }
-      );
-    }
+    // if (!canUpdate) {
+    //   return NextResponse.json(
+    //     { error: reason || 'Não é possível atualizar o perfil' },
+    //     { status: 403 }
+    //   );
+    // }
 
     // Validar se o perfil pertence ao usuário logado
     const profile = await prisma.producerProfile.findFirst({
@@ -66,10 +66,10 @@ export async function PATCH(req: Request) {
     });
 
     // Registrar uso da assinatura
-    await logSubscriptionUsage(parseInt(session.user.id), 'profile_update', `bio-${profileId}`, {
-      field: 'description',
-      value: bio,
-    });
+    // await logSubscriptionUsage(parseInt(session.user.id), 'profile_update', `bio-${profileId}`, {
+    //   field: 'description',
+    //   value: bio,
+    // });
 
     return NextResponse.json({ success: true });
   } catch (err) {

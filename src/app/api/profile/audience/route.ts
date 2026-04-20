@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/utils/prisma";
 import { updateProducerVerificationStatus } from "@/lib/profile-verification";
+import { canUpdateProfile, logSubscriptionUsage } from "@/lib/subscription";
 
 export async function PATCH(req: Request) {
   try {
@@ -22,6 +23,16 @@ export async function PATCH(req: Request) {
         { status: 400 }
       );
     }
+
+    // Verificar limitações de assinatura
+    // const { canUpdate, reason } = await canUpdateProfile(parseInt(session.user.id));
+    
+    // if (!canUpdate) {
+    //   return NextResponse.json(
+    //     { error: reason || 'Não é possível atualizar o perfil' },
+    //     { status: 403 }
+    //   );
+    // }
 
     // Validar se o perfil pertence ao usuário logado
     const profile = await prisma.producerProfile.findFirst({
@@ -105,6 +116,13 @@ export async function PATCH(req: Request) {
         });
       }
     });
+
+    // Registrar uso da assinatura
+    // await logSubscriptionUsage(parseInt(session.user.id), 'profile_update', `audience-${profileId}`, {
+    //   field: 'audience',
+    //   languagesCount: languages?.length || 0,
+    //   audienceCount: audience?.length || 0,
+    // });
 
     // Atualiza o status de verificação do perfil
     if (producerId) {

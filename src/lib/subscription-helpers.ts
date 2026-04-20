@@ -34,6 +34,42 @@ export async function countUserPhotos(userId: number): Promise<number> {
 }
 
 /**
+ * Sincroniza os contadores da subscription com a contagem real de recursos
+ */
+export async function syncSubscriptionCounters(userId: number): Promise<void> {
+  try {
+    const activeSubscription = await (prisma as any).subscription.findFirst({
+      where: {
+        userId,
+        status: 'ACTIVE',
+        endDate: {
+          gte: new Date(),
+        },
+      },
+    });
+
+    if (!activeSubscription) {
+      return; // Sem assinatura ativa para sincronizar
+    }
+
+    // Contar recursos reais
+    const realPhotosCount = await countUserPhotos(userId);
+    
+    // Atualizar contadores na subscription
+    await (prisma as any).subscription.update({
+      where: { id: activeSubscription.id },
+      data: {
+        photosUsed: realPhotosCount,
+        // TODO: Adicionar sincronização de vídeos quando implementado
+        // videosUsed: realVideosCount,
+      },
+    });
+  } catch (error) {
+    console.error('Erro ao sincronizar contadores da assinatura:', error);
+  }
+}
+
+/**
  * Cria uma nova assinatura inicializando os contadores corretamente
  */
 export async function createSubscriptionWithCorrectCounters(
@@ -147,7 +183,7 @@ export async function getUserSubscriptionInfo(userId: number) {
         hasFeaturedProfile: (activeSubscription.plan as any).hasFeaturedProfile || false,
       },
       usage: {
-        photosUsed: activeSubscription.photosUsed,
+        photosUsed, // Usar contagem real de fotos em vez do contador da subscription
         videosUsed: activeSubscription.videosUsed,
         profileUpdatesUsed: activeSubscription.profileUpdatesUsed,
       },
@@ -156,7 +192,7 @@ export async function getUserSubscriptionInfo(userId: number) {
       daysRemaining: Math.max(0, daysRemaining),
       isExpired,
       canUpload: {
-        photos: activeSubscription.photosUsed < activeSubscription.plan.maxPhotos,
+        photos: photosUsed < activeSubscription.plan.maxPhotos, // Usar contagem real
         videos: activeSubscription.videosUsed < activeSubscription.plan.maxVideos,
       },
       canUpdateProfile: ((activeSubscription.plan as any).maxProfileUpdates || (activeSubscription.plan as any).maxUpdates) === -1 || 
@@ -230,7 +266,10 @@ export async function createFreeSubscription(userId: number): Promise<void> {
       return;
     }
 
-    // Criar assinatura gratuita permanente
+    // Contar fotos reais do usuário
+    const currentPhotosCount = await countUserPhotos(userId);
+
+    // Criar assinatura gratuita permanente com contadores corretos
     await (prisma as any).subscription.create({
       data: {
         userId,
@@ -238,7 +277,7 @@ export async function createFreeSubscription(userId: number): Promise<void> {
         status: 'ACTIVE',
         startDate: new Date(),
         endDate: new Date(2099, 11, 31), // Data muito distante no futuro
-        photosUsed: 0,
+        photosUsed: currentPhotosCount, // Usar contagem real
         videosUsed: 0,
         profileUpdatesUsed: 0,
       },

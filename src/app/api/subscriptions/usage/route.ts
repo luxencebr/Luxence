@@ -16,6 +16,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { action, resourceId, metadata } = body;
 
+    // Temporariamente permitindo profile_update mas sem efeito
     if (!action || !['photo_upload', 'video_upload', 'profile_update'].includes(action)) {
       return NextResponse.json(
         { error: 'Ação inválida' },

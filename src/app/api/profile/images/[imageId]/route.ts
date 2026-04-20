@@ -5,6 +5,7 @@ import { deleteFromSpaces } from "@/lib/deleteFromSpaces";
 import { uploadToSpaces } from "@/lib/uploadToSpaces";
 import sharp from "sharp";
 import { updateProducerVerificationStatus } from "@/lib/profile-verification";
+import { syncSubscriptionCounters } from "@/lib/subscription-helpers";
 
 interface ProfileImage {
   id: string;
@@ -87,6 +88,9 @@ export async function DELETE(req: Request, context: any) {
       where: { id: profile.id },
       data: { images: updatedImages as any },
     });
+
+    // Sincronizar contadores da assinatura após remoção
+    await syncSubscriptionCounters(parseInt(session.user.id));
 
     // Atualiza o status de verificação do perfil
     await updateProducerVerificationStatus(profile.producerId);

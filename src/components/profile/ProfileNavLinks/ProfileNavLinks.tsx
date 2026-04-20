@@ -16,11 +16,7 @@ const navItems = [
     label: "Privacidade e Segurança",
     icon: Lock,
   },
-  {
-    href: "/profile/payment",
-    label: "Métodos de Pagamento",
-    icon: CreditCard,
-  },
+
   {
     href: "/profile/signature",
     label: "Assinatura",

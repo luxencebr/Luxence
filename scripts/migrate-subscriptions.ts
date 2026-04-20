@@ -47,6 +47,10 @@ async function migrateSubscriptions() {
         ? new Date(2099, 11, 31) // Data muito no futuro para plano gratuito
         : new Date(startDate.getTime() + (30 * 24 * 60 * 60 * 1000)); // 30 dias para planos pagos
 
+      // Contar fotos reais do usuário
+      const { countUserPhotos } = await import('../src/lib/subscription-helpers');
+      const realPhotosCount = await countUserPhotos(producer.userId);
+
       await prisma.subscription.create({
         data: {
           userId: producer.userId,
@@ -54,7 +58,7 @@ async function migrateSubscriptions() {
           status: 'ACTIVE',
           startDate,
           endDate,
-          photosUsed: 0,
+          photosUsed: realPhotosCount, // Usar contagem real
           videosUsed: 0,
           profileUpdatesUsed: 0,
         },
