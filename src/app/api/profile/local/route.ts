@@ -1,8 +1,19 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/utils/prisma";
+import { auth } from "@/auth";
+import { canUpdateProfile, logSubscriptionUsage } from "@/lib/subscription";
 
 export async function POST(req: Request) {
   try {
+    const session = await auth();
+    
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "Não autorizado" },
+        { status: 401 }
+      );
+    }
+
     const {
       profileId,
       hasLocal,
@@ -33,6 +44,16 @@ export async function POST(req: Request) {
       );
     }
 
+    // Verificar limitações de assinatura
+    // const { canUpdate, reason } = await canUpdateProfile(parseInt(session.user.id));
+    
+    // if (!canUpdate) {
+    //   return NextResponse.json(
+    //     { error: reason || 'Não é possível atualizar o perfil' },
+    //     { status: 403 }
+    //   );
+    // }
+
     const profile = await prisma.producerProfile.findUnique({
       where: { id: Number(profileId) },
       include: {
@@ -48,6 +69,14 @@ export async function POST(req: Request) {
       return NextResponse.json(
         { error: "Perfil não encontrado" },
         { status: 404 }
+      );
+    }
+
+    // Verificar se o perfil pertence ao usuário logado
+    if (profile.producer.userId !== parseInt(session.user.id)) {
+      return NextResponse.json(
+        { error: "Perfil não autorizado" },
+        { status: 403 }
       );
     }
 
@@ -165,7 +194,19 @@ export async function POST(req: Request) {
     });
 
     // ----------------------------
-    // 6) Formatar resposta
+    // 6) Registrar uso da assinatura
+    // ----------------------------
+    // await logSubscriptionUsage(parseInt(session.user.id), 'profile_update', `location-${profileId}`, {
+    //   field: 'location',
+    //   hasLocal,
+    //   localityUpdated: !!locality,
+    //   localUpdated: !!local,
+    //   locationsCount: locations?.length || 0,
+    //   amenitiesCount: amenities?.length || 0,
+    // });
+
+    // ----------------------------
+    // 7) Formatar resposta
     // ----------------------------
     const formatted = {
       hasLocal: updated?.hasLocal,

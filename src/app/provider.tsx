@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import StartPopup from "@/components/StartPopup/StartPopup";
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
+import AccountStatusManager from "@/components/AccountStatusManager/AccountStatusManager";
 import { ScrollTop } from "@/utils/ScrollTop";
 
 const AGE_CONFIRMED_KEY = "luxence_age_confirmed";
@@ -36,10 +37,16 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     pathname?.startsWith("/signin") ||
     pathname === "/catalog" ||
     pathname === "/advertiser" ||
-    pathname?.startsWith("/admin");
+    pathname?.startsWith("/admin") ||
+    pathname?.startsWith("/profile");
 
   if (noLayout) {
-    return <SessionProvider>{children}</SessionProvider>;
+    return (
+      <SessionProvider>
+        <AccountStatusManager />
+        {children}
+      </SessionProvider>
+    );
   }
 
   if (hasConfirmedAge === null) {
@@ -48,6 +55,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <SessionProvider>
+      <AccountStatusManager />
       <Header />
       <ScrollTop />
       {children}

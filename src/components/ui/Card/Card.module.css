@@ -1,0 +1,30 @@
+.card {
+  background: var(--card-bg, var(--light-complementary-color));
+  flex: 1;
+}
+
+.animated {
+  transition: var(--transition-normal);
+}
+
+.animated:hover {
+  transform: translateY(-2px);
+}
+
+.small {
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+}
+
+.medium {
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.large {
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}

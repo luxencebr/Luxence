@@ -1,4 +1,4 @@
-import { PrismaClient, APPEARANCE_VALUE_TYPE } from "@prisma/client";
+import { PrismaClient, APPEARANCE_VALUE_TYPE, SIGNATURE } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const CONTACT_OPTIONS = [
@@ -180,6 +180,61 @@ const PAYMENT_OPTIONS = [
   { id: 3, name: "debito", label: "Débito" },
 ];
 
+const SUBSCRIPTION_PLANS = [
+  {
+    signature: 'COPPER' as SIGNATURE,
+    name: 'Cobre',
+    description: 'Plano gratuito para começar',
+    price: 0,
+    maxPhotos: 3,
+    maxVideos: 0,
+    maxProfileUpdates: 2,
+    hasCommentControl: false,
+    hasVoiceDemo: false,
+    priority: '',
+    hasFeaturedProfile: false,
+  },
+  {
+    signature: 'SILVER' as SIGNATURE,
+    name: 'Prata',
+    description: 'Ideal para quem está começando',
+    price: 29.90,
+    maxPhotos: 5,
+    maxVideos: 1,
+    maxProfileUpdates: 5,
+    hasCommentControl: true,
+    hasVoiceDemo: false,
+    priority: '',
+    hasFeaturedProfile: false,
+  },
+  {
+    signature: 'GOLD' as SIGNATURE,
+    name: 'Ouro',
+    description: 'Perfeito para quem quer crescer',
+    price: 49.90,
+    maxPhotos: 10,
+    maxVideos: 2,
+    maxProfileUpdates: 10,
+    hasCommentControl: true,
+    hasVoiceDemo: true,
+    priority: 'Alta',
+    hasFeaturedProfile: false,
+  },
+  {
+    signature: 'DIAMOND' as SIGNATURE,
+    name: 'Diamante',
+    description: 'O melhor para quem quer se destacar',
+    price: 79.90,
+    maxPhotos: 20,
+    maxVideos: 5,
+    maxProfileUpdates: -1, // Ilimitado
+    hasCommentControl: true,
+    hasVoiceDemo: true,
+    priority: 'Máxima',
+    hasFeaturedProfile: true,
+  },
+];
+
 async function upsertManyByName<T extends { id: number; name: string }>(
   model: {
     upsert: (args: {
@@ -230,6 +285,20 @@ async function upsertMany<T extends { id: number }>(
   console.log(`🌱 ${label} OK`);
 }
 
+async function upsertSubscriptionPlans() {
+  console.log('🌱 subscriptionPlans...');
+
+  for (const plan of SUBSCRIPTION_PLANS) {
+    await prisma.subscriptionPlan.upsert({
+      where: { signature: plan.signature },
+      update: plan,
+      create: plan,
+    });
+  }
+
+  console.log('🌱 subscriptionPlans OK');
+}
+
 async function main() {
   console.log("🌱 Iniciando seed...");
 
@@ -270,6 +339,9 @@ async function main() {
     PAYMENT_OPTIONS,
     "paymentOption"
   );
+
+  // Seed dos planos de assinatura
+  await upsertSubscriptionPlans();
 
   console.log("🌱 Seed finalizado com sucesso!");
 }

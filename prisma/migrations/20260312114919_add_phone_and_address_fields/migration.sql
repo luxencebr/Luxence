@@ -1,0 +1,8 @@
+-- AlterTable
+ALTER TABLE `Locality` ADD COLUMN `cep` VARCHAR(191) NULL,
+    ADD COLUMN `complement` VARCHAR(191) NULL,
+    ADD COLUMN `number` VARCHAR(191) NULL,
+    ADD COLUMN `street` VARCHAR(191) NULL;
+
+-- AlterTable
+ALTER TABLE `User` ADD COLUMN `phone` VARCHAR(191) NULL;

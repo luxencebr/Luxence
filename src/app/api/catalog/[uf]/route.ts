@@ -24,6 +24,7 @@ export async function GET(
         locality: {
           state,
         },
+        isDeleted: false, // Excluir usuários com soft delete
       },
     };
 
@@ -76,7 +77,19 @@ export async function GET(
               where: {
                 isApproved: true,
               },
-              include: { user: true },
+              include: { 
+                user: { 
+                  select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    role: true,
+                    gender: true,
+                    createdAt: true,
+                    updatedAt: true,
+                  }
+                } 
+              },
             },
           },
         },
@@ -85,10 +98,53 @@ export async function GET(
       take: limit,
     });
 
+    // Buscar assinaturas ativas separadamente para ordenação por prioridade
+    const userIds = producers.map(p => p.userId);
+    const activeSubscriptions = await (prisma as any).subscription.findMany({
+      where: {
+        userId: { in: userIds },
+        status: 'ACTIVE',
+        endDate: { gte: new Date() },
+      },
+      include: {
+        plan: true,
+      },
+      orderBy: {
+        endDate: 'desc',
+      },
+    });
+
+    // Criar mapa de assinaturas por usuário
+    const subscriptionMap = new Map();
+    activeSubscriptions.forEach((sub: any) => {
+      if (!subscriptionMap.has(sub.userId)) {
+        subscriptionMap.set(sub.userId, sub);
+      }
+    });
+
+    // Ordenar por prioridade do plano (DIAMOND > GOLD > SILVER > COPPER)
+    const priorityOrder = { 'DIAMOND': 4, 'GOLD': 3, 'SILVER': 2, 'COPPER': 1 };
+    
+    const sortedProducers = producers.sort((a, b) => {
+      const aSubscription = subscriptionMap.get(a.userId);
+      const bSubscription = subscriptionMap.get(b.userId);
+      
+      const aPriority = aSubscription?.plan?.signature 
+        ? priorityOrder[aSubscription.plan.signature as keyof typeof priorityOrder] || 1
+        : 1; // COPPER como padrão
+        
+      const bPriority = bSubscription?.plan?.signature 
+        ? priorityOrder[bSubscription.plan.signature as keyof typeof priorityOrder] || 1
+        : 1; // COPPER como padrão
+      
+      // Ordenação decrescente (maior prioridade primeiro)
+      return bPriority - aPriority;
+    });
+
     const hasMore = skip + producers.length < totalCount;
 
     return NextResponse.json({
-      producers,
+      producers: sortedProducers,
       pagination: {
         page,
         limit,

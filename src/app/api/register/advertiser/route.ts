@@ -3,6 +3,7 @@ import { prisma } from "@/utils/prisma";
 import { uploadToSpaces } from "@/lib/uploadToSpaces";
 import { randomUUID } from "crypto";
 import { hash } from "bcryptjs";
+import { createFreeSubscription } from "@/lib/subscription-helpers";
 
 export async function POST(req: Request) {
   try {
@@ -49,8 +50,10 @@ export async function POST(req: Request) {
       );
     }
 
-    // Verificar email duplicado
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    // Verificar email duplicado (excluindo usuários com soft delete)
+    const existingUser = await prisma.user.findUnique({ 
+      where: { email, isDeleted: false } 
+    });
     if (existingUser) {
       return NextResponse.json(
         { error: "Este email já está cadastrado." },
@@ -58,11 +61,12 @@ export async function POST(req: Request) {
       );
     }
 
-    // Verificar documento duplicado
+    // Verificar documento duplicado (excluindo usuários com soft delete)
     const cleanDocument = document.replace(/\D/g, "");
     const existingProducer = await prisma.producer.findFirst({
       where: {
         OR: [{ document }, { document: cleanDocument }],
+        user: { isDeleted: false }, // Excluir usuários com soft delete
       },
     });
 
@@ -195,6 +199,9 @@ export async function POST(req: Request) {
         city: "Rio de Janeiro",
       },
     });
+
+    // Criar assinatura gratuita COPPER
+    await createFreeSubscription(user.id);
 
     return NextResponse.json({ producer }, { status: 201 });
   } catch (error: any) {

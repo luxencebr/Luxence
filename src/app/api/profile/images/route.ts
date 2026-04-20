@@ -1,13 +1,24 @@
 import { NextResponse } from "next/server";
+import { auth } from "@/auth";
 import { prisma } from "@/utils/prisma";
 import { uploadToSpaces } from "@/lib/uploadToSpaces";
 import { randomUUID } from "crypto";
 import sharp from "sharp";
-import { SIGNATURE_LIMITS, type Signature } from "@/utils/signatureLimits";
+import { type Signature } from "@/utils/signatureLimits";
 import { updateProducerVerificationStatus } from "@/lib/profile-verification";
+import { canUploadPhotos, logSubscriptionUsage } from "@/lib/subscription";
 
 export async function POST(req: Request) {
   try {
+    const session = await auth();
+    
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "Não autorizado" },
+        { status: 401 }
+      );
+    }
+
     const formData = await req.formData();
     const file = formData.get("file") as File;
     const profileId = Number(formData.get("profileId"));
@@ -21,8 +32,13 @@ export async function POST(req: Request) {
     const cropData = JSON.parse(cropDataStr);
 
     // Buscar o perfil com informações do produtor e assinatura
-    const profile = await prisma.producerProfile.findUnique({
-      where: { id: profileId },
+    const profile = await prisma.producerProfile.findFirst({
+      where: { 
+        id: profileId,
+        producer: {
+          userId: parseInt(session.user.id)
+        }
+      },
       select: {
         images: true,
         producerId: true,
@@ -36,24 +52,22 @@ export async function POST(req: Request) {
 
     if (!profile) {
       return NextResponse.json(
-        { error: "Perfil não encontrado" },
+        { error: "Perfil não encontrado ou não autorizado" },
         { status: 404 },
       );
     }
 
     const images = Array.isArray(profile.images) ? profile.images : [];
     const currentImageCount = images.length;
-    const signature = profile.producer.signature as Signature;
-    const maxImages = SIGNATURE_LIMITS[signature];
-
-    // Verificar se já atingiu o limite
-    if (currentImageCount >= maxImages) {
+    
+    // Usar novo sistema de verificação de assinatura
+    const { canUpload, reason } = await canUploadPhotos(parseInt(session.user.id));
+    
+    if (!canUpload) {
       return NextResponse.json(
         {
-          error: `Limite de imagens atingido. Seu plano ${signature} permite até ${maxImages} imagens.`,
-          limit: maxImages,
+          error: reason || 'Não é possível fazer upload de fotos',
           current: currentImageCount,
-          signature,
         },
         { status: 403 },
       );
@@ -115,12 +129,18 @@ export async function POST(req: Request) {
       },
     });
 
+    // Registrar uso da assinatura
+    await logSubscriptionUsage(parseInt(session.user.id), 'photo_upload', imageId, {
+      fileName: file.name,
+      fileSize: buffer.length,
+    });
+
     // Atualiza o status de verificação do perfil
     await updateProducerVerificationStatus(profile.producerId);
 
     return NextResponse.json(newImage);
   } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Erro no upload" }, { status: 500 });
+    console.error("Erro no upload:", err);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   }
 }

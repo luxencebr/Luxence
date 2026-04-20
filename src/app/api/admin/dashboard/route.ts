@@ -29,37 +29,37 @@ export async function GET(request: NextRequest) {
       totalAdvertisers,
       planDistribution,
     ] = await Promise.all([
-      // Usuários ativos
-      prisma.user.count({ where: { updatedAt: { gte: today } } }),
-      prisma.user.count({ where: { updatedAt: { gte: weekAgo } } }),
-      prisma.user.count({ where: { updatedAt: { gte: monthAgo } } }),
+      // Usuários ativos (excluindo soft deleted)
+      prisma.user.count({ where: { updatedAt: { gte: today }, isDeleted: false } }),
+      prisma.user.count({ where: { updatedAt: { gte: weekAgo }, isDeleted: false } }),
+      prisma.user.count({ where: { updatedAt: { gte: monthAgo }, isDeleted: false } }),
 
-      // Crescimento comparativo
-      prisma.user.count({ where: { createdAt: { gte: weekAgo } } }),
+      // Crescimento comparativo (excluindo soft deleted)
+      prisma.user.count({ where: { createdAt: { gte: weekAgo }, isDeleted: false } }),
       prisma.user.count({
-        where: { createdAt: { gte: lastWeek, lt: weekAgo } },
+        where: { createdAt: { gte: lastWeek, lt: weekAgo }, isDeleted: false },
       }),
-      prisma.user.count({ where: { createdAt: { gte: monthAgo } } }),
+      prisma.user.count({ where: { createdAt: { gte: monthAgo }, isDeleted: false } }),
       prisma.user.count({
-        where: { createdAt: { gte: lastMonth, lt: monthAgo } },
+        where: { createdAt: { gte: lastMonth, lt: monthAgo }, isDeleted: false },
       }),
 
-      // Anunciantes
+      // Anunciantes (excluindo soft deleted)
       prisma.producer.count({
-        where: { user: { role: "ADVERTISER" }, verificationStatus: "GREEN" },
+        where: { user: { role: "ADVERTISER", isDeleted: false }, verificationStatus: "GREEN" },
       }),
       prisma.producer.count({
         where: {
-          user: { role: "ADVERTISER" },
+          user: { role: "ADVERTISER", isDeleted: false },
           verificationStatus: { in: ["RED", "YELLOW"] },
         },
       }),
-      prisma.producer.count({ where: { user: { role: "ADVERTISER" } } }),
+      prisma.producer.count({ where: { user: { role: "ADVERTISER", isDeleted: false } } }),
 
-      // Distribuição de planos
+      // Distribuição de planos (excluindo soft deleted)
       prisma.producer.groupBy({
         by: ["signature"],
-        where: { user: { role: "ADVERTISER" } },
+        where: { user: { role: "ADVERTISER", isDeleted: false } },
         _count: { signature: true },
       }),
     ]);
@@ -217,11 +217,11 @@ export async function GET(request: NextRequest) {
       },
     };
 
-    // Top reviews das producers (com mais reviews aprovadas)
+    // Top reviews das producers (com mais reviews aprovadas, excluindo soft deleted)
     const topReviews = await prisma.producerProfile.findMany({
       where: {
         producer: {
-          user: { role: "ADVERTISER" },
+          user: { role: "ADVERTISER", isDeleted: false },
         },
       },
       include: {
@@ -243,11 +243,11 @@ export async function GET(request: NextRequest) {
       take: 5,
     });
 
-    // Top views (anunciantes com mais views)
+    // Top views (anunciantes com mais views, excluindo soft deleted)
     const topViews = await prisma.producerProfile.findMany({
       where: {
         producer: {
-          user: { role: "ADVERTISER" },
+          user: { role: "ADVERTISER", isDeleted: false },
         },
       },
       include: {

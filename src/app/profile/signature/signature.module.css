@@ -1,0 +1,335 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  padding: var(--space-md);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Current Plan Section */
+.currentPlanContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.currentPlanHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-xl);
+}
+
+.currentPlanInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.currentPlanTitle {
+  font-size: var(--ft-md);
+  font-weight: 400;
+  color: var(--light-color);
+  margin: 0;
+}
+
+.currentPlanDetails {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: end;
+  gap: var(--space-xs);
+}
+
+.planName {
+  font-size: var(--ft-xl);
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.planPrice {
+  opacity: 0.8;
+  font-size: var(--ft-sm);
+  color: var(--text-secondary-color);
+}
+
+.planDescription {
+  font-size: var(--ft-sm);
+  color: var(--text-secondary-color);
+  margin: var(--space-xs) 0 0 0;
+}
+
+/* Subscription Info */
+.subscriptionInfo {
+  display: flex;
+  align-items: center;
+}
+
+.upgradeButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  background: var(--primary-color);
+  color: var(--dark-color);
+  border: none;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-normal);
+  font-size: var(--ft-sm);
+}
+.upgradeButton:hover {
+  background: var(--primary-complementary-color);
+  transform: translateY(-1px);
+}
+
+.dateInfo {
+  background: var(--dark-color);
+  padding: var(--space-sm) var(--space-lg);
+
+  border-radius: var(--radius-sm);
+
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.remainingTime {
+  font-size: var(--ft-md);
+  font-weight: bold;
+}
+
+.dateItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--ft-sm);
+  color: var(--text-secondary-color);
+}
+
+/* Usage Section */
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--ft-lg);
+  font-weight: 600;
+  color: var(--light-color);
+  margin: 0 0 var(--space-md) 0;
+}
+
+.usageGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-md);
+}
+
+.usageItem {
+  background: var(--background-color);
+  padding: var(--space-md);
+  border-radius: var(--radius-sm);
+}
+
+.usageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-xs);
+  font-size: var(--ft-sm);
+}
+
+.usageHeader span:first-child {
+  color: var(--light-color);
+  font-weight: 500;
+}
+
+.usageHeader span:last-child {
+  color: var(--text-secondary-color);
+  font-weight: 600;
+}
+
+.progressBar {
+  width: 100%;
+  height: 6px;
+  background: var(--border-color);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--primary-color);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+/* Limits Section */
+.limitsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-sm);
+}
+
+.limitItem {
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-xs);
+  font-size: var(--ft-sm);
+  font-weight: 500;
+  text-align: center;
+}
+
+.limitItem.available {
+  background: rgba(34, 197, 94, 0.1);
+  color: var(--success-color);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.limitItem.unavailable {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger-color);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* Plans Section */
+.plansTitle {
+  font-size: var(--ft-xl);
+  font-weight: 600;
+  color: var(--light-color);
+  margin-bottom: var(--space-xl);
+  text-align: center;
+}
+
+.plansGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-md);
+}
+
+.planCard {
+  position: relative;
+  transition: var(--transition-normal);
+}
+
+.planCard:hover {
+  transform: translateY(-4px);
+}
+
+.planCard.popular {
+  border: 2px solid var(--primary-color);
+}
+
+.popularBadge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary-color);
+  color: var(--dark-color);
+  padding: var(--space-xs) var(--space-md);
+  border-radius: 20px;
+  font-size: var(--ft-xs);
+  font-weight: 600;
+  z-index: 1;
+}
+
+.planContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  height: 100%;
+}
+.planHeader {
+  text-align: center;
+}
+
+.planContent .planName {
+  font-size: var(--ft-xl);
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.planContent .planPrice {
+  opacity: 0.8;
+  font-size: var(--ft-sm);
+  color: var(--light-color);
+}
+
+.planContent .planDescription {
+  text-align: center;
+  color: var(--text-secondary-color);
+  font-size: var(--ft-sm);
+  margin: 0;
+}
+
+/* Benefits */
+.benefits {
+  list-style: none;
+  padding: 0 var(--space-lg);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  flex: 1;
+}
+
+.benefit {
+  background: var(--dark-color);
+  padding: var(--space-sm);
+  border-radius: var(--radius-xs);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--ft-sm);
+  color: var(--light-color);
+}
+
+.benefit.deny {
+  opacity: 0.5;
+}
+
+.benefit svg {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.checkIcon {
+  color: var(--success-color);
+  font-size: var(--ft-xs);
+}
+
+.xmarkIcon {
+  color: var(--danger-color);
+  font-size: var(--ft-xs);
+}
+
+.planAction {
+  margin-top: auto;
+}
+
+.planAction .upgradeButton {
+  width: 100%;
+  justify-content: center;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--space-xs);
+  }
+
+  .currentPlanHeader {
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .dateInfo {
+    align-items: flex-start;
+  }
+
+  .usageGrid,
+  .limitsList,
+  .plansGrid {
+    grid-template-columns: 1fr;
+  }
+}

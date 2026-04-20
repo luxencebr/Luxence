@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/utils/prisma";
 import { updateProducerVerificationStatus } from "@/lib/profile-verification";
+import { canUpdateProfile, logSubscriptionUsage } from "@/lib/subscription";
 
 export async function POST(request: Request) {
   try {
@@ -19,6 +20,16 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+
+    // Verificar limitações de assinatura
+    // const { canUpdate, reason } = await canUpdateProfile(parseInt(session.user.id));
+    
+    // if (!canUpdate) {
+    //   return NextResponse.json(
+    //     { error: reason || 'Não é possível atualizar o perfil' },
+    //     { status: 403 }
+    //   );
+    // }
 
     // Valida a idade se fornecida
     if (age !== null && age !== undefined) {
@@ -53,6 +64,12 @@ export async function POST(request: Request) {
       where: { id: profileId },
       data: { age: age ? parseInt(age) : null },
     });
+
+    // Registrar uso da assinatura
+    // await logSubscriptionUsage(parseInt(session.user.id), 'profile_update', `age-${profileId}`, {
+    //   field: 'age',
+    //   value: age,
+    // });
 
     // Atualiza o status de verificação do perfil
     await updateProducerVerificationStatus(producer.id);

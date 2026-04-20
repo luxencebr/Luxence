@@ -70,10 +70,10 @@ class DatabaseMonitor {
       const avgConnectionTime =
         results.reduce((sum, time) => sum + time, 0) / results.length;
 
-      // Get some basic database stats
+      // Get some basic database stats (excluindo soft deleted)
       const [userCount, producerCount, reviewCount] = await Promise.all([
-        prisma.user.count(),
-        prisma.producer.count(),
+        prisma.user.count({ where: { isDeleted: false } }),
+        prisma.producer.count({ where: { user: { isDeleted: false } } }),
         prisma.review.count(),
       ]);
 

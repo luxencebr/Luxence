@@ -14,6 +14,10 @@
   --light-color: #fefefe;
   --light-complementary-color: #f0f0f0;
 
+  --text-secondary-color: #a0a0a0;
+  --border-color: #404040;
+  --error-color: #ef4444;
+
   --success-color: rgba(163, 230, 191); /* verde pastel */
   --warning-color: rgba(253, 224, 140); /* amarelo pastel */
   --danger-color: rgba(252, 165, 165); /* vermelho pastel */
@@ -32,9 +36,9 @@
 
   /* === Shadows === */
 
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.25);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.5);
   --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.75);
+  --shadow-lg: 0 6px 12px rgba(0, 0, 0, 0.5);
 
   /* === Border Radius === */
 

@@ -5,11 +5,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Cropper from "react-easy-crop";
 import styles from "./Slider.module.css";
 import { HiOutlinePencil } from "react-icons/hi2";
-import {
-  SIGNATURE_LIMITS,
-  type Signature,
-  canAddMoreImages,
-} from "@/utils/signatureLimits";
+import { type Signature } from "@/utils/signatureLimits";
 import { dispatchProfileUpdateEvent } from "@/utils/profileUpdateEvent";
 
 import { GoUpload } from "react-icons/go";
@@ -41,6 +37,7 @@ interface SliderProps {
   initialImages?: ImageItem[];
   canEdit?: boolean;
   signature?: Signature;
+  userId?: number; // Add userId for subscription checks
 }
 
 /* ================= COMPONENT ================= */
@@ -50,11 +47,19 @@ export default function Slider({
   initialImages,
   canEdit = false,
   signature = "COPPER",
+  userId,
 }: SliderProps) {
   /* ================= STATE ================= */
 
   const [images, setImages] = useState<ImageItem[]>(() => initialImages ?? []);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [subscriptionInfo, setSubscriptionInfo] = useState<{
+    maxPhotos: number;
+    canUploadPhotos: boolean;
+  }>({
+    maxPhotos: 3, // Default COPPER limit
+    canUploadPhotos: true,
+  });
 
   const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
@@ -86,6 +91,28 @@ export default function Slider({
     setImages(initialImages ?? []);
     setCurrentSlide(0);
   }, [initialImages]);
+
+  // Fetch subscription info when userId changes
+  useEffect(() => {
+    if (!userId) return;
+
+    const fetchSubscriptionInfo = async () => {
+      try {
+        const response = await fetch('/api/subscriptions');
+        if (response.ok) {
+          const data = await response.json();
+          setSubscriptionInfo({
+            maxPhotos: data.limits.maxPhotos,
+            canUploadPhotos: data.canUpload.photos,
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching subscription info:', error);
+      }
+    };
+
+    fetchSubscriptionInfo();
+  }, [userId]);
 
   /* ================= AUTOPLAY ================= */
 
@@ -129,9 +156,9 @@ export default function Slider({
     e.target.value = "";
 
     // Verificar limite de imagens baseado na assinatura
-    if (!canAddMoreImages(signature, images.length)) {
+    if (!subscriptionInfo.canUploadPhotos || images.length >= subscriptionInfo.maxPhotos) {
       alert(
-        `Limite de imagens atingido! Seu plano ${signature} permite até ${SIGNATURE_LIMITS[signature]} imagens. Considere fazer upgrade do seu plano para adicionar mais imagens.`,
+        `Limite de imagens atingido! Seu plano permite até ${subscriptionInfo.maxPhotos} imagens. Considere fazer upgrade do seu plano para adicionar mais imagens.`,
       );
       return;
     }
@@ -200,6 +227,12 @@ export default function Slider({
 
       setImages((prev) => prev.filter((_, i) => i !== index));
       setCurrentSlide((prev) => Math.max(0, prev - 1));
+      
+      // Update subscription info after deleting image
+      setSubscriptionInfo(prevInfo => ({
+        ...prevInfo,
+        canUploadPhotos: true, // Can always upload after deleting
+      }));
       
       // Dispara evento de atualização
       dispatchProfileUpdateEvent();
@@ -352,12 +385,12 @@ export default function Slider({
                     htmlFor="addImageInput"
                     className={`${styles.addBtn} ${
                       isUploading ? styles.loading : ""
-                    } ${!canAddMoreImages(signature, images.length) ? styles.disabled : ""}`}
+                    } ${!subscriptionInfo.canUploadPhotos || images.length >= subscriptionInfo.maxPhotos ? styles.disabled : ""}`}
                     aria-label="Adicionar imagem"
                     title={
-                      !canAddMoreImages(signature, images.length)
-                        ? `Limite atingido (${images.length}/${SIGNATURE_LIMITS[signature]})`
-                        : `Adicionar imagem (${images.length}/${SIGNATURE_LIMITS[signature]})`
+                      !subscriptionInfo.canUploadPhotos || images.length >= subscriptionInfo.maxPhotos
+                        ? `Limite atingido (${images.length}/${subscriptionInfo.maxPhotos})`
+                        : `Adicionar imagem (${images.length}/${subscriptionInfo.maxPhotos})`
                     }
                   >
                     {isUploading ? (
@@ -459,6 +492,11 @@ export default function Slider({
                     setImages((prev) => {
                       if (cropMode === "create") {
                         setCurrentSlide(prev.length);
+                        // Update subscription info after adding image
+                        setSubscriptionInfo(prevInfo => ({
+                          ...prevInfo,
+                          canUploadPhotos: (prev.length + 1) < prevInfo.maxPhotos,
+                        }));
                         return [...prev, updatedImage];
                       }
 

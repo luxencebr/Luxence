@@ -13,6 +13,9 @@ import {
   Server,
 } from "lucide-react";
 
+// Esta página é dinâmica e não precisa de generateStaticParams
+export const dynamic = 'force-dynamic';
+
 interface DashboardData {
   activeUsers: {
     today: number;
