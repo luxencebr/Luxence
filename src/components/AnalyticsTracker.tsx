@@ -56,6 +56,26 @@ export default function AnalyticsTracker() {
     }
 
     try {
+      // Get viewport information and additional device info for better fingerprinting
+      const viewport = {
+        width: window.innerWidth,
+        height: window.innerHeight,
+      };
+
+      // Get additional device information
+      const deviceInfo = {
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        platform: navigator.platform,
+        cookieEnabled: navigator.cookieEnabled,
+        onLine: navigator.onLine,
+        screenWidth: window.screen.width,
+        screenHeight: window.screen.height,
+        colorDepth: window.screen.colorDepth,
+        pixelDepth: (window.screen as any).pixelDepth || window.screen.colorDepth,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      };
+
       const response = await fetch("/api/analytics/track", {
         method: "POST",
         headers: {
@@ -66,6 +86,8 @@ export default function AnalyticsTracker() {
           referrer: document.referrer,
           sessionId: getOrCreateSessionId(),
           userId: session?.user?.id ? parseInt(session.user.id) : undefined,
+          viewport,
+          deviceInfo,
         }),
       });
 

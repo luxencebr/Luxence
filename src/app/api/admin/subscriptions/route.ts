@@ -89,13 +89,22 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { userId, planId, durationMonths = 1, action } = body;
+    const { userId, planId, planSignature, durationMonths = 1, action } = body;
 
-    if (action === 'create') {
-      // Criar nova assinatura
-      const plan = await prisma.subscriptionPlan.findUnique({
-        where: { id: planId },
-      });
+    if (action === 'create' || action === 'create_by_signature') {
+      let plan;
+      
+      if (action === 'create_by_signature' && planSignature) {
+        // Buscar plano pela signature
+        plan = await prisma.subscriptionPlan.findUnique({
+          where: { signature: planSignature },
+        });
+      } else if (planId) {
+        // Buscar plano pelo ID
+        plan = await prisma.subscriptionPlan.findUnique({
+          where: { id: planId },
+        });
+      }
 
       if (!plan) {
         return NextResponse.json(
@@ -104,11 +113,23 @@ export async function POST(request: NextRequest) {
         );
       }
 
+      // Verificar se o usuário existe
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+      });
+
+      if (!user) {
+        return NextResponse.json(
+          { error: 'Usuário não encontrado' },
+          { status: 404 }
+        );
+      }
+
       const startDate = new Date();
       const endDate = new Date();
       endDate.setMonth(endDate.getMonth() + durationMonths);
 
-      // Cancelar assinatura ativa anterior
+      // Cancelar assinatura ativa anterior (marretada - força cancelamento)
       await prisma.subscription.updateMany({
         where: {
           userId,
@@ -120,13 +141,18 @@ export async function POST(request: NextRequest) {
         },
       });
 
+      // Criar nova assinatura (marretada - força criação)
       const subscription = await prisma.subscription.create({
         data: {
           userId,
-          planId,
+          planId: plan.id,
           status: 'ACTIVE',
           startDate,
           endDate,
+          // Inicializar contadores zerados
+          photosUsed: 0,
+          videosUsed: 0,
+          profileUpdatesUsed: 0,
         },
         include: {
           user: {
@@ -140,7 +166,7 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      // Atualizar signature do produtor
+      // Atualizar signature do produtor (marretada - força atualização)
       await prisma.producer.updateMany({
         where: { userId },
         data: { signature: plan.signature },

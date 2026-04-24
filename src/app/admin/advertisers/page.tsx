@@ -2,7 +2,19 @@
 
 import { useState, useEffect } from "react";
 import styles from "./advertisers.module.css";
-import { ArrowUpDown, Eye, User, MessageCircle } from "lucide-react";
+import commonStyles from "../admin-common.module.css";
+import {
+  Eye,
+  User,
+  MessageCircle,
+  ChevronUp,
+  ChevronDown,
+  ChevronRight,
+  Search,
+  X,
+  ArrowUpAZ,
+  Calendar,
+} from "lucide-react";
 import Dropdown from "@/components/ui/Dropdown/Dropdown";
 
 interface Advertiser {
@@ -46,32 +58,32 @@ const STATUS_LABELS = {
   GREEN: "Aprovado",
 } as const;
 
-const STATUS_COLORS = {
-  RED: "#ef4444",
-  YELLOW: "#f59e0b",
-  GREEN: "#10b981",
-} as const;
-
 const PLAN_OPTIONS = [
-  { key: "", label: "Todos" },
-  { key: "COPPER", label: "Cobre" },
-  { key: "SILVER", label: "Prata" },
-  { key: "GOLD", label: "Ouro" },
-  { key: "DIAMOND", label: "Diamante" },
+  { key: "", label: "Todos os Planos" },
+  { key: "COPPER", label: "Plano Cobre" },
+  { key: "SILVER", label: "Plano Prata" },
+  { key: "GOLD", label: "Plano Ouro" },
+  { key: "DIAMOND", label: "Plano Diamante" },
 ] as const;
 
 const GENDER_OPTIONS = [
-  { key: "", label: "Todos" },
-  { key: "MALE", label: "Masculino" },
-  { key: "FEMALE", label: "Feminino" },
-  { key: "TRANS", label: "Trans" },
+  { key: "", label: "Todos os Gêneros" },
+  { key: "MALE", label: "Gênero Masculino" },
+  { key: "FEMALE", label: "Gênero Feminino" },
+  { key: "TRANS", label: "Gênero Trans" },
 ] as const;
 
 const STATUS_OPTIONS = [
-  { key: "", label: "Todos" },
-  { key: "RED", label: "Reprovado" },
-  { key: "YELLOW", label: "Em Análise" },
-  { key: "GREEN", label: "Aprovado" },
+  { key: "", label: "Todos os Status" },
+  { key: "RED", label: "Status Reprovado" },
+  { key: "YELLOW", label: "Status Em Análise" },
+  { key: "GREEN", label: "Status Aprovado" },
+] as const;
+
+const SORT_OPTIONS = [
+  { key: "createdAt", label: "Cadastro", icon: Calendar },
+  { key: "views", label: "Visualizações", icon: Eye },
+  { key: "name", label: "Alfabético", icon: ArrowUpAZ },
 ] as const;
 
 export default function AdvertisersPage() {
@@ -123,24 +135,51 @@ export default function AdvertisersPage() {
   }, [searchQuery]);
 
   const handleSort = (key: SortKey) => {
-    setSort((prev) => ({
-      key,
-      direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
-    }));
+    setSort((prev) => {
+      if (prev.key === key) {
+        // Se é a mesma chave, alterna a direção
+        return {
+          key,
+          direction: prev.direction === "asc" ? "desc" : "asc",
+        };
+      } else {
+        // Nova chave: cadastro e views começam decrescente, alfabético crescente
+        const defaultDirection = key === "createdAt" || key === "views" ? "desc" : "asc";
+        return {
+          key,
+          direction: defaultDirection,
+        };
+      }
+    });
   };
 
-  const handleFilterChange = (filterKey: "plan" | "status" | "gender", value: string) => {
+  const handleFilterChange = (
+    filterKey: "plan" | "status" | "gender",
+    value: string,
+  ) => {
     setFilters((prev) => ({ ...prev, [filterKey]: value }));
   };
 
   const getFilterLabel = (filterKey: "plan" | "status" | "gender") => {
-    const options = 
-      filterKey === "plan" ? PLAN_OPTIONS : 
-      filterKey === "status" ? STATUS_OPTIONS : 
-      GENDER_OPTIONS;
+    const options =
+      filterKey === "plan"
+        ? PLAN_OPTIONS
+        : filterKey === "status"
+          ? STATUS_OPTIONS
+          : GENDER_OPTIONS;
     return (
-      options.find((opt) => opt.key === filters[filterKey])?.label || "Todos"
+      options.find((opt) => opt.key === filters[filterKey])?.label ||
+      (filterKey === "plan"
+        ? "Todos os Planos"
+        : filterKey === "status"
+          ? "Todos os Status"
+          : "Todos os Gêneros")
     );
+  };
+
+  const getSortLabel = () => {
+    const option = SORT_OPTIONS.find((opt) => opt.key === sort.key);
+    return option?.label || "Data de Cadastro";
   };
 
   const formatDate = (dateString: string) => {
@@ -151,36 +190,106 @@ export default function AdvertisersPage() {
     });
   };
 
+  const formatPhone = (phone: string) => {
+    // Remove todos os caracteres não numéricos
+    const cleanPhone = phone.replace(/\D/g, "");
+
+    // Se não tem pelo menos 10 dígitos, retorna como está
+    if (cleanPhone.length < 10) {
+      return phone;
+    }
+
+    // Formato para celular (11 dígitos): (XX) XXXXX-XXXX
+    if (cleanPhone.length === 11) {
+      return `(${cleanPhone.slice(0, 2)}) ${cleanPhone.slice(2, 7)}-${cleanPhone.slice(7)}`;
+    }
+
+    // Formato para telefone fixo (10 dígitos): (XX) XXXX-XXXX
+    if (cleanPhone.length === 10) {
+      return `(${cleanPhone.slice(0, 2)}) ${cleanPhone.slice(2, 6)}-${cleanPhone.slice(6)}`;
+    }
+
+    // Se tem mais de 11 dígitos, pega apenas os primeiros 11
+    if (cleanPhone.length > 11) {
+      const truncated = cleanPhone.slice(0, 11);
+      return `(${truncated.slice(0, 2)}) ${truncated.slice(2, 7)}-${truncated.slice(7)}`;
+    }
+
+    return phone;
+  };
+
   const updateAdvertiser = async (
     advertiserId: number,
     data: { signature?: string; verificationStatus?: string },
   ) => {
     try {
       setUpdating(advertiserId);
-      const response = await fetch(
-        `/api/admin/advertisers?id=${advertiserId}`,
-        {
-          method: "PATCH",
+
+      // Se está alterando a signature, usar o sistema de assinaturas
+      if (data.signature) {
+        const advertiser = advertisers.find((adv) => adv.id === advertiserId);
+        if (!advertiser) {
+          throw new Error("Anunciante não encontrado");
+        }
+
+        // Criar nova assinatura através da API de admin
+        const subscriptionResponse = await fetch("/api/admin/subscriptions", {
+          method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        },
-      );
+          body: JSON.stringify({
+            userId: advertiser.userId,
+            planSignature: data.signature,
+            action: "create_by_signature",
+            durationMonths: 1, // Padrão de 1 mês
+          }),
+        });
 
-      if (!response.ok) throw new Error("Falha ao atualizar");
+        if (!subscriptionResponse.ok) {
+          const errorData = await subscriptionResponse.json();
+          throw new Error(errorData.error || "Falha ao criar assinatura");
+        }
 
-      const updated = await response.json();
-      setAdvertisers((prev) =>
-        prev.map((adv) => (adv.id === advertiserId ? updated : adv)),
-      );
+        // Atualizar o estado local
+        setAdvertisers((prev) =>
+          prev.map((adv) =>
+            adv.id === advertiserId
+              ? { ...adv, signature: data.signature as any }
+              : adv,
+          ),
+        );
+      } else {
+        // Para outras atualizações (como verificationStatus), usar a API original
+        const response = await fetch(
+          `/api/admin/advertisers?id=${advertiserId}`,
+          {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          },
+        );
+
+        if (!response.ok) throw new Error("Falha ao atualizar");
+
+        const updated = await response.json();
+        setAdvertisers((prev) =>
+          prev.map((adv) => (adv.id === advertiserId ? updated : adv)),
+        );
+      }
     } catch (error) {
       console.error("Erro ao atualizar:", error);
-      alert("Erro ao atualizar");
+      alert(
+        `Erro ao atualizar: ${error instanceof Error ? error.message : "Erro desconhecido"}`,
+      );
     } finally {
       setUpdating(null);
     }
   };
 
-  const sendWhatsAppMessage = async (advertiserId: number, phone: string, producerName: string) => {
+  const sendWhatsAppMessage = async (
+    advertiserId: number,
+    phone: string,
+    producerName: string,
+  ) => {
     try {
       const response = await fetch(
         `/api/admin/advertisers/profile-check?producerId=${advertiserId}`,
@@ -197,13 +306,20 @@ export default function AdvertisersPage() {
 
       // Dicas específicas para cada campo
       const fieldTips: Record<string, string> = {
-        "Nome do perfil": "Preencha o nome artístico/profissional que aparecerá no seu perfil público. O campo para alteração fica logo abaixo das imagens do perfil, basta clicar sobre ele para editar.",
-        "Idade do perfil": "Informe sua idade (entre 18 e 99 anos) no campo específico do perfil. O campo para alteração fica logo ao lado no Nome.",
-        "Ao menos 1 imagem": "Adicione pelo menos uma foto ao seu perfil na seção de Imagens.",
-        "Ao menos 1 preço e forma de pagamento": "Cadastre seus valores e selecione as formas de pagamento aceitas.",
-        "Idiomas falados": "Selecione os idiomas que você fala na seção de Idiomas.",
-        "Público que atende": "Indique qual público você atende na seção de Público.",
-        "Ao menos 1 contato": "Na parte inferior da tela, você encontrará os ícones do WhatsApp, Telegram e Instagram. Ao clicar em cada um deles, é possível preencher o respectivo campo com suas informações.",
+        "Nome do perfil":
+          "Preencha o nome artístico/profissional que aparecerá no seu perfil público. O campo para alteração fica logo abaixo das imagens do perfil, basta clicar sobre ele para editar.",
+        "Idade do perfil":
+          "Informe sua idade (entre 18 e 99 anos) no campo específico do perfil. O campo para alteração fica logo ao lado no Nome.",
+        "Ao menos 1 imagem":
+          "Adicione pelo menos uma foto ao seu perfil na seção de Imagens.",
+        "Ao menos 1 preço e forma de pagamento":
+          "Cadastre seus valores e selecione as formas de pagamento aceitas.",
+        "Idiomas falados":
+          "Selecione os idiomas que você fala na seção de Idiomas.",
+        "Público que atende":
+          "Indique qual público você atende na seção de Público.",
+        "Ao menos 1 contato":
+          "Na parte inferior da tela, você encontrará os ícones do WhatsApp, Telegram e Instagram. Ao clicar em cada um deles, é possível preencher o respectivo campo com suas informações.",
       };
 
       // Gerar mensagem
@@ -260,25 +376,91 @@ export default function AdvertisersPage() {
   });
 
   return (
-    <div className={styles.container}>
-      <header className={styles.header}>
-        <div className={styles.left}>
-          <h1 className={styles.title}>Anunciantes</h1>
-          <h2 className={styles.subtitle}>
+    <div className={commonStyles.container}>
+      <header className={commonStyles.header}>
+        <div className={commonStyles.headerContent}>
+          <h1 className={commonStyles.title}>Anunciantes</h1>
+          <p className={commonStyles.subtitle}>
             Gerenciamento de perfis de anunciantes
-          </h2>
+          </p>
         </div>
       </header>
 
-      <div className={styles.content}>
+      <div className={commonStyles.content}>
         <div className={styles.searchContainer}>
-          <input
-            type="text"
-            placeholder="Buscar por nome real, nome do perfil, email, telefone ou documento..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className={styles.searchInput}
-          />
+          <div className={styles.searchWrapper}>
+            <Search className={styles.searchIcon} size={18} />
+            <input
+              type="text"
+              placeholder="Buscar anunciante..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className={styles.searchInput}
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className={styles.clearButton}
+                title="Limpar busca"
+              >
+                <X size={16} />
+              </button>
+            )}
+          </div>
+
+          <div className={styles.mobileSortDropdown}>
+            <Dropdown
+              trigger={
+                <>
+                  <div className={styles.sortArrows}>
+                    <ChevronUp
+                      size={10}
+                      className={
+                        sort.direction === "asc"
+                          ? styles.sortArrowActive
+                          : styles.sortArrow
+                      }
+                    />
+                    <ChevronDown
+                      size={10}
+                      className={
+                        sort.direction === "desc"
+                          ? styles.sortArrowActive
+                          : styles.sortArrow
+                      }
+                    />
+                  </div>
+                  <span>{getSortLabel()}</span>
+                </>
+              }
+              triggerClassName={styles.sortDropdownTrigger}
+              menuClassName={styles.sortDropdownMenu}
+            >
+              {(close) => (
+                <div className={styles.sortOptions}>
+                  {SORT_OPTIONS.map((option) => {
+                    const IconComponent = option.icon;
+                    return (
+                      <button
+                        key={option.key}
+                        onClick={() => {
+                          handleSort(option.key);
+                          close();
+                        }}
+                        className={
+                          sort.key === option.key ? styles.optionActive : ""
+                        }
+                      >
+                        <IconComponent size={16} />
+                        <span>{option.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </Dropdown>
+          </div>
         </div>
 
         <div className={styles.tableWrapper}>
@@ -289,17 +471,27 @@ export default function AdvertisersPage() {
                   <button
                     type="button"
                     onClick={() => handleSort("createdAt")}
-                    className={styles.sortButton}
+                    className={styles.headerSortButton}
                   >
-                    Cadastro
-                    <ArrowUpDown
-                      size={14}
-                      className={
-                        sort.key === "createdAt"
-                          ? styles.sortActive
-                          : styles.sortIcon
-                      }
-                    />
+                    <span className={styles.headerText}>Data</span>
+                    <div className={styles.sortArrows}>
+                      <ChevronUp
+                        size={10}
+                        className={
+                          sort.key === "createdAt" && sort.direction === "asc"
+                            ? styles.sortArrowActive
+                            : styles.sortArrow
+                        }
+                      />
+                      <ChevronDown
+                        size={10}
+                        className={
+                          sort.key === "createdAt" && sort.direction === "desc"
+                            ? styles.sortArrowActive
+                            : styles.sortArrow
+                        }
+                      />
+                    </div>
                   </button>
                 </th>
 
@@ -307,17 +499,27 @@ export default function AdvertisersPage() {
                   <button
                     type="button"
                     onClick={() => handleSort("views")}
-                    className={styles.sortButton}
+                    className={styles.headerSortButton}
                   >
-                    Views
-                    <ArrowUpDown
-                      size={14}
-                      className={
-                        sort.key === "views"
-                          ? styles.sortActive
-                          : styles.sortIcon
-                      }
-                    />
+                    <span className={styles.headerText}>Views</span>
+                    <div className={styles.sortArrows}>
+                      <ChevronUp
+                        size={10}
+                        className={
+                          sort.key === "views" && sort.direction === "asc"
+                            ? styles.sortArrowActive
+                            : styles.sortArrow
+                        }
+                      />
+                      <ChevronDown
+                        size={10}
+                        className={
+                          sort.key === "views" && sort.direction === "desc"
+                            ? styles.sortArrowActive
+                            : styles.sortArrow
+                        }
+                      />
+                    </div>
                   </button>
                 </th>
 
@@ -325,29 +527,36 @@ export default function AdvertisersPage() {
                   <button
                     type="button"
                     onClick={() => handleSort("name")}
-                    className={styles.sortButton}
+                    className={styles.headerSortButton}
                   >
-                    Nome
-                    <ArrowUpDown
-                      size={14}
-                      className={
-                        sort.key === "name"
-                          ? styles.sortActive
-                          : styles.sortIcon
-                      }
-                    />
+                    <span className={styles.headerText}>Anunciante</span>
+                    <div className={styles.sortArrows}>
+                      <ChevronUp
+                        size={10}
+                        className={
+                          sort.key === "name" && sort.direction === "asc"
+                            ? styles.sortArrowActive
+                            : styles.sortArrow
+                        }
+                      />
+                      <ChevronDown
+                        size={10}
+                        className={
+                          sort.key === "name" && sort.direction === "desc"
+                            ? styles.sortArrowActive
+                            : styles.sortArrow
+                        }
+                      />
+                    </div>
                   </button>
                 </th>
 
                 <th>
                   <Dropdown
                     trigger={
-                      <button className={styles.sortButton}>
-                        Gênero
-                        <span className={styles.filterIndicator}>
-                          {getFilterLabel("gender")}
-                        </span>
-                      </button>
+                      <div className={styles.headerDropdownTrigger}>
+                        {getFilterLabel("gender")}
+                      </div>
                     }
                     triggerClassName={styles.dropdownHeaderTrigger}
                     menuClassName={styles.dropdownHeaderMenu}
@@ -378,12 +587,9 @@ export default function AdvertisersPage() {
                 <th>
                   <Dropdown
                     trigger={
-                      <button className={styles.sortButton}>
-                        Plano
-                        <span className={styles.filterIndicator}>
-                          {getFilterLabel("plan")}
-                        </span>
-                      </button>
+                      <div className={styles.headerDropdownTrigger}>
+                        {getFilterLabel("plan")}
+                      </div>
                     }
                     triggerClassName={styles.dropdownHeaderTrigger}
                     menuClassName={styles.dropdownHeaderMenu}
@@ -414,12 +620,9 @@ export default function AdvertisersPage() {
                 <th>
                   <Dropdown
                     trigger={
-                      <button className={styles.sortButton}>
-                        Status
-                        <span className={styles.filterIndicator}>
-                          {getFilterLabel("status")}
-                        </span>
-                      </button>
+                      <div className={styles.headerDropdownTrigger}>
+                        {getFilterLabel("status")}
+                      </div>
                     }
                     triggerClassName={styles.dropdownHeaderTrigger}
                     menuClassName={styles.dropdownHeaderMenu}
@@ -448,7 +651,7 @@ export default function AdvertisersPage() {
                 </th>
 
                 <th>
-                  <span className={styles.sortButton}>Ações</span>
+                  <span className={styles.headerText}>Ações Disponíveis</span>
                 </th>
               </tr>
             </thead>
@@ -498,7 +701,7 @@ export default function AdvertisersPage() {
                         <td>
                           <div className={styles.viewsInfo}>
                             <div className={styles.totalViews}>
-                              {advertiser.profile?.views || 0} total
+                              {advertiser.profile?.views || 0} totais
                             </div>
                             <div className={styles.weeklyViews}>
                               {advertiser.profile?.weeklyViews || 0} esta semana
@@ -519,14 +722,16 @@ export default function AdvertisersPage() {
                             <div className={styles.advertiserEmail}>
                               {advertiser.email}
                             </div>
-                            <div className={styles.advertiserDocument}>
-                              {advertiser.document}
+                            <div className={styles.advertiserPhone}>
+                              {formatPhone(advertiser.phone)}
                             </div>
                           </div>
                         </td>
 
                         <td>
-                          <span className={`${styles.genderBadge} ${styles[advertiser.gender.toLowerCase()]}`}>
+                          <span
+                            className={`${styles.genderDisplay} ${styles[advertiser.gender.toLowerCase()]}`}
+                          >
                             {GENDER_LABELS[advertiser.gender]}
                           </span>
                         </td>
@@ -574,11 +779,7 @@ export default function AdvertisersPage() {
                           <Dropdown
                             trigger={
                               <span
-                                className={styles.status}
-                                style={{
-                                  color:
-                                    STATUS_COLORS[advertiser.verificationStatus],
-                                }}
+                                className={`${styles.status} ${styles[advertiser.verificationStatus.toLowerCase()]}`}
                               >
                                 {STATUS_LABELS[advertiser.verificationStatus]}
                               </span>
@@ -666,6 +867,72 @@ export default function AdvertisersPage() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Cards List */}
+        <div className={styles.mobileCardsList}>
+          {loading ? (
+            <div className={styles.mobileLoading}>
+              <span className={styles.spinner}></span>
+              <span>Carregando anunciantes...</span>
+            </div>
+          ) : error ? (
+            <div className={styles.mobileError}>
+              <div className={styles.errorMessage}>Erro: {error}</div>
+              <button onClick={fetchAdvertisers} className={styles.retryButton}>
+                Tentar novamente
+              </button>
+            </div>
+          ) : sortedAdvertisers.length > 0 ? (
+            sortedAdvertisers.map((advertiser) => (
+              <div
+                key={advertiser.id}
+                className={styles.mobileCard}
+                onClick={() => {
+                  // TODO: Implementar visão individual (equivalente ao botão desabilitado)
+                  alert("Visão individual em desenvolvimento");
+                }}
+              >
+                <div className={styles.cardContent}>
+                  <button
+                    className={styles.cardViewBtn}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(
+                        `/product/${advertiser.profile?.id}`,
+                        "_blank",
+                      );
+                    }}
+                    disabled={!advertiser.profile}
+                    title="Ver perfil"
+                  >
+                    <Eye size={16} />
+                    <span>Ver perfil</span>
+                  </button>
+                  <div className={styles.cardInfo}>
+                    <div className={styles.cardName}>
+                      {advertiser.name}
+                      {advertiser.producerName && (
+                        <span className={styles.cardProfileName}>
+                          ({advertiser.producerName})
+                        </span>
+                      )}
+                    </div>
+                    <div className={styles.cardEmail}>{advertiser.email}</div>
+                    <div className={styles.cardPhone}>
+                      {formatPhone(advertiser.phone)}
+                    </div>
+                  </div>
+
+                  <ChevronRight className={styles.cardChevron} size={20} />
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className={styles.mobileEmpty}>
+              <p>Nenhum anunciante encontrado</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

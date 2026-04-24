@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { getAnalyticsAdapter } from "@/lib/analytics-adapter";
 
 const prisma = new PrismaClient();
 
@@ -15,6 +16,12 @@ export async function GET(request: NextRequest) {
     const lastWeek = new Date(today.getTime() - 14 * 24 * 60 * 60 * 1000);
     const lastMonth = new Date(today.getTime() - 60 * 24 * 60 * 60 * 1000);
 
+    // Usar o adaptador simplificado
+    const adapter = getAnalyticsAdapter(prisma);
+    
+    // Obter métricas consolidadas do analytics
+    const analyticsMetrics = await adapter.getConsolidatedMetrics("24h");
+    
     // Queries principais em paralelo
     const [
       activeUsersToday,
@@ -64,126 +71,8 @@ export async function GET(request: NextRequest) {
       }),
     ]);
 
-    // Acessos por período
-    const generateDailyAccess = async (days: number) => {
-      const dailyAccess = [];
-      const periodDays = parseInt(period);
-
-      // Primeiro, vamos verificar o período com dados no banco
-      const firstView = await prisma.profileView.findFirst({
-        orderBy: { viewedAt: "asc" },
-        select: { viewedAt: true },
-      });
-
-      if (!firstView) {
-        return []; // Sem dados no banco
-      }
-
-      const firstDataDate = new Date(
-        firstView.viewedAt.getFullYear(),
-        firstView.viewedAt.getMonth(),
-        firstView.viewedAt.getDate(),
-      );
-
-      if (periodDays === 7) {
-        // 7 dias: Mostrar os últimos 7 dias (incluindo 0s)
-        for (let i = 6; i >= 0; i--) {
-          const date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
-
-          // Só incluir se a data for >= primeira data com dados
-          if (date >= firstDataDate) {
-            const nextDate = new Date(date.getTime() + 24 * 60 * 60 * 1000);
-
-            const views = await prisma.profileView.count({
-              where: {
-                viewedAt: {
-                  gte: date,
-                  lt: nextDate,
-                },
-              },
-            });
-
-            dailyAccess.push({
-              date: date.toISOString().split("T")[0],
-              views,
-              label: date.toLocaleDateString("pt-BR", {
-                day: "2-digit",
-                month: "2-digit",
-              }),
-            });
-          }
-        }
-      } else if (periodDays === 30) {
-        // 30 dias: Agrupar de 3 em 3 dias, 10 pontos
-        for (let i = 9; i >= 0; i--) {
-          const endDate = new Date(
-            today.getTime() - i * 3 * 24 * 60 * 60 * 1000,
-          );
-          const startDate = new Date(
-            endDate.getTime() - 3 * 24 * 60 * 60 * 1000,
-          );
-
-          // Só incluir se o período tem interseção com dados
-          if (endDate >= firstDataDate) {
-            const views = await prisma.profileView.count({
-              where: {
-                viewedAt: {
-                  gte: startDate,
-                  lt: endDate,
-                },
-              },
-            });
-
-            // Incluir mesmo se views = 0, desde que esteja no período com dados
-            dailyAccess.push({
-              date: startDate.toISOString().split("T")[0],
-              views,
-              label: `${startDate.toLocaleDateString("pt-BR", {
-                day: "2-digit",
-                month: "2-digit",
-              })}`,
-            });
-          }
-        }
-      } else {
-        // 1 ano: Agrupar por mês (30 dias), 12 pontos
-        for (let i = 11; i >= 0; i--) {
-          const endDate = new Date(
-            today.getTime() - i * 30 * 24 * 60 * 60 * 1000,
-          );
-          const startDate = new Date(
-            endDate.getTime() - 30 * 24 * 60 * 60 * 1000,
-          );
-
-          // Só incluir se o período tem interseção com dados
-          if (endDate >= firstDataDate) {
-            const views = await prisma.profileView.count({
-              where: {
-                viewedAt: {
-                  gte: startDate,
-                  lt: endDate,
-                },
-              },
-            });
-
-            // Incluir mesmo se views = 0, desde que esteja no período com dados
-            dailyAccess.push({
-              date: startDate.toISOString().split("T")[0],
-              views,
-              label: startDate
-                .toLocaleDateString("pt-BR", {
-                  month: "short",
-                })
-                .replace(".", ""),
-            });
-          }
-        }
-      }
-
-      return dailyAccess;
-    };
-
-    const dailyAccess = await generateDailyAccess(parseInt(period));
+    // Acessos por período - usar dados reais de sessões do analytics
+    const dailyAccess = await adapter.getSessionsByDateRange(parseInt(period));
 
     // Performance do sistema
     const memory = process.memoryUsage();
@@ -271,11 +160,25 @@ export async function GET(request: NextRequest) {
         ? ((usersThisMonth - usersLastMonth) / usersLastMonth) * 100
         : 0;
 
+    // Usar dados do analytics consolidado
+    const activeUsersNow = analyticsMetrics.summary.activeSessions;
+    const authenticatedUsersNow = analyticsMetrics.users.breakdown.authenticated;
+    const anonymousUsersNow = analyticsMetrics.users.breakdown.anonymous;
+    
+    // Usar dados do analytics para métricas de plataforma
+    const totalSessions = analyticsMetrics.summary.totalSessions;
+    const totalPageViews = analyticsMetrics.summary.totalPageViews;
+    const bounceRate = analyticsMetrics.navigation.bounceRate;
+    const avgSessionTime = analyticsMetrics.navigation.avgSessionDuration;
+
     const dashboard = {
       activeUsers: {
         today: activeUsersToday,
         week: activeUsersWeek,
         month: activeUsersMonth,
+        now: activeUsersNow,
+        authenticated: authenticatedUsersNow,
+        anonymous: anonymousUsersNow,
       },
       growth: {
         week: {
@@ -293,6 +196,14 @@ export async function GET(request: NextRequest) {
         active: activeAdvertisers,
         inactive: inactiveAdvertisers,
         total: totalAdvertisers,
+        verified: activeAdvertisers,
+        pending: inactiveAdvertisers,
+      },
+      platform: {
+        totalSessions,
+        totalPageViews,
+        bounceRate,
+        avgSessionTime,
       },
       planDistribution: planDistribution.map((plan) => ({
         plan: plan.signature,
