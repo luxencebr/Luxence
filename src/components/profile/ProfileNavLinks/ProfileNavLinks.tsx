@@ -16,12 +16,11 @@ const navItems = [
     label: "Privacidade e Segurança",
     icon: Lock,
   },
-
-  {
-    href: "/profile/signature",
-    label: "Assinatura",
-    icon: Crown,
-  },
+  // {
+  //   href: "/profile/signature",
+  //   label: "Assinatura",
+  //   icon: Crown,
+  // },
 ];
 
 export default function ProfileNavLinks() {
