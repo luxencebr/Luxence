@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { analyticsMonitor } from "@/lib/analytics-monitor";
 import { PrismaClient } from "@prisma/client";
+import { getAnalyticsAdapter } from "@/lib/analytics-adapter";
 
 const prisma = new PrismaClient();
 
@@ -20,12 +20,26 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const metrics = await analyticsMonitor.getAllMetricsWithDB(period, prisma);
+    // Usar o adaptador simplificado
+    const adapter = getAnalyticsAdapter(prisma);
+    
+    // Obter métricas consolidadas
+    const metrics = await adapter.getConsolidatedMetrics(period);
+    
+    // Obter breakdowns
+    const [devices, location] = await Promise.all([
+      adapter.getDeviceBreakdown(period),
+      adapter.getLocationBreakdown(period),
+    ]);
 
-    return NextResponse.json({
+    const response = {
       ...metrics,
+      devices,
+      location,
       timestamp: new Date().toISOString(),
-    });
+    };
+
+    return NextResponse.json(response);
   } catch (error) {
     console.error("Error fetching metrics:", error);
     return NextResponse.json(

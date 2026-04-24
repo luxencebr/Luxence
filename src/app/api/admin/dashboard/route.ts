@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import { analyticsMonitor } from "@/lib/analytics-monitor";
+import { getAnalyticsAdapter } from "@/lib/analytics-adapter";
 
 const prisma = new PrismaClient();
 
@@ -16,8 +16,11 @@ export async function GET(request: NextRequest) {
     const lastWeek = new Date(today.getTime() - 14 * 24 * 60 * 60 * 1000);
     const lastMonth = new Date(today.getTime() - 60 * 24 * 60 * 60 * 1000);
 
-    // Obter métricas do analytics-monitor para consistência
-    const analyticsMetrics = analyticsMonitor.getAllMetrics("24h");
+    // Usar o adaptador simplificado
+    const adapter = getAnalyticsAdapter(prisma);
+    
+    // Obter métricas consolidadas do analytics
+    const analyticsMetrics = await adapter.getConsolidatedMetrics("24h");
     
     // Queries principais em paralelo
     const [
@@ -68,8 +71,8 @@ export async function GET(request: NextRequest) {
       }),
     ]);
 
-    // Acessos por período - usar dados reais de sessões únicas do analytics-monitor
-    const dailyAccess = analyticsMonitor.getSessionsByDateRange(parseInt(period));
+    // Acessos por período - usar dados reais de sessões do analytics
+    const dailyAccess = await adapter.getSessionsByDateRange(parseInt(period));
 
     // Performance do sistema
     const memory = process.memoryUsage();
@@ -157,15 +160,16 @@ export async function GET(request: NextRequest) {
         ? ((usersThisMonth - usersLastMonth) / usersLastMonth) * 100
         : 0;
 
-    // Usar dados do analytics-monitor para usuários online
+    // Usar dados do analytics consolidado
     const activeUsersNow = analyticsMetrics.summary.activeSessions;
-    const authenticatedUsersNow = analyticsMetrics.users.authenticatedUsers;
+    const authenticatedUsersNow = analyticsMetrics.users.breakdown.authenticated;
     const anonymousUsersNow = analyticsMetrics.users.breakdown.anonymous;
     
     // Usar dados do analytics para métricas de plataforma
     const totalSessions = analyticsMetrics.summary.totalSessions;
     const totalPageViews = analyticsMetrics.summary.totalPageViews;
     const bounceRate = analyticsMetrics.navigation.bounceRate;
+    const avgSessionTime = analyticsMetrics.navigation.avgSessionDuration;
 
     const dashboard = {
       activeUsers: {
@@ -199,7 +203,7 @@ export async function GET(request: NextRequest) {
         totalSessions,
         totalPageViews,
         bounceRate,
-        avgSessionTime: Math.round(Math.random() * 300 + 120), // Simulação: 2-7 min
+        avgSessionTime,
       },
       planDistribution: planDistribution.map((plan) => ({
         plan: plan.signature,

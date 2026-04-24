@@ -81,6 +81,7 @@ model User {
   passwordResetTokens PasswordResetToken[]
   sessions    UserSession[]
   subscriptions Subscription[]
+  analyticsSessions AnalyticsSession[]
 }
 
 model PasswordResetToken {
@@ -651,4 +652,189 @@ model HomeSliderImage {
   order       Int      @default(0)
 
   createdAt   DateTime @default(now())
+}
+// ========== ANALYTICS SYSTEM ==========
+
+model AnalyticsSession {
+  id            String   @id @default(cuid())
+  
+  // Identificação única da sessão
+  sessionId     String   @unique
+  fingerprint   String   // Identificação única do dispositivo/browser
+  
+  // Dados do usuário (se autenticado)
+  userId        Int?
+  user          User?    @relation(fields: [userId], references: [id])
+  
+  // Dados de acesso
+  ipAddress     String
+  userAgent     String
+  
+  // Localização
+  country       String
+  region        String
+  city          String
+  
+  // Dispositivo
+  deviceType    String   // mobile, desktop, tablet
+  browser       String
+  browserVersion String?
+  os            String
+  osVersion     String?
+  viewport      String?  // "1920x1080"
+  
+  // Idioma
+  language      String   @default("pt")
+  
+  // Timestamps
+  startTime     DateTime @default(now())
+  lastActivity  DateTime @default(now())
+  endTime       DateTime?
+  
+  // Métricas da sessão
+  duration      Int      @default(0) // em segundos
+  pageViewCount Int      @default(0) // número de páginas visitadas
+  isActive      Boolean  @default(true)
+  
+  // Classificação de engajamento
+  hasEngagement Boolean  @default(false) // 2min+ ou ação específica
+  bounced       Boolean  @default(false) // saiu sem engajamento
+  
+  // Relacionamentos
+  pageViews     AnalyticsPageView[]
+  
+  @@index([sessionId])
+  @@index([fingerprint])
+  @@index([userId])
+  @@index([startTime])
+  @@index([country])
+  @@index([deviceType])
+  @@index([isActive])
+  @@index([hasEngagement])
+}
+
+model AnalyticsPageView {
+  id          String   @id @default(cuid())
+  
+  sessionId   String
+  session     AnalyticsSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  path        String
+  referrer    String?
+  
+  startTime   DateTime @default(now())
+  endTime     DateTime?
+  duration    Int      @default(0) // em segundos
+  
+  // Ações específicas na página
+  profileViewed Boolean @default(false)
+  contactViewed Boolean @default(false)
+  
+  @@index([sessionId])
+  @@index([path])
+  @@index([startTime])
+}
+
+// Agregações por hora para performance
+model AnalyticsHourly {
+  id            Int      @id @default(autoincrement())
+  
+  date          DateTime // truncado para hora (2024-04-24 14:00:00)
+  
+  // Métricas básicas
+  totalSessions Int      @default(0)
+  uniqueUsers   Int      @default(0) // baseado em fingerprint
+  authenticatedUsers Int @default(0)
+  anonymousUsers Int    @default(0)
+  
+  // Engajamento
+  engagedSessions Int    @default(0)
+  bouncedSessions Int    @default(0)
+  bounceRate      Float  @default(0) // calculado
+  
+  // Tempo médio
+  avgSessionDuration Float @default(0) // em segundos
+  totalPageViews     Int   @default(0)
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@unique([date])
+  @@index([date])
+}
+
+// Agregações por dia
+model AnalyticsDaily {
+  id            Int      @id @default(autoincrement())
+  
+  date          DateTime // truncado para dia (2024-04-24 00:00:00)
+  
+  // Métricas básicas
+  totalSessions Int      @default(0)
+  uniqueUsers   Int      @default(0)
+  authenticatedUsers Int @default(0)
+  anonymousUsers Int    @default(0)
+  
+  // Engajamento
+  engagedSessions Int    @default(0)
+  bouncedSessions Int    @default(0)
+  bounceRate      Float  @default(0)
+  
+  // Tempo médio
+  avgSessionDuration Float @default(0)
+  totalPageViews     Int   @default(0)
+  
+  // Picos de atividade
+  peakHour      Int?     // hora com mais atividade (0-23)
+  peakSessions  Int      @default(0)
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@unique([date])
+  @@index([date])
+}
+
+// Dispositivos por período
+model AnalyticsDeviceBreakdown {
+  id          Int      @id @default(autoincrement())
+  
+  date        DateTime // data de referência
+  period      String   // 'hourly', 'daily', 'weekly', 'monthly'
+  
+  deviceType  String   // mobile, desktop, tablet
+  browser     String
+  os          String
+  
+  sessionCount Int     @default(0)
+  uniqueUsers  Int     @default(0)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([date, period, deviceType, browser, os])
+  @@index([date, period])
+  @@index([deviceType])
+}
+
+// Localização por período
+model AnalyticsLocationBreakdown {
+  id          Int      @id @default(autoincrement())
+  
+  date        DateTime
+  period      String   // 'hourly', 'daily', 'weekly', 'monthly'
+  
+  country     String
+  region      String
+  city        String
+  
+  sessionCount Int     @default(0)
+  uniqueUsers  Int     @default(0)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([date, period, country, region, city])
+  @@index([date, period])
+  @@index([country])
 }

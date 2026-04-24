@@ -561,7 +561,7 @@ export default function MetricsPage() {
               </span>
               <span className={commonStyles.cardDescription}>
                 {data.users.retention.retained} de {data.users.retention.total}{" "}
-                usuários retornaram
+                sessões com engajamento (2min+ ou perfil+contato)
               </span>
             </div>
           </Card>
@@ -584,7 +584,7 @@ export default function MetricsPage() {
                 {data.navigation.bounceRate}%
               </span>
               <span className={commonStyles.cardDescription}>
-                Usuários que saíram após 1 página
+                Sessões sem engajamento (inverso da retenção)
               </span>
             </div>
           </Card>
