@@ -23,7 +23,7 @@ import Card from "@/components/ui/Card/Card";
 
 interface MetricsData {
   users: {
-    period: "24h" | "7d" | "30d";
+    period: "24h" | "7d" | "30d" | "1y" | "all";
     activeUsers: number;
     uniqueUsers: number;
     authenticatedUsers: number;
@@ -88,6 +88,14 @@ interface MetricsData {
     totalSessions: number;
     activeSessions: number;
   };
+  dailyAccess: Array<{
+    date: string;
+    views: number;
+    label: string;
+    dayOfWeek?: string;
+    isWeekly?: boolean;
+    isHourly?: boolean;
+  }>;
   timestamp: string;
 }
 
@@ -96,7 +104,7 @@ export default function MetricsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [autoRefresh, setAutoRefresh] = useState(true);
-  const [selectedPeriod, setSelectedPeriod] = useState<"24h" | "7d" | "30d">(
+  const [selectedPeriod, setSelectedPeriod] = useState<"24h" | "7d" | "30d" | "1y" | "all">(
     "24h",
   );
   const [tooltip, setTooltip] = useState<{
@@ -112,7 +120,7 @@ export default function MetricsPage() {
     new Set(),
   );
 
-  const fetchData = async (period?: "24h" | "7d" | "30d") => {
+  const fetchData = async (period?: "24h" | "7d" | "30d" | "1y" | "all") => {
     try {
       setLoading(true);
       const periodToUse = period || selectedPeriod;
@@ -142,7 +150,7 @@ export default function MetricsPage() {
     fetchData();
   };
 
-  const handlePeriodChange = (period: "24h" | "7d" | "30d") => {
+  const handlePeriodChange = (period: "24h" | "7d" | "30d" | "1y" | "all") => {
     setSelectedPeriod(period);
   };
 
@@ -457,7 +465,11 @@ export default function MetricsPage() {
                       ? "24h" 
                       : selectedPeriod === "7d" 
                       ? "7 dias" 
-                      : "30 dias"}
+                      : selectedPeriod === "30d"
+                      ? "30 dias"
+                      : selectedPeriod === "1y"
+                      ? "1 ano"
+                      : "Histórico Geral"}
                   </div>
                 }
                 containerClassName={commonStyles.dropdownContainer}
@@ -485,6 +497,20 @@ export default function MetricsPage() {
                 >
                   30 dias
                 </button>
+                <button
+                  type="button"
+                  onClick={() => handlePeriodChange("1y")}
+                  className={`${commonStyles.dropdownOption} ${selectedPeriod === "1y" ? commonStyles.dropdownOptionSelected : ""}`}
+                >
+                  1 ano
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handlePeriodChange("all")}
+                  className={`${commonStyles.dropdownOption} ${selectedPeriod === "all" ? commonStyles.dropdownOptionSelected : ""}`}
+                >
+                  Histórico Geral
+                </button>
               </Dropdown>
             </div>
             <div className={commonStyles.periodButtons}>
@@ -505,6 +531,18 @@ export default function MetricsPage() {
                 onClick={() => handlePeriodChange("30d")}
               >
                 30 dias
+              </button>
+              <button
+                className={`${commonStyles.periodButton} ${selectedPeriod === "1y" ? commonStyles.periodActive : ""}`}
+                onClick={() => handlePeriodChange("1y")}
+              >
+                1 ano
+              </button>
+              <button
+                className={`${commonStyles.periodButton} ${selectedPeriod === "all" ? commonStyles.periodActive : ""}`}
+                onClick={() => handlePeriodChange("all")}
+              >
+                Geral
               </button>
             </div>
           </div>
@@ -603,7 +641,11 @@ export default function MetricsPage() {
                     ? "24 horas"
                     : selectedPeriod === "7d"
                       ? "7 dias"
-                      : "30 dias"}
+                      : selectedPeriod === "30d"
+                      ? "30 dias"
+                      : selectedPeriod === "1y"
+                      ? "1 ano"
+                      : "Histórico Geral"}
                   )
                 </span>
               </h3>
@@ -659,8 +701,9 @@ export default function MetricsPage() {
             </Card>
           </div>
 
-          {/* Distribuição de Usuários - Linha Inteira */}
-          <div className={commonStyles.fullWidthCard}>
+          {/* Gráficos de Análise - Dois Cards Lado a Lado */}
+          <div className={commonStyles.cardsGrid}>
+            {/* Distribuição de Usuários Ativos */}
             <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
               <div className={commonStyles.cardHeader}>
                 <Activity className={commonStyles.cardIcon} />
@@ -673,15 +716,6 @@ export default function MetricsPage() {
                   const totalUsers = data.users.breakdown.authenticated + data.users.breakdown.anonymous;
                   const authenticatedPercentage = totalUsers > 0 ? (data.users.breakdown.authenticated / totalUsers) * 100 : 0;
                   const anonymousPercentage = totalUsers > 0 ? (data.users.breakdown.anonymous / totalUsers) * 100 : 0;
-                  
-                  // Debug log temporário
-                  console.log('BreakdownBar Debug:', {
-                    authenticated: data.users.breakdown.authenticated,
-                    anonymous: data.users.breakdown.anonymous,
-                    totalUsers,
-                    authenticatedPercentage,
-                    anonymousPercentage
-                  });
                   
                   return (
                     <>
@@ -735,6 +769,165 @@ export default function MetricsPage() {
                     <span>Total Ativo ({data.users.breakdown.authenticated + data.users.breakdown.anonymous})</span>
                   </div>
                 </div>
+              </div>
+            </Card>
+
+            {/* Gráfico de Acessos por Período */}
+            <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
+              <div className={commonStyles.cardHeader}>
+                <TrendingUp className={commonStyles.cardIcon} />
+                <span className={commonStyles.cardLabel}>
+                  {selectedPeriod === "24h" ? "Acessos por Hora (Hoje)" : "Acessos por Período"}
+                </span>
+              </div>
+              <div className={styles.chartContainer}>
+                {loading ? (
+                  <div className={styles.chartLoading}>
+                    <div className={commonStyles.spinner}></div>
+                    <span>Carregando dados...</span>
+                  </div>
+                ) : (
+                  <svg className={styles.chartSvg} viewBox="0 0 380 200" preserveAspectRatio="xMidYMid meet">
+                    {/* Grid lines */}
+                    <defs>
+                      <pattern
+                        id="grid-metrics"
+                        width={data.dailyAccess?.[0]?.isHourly ? "15" : "38"}
+                        height="20"
+                        patternUnits="userSpaceOnUse"
+                      >
+                        <path
+                          d={data.dailyAccess?.[0]?.isHourly ? "M 15 0 L 0 0 0 20" : "M 38 0 L 0 0 0 20"}
+                          fill="none"
+                          stroke="var(--dark-color)"
+                          strokeWidth="0.5"
+                          opacity="0.3"
+                        />
+                      </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#grid-metrics)" />
+
+                    {/* Chart content */}
+                    {(() => {
+                      if (!data.dailyAccess || !data.dailyAccess.length) return null;
+
+                      const maxViews = Math.max(
+                        ...data.dailyAccess.map((d) => d.views),
+                        1,
+                      );
+                      const isHourly = data.dailyAccess[0]?.isHourly;
+                      const stepX = 330 / Math.max(data.dailyAccess.length - 1, 1);
+
+                      const points = data.dailyAccess
+                        .map((day, index) => {
+                          const x = 25 + index * stepX;
+                          const y = 150 - (day.views / maxViews) * 110;
+                          return `${x},${y}`;
+                        })
+                        .join(" ");
+
+                      return (
+                        <>
+                          {/* Data points with hover effects */}
+                          {data.dailyAccess.map((day, index) => {
+                            const x = 25 + index * stepX;
+                            const y = 150 - (day.views / maxViews) * 110;
+                            return (
+                              <g
+                                key={`point-${index}`}
+                                className={styles.chartPointGroup}
+                              >
+                                {/* Extended hover area */}
+                                <rect
+                                  x={x - (isHourly ? 8 : 12)}
+                                  y={30}
+                                  width={isHourly ? "16" : "24"}
+                                  height="140"
+                                  fill="transparent"
+                                  className={styles.chartHoverArea}
+                                />
+
+                                {/* Vertical dashed line */}
+                                <line
+                                  x1={x}
+                                  y1={30}
+                                  x2={x}
+                                  y2={150}
+                                  stroke="var(--dark-complementary-color)"
+                                  strokeWidth="1"
+                                  strokeDasharray="3,3"
+                                  className={styles.chartVerticalLine}
+                                />
+
+                                {/* Data point */}
+                                <circle
+                                  cx={x}
+                                  cy={y}
+                                  r={isHourly ? "2.5" : "3"}
+                                  fill="var(--primary-color)"
+                                  stroke="var(--dark-color)"
+                                  strokeWidth="2"
+                                  className={styles.chartPoint}
+                                />
+
+                                {/* Value label */}
+                                <text
+                                  x={x}
+                                  y={y - 8}
+                                  textAnchor="middle"
+                                  fontSize={isHourly ? "9" : "10"}
+                                  fill="var(--primary-color)"
+                                  fontWeight="600"
+                                  className={styles.chartPointValue}
+                                >
+                                  {day.views}
+                                </text>
+
+                                {/* Date/Hour label */}
+                                <text
+                                  x={x}
+                                  y={170}
+                                  textAnchor="middle"
+                                  fontSize={isHourly ? "7" : "8"}
+                                  fill="var(--light-complementary-color)"
+                                  fontWeight="500"
+                                  className={styles.chartDateLabel}
+                                >
+                                  {day.label}
+                                </text>
+                                
+                                {/* Day of week label for weekly periods (não mostrar para dados horários) */}
+                                {!isHourly && day.isWeekly && day.dayOfWeek && (
+                                  <text
+                                    x={x}
+                                    y={180}
+                                    textAnchor="middle"
+                                    fontSize="7"
+                                    fill="var(--light-complementary-color)"
+                                    fontWeight="400"
+                                    className={styles.chartDayLabel}
+                                  >
+                                    {day.dayOfWeek}
+                                  </text>
+                                )}
+                              </g>
+                            );
+                          })}
+
+                          {/* Chart line */}
+                          <polyline
+                            fill="none"
+                            stroke="var(--primary-color)"
+                            strokeWidth={isHourly ? "1.5" : "2"}
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            points={points}
+                          />
+                        </>
+                      );
+                    })()}
+                  </svg>
+                )}
               </div>
             </Card>
           </div>
@@ -813,7 +1006,11 @@ export default function MetricsPage() {
                       ? "24 horas"
                       : selectedPeriod === "7d"
                         ? "7 dias"
-                        : "30 dias"}
+                        : selectedPeriod === "30d"
+                        ? "30 dias"
+                        : selectedPeriod === "1y"
+                        ? "1 ano"
+                        : "Histórico Geral"}
                     )
                   </span>
                 </h3>
@@ -861,7 +1058,11 @@ export default function MetricsPage() {
                       ? "24 horas"
                       : selectedPeriod === "7d"
                         ? "7 dias"
-                        : "30 dias"}
+                        : selectedPeriod === "30d"
+                        ? "30 dias"
+                        : selectedPeriod === "1y"
+                        ? "1 ano"
+                        : "Histórico Geral"}
                     )
                   </span>
                 </h3>

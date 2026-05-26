@@ -1,0 +1,852 @@
+/* Advertiser Details - Padronizado seguindo admin-common */
+
+/* ===== LAYOUT PRINCIPAL ===== */
+
+/* Back Button */
+.backButton {
+  background: var(--primary-color);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-md);
+  color: var(--dark-color);
+  cursor: pointer;
+  font-size: var(--ft-sm);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  transition: var(--transition-normal);
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.backButton:hover {
+  opacity: 0.8;
+}
+
+.backText {
+  display: inline;
+}
+
+/* ===== CARDS PADRONIZADOS ===== */
+
+/* Container dos Cards */
+.cardsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* Stats Row - Views e Média lado a lado */
+.statsRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+
+/* Conteúdo do Card */
+.cardContent {
+  padding: var(--space-xs);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs); /* Reduzido de var(--space-sm) para var(--space-xs) */
+  transition: all 0.2s ease;
+  min-height: 72px; /* Reduzido de 88px para 72px para compensar o padding adicionado */
+  justify-content: space-between; /* Distribui o conteúdo uniformemente */
+}
+
+.clickableCard {
+  cursor: pointer;
+  padding: var(--space-xs);
+  border-radius: var(--radius-sm);
+  transition: background-color 0.2s ease;
+}
+
+.clickableCard:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* Header do Card */
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-xs); /* Reduzido de var(--space-sm) para var(--space-xs) */
+  min-height: 20px;
+}
+
+.cardTitleSection {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  flex: 1;
+}
+
+.cardTitle {
+  font-size: var(--ft-md);
+  font-weight: 600;
+  color: var(--light-color);
+  margin: 0;
+  line-height: 1.2; /* Altura de linha consistente */
+}
+
+/* Valores do Card */
+.cardValue {
+  opacity: 0.8;
+  padding: var(
+    --space-xs
+  ); /* Reduzido de var(--space-sm) para var(--space-xs) */
+  font-size: var(--ft-sm);
+  color: var(--text-secondary-color);
+  margin: 0;
+}
+
+.cardValueWithAction {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.cardValueWithAction .cardValue {
+  flex: 1;
+  margin: 0;
+  padding: 0;
+}
+
+/* Inputs do Card */
+.cardInput {
+  padding: var(--space-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xs);
+  background-color: var(--dark-color);
+  color: var(--light-color);
+  font-family: inherit;
+  font-size: var(--ft-sm);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.cardInput:focus {
+  border-color: var(--primary-color);
+}
+
+/* Ações do Card */
+.cardActions {
+  display: flex;
+  gap: var(--space-xs);
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.saveButton,
+.cancelButton {
+  padding: var(--space-xs) var(--space-sm);
+  border: none;
+  border-radius: var(--radius-xs);
+  font-family: inherit;
+  font-size: var(--ft-xs);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.saveButton {
+  background-color: var(--primary-color);
+  color: var(--dark-complementary-color);
+}
+
+.saveButton:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.saveButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cancelButton {
+  background-color: var(--dark-color);
+  color: var(--text-secondary-color);
+  border: 1px solid var(--border-color);
+}
+
+.cancelButton:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.cancelButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Botões de Ação do Card */
+.cardActionButtons {
+  display: flex;
+  gap: var(--space-xs);
+  flex-shrink: 0;
+}
+
+.cardActionButton {
+  padding: var(--space-sm);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-normal);
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.cardActionButton:hover {
+  transform: translateY(-1px);
+}
+
+.cardActionButton.whatsappButton {
+  background: #25d366 !important;
+  color: white !important;
+}
+
+.cardActionButton.whatsappButton:hover {
+  background: #20ba5a !important;
+}
+
+.cardActionButton.whatsapp {
+  background: #25d366 !important;
+  color: white !important;
+}
+
+.cardActionButton.whatsapp:hover {
+  background: #20ba5a !important;
+}
+
+.cardActionButton.emailButton {
+  background: #0078d4;
+  color: white;
+}
+
+.cardActionButton.emailButton:hover {
+  background: #106ebe;
+}
+
+.cardActionButton.alertButton {
+  background: var(--warning-color);
+  color: var(--dark-color);
+}
+
+.cardActionButton.alertButton:hover {
+  background: #eab308;
+}
+
+.cardActionButton.telegram {
+  background: #0088cc;
+  color: white;
+}
+
+.cardActionButton.telegram:hover {
+  background: #006ba3;
+}
+
+.cardActionButton.instagram {
+  background: linear-gradient(
+    45deg,
+    #f09433 0%,
+    #e6683c 25%,
+    #dc2743 50%,
+    #cc2366 75%,
+    #bc1888 100%
+  );
+  color: white;
+}
+
+.cardActionButton.instagram:hover {
+  opacity: 0.8;
+}
+
+/* Link de Ação do Card */
+.cardActionLink {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--primary-color);
+  font-size: var(--ft-xs);
+  font-weight: 600;
+}
+
+/* ===== DROPDOWNS PADRONIZADOS ===== */
+
+/* Dropdown Trigger para Cards */
+.cardDropdownTrigger {
+  width: 100%;
+  padding: var(--space-xs) var(--space-sm);
+  background: var(
+    --dark-color
+  ); /* Mudado de var(--dark-complementary-color) para var(--dark-color) */
+  border: 1px solid var(--dark-complementary-color);
+  border-radius: var(--radius-sm);
+  color: var(--light-color);
+  font-size: var(--ft-sm);
+  cursor: pointer;
+  transition: var(--transition-normal);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 32px;
+}
+
+.cardDropdownTrigger:hover {
+  opacity: 0.8; /* Mudança sutil para um tom mais claro */
+}
+
+/* Dropdown Menu para Cards */
+.cardDropdownMenu {
+  background: var(--dark-color) !important;
+  border: 1px solid var(--dark-complementary-color) !important;
+  border-radius: var(--radius-sm) !important;
+  box-shadow: var(--shadow-lg) !important;
+  margin-top: var(--space-xs) !important;
+}
+
+/* ===== CONTROLES ADMINISTRATIVOS ===== */
+
+/* Row para cards lado a lado */
+.adminControlsRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+
+/* ===== PERFIL ===== */
+
+.noProfile {
+  text-align: center;
+  padding: var(--space-xl);
+  color: var(--light-complementary-color);
+}
+
+.noProfile p {
+  margin: 0;
+  font-size: var(--ft-md);
+}
+
+.profileActions {
+  display: flex;
+  justify-content: center;
+}
+
+.viewProfileButton {
+  background: var(--primary-color);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-lg);
+  color: var(--dark-color);
+  cursor: pointer;
+  font-size: var(--ft-sm);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  transition: var(--transition-normal);
+}
+
+.viewProfileButton:hover {
+  opacity: 0.8;
+}
+
+/* ===== ASSINATURAS ===== */
+
+.subscriptionsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.subscriptionsTableContainer {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid var(--dark-complementary-color);
+  border-radius: var(--radius-sm);
+  background: var(--background-complementary-color);
+}
+
+.subscriptionsTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--ft-sm);
+}
+
+.subscriptionsTable thead {
+  position: sticky;
+  top: 0;
+  background: var(--dark-complementary-color);
+  z-index: 1;
+}
+
+.subscriptionsTable th {
+  padding: var(--space-md);
+  text-align: left;
+  font-weight: 600;
+  color: var(--light-color);
+  border-bottom: 2px solid var(--background-color);
+  white-space: nowrap;
+}
+
+.subscriptionsTable td {
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--dark-complementary-color);
+  vertical-align: top;
+}
+
+.subscriptionsTable tbody tr:hover {
+  background: var(--dark-complementary-color);
+}
+
+.subscriptionsTable tbody tr.activeRow {
+  background: rgba(34, 197, 94, 0.1);
+  border-left: 3px solid var(--success-color);
+}
+
+.subscriptionsTable tbody tr.activeRow:hover {
+  background: rgba(34, 197, 94, 0.15);
+}
+
+/* Plan Info */
+.planInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.planName {
+  font-weight: 600;
+  color: var(--light-color);
+}
+
+.planSignature {
+  font-size: var(--ft-xs);
+  color: var(--light-complementary-color);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* Period Info */
+.periodInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.autoRenew {
+  font-size: var(--ft-xs);
+  color: var(--light-complementary-color);
+}
+
+/* Payments Info */
+.paymentsInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.paymentsCount {
+  font-weight: 600;
+  color: var(--light-color);
+}
+
+.paymentsDetails {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.paymentItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-xs);
+  background: var(--dark-complementary-color);
+  border-radius: var(--radius-xs);
+  font-size: var(--ft-xs);
+}
+
+.paymentStatus {
+  padding: 2px var(--space-xs);
+  border-radius: var(--radius-xs);
+  font-size: var(--ft-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.paymentAmount {
+  font-weight: 600;
+  color: var(--light-color);
+}
+
+.morePayments {
+  font-size: var(--ft-xs);
+  color: var(--light-complementary-color);
+  text-align: center;
+  padding: var(--space-xs);
+  background: var(--dark-complementary-color);
+  border-radius: var(--radius-xs);
+}
+
+.totalAmount {
+  font-weight: 700;
+  font-size: var(--ft-md);
+  color: var(--success-color);
+}
+
+/* Show More Button */
+.showMoreContainer {
+  display: flex;
+  justify-content: center;
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--dark-complementary-color);
+}
+
+.showMoreButton {
+  background: var(--primary-color);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-lg);
+  color: var(--dark-color);
+  cursor: pointer;
+  font-size: var(--ft-sm);
+  font-weight: 600;
+  transition: var(--transition-normal);
+}
+
+.showMoreButton:hover {
+  opacity: 0.8;
+}
+
+/* Status badges */
+.statusBadge {
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  font-size: var(--ft-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+.statusBadge.active {
+  background: var(--success-color);
+  color: var(--dark-color);
+}
+
+.statusBadge.expired {
+  background: var(--danger-color);
+  color: var(--light-color);
+}
+
+.statusBadge.cancelled {
+  background: var(--light-complementary-color);
+  color: var(--dark-color);
+}
+
+.statusBadge.pending {
+  background: var(--warning-color);
+  color: var(--dark-color);
+}
+
+.statusBadge.suspended {
+  background: var(--warning-color);
+  color: var(--dark-color);
+}
+
+.statusBadge.completed {
+  background: var(--success-color);
+  color: var(--dark-color);
+}
+
+.statusBadge.failed {
+  background: var(--danger-color);
+  color: var(--light-color);
+}
+
+.statusBadge.refunded {
+  background: var(--light-complementary-color);
+  color: var(--dark-color);
+}
+
+/* No Data State */
+.noData {
+  text-align: center;
+  padding: var(--space-xl);
+  color: var(--light-complementary-color);
+}
+
+.noData p {
+  margin: 0;
+  font-size: var(--ft-md);
+}
+
+/* ===== SLIDER POPUP ===== */
+
+.sliderPopup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+}
+
+.sliderPopupBackdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  z-index: 1;
+}
+
+.sliderPopupContent {
+  position: relative;
+  width: fit-content;
+  max-width: min(90vw, 600px);
+  background: var(--dark-color);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--dark-complementary-color);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 2;
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.sliderPopupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--dark-complementary-color);
+  background: var(--background-color);
+  flex-shrink: 0;
+  z-index: 3;
+}
+
+.sliderPopupHeader h3 {
+  margin: 0;
+  color: var(--light-color);
+  font-size: var(--ft-md);
+  font-weight: 600;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: var(--light-complementary-color);
+  cursor: pointer;
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+  transition: var(--transition-normal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 4;
+}
+
+.closeButton:hover {
+  background: var(--dark-complementary-color);
+  color: var(--light-color);
+}
+
+.sliderContainer {
+  padding: var(--space-lg);
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive Slider dentro do popup */
+.sliderContainer :global(.slider) {
+  height: min(70vh, 500px) !important;
+  width: calc(min(70vh, 500px) * 3 / 4) !important;
+  max-width: calc(90vw - 2 * var(--space-lg)) !important;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+@media (max-width: 768px) {
+  .backText {
+    display: none;
+  }
+
+  .backButton {
+    padding: var(--space-sm);
+    min-width: 40px;
+    justify-content: center;
+  }
+
+  .cardsContainer {
+    gap: var(--space-sm);
+  }
+
+  .statsRow {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+
+  .cardContent {
+    padding: var(--space-xs); /* Mantém o padding consistente em mobile */
+  }
+
+  .cardHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-sm);
+  }
+
+  .cardActions {
+    justify-content: flex-end;
+  }
+
+  .cardValueWithAction {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-xs);
+  }
+
+  .cardValueWithAction .cardActionButton,
+  .cardValueWithAction .cardActionButtons {
+    align-self: center;
+  }
+
+  .adminControlsRow {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+
+  .sliderPopup {
+    padding: var(--space-md);
+  }
+
+  .sliderPopupContent {
+    max-width: 95vw;
+  }
+
+  .sliderPopupHeader {
+    padding: var(--space-md);
+  }
+
+  .sliderContainer {
+    padding: var(--space-md);
+  }
+
+  /* Responsive Slider dentro do popup - mobile */
+  .sliderContainer :global(.slider) {
+    height: min(60vh, 400px) !important;
+    width: calc(min(60vh, 400px) * 3 / 4) !important;
+    max-width: calc(95vw - 2 * var(--space-md)) !important;
+  }
+
+  /* Responsive table */
+  .subscriptionsTableContainer {
+    max-height: 300px;
+  }
+
+  .subscriptionsTable {
+    font-size: var(--ft-xs);
+  }
+
+  .subscriptionsTable th,
+  .subscriptionsTable td {
+    padding: var(--space-sm);
+  }
+
+  .planInfo,
+  .periodInfo,
+  .paymentsInfo {
+    gap: 2px;
+  }
+
+  .paymentItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .totalAmount {
+    font-size: var(--ft-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  /* Mobile table adjustments */
+  .subscriptionsTable {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .subscriptionsTable thead,
+  .subscriptionsTable tbody,
+  .subscriptionsTable th,
+  .subscriptionsTable td,
+  .subscriptionsTable tr {
+    display: block;
+  }
+
+  .subscriptionsTable thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+
+  .subscriptionsTable tr {
+    border: 1px solid var(--dark-complementary-color);
+    margin-bottom: var(--space-md);
+    padding: var(--space-md);
+    border-radius: var(--radius-sm);
+    background: var(--background-complementary-color);
+  }
+
+  .subscriptionsTable td {
+    border: none;
+    position: relative;
+    padding: var(--space-sm) 0;
+    padding-left: 35%;
+    white-space: normal;
+  }
+
+  .subscriptionsTable td:before {
+    content: attr(data-label) ": ";
+    position: absolute;
+    left: 0;
+    width: 30%;
+    padding-right: var(--space-sm);
+    white-space: nowrap;
+    font-weight: 600;
+    color: var(--light-complementary-color);
+  }
+}
+/* Textarea específico para cards */
+.cardTextarea {
+  min-height: 100px;
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.4;
+}
+
+.cardTextarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}

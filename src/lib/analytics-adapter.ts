@@ -17,21 +17,21 @@ export class AnalyticsAdapter {
   /**
    * Obtém métricas consolidadas do banco
    */
-  async getConsolidatedMetrics(period: "24h" | "7d" | "30d" = "24h") {
+  async getConsolidatedMetrics(period: "24h" | "7d" | "30d" | "1y" | "all" = "24h") {
     return await this.analyticsService.getConsolidatedMetrics(period);
   }
 
   /**
    * Obtém breakdown de dispositivos
    */
-  async getDeviceBreakdown(period: "24h" | "7d" | "30d" = "7d") {
+  async getDeviceBreakdown(period: "24h" | "7d" | "30d" | "1y" | "all" = "7d") {
     return await this.analyticsService.getDeviceBreakdown(period);
   }
 
   /**
    * Obtém breakdown de localização
    */
-  async getLocationBreakdown(period: "24h" | "7d" | "30d" = "7d") {
+  async getLocationBreakdown(period: "24h" | "7d" | "30d" | "1y" | "all" = "7d") {
     return await this.analyticsService.getLocationBreakdown(period);
   }
 

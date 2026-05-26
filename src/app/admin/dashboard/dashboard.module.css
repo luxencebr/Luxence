@@ -120,10 +120,27 @@
   pointer-events: none;
 }
 
+.chartDayLabel {
+  font-size: 9px;
+  font-weight: 400;
+  fill: var(--light-complementary-color);
+  text-anchor: middle;
+  transition: all 0.2s ease;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
 .chartPointGroup:hover .chartDateLabel {
   font-weight: 600;
   fill: var(--primary-color);
   font-size: 11px;
+}
+
+.chartPointGroup:hover .chartDayLabel {
+  font-weight: 500;
+  fill: var(--primary-color);
+  font-size: 10px;
+  opacity: 1;
 }
 
 /* Top Performers */

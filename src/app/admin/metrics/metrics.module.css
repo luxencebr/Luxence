@@ -69,23 +69,114 @@
   flex-shrink: 0;
 }
 
-/* Card Content - Specific to metrics */
-.cardContainer {
+/* Chart Content Inside Cards */
+.chartContainer {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--space-lg);
+  position: relative;
+  min-height: 200px;
+  padding: 0; /* Remove padding desnecessário */
 }
 
-.chartContainer {
+.chartLoading {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  background: var(--dark-complementary-color);
+  border-radius: var(--radius-sm);
+  color: var(--light-complementary-color);
+  height: 200px;
+  width: 100%;
+  border: 1px solid var(--dark-complementary-color);
 }
 
 .chartSvg {
-  width: 200px;
+  width: 100%;
   height: 200px;
-  max-width: 100%;
+  background: var(--dark-color);
+  border-radius: var(--radius-sm);
+  overflow: visible;
+  border: 1px solid var(--dark-complementary-color);
+}
+
+/* Chart interaction styles */
+.chartPointGroup {
+  cursor: pointer;
+}
+
+.chartHoverArea {
+  cursor: pointer;
+}
+
+.chartPoint {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.chartVerticalLine {
+  transition: all 0.2s ease;
+  opacity: 0.3;
+}
+
+.chartPointGroup:hover .chartPoint {
+  r: 5;
+}
+
+.chartPointGroup:hover .chartVerticalLine {
+  opacity: 0.8 !important;
+  stroke-width: 2;
+  stroke: var(--light-complementary-color);
+}
+
+.chartPointValue {
+  font-size: 10px;
+  font-weight: 600;
+  fill: var(--primary-color);
+  text-anchor: middle;
+  opacity: 1;
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+
+.chartPointGroup:hover .chartPointValue {
+  font-weight: 700;
+  font-size: 11px;
+  filter: drop-shadow(0 0 3px var(--primary-color));
+}
+
+.chartDateLabel {
+  font-size: 8px;
+  font-weight: 500;
+  fill: var(--light-complementary-color);
+  text-anchor: middle;
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+
+.chartDayLabel {
+  font-size: 7px;
+  font-weight: 400;
+  fill: var(--light-complementary-color);
+  text-anchor: middle;
+  transition: all 0.2s ease;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.chartPointGroup:hover .chartDateLabel {
+  font-weight: 600;
+  fill: var(--primary-color);
+  font-size: 9px;
+}
+
+.chartPointGroup:hover .chartDayLabel {
+  font-weight: 500;
+  fill: var(--primary-color);
+  font-size: 8px;
+  opacity: 1;
 }
 
 .chartLegend {
@@ -243,16 +334,43 @@
 
 /* Responsive Design */
 @media (max-width: 1024px) {
+  .chartContainer {
+    min-height: 180px;
+  }
+  
   .chartSvg {
-    width: 160px;
-    height: 160px;
+    height: 180px;
+  }
+  
+  .chartLoading {
+    height: 180px;
   }
 }
 
 @media (max-width: 768px) {
+  .chartContainer {
+    min-height: 160px;
+  }
+  
   .chartSvg {
-    width: 140px;
-    height: 140px;
+    height: 160px;
+  }
+  
+  .chartLoading {
+    height: 160px;
+  }
+  
+  /* Reduz espaçamento em mobile */
+  .chartPointValue {
+    font-size: 9px;
+  }
+  
+  .chartDateLabel {
+    font-size: 7px;
+  }
+  
+  .chartDayLabel {
+    font-size: 6px;
   }
 }
 
@@ -271,5 +389,39 @@
 
   .chartLegend .legendValue {
     align-self: flex-end;
+  }
+  
+  .chartContainer {
+    min-height: 140px;
+  }
+  
+  .chartSvg {
+    height: 140px;
+  }
+  
+  .chartLoading {
+    height: 140px;
+  }
+  
+  /* Ajusta labels para mobile pequeno */
+  .chartPointValue {
+    font-size: 8px;
+  }
+  
+  .chartDateLabel {
+    font-size: 6px;
+  }
+  
+  .chartDayLabel {
+    display: none; /* Oculta dia da semana em telas muito pequenas */
+  }
+  
+  /* Para dados horários em mobile, mostrar apenas algumas labels */
+  .chartDateLabel:nth-child(4n+1) {
+    display: block; /* Mostra apenas a cada 4 horas em mobile */
+  }
+  
+  .chartDateLabel:not(:nth-child(4n+1)) {
+    display: none;
   }
 }

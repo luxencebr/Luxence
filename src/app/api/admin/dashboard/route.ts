@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const period = searchParams.get("period") || "7"; // 7, 30, 365
+    const period = searchParams.get("period") || "7"; // 7, 30, 365, all
 
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -71,8 +71,24 @@ export async function GET(request: NextRequest) {
       }),
     ]);
 
-    // Acessos por período - usar dados reais de sessões do analytics
-    const dailyAccess = await adapter.getSessionsByDateRange(parseInt(period));
+    // Acessos por período - usar dados reais de sessões do analytics com agrupamento inteligente
+    let dailyAccess;
+    if (period === "all") {
+      // Para "all time", calcular desde o início do sistema
+      const firstSession = await prisma.analyticsSession.findFirst({
+        orderBy: { startTime: 'asc' },
+        select: { startTime: true }
+      });
+      
+      if (firstSession) {
+        const daysSinceFirst = Math.ceil((now.getTime() - firstSession.startTime.getTime()) / (24 * 60 * 60 * 1000));
+        dailyAccess = await adapter.getSessionsByDateRange(daysSinceFirst);
+      } else {
+        dailyAccess = [];
+      }
+    } else {
+      dailyAccess = await adapter.getSessionsByDateRange(parseInt(period));
+    }
 
     // Performance do sistema
     const memory = process.memoryUsage();

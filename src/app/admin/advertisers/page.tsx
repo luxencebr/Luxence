@@ -845,10 +845,9 @@ export default function AdvertisersPage() {
                             <button
                               className={styles.detailBtn}
                               onClick={() => {
-                                // TODO: Implementar visão individual
-                                alert("Visão individual em desenvolvimento");
+                                window.location.href = `/admin/advertisers/${advertiser.id}`;
                               }}
-                              title="Detalhes"
+                              title="Ver detalhes completos"
                             >
                               <User size={16} />
                             </button>
@@ -889,8 +888,7 @@ export default function AdvertisersPage() {
                 key={advertiser.id}
                 className={styles.mobileCard}
                 onClick={() => {
-                  // TODO: Implementar visão individual (equivalente ao botão desabilitado)
-                  alert("Visão individual em desenvolvimento");
+                  window.location.href = `/admin/advertisers/${advertiser.id}`;
                 }}
               >
                 <div className={styles.cardContent}>

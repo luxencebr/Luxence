@@ -192,6 +192,17 @@ function Dropdown({
                 Nenhum resultado encontrado
               </div>
             )
+          ) : !searchable && options.length > 0 ? (
+            options.map((option) => (
+              <button
+                key={option}
+                type="button"
+                onClick={() => handleSelectOption(option)}
+                className={`${styles.option} ${option === selectedValue ? styles.optionSelected : ""}`}
+              >
+                {option}
+              </button>
+            ))
           ) : typeof children === "function" ? (
             (children as (close: () => void) => ReactNode)(closeMenu)
           ) : (

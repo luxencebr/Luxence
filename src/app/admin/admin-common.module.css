@@ -117,6 +117,7 @@
   align-items: center;
   border-bottom: 2px solid var(--primary-color);
   padding-bottom: var(--space-sm);
+  min-height: 48px; /* Altura mínima consistente */
 }
 
 .sectionTitle {
@@ -126,18 +127,21 @@
   font-size: var(--ft-lg);
   font-weight: 600;
   color: var(--light-color);
+  line-height: 1.2; /* Altura de linha consistente */
 }
 
 .sectionIcon {
   color: var(--primary-color);
   width: 24px;
   height: 24px;
+  flex-shrink: 0; /* Evita que o ícone encolha */
 }
 
 .sectionTitle h3 {
   margin: 0;
   font-size: var(--ft-lg);
   font-weight: 600;
+  line-height: 1.2; /* Altura de linha consistente */
   color: var(--light-color);
 }
 
@@ -518,7 +522,15 @@
 
 @media (max-width: 480px) {
   .summaryCard {
-    padding: var(--space-md);
+    padding: var(--space-sm);
     min-height: auto;
+  }
+  
+  .cardValue {
+    gap: var(--space-xs);
+  }
+  
+  .primaryValue {
+    font-size: var(--ft-lg);
   }
 }

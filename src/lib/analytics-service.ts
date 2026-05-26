@@ -86,7 +86,7 @@ export class AnalyticsService {
    * Obtém métricas consolidadas para um período
    * Usado tanto pelo dashboard quanto pelas métricas
    */
-  async getConsolidatedMetrics(period: "24h" | "7d" | "30d" = "24h") {
+  async getConsolidatedMetrics(period: "24h" | "7d" | "30d" | "1y" | "all" = "24h") {
     const now = new Date();
     const startDate = this.getStartDate(now, period);
 
@@ -166,7 +166,7 @@ export class AnalyticsService {
   /**
    * Obtém breakdown de dispositivos
    */
-  async getDeviceBreakdown(period: "24h" | "7d" | "30d" = "7d") {
+  async getDeviceBreakdown(period: "24h" | "7d" | "30d" | "1y" | "all" = "7d") {
     const startDate = this.getStartDate(new Date(), period);
 
     const deviceData = await this.prisma.analyticsSession.groupBy({
@@ -229,7 +229,7 @@ export class AnalyticsService {
   /**
    * Obtém breakdown de localização
    */
-  async getLocationBreakdown(period: "24h" | "7d" | "30d" = "7d") {
+  async getLocationBreakdown(period: "24h" | "7d" | "30d" | "1y" | "all" = "7d") {
     const startDate = this.getStartDate(new Date(), period);
 
     const locationData = await this.prisma.analyticsSession.groupBy({
@@ -290,45 +290,349 @@ export class AnalyticsService {
   }
 
   /**
+   * Utilitário para obter data/hora no fuso horário de Brasília
+   */
+  private getBrasiliaTime(date: Date = new Date()): Date {
+    const brasiliaOffset = -3 * 60; // UTC-3 em minutos
+    return new Date(date.getTime() + (brasiliaOffset - date.getTimezoneOffset()) * 60 * 1000);
+  }
+
+  /**
+   * Utilitário para converter data de Brasília para UTC
+   */
+  private brasiliaToUTC(brasiliaDate: Date): Date {
+    const brasiliaOffset = -3 * 60; // UTC-3 em minutos
+    return new Date(brasiliaDate.getTime() - (brasiliaOffset - brasiliaDate.getTimezoneOffset()) * 60 * 1000);
+  }
+
+  /**
    * Obtém dados de acesso por período (para gráficos)
+   * Agora com agrupamento inteligente baseado no período
    */
   async getSessionsByDateRange(days: number) {
-    const endDate = new Date();
-    const startDate = new Date(endDate.getTime() - days * 24 * 60 * 60 * 1000);
+    // Usar fuso horário de Brasília (UTC-3)
+    const brasiliaTime = this.getBrasiliaTime();
+    
+    // Para período de 24h, usar dados horários
+    if (days === 1) {
+      return this.getSessionsByHour();
+    }
+    
+    // Fim do dia atual em Brasília (23:59:59)
+    const endDate = new Date(brasiliaTime.getFullYear(), brasiliaTime.getMonth(), brasiliaTime.getDate(), 23, 59, 59, 999);
+    
+    // Início do período (00:00:00 do dia N dias atrás)
+    const startDate = new Date(endDate.getTime() - (days - 1) * 24 * 60 * 60 * 1000);
+    startDate.setHours(0, 0, 0, 0);
 
-    // Buscar sessões agrupadas por dia
+    // Buscar sessões do período (converter de volta para UTC para query)
+    const startDateUTC = this.brasiliaToUTC(startDate);
+    const endDateUTC = this.brasiliaToUTC(endDate);
+    
     const sessions = await this.prisma.analyticsSession.findMany({
       where: {
-        startTime: { gte: startDate, lte: endDate },
+        startTime: { gte: startDateUTC, lte: endDateUTC },
       },
       select: {
         startTime: true,
       },
     });
 
-    // Agrupar por dia
-    const dailyMap = new Map<string, number>();
+    // Determinar agrupamento baseado no período
+    if (days <= 7) {
+      // 7 dias ou menos: mostrar por dia
+      return this.groupSessionsByDay(sessions, startDate, days);
+    } else if (days <= 30) {
+      // 30 dias: agrupar de 3 em 3 dias (10 pontos)
+      return this.groupSessionsByPeriod(sessions, startDate, days, 3);
+    } else if (days <= 365) {
+      // 1 ano: agrupar por mês (12 pontos)
+      return this.groupSessionsByMonth(sessions, startDate, days);
+    } else {
+      // All time: agrupar por trimestre ou ano dependendo do range
+      const totalDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000));
+      if (totalDays > 1095) { // Mais de 3 anos
+        return this.groupSessionsByYear(sessions, startDate, totalDays);
+      } else {
+        return this.groupSessionsByQuarter(sessions, startDate, totalDays);
+      }
+    }
+  }
+
+  /**
+   * Obtém dados de sessões por hora para o período de 24h
+   * Mostra apenas as horas do dia atual até a hora atual
+   */
+  private async getSessionsByHour() {
+    // Usar horário local do servidor (assumindo que está configurado para Brasília)
+    const now = new Date();
+    const currentHour = now.getHours();
     
-    // Inicializar todos os dias com 0
-    for (let i = 0; i < days; i++) {
-      const date = new Date(startDate.getTime() + i * 24 * 60 * 60 * 1000);
-      const dateStr = date.toISOString().split('T')[0];
-      dailyMap.set(dateStr, 0);
+    // Início do dia atual (00:00:00)
+    const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+    
+    // Fim da hora atual (XX:59:59)
+    const currentHourEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), currentHour, 59, 59, 999);
+    
+    console.log(`[DEBUG] Buscando sessões de ${dayStart.toISOString()} até ${currentHourEnd.toISOString()}`);
+    console.log(`[DEBUG] Hora atual: ${currentHour}h`);
+    
+    // Buscar sessões do dia atual até a hora atual (usar UTC diretamente)
+    const sessions = await this.prisma.analyticsSession.findMany({
+      where: {
+        startTime: { gte: dayStart, lte: currentHourEnd },
+      },
+      select: {
+        startTime: true,
+      },
+    });
+
+    console.log(`[DEBUG] Encontradas ${sessions.length} sessões`);
+
+    // Criar mapa de horas (00 até hora atual)
+    const hourlyMap = new Map<number, number>();
+    
+    // Inicializar todas as horas de 00 até a hora atual com 0
+    for (let hour = 0; hour <= currentHour; hour++) {
+      hourlyMap.set(hour, 0);
     }
 
     // Preencher com dados reais
     sessions.forEach(session => {
-      const dateStr = session.startTime.toISOString().split('T')[0];
-      dailyMap.set(dateStr, (dailyMap.get(dateStr) || 0) + 1);
+      const hour = session.startTime.getHours();
+      console.log(`[DEBUG] Sessão na hora ${hour}h: ${session.startTime.toISOString()}`);
+      
+      if (hourlyMap.has(hour)) {
+        hourlyMap.set(hour, (hourlyMap.get(hour) || 0) + 1);
+      }
     });
 
-    return Array.from(dailyMap.entries()).map(([date, views]) => ({
-      date,
-      views,
-      label: new Date(date).toLocaleDateString('pt-BR', { 
+    // Log do resultado
+    console.log(`[DEBUG] Dados por hora:`, Array.from(hourlyMap.entries()));
+
+    // Converter para formato esperado pelo gráfico
+    return Array.from(hourlyMap.entries()).map(([hour, views]) => {
+      const hourStr = String(hour).padStart(2, '0');
+      const today = now.toISOString().split('T')[0];
+      
+      return {
+        date: `${today}T${hourStr}:00:00`,
+        views,
+        label: `${hourStr}h`,
+        isHourly: true, // Flag para indicar que são dados horários
+      };
+    });
+  }
+
+  /**
+   * Agrupa sessões por dia
+   */
+  private groupSessionsByDay(sessions: Array<{ startTime: Date }>, startDate: Date, days: number) {
+    const dailyMap = new Map<string, number>();
+    
+    // Inicializar todos os dias com 0 (usando datas em Brasília)
+    for (let i = 0; i < days; i++) {
+      const date = new Date(startDate.getTime() + i * 24 * 60 * 60 * 1000);
+      // Manter a data em formato local (Brasília) para consistência
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const dateStr = `${year}-${month}-${day}`;
+      dailyMap.set(dateStr, 0);
+    }
+
+    // Preencher com dados reais (converter para horário de Brasília)
+    sessions.forEach(session => {
+      // Converter UTC para horário de Brasília
+      const brasiliaTime = this.getBrasiliaTime(session.startTime);
+      // Usar o mesmo formato de data
+      const year = brasiliaTime.getFullYear();
+      const month = String(brasiliaTime.getMonth() + 1).padStart(2, '0');
+      const day = String(brasiliaTime.getDate()).padStart(2, '0');
+      const dateStr = `${year}-${month}-${day}`;
+      
+      if (dailyMap.has(dateStr)) {
+        dailyMap.set(dateStr, (dailyMap.get(dateStr) || 0) + 1);
+      }
+    });
+
+    return Array.from(dailyMap.entries()).map(([date, views]) => {
+      const [year, month, day] = date.split('-');
+      const dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+      
+      // Para períodos semanais, incluir informações do dia da semana
+      const dayOfWeek = dateObj.toLocaleDateString('pt-BR', { weekday: 'short' });
+      const dayMonth = dateObj.toLocaleDateString('pt-BR', { 
         day: '2-digit', 
         month: '2-digit' 
-      }),
+      });
+      
+      return {
+        date,
+        views,
+        label: dayMonth,
+        dayOfWeek: dayOfWeek,
+        isWeekly: days <= 7, // Flag para indicar se é período semanal
+      };
+    });
+  }
+
+  /**
+   * Agrupa sessões por período de N dias
+   */
+  private groupSessionsByPeriod(sessions: Array<{ startTime: Date }>, startDate: Date, totalDays: number, groupSize: number) {
+    const groups = Math.ceil(totalDays / groupSize);
+    const periodMap = new Map<number, number>();
+    
+    // Inicializar todos os períodos com 0
+    for (let i = 0; i < groups; i++) {
+      periodMap.set(i, 0);
+    }
+
+    // Preencher com dados reais (converter para horário de Brasília)
+    sessions.forEach(session => {
+      // Converter UTC para horário de Brasília
+      const brasiliaTime = this.getBrasiliaTime(session.startTime);
+      const daysDiff = Math.floor((brasiliaTime.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000));
+      const groupIndex = Math.floor(daysDiff / groupSize);
+      if (groupIndex >= 0 && groupIndex < groups) {
+        periodMap.set(groupIndex, (periodMap.get(groupIndex) || 0) + 1);
+      }
+    });
+
+    return Array.from(periodMap.entries()).map(([groupIndex, views]) => {
+      // Para o período mensal (30 dias), mostrar o último dia da soma
+      const groupEndDate = new Date(startDate.getTime() + (groupIndex + 1) * groupSize * 24 * 60 * 60 * 1000 - 1);
+      
+      // Usar formato consistente de data
+      const year = groupEndDate.getFullYear();
+      const month = String(groupEndDate.getMonth() + 1).padStart(2, '0');
+      const day = String(groupEndDate.getDate()).padStart(2, '0');
+      const dateStr = `${year}-${month}-${day}`;
+      
+      return {
+        date: dateStr,
+        views,
+        label: groupEndDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),
+      };
+    });
+  }
+
+  /**
+   * Agrupa sessões por mês
+   */
+  private groupSessionsByMonth(sessions: Array<{ startTime: Date }>, startDate: Date, totalDays: number) {
+    const monthMap = new Map<string, number>();
+    const now = new Date();
+    
+    // Para o período anual, mostrar apenas os últimos 12 meses contando com o vigente
+    // Começar 11 meses atrás e ir até o mês atual
+    const startMonth = new Date(now.getFullYear(), now.getMonth() - 11, 1);
+    const endMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    
+    // Inicializar todos os meses com 0
+    let currentMonth = new Date(startMonth);
+    while (currentMonth <= endMonth) {
+      const monthKey = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}`;
+      monthMap.set(monthKey, 0);
+      currentMonth.setMonth(currentMonth.getMonth() + 1);
+    }
+
+    // Preencher com dados reais (filtrar apenas sessões dos últimos 12 meses)
+    sessions.forEach(session => {
+      if (session.startTime >= startMonth && session.startTime <= now) {
+        const monthKey = `${session.startTime.getFullYear()}-${String(session.startTime.getMonth() + 1).padStart(2, '0')}`;
+        if (monthMap.has(monthKey)) {
+          monthMap.set(monthKey, (monthMap.get(monthKey) || 0) + 1);
+        }
+      }
+    });
+
+    return Array.from(monthMap.entries()).map(([monthKey, views]) => {
+      const [year, month] = monthKey.split('-');
+      const date = new Date(parseInt(year), parseInt(month) - 1, 1);
+      
+      return {
+        date: date.toISOString().split('T')[0],
+        views,
+        // Para o período anual, mostrar somente o mês abreviado (jan, fev, mar...)
+        label: date.toLocaleDateString('pt-BR', { 
+          month: 'short'
+        }).replace('.', ''),
+      };
+    });
+  }
+
+  /**
+   * Agrupa sessões por trimestre
+   */
+  private groupSessionsByQuarter(sessions: Array<{ startTime: Date }>, startDate: Date, totalDays: number) {
+    const quarterMap = new Map<string, number>();
+    
+    // Calcular quantos trimestres cobrir
+    const startQuarter = Math.floor(startDate.getMonth() / 3);
+    const startYear = startDate.getFullYear();
+    const endDate = new Date(startDate.getTime() + totalDays * 24 * 60 * 60 * 1000);
+    const endQuarter = Math.floor(endDate.getMonth() / 3);
+    const endYear = endDate.getFullYear();
+    
+    // Inicializar todos os trimestres com 0
+    for (let year = startYear; year <= endYear; year++) {
+      const startQ = year === startYear ? startQuarter : 0;
+      const endQ = year === endYear ? endQuarter : 3;
+      
+      for (let quarter = startQ; quarter <= endQ; quarter++) {
+        const quarterKey = `${year}-Q${quarter + 1}`;
+        quarterMap.set(quarterKey, 0);
+      }
+    }
+
+    // Preencher com dados reais
+    sessions.forEach(session => {
+      const quarter = Math.floor(session.startTime.getMonth() / 3);
+      const quarterKey = `${session.startTime.getFullYear()}-Q${quarter + 1}`;
+      quarterMap.set(quarterKey, (quarterMap.get(quarterKey) || 0) + 1);
+    });
+
+    return Array.from(quarterMap.entries()).map(([quarterKey, views]) => {
+      const [year, quarterStr] = quarterKey.split('-Q');
+      const quarter = parseInt(quarterStr) - 1;
+      const date = new Date(parseInt(year), quarter * 3, 1);
+      
+      return {
+        date: date.toISOString().split('T')[0],
+        views,
+        label: `T${quarter + 1}/${year.slice(-2)}`,
+      };
+    });
+  }
+
+  /**
+   * Agrupa sessões por ano
+   */
+  private groupSessionsByYear(sessions: Array<{ startTime: Date }>, startDate: Date, totalDays: number) {
+    const yearMap = new Map<number, number>();
+    
+    // Calcular quantos anos cobrir
+    const startYear = startDate.getFullYear();
+    const endDate = new Date(startDate.getTime() + totalDays * 24 * 60 * 60 * 1000);
+    const endYear = endDate.getFullYear();
+    
+    // Inicializar todos os anos com 0
+    for (let year = startYear; year <= endYear; year++) {
+      yearMap.set(year, 0);
+    }
+
+    // Preencher com dados reais
+    sessions.forEach(session => {
+      const year = session.startTime.getFullYear();
+      yearMap.set(year, (yearMap.get(year) || 0) + 1);
+    });
+
+    return Array.from(yearMap.entries()).map(([year, views]) => ({
+      date: new Date(year, 0, 1).toISOString().split('T')[0],
+      views,
+      label: year.toString(),
     }));
   }
 
@@ -469,7 +773,7 @@ export class AnalyticsService {
   /**
    * Utilitário para calcular data de início baseada no período
    */
-  private getStartDate(now: Date, period: "24h" | "7d" | "30d"): Date {
+  private getStartDate(now: Date, period: "24h" | "7d" | "30d" | "1y" | "all"): Date {
     switch (period) {
       case "24h":
         return new Date(now.getTime() - 24 * 60 * 60 * 1000);
@@ -477,6 +781,11 @@ export class AnalyticsService {
         return new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
       case "30d":
         return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      case "1y":
+        return new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+      case "all":
+        // Para "all time", buscar a primeira sessão registrada
+        return new Date(2024, 0, 1); // Ou usar uma data padrão como início do sistema
       default:
         return new Date(now.getTime() - 24 * 60 * 60 * 1000);
     }

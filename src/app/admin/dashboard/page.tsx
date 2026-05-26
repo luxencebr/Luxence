@@ -111,9 +111,7 @@ const PLAN_COLORS = {
 export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [cardLoading, setCardLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [cardPeriod, setCardPeriod] = useState("7");
   const [autoRefresh, setAutoRefresh] = useState(true);
 
   useEffect(() => {
@@ -124,21 +122,13 @@ export default function DashboardPage() {
     if (!autoRefresh) return;
     const interval = setInterval(() => fetchDashboardData(), 60000);
     return () => clearInterval(interval);
-  }, [autoRefresh, cardPeriod]);
+  }, [autoRefresh]);
 
-  const fetchDashboardData = async (period?: string) => {
+  const fetchDashboardData = async () => {
     try {
-      const isCardUpdate = !!period;
-      if (isCardUpdate) {
-        setCardLoading(true);
-      } else {
-        setLoading(true);
-      }
+      setLoading(true);
 
-      const periodParam = period || cardPeriod;
-      const response = await fetch(
-        `/api/admin/dashboard?period=${periodParam}`,
-      );
+      const response = await fetch(`/api/admin/dashboard?period=7`);
       if (!response.ok) throw new Error("Falha ao carregar dados");
 
       const dashboardData = await response.json();
@@ -148,18 +138,11 @@ export default function DashboardPage() {
       setError(err instanceof Error ? err.message : "Erro desconhecido");
     } finally {
       setLoading(false);
-      setCardLoading(false);
     }
   };
 
   const refreshDashboard = () => {
-    fetchDashboardData(); // Atualiza tudo com o período atual
-  };
-
-  const handlePeriodChange = (period: string) => {
-    if (period === cardPeriod) return;
-    setCardPeriod(period);
-    fetchDashboardData(period);
+    fetchDashboardData();
   };
 
   const getGrowthColor = (growth: number) => {
@@ -285,208 +268,6 @@ export default function DashboardPage() {
                 </div>
               </Card>
             </div>
-
-            <Card className={commonStyles.summaryCard} backgroundColor="var(--dark-complementary-color)">
-              <div className={styles.cardHeader}>
-                <h3>Acessos por Período</h3>
-                <div className={styles.cardPeriodSelector}>
-                  <div className={styles.cardPeriodDropdown}>
-                    <Dropdown
-                      trigger={
-                        <div className={commonStyles.dropdownTrigger}>
-                          {cardPeriod === "7"
-                            ? "7 dias"
-                            : cardPeriod === "30"
-                              ? "30 dias"
-                              : "1 ano"}
-                        </div>
-                      }
-                      containerClassName={commonStyles.dropdownContainer}
-                      triggerClassName={commonStyles.dropdownTriggerStyle}
-                      menuClassName={commonStyles.dropdownMenu}
-                    >
-                      <button
-                        type="button"
-                        onClick={() => handlePeriodChange("7")}
-                        className={`${commonStyles.dropdownOption} ${cardPeriod === "7" ? commonStyles.dropdownOptionSelected : ""}`}
-                      >
-                        7 dias
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handlePeriodChange("30")}
-                        className={`${commonStyles.dropdownOption} ${cardPeriod === "30" ? commonStyles.dropdownOptionSelected : ""}`}
-                      >
-                        30 dias
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handlePeriodChange("365")}
-                        className={`${commonStyles.dropdownOption} ${cardPeriod === "365" ? commonStyles.dropdownOptionSelected : ""}`}
-                      >
-                        1 ano
-                      </button>
-                    </Dropdown>
-                  </div>
-                  <div className={styles.cardPeriodButtons}>
-                    <button
-                      className={`${commonStyles.periodButton} ${cardPeriod === "7" ? commonStyles.periodActive : ""}`}
-                      onClick={() => handlePeriodChange("7")}
-                    >
-                      7 dias
-                    </button>
-                    <button
-                      className={`${commonStyles.periodButton} ${cardPeriod === "30" ? commonStyles.periodActive : ""}`}
-                      onClick={() => handlePeriodChange("30")}
-                    >
-                      30 dias
-                    </button>
-                    <button
-                      className={`${commonStyles.periodButton} ${cardPeriod === "365" ? commonStyles.periodActive : ""}`}
-                      onClick={() => handlePeriodChange("365")}
-                    >
-                      1 ano
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div className={styles.chartContainer}>
-                {cardLoading ? (
-                  <div className={styles.chartLoading}>
-                    <div className={commonStyles.spinner}></div>
-                    <span>Carregando dados...</span>
-                  </div>
-                ) : (
-                  <>
-                    <svg className={styles.chartSvg} viewBox="0 0 400 240">
-                      {/* Grid lines */}
-                      <defs>
-                        <pattern
-                          id="grid"
-                          width="40"
-                          height="20"
-                          patternUnits="userSpaceOnUse"
-                        >
-                          <path
-                            d="M 40 0 L 0 0 0 20"
-                            fill="none"
-                            stroke="var(--dark-color)"
-                            strokeWidth="0.5"
-                            opacity="0.3"
-                          />
-                        </pattern>
-                      </defs>
-                      <rect width="100%" height="100%" fill="url(#grid)" />
-
-                      {/* Chart content */}
-                      {(() => {
-                        if (!data.dailyAccess.length) return null;
-
-                        const maxViews = Math.max(
-                          ...data.dailyAccess.map((d) => d.views),
-                          1,
-                        );
-                        const stepX =
-                          350 / Math.max(data.dailyAccess.length - 1, 1);
-
-                        const points = data.dailyAccess
-                          .map((day, index) => {
-                            const x = 25 + index * stepX;
-                            const y = 180 - (day.views / maxViews) * 140;
-                            return `${x},${y}`;
-                          })
-                          .join(" ");
-
-                        return (
-                          <>
-                            {/* Data points with hover effects */}
-                            {data.dailyAccess.map((day, index) => {
-                              const x = 25 + index * stepX;
-                              const y = 180 - (day.views / maxViews) * 140;
-                              return (
-                                <g
-                                  key={`point-${index}`}
-                                  className={styles.chartPointGroup}
-                                >
-                                  {/* Extended hover area (covers entire vertical line) */}
-                                  <rect
-                                    x={x - 15}
-                                    y={40}
-                                    width="30"
-                                    height="200"
-                                    fill="transparent"
-                                    className={styles.chartHoverArea}
-                                  />
-
-                                  {/* Vertical dashed line (highlighted on hover) */}
-                                  <line
-                                    x1={x}
-                                    y1={40}
-                                    x2={x}
-                                    y2={180}
-                                    stroke="var(--dark-complementary-color)"
-                                    strokeWidth="1"
-                                    strokeDasharray="4,4"
-                                    className={styles.chartVerticalLine}
-                                  />
-
-                                  {/* Actual data point */}
-                                  <circle
-                                    cx={x}
-                                    cy={y}
-                                    r="4"
-                                    fill="var(--primary-color)"
-                                    stroke="var(--dark-color)"
-                                    strokeWidth="2"
-                                    className={styles.chartPoint}
-                                  />
-
-                                  {/* Value label (always visible) */}
-                                  <text
-                                    x={x}
-                                    y={y - 15}
-                                    textAnchor="middle"
-                                    fontSize="12"
-                                    fill="var(--primary-color)"
-                                    fontWeight="600"
-                                    className={styles.chartPointValue}
-                                  >
-                                    {day.views}
-                                  </text>
-
-                                  {/* Date/Month label below the chart */}
-                                  <text
-                                    x={x}
-                                    y={200}
-                                    textAnchor="middle"
-                                    fontSize="10"
-                                    fill="var(--light-complementary-color)"
-                                    fontWeight="500"
-                                    className={styles.chartDateLabel}
-                                  >
-                                    {day.label}
-                                  </text>
-                                </g>
-                              );
-                            })}
-
-                            {/* Chart line */}
-                            <polyline
-                              fill="none"
-                              stroke="var(--primary-color)"
-                              strokeWidth="3"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              points={points}
-                            />
-                          </>
-                        );
-                      })()}
-                    </svg>
-                  </>
-                )}
-              </div>
-            </Card>
           </div>
         </section>
 
