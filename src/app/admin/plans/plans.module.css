@@ -1,0 +1,855 @@
+/* Plans Page - Clean layout without unnecessary sections */
+
+/* Create Button */
+.createButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--primary-color);
+  color: var(--dark-color);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: var(--ft-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-normal);
+  white-space: nowrap;
+}
+
+.createButton:hover:not(:disabled) {
+  opacity: 0.8;
+}
+
+.createButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.createButton span {
+  display: inline;
+}
+
+/* Search Container */
+.searchContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.searchWrapper {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: var(--space-sm);
+  color: var(--light-complementary-color);
+  z-index: 2;
+  transition: color 0.2s ease;
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  padding: var(--space-sm) var(--space-md) var(--space-sm) 44px;
+  border: 1px solid transparent;
+  border-radius: 24px;
+  background: var(--dark-complementary-color);
+  color: var(--light-color);
+  font-size: var(--ft-sm);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  outline: none;
+}
+
+.searchInput:focus + .searchIcon,
+.searchWrapper:hover .searchIcon {
+  color: var(--primary-color);
+}
+
+.searchInput:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.searchInput::placeholder {
+  color: var(--light-complementary-color);
+  font-weight: 400;
+}
+
+.clearButton {
+  position: absolute;
+  right: var(--space-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
+  color: var(--light-complementary-color);
+  cursor: pointer;
+  border-radius: 50%;
+  transition: var(--transition-normal);
+}
+
+.clearButton:hover {
+  background: var(--background-color);
+  color: var(--light-color);
+}
+
+/* Plans Container - Main wrapper */
+.plansContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+/* ============================================
+   PLANO PADRÃO (COBRE) - CARD HORIZONTAL
+   ============================================ */
+
+.defaultPlanCard {
+  position: relative;
+  transition: var(--transition-normal);
+  border: 2px solid var(--primary-color);
+  background: var(--dark-complementary-color);
+}
+
+.defaultPlanCard:hover:not(.updating) {
+  transform: translateY(-2px);
+}
+
+.defaultPlanContent {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: var(--space-xl);
+  padding: var(--space-xl);
+  align-items: start;
+}
+
+.defaultPlanLeft {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  justify-content: space-between;
+  height: 100%;
+}
+
+.defaultPlanRight {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* Headers com Status e Actions */
+.defaultCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--dark-complementary-color);
+}
+
+.compactCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+}
+
+.defaultBenefitsSection {
+  flex: 1;
+}
+
+.defaultBenefitsList {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-sm);
+}
+
+.defaultPlanFooter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--dark-complementary-color);
+  margin-top: auto;
+}
+
+/* Plans Grid */
+.plansGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-lg);
+  align-items: start;
+}
+
+/* Plan Cards */
+.planCard {
+  position: relative;
+  transition: var(--transition-normal);
+  border: 1px solid var(--dark-complementary-color);
+  height: fit-content;
+}
+
+.planCard:hover:not(.updating) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.planCard.updating {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.planContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  height: 100%;
+}
+
+/* Plan Header */
+.planHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: var(--space-sm);
+  border-bottom: 2px solid var(--dark-complementary-color);
+  margin-bottom: var(--space-sm);
+}
+
+.signatureBadge {
+  padding: var(--space-xs) var(--space-md);
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: var(--ft-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.statusToggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  border: none;
+  border-radius: 20px;
+  font-size: var(--ft-xs);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-normal);
+  flex-shrink: 0;
+}
+
+.statusToggle:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.statusToggle.active {
+  background: rgba(34, 197, 94, 0.2);
+  color: var(--success-color);
+}
+
+.statusToggle.inactive {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--danger-color);
+}
+
+.statusToggle:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+/* Plan Info */
+.planInfo {
+  text-align: center;
+  margin-bottom: var(--space-sm);
+}
+
+.planName {
+  font-size: var(--ft-xl);
+  font-weight: 700;
+  color: var(--primary-color);
+  margin: 0 0 var(--space-xs) 0;
+}
+
+.planPrice {
+  font-size: var(--ft-lg);
+  font-weight: 600;
+  color: var(--light-color);
+  margin: 0 0 var(--space-sm) 0;
+}
+
+.planDescription {
+  font-size: var(--ft-sm);
+  color: var(--light-complementary-color);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Benefits Section */
+.benefitsSection {
+  flex: 1;
+}
+
+.benefitsTitle {
+  font-size: var(--ft-md);
+  font-weight: 600;
+  color: var(--light-color);
+  margin: 0 0 var(--space-md) 0;
+  padding-bottom: var(--space-xs);
+  border-bottom: 1px solid var(--dark-complementary-color);
+}
+
+.benefitsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.benefit {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm);
+  background: var(--background-color);
+  border-radius: var(--radius-xs);
+  font-size: var(--ft-sm);
+  color: var(--light-color);
+  transition: var(--transition-normal);
+}
+
+.benefit svg {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.benefit.enabled {
+  border-left: 3px solid var(--success-color);
+}
+
+.benefit.disabled {
+  opacity: 0.5;
+  border-left: 3px solid var(--danger-color);
+}
+
+.checkIcon {
+  color: var(--success-color);
+  font-size: var(--ft-xs);
+}
+
+.xmarkIcon {
+  color: var(--danger-color);
+  font-size: var(--ft-xs);
+}
+
+/* Plan Footer */
+.planFooter {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--dark-complementary-color);
+  margin-top: auto;
+}
+
+.planStats {
+  display: flex;
+  justify-content: center;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--ft-sm);
+  color: var(--light-complementary-color);
+}
+
+.planActions {
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: center;
+}
+
+.editButton,
+.deleteButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
+  border: none;
+  border-radius: var(--radius-xs);
+  font-size: var(--ft-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-normal);
+  flex: 1;
+  justify-content: center;
+}
+
+.editButton {
+  background: var(--primary-color);
+  color: var(--dark-color);
+}
+
+.editButton:hover:not(:disabled) {
+  background: var(--secundary-color);
+}
+
+.editButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.deleteButton {
+  background: rgba(231, 76, 60, 0.2);
+  color: var(--danger-color);
+}
+
+.deleteButton:hover:not(:disabled) {
+  background: rgba(231, 76, 60, 0.3);
+}
+
+.deleteButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.planDates {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--space-xs);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: var(--ft-xs);
+  color: var(--light-complementary-color);
+  margin-top: var(--space-sm);
+}
+
+/* Updating Overlay */
+.updatingOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  border-radius: var(--radius-md);
+  color: var(--light-color);
+  font-size: var(--ft-sm);
+}
+
+/* Empty State */
+.emptyContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  text-align: center;
+  color: var(--light-complementary-color);
+  gap: var(--space-md);
+  padding: var(--space-xl);
+}
+
+.emptyIcon {
+  color: var(--light-complementary-color);
+  opacity: 0.5;
+}
+
+.emptyContainer h3 {
+  font-size: var(--ft-lg);
+  font-weight: 600;
+  margin: 0;
+  color: var(--light-color);
+}
+
+.emptyContainer p {
+  font-size: var(--ft-sm);
+  margin: 0;
+  max-width: 400px;
+}
+
+/* ============================================
+   OUTROS PLANOS - GRID 3 COLUNAS
+   ============================================ */
+
+.otherPlansHeader {
+  text-align: center;
+  padding-top: var(--space-xl);
+  border-top: 2px solid var(--dark-complementary-color);
+}
+
+.otherPlansHeader h2 {
+  font-size: var(--ft-xl);
+  font-weight: 700;
+  color: var(--light-color);
+  margin: 0 0 var(--space-sm) 0;
+}
+
+.otherPlansHeader p {
+  font-size: var(--ft-md);
+  color: var(--light-complementary-color);
+  margin: 0;
+}
+
+.otherPlansGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+  align-items: start;
+}
+
+/* Compact Plan Cards - Seguindo padrão signature */
+.compactPlanCard {
+  position: relative;
+  transition: var(--transition-normal);
+}
+
+.compactPlanCard:hover:not(.updating) {
+  transform: translateY(-4px);
+}
+
+.compactPlanContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  height: 100%;
+}
+
+/* Plan Header compacto */
+.compactPlanHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-sm);
+}
+
+.compactPlanInfo {
+  text-align: center;
+  margin-bottom: var(--space-md);
+}
+
+.compactPlanName {
+  font-size: var(--ft-xl);
+  font-weight: 700;
+  color: var(--primary-color);
+  margin: 0 0 var(--space-xs) 0;
+}
+
+.compactPlanPrice {
+  font-size: var(--ft-md);
+  font-weight: 600;
+  color: var(--light-color);
+  margin: 0 0 var(--space-sm) 0;
+  opacity: 0.8;
+}
+
+.compactPlanDescription {
+  font-size: var(--ft-sm);
+  color: var(--light-complementary-color);
+  line-height: 1.4;
+  margin: 0;
+  text-align: center;
+}
+
+/* Benefits seguindo padrão signature */
+.compactBenefitsSection {
+  flex: 1;
+}
+
+.compactBenefitsTitle {
+  font-size: var(--ft-md);
+  font-weight: 600;
+  color: var(--light-color);
+  margin: 0 0 var(--space-md) 0;
+  padding-bottom: var(--space-xs);
+  border-bottom: 1px solid var(--dark-complementary-color);
+}
+
+.compactBenefitsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.compactBenefit {
+  background: var(--background-color);
+  padding: var(--space-sm);
+  border-radius: var(--radius-xs);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--ft-sm);
+  color: var(--light-color);
+}
+
+.compactBenefit svg {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.compactBenefit.enabled {
+  border-left: 3px solid var(--success-color);
+}
+
+.compactBenefit.disabled {
+  opacity: 0.5;
+  border-left: 3px solid var(--danger-color);
+}
+
+/* Footer compacto seguindo padrão */
+.compactPlanFooter {
+  display: flex;
+  justify-content: center;
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--dark-complementary-color);
+  margin-top: auto;
+}
+
+.compactPlanStats {
+  display: flex;
+  justify-content: center;
+}
+
+.compactPlanActions {
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: center;
+}
+
+.compactEditButton,
+.compactDeleteButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
+  border: none;
+  border-radius: var(--radius-xs);
+  font-size: var(--ft-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-normal);
+  flex: 1;
+  justify-content: center;
+}
+
+.compactEditButton {
+  background: var(--primary-color);
+  color: var(--dark-color);
+}
+
+.compactEditButton:hover:not(:disabled) {
+  background: var(--secundary-color);
+}
+
+.compactEditButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.compactDeleteButton {
+  background: rgba(231, 76, 60, 0.2);
+  color: var(--danger-color);
+}
+
+.compactDeleteButton:hover:not(:disabled) {
+  background: rgba(231, 76, 60, 0.3);
+}
+
+.compactDeleteButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.compactPlanActions {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.compactEditButton,
+.compactDeleteButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
+  border: none;
+  border-radius: var(--radius-xs);
+  font-size: var(--ft-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-normal);
+  justify-content: center;
+}
+
+.compactEditButton {
+  background: var(--primary-color);
+  color: var(--dark-color);
+}
+
+.compactEditButton:hover:not(:disabled) {
+  background: var(--secundary-color);
+}
+
+.compactEditButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.compactDeleteButton {
+  background: rgba(231, 76, 60, 0.2);
+  color: var(--danger-color);
+}
+
+.compactDeleteButton:hover:not(:disabled) {
+  background: rgba(231, 76, 60, 0.3);
+}
+
+.compactDeleteButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN UPDATES
+   ============================================ */
+
+@media (max-width: 1024px) {
+  .otherPlansGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .defaultPlanContent {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
+
+  .defaultBenefitsList {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .otherPlansGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .defaultPlanContent {
+    padding: var(--space-lg);
+  }
+
+  .defaultCardHeader,
+  .compactCardHeader {
+    flex-direction: column;
+    gap: var(--space-sm);
+    align-items: center;
+  }
+}
+@media (max-width: 768px) {
+  .plansGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  .planHeader {
+    flex-direction: column;
+    gap: var(--space-sm);
+    align-items: center;
+  }
+
+  .planFooter {
+    gap: var(--space-md);
+  }
+
+  .planActions {
+    flex-direction: row;
+    gap: var(--space-sm);
+  }
+
+  .planDates {
+    flex-direction: column;
+    gap: var(--space-xs);
+    align-items: center;
+  }
+
+  .searchWrapper {
+    max-width: none;
+  }
+
+  .createButton span {
+    display: none;
+  }
+
+  .createButton {
+    padding: var(--space-sm);
+    min-width: 40px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .defaultPlanContent {
+    padding: var(--space-md);
+    gap: var(--space-md);
+  }
+
+  .compactPlanContent {
+    padding: var(--space-md);
+    gap: var(--space-sm);
+  }
+
+  .compactBenefitsList {
+    gap: var(--space-xs);
+  }
+
+  .compactBenefit {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: var(--ft-xs);
+  }
+
+  .compactPlanActions {
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .planContent {
+    padding: var(--space-md);
+    gap: var(--space-sm);
+  }
+
+  .benefitsList {
+    gap: var(--space-xs);
+  }
+
+  .benefit {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: var(--ft-xs);
+  }
+
+  .planActions {
+    flex-direction: column;
+  }
+
+  .editButton,
+  .deleteButton {
+    flex: none;
+  }
+}

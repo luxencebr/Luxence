@@ -5,15 +5,16 @@ import { uploadToSpaces } from "@/lib/uploadToSpaces";
 import { auth } from "@/auth";
 import sharp from "sharp";
 
-export async function DELETE(_req: Request, { params }: any) {
+export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
 
   if (session?.user.role !== "ADMIN") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
+  const { id } = await params;
   const image = await prisma.homeSliderImage.findUnique({
-    where: { id: params.id },
+    where: { id },
   });
 
   if (!image) {
@@ -31,13 +32,13 @@ export async function DELETE(_req: Request, { params }: any) {
   }
 
   await prisma.homeSliderImage.delete({
-    where: { id: params.id },
+    where: { id },
   });
 
   return NextResponse.json({ success: true });
 }
 
-export async function PATCH(_req: Request, { params }: any) {
+export async function PATCH(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
 
   if (session?.user.role !== "ADMIN") {
@@ -45,9 +46,10 @@ export async function PATCH(_req: Request, { params }: any) {
   }
 
   const { cropData, zoom } = await _req.json();
+  const { id } = await params;
 
   const image = await prisma.homeSliderImage.findUnique({
-    where: { id: params.id },
+    where: { id },
   });
 
   const response = await fetch(image!.originalUrl!);
@@ -64,13 +66,13 @@ export async function PATCH(_req: Request, { params }: any) {
 
   const newUrl = await uploadToSpaces({
     buffer: croppedBuffer,
-    filename: `${params.id}-cropped.jpg`,
+    filename: `${id}-cropped.jpg`,
     contentType: "image/jpeg",
     folder: "home-slider",
   });
 
   const updated = await prisma.homeSliderImage.update({
-    where: { id: params.id },
+    where: { id },
     data: {
       url: newUrl,
       cropX: cropData.x,

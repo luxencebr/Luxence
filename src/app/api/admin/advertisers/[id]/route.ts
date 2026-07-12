@@ -5,15 +5,16 @@ const prisma = new PrismaClient();
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const advertiserId = parseInt(params.id);
+    const { id } = await params;
+    const advertiserId = parseInt(id);
 
     if (isNaN(advertiserId)) {
       return NextResponse.json(
         { error: "ID do anunciante inválido" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -79,7 +80,7 @@ export async function GET(
     if (!advertiser) {
       return NextResponse.json(
         { error: "Anunciante não encontrado" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -98,25 +99,26 @@ export async function GET(
 
     // Buscar sessões ativas separadamente
     const activeSessions = await prisma.userSession.findMany({
-      where: { 
+      where: {
         userId: advertiser.userId,
-        isActive: true 
+        isActive: true,
       },
       orderBy: { lastActivity: "desc" },
       take: 5,
     });
 
     // Calcular estatísticas de visualizações
-    const viewsLast7Days = advertiser.profile?.profileViews.filter(
-      (view) =>
-        view.viewedAt >= new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-    ).length || 0;
+    const viewsLast7Days =
+      advertiser.profile?.profileViews.filter(
+        (view) =>
+          view.viewedAt >= new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      ).length || 0;
 
     const viewsLast30Days = advertiser.profile?.profileViews.length || 0;
 
     // Buscar assinatura atual
     const currentSubscription = subscriptions.find(
-      (sub) => sub.status === "ACTIVE"
+      (sub) => sub.status === "ACTIVE",
     );
 
     // Processar dados para resposta
@@ -234,7 +236,7 @@ export async function GET(
     console.error("Erro ao buscar detalhes do anunciante:", error);
     return NextResponse.json(
       { error: "Erro interno do servidor" },
-      { status: 500 }
+      { status: 500 },
     );
   } finally {
     await prisma.$disconnect();
@@ -243,54 +245,55 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const advertiserId = parseInt(params.id);
+    const { id } = await params;
+    const advertiserId = parseInt(id);
     const body = await request.json();
 
     console.log("PATCH /api/admin/advertisers/[id] - Dados recebidos:", {
       advertiserId,
-      body: JSON.stringify(body, null, 2)
+      body: JSON.stringify(body, null, 2),
     });
 
     if (isNaN(advertiserId)) {
       return NextResponse.json(
         { error: "ID do anunciante inválido" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    const { 
-      signature, 
-      verificationStatus, 
-      isVerified, 
-      user, 
-      profile, 
-      contactId, 
+    const {
+      signature,
+      verificationStatus,
+      isVerified,
+      user,
+      profile,
+      contactId,
       contactValue,
       notifications,
-      ...producerData 
+      ...producerData
     } = body;
 
     // Buscar o producer para obter o userId e profileId
     const producer = await prisma.producer.findUnique({
       where: { id: advertiserId },
-      select: { 
-        userId: true, 
+      select: {
+        userId: true,
         profile: { select: { id: true } },
         name: true,
         document: true,
         nationality: true,
         birthday: true,
-        phone: true
+        phone: true,
       },
     });
 
     if (!producer) {
       return NextResponse.json(
         { error: "Anunciante não encontrado" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -306,18 +309,22 @@ export async function PATCH(
       // 1. Atualizar dados do usuário se fornecidos
       if (user && Object.keys(user).length > 0) {
         console.log("Atualizando dados do usuário:", user);
-        
+
         // Validar campos do usuário
         const userUpdateData: any = {};
-        
+
         if (user.name !== undefined) userUpdateData.name = user.name;
         if (user.email !== undefined) userUpdateData.email = user.email;
         if (user.phone !== undefined) userUpdateData.phone = user.phone;
         if (user.gender !== undefined) userUpdateData.gender = user.gender;
-        if (user.emailNotifications !== undefined) userUpdateData.emailNotifications = user.emailNotifications;
-        if (user.whatsappNotifications !== undefined) userUpdateData.whatsappNotifications = user.whatsappNotifications;
-        if (user.isDeleted !== undefined) userUpdateData.isDeleted = user.isDeleted;
-        if (user.deletedAt !== undefined) userUpdateData.deletedAt = user.deletedAt;
+        if (user.emailNotifications !== undefined)
+          userUpdateData.emailNotifications = user.emailNotifications;
+        if (user.whatsappNotifications !== undefined)
+          userUpdateData.whatsappNotifications = user.whatsappNotifications;
+        if (user.isDeleted !== undefined)
+          userUpdateData.isDeleted = user.isDeleted;
+        if (user.deletedAt !== undefined)
+          userUpdateData.deletedAt = user.deletedAt;
 
         if (Object.keys(userUpdateData).length > 0) {
           updatedUser = await tx.user.update({
@@ -331,10 +338,12 @@ export async function PATCH(
       // 2. Atualizar notificações se fornecidas
       if (notifications && Object.keys(notifications).length > 0) {
         console.log("Atualizando notificações:", notifications);
-        
+
         const notificationData: any = {};
-        if (notifications.email !== undefined) notificationData.emailNotifications = notifications.email;
-        if (notifications.whatsapp !== undefined) notificationData.whatsappNotifications = notifications.whatsapp;
+        if (notifications.email !== undefined)
+          notificationData.emailNotifications = notifications.email;
+        if (notifications.whatsapp !== undefined)
+          notificationData.whatsappNotifications = notifications.whatsapp;
 
         if (Object.keys(notificationData).length > 0) {
           await tx.user.update({
@@ -348,10 +357,10 @@ export async function PATCH(
       // 3. Atualizar dados do perfil se fornecidos
       if (profile && producer.profile && Object.keys(profile).length > 0) {
         console.log("Atualizando dados do perfil:", profile);
-        
+
         // Validar campos do perfil
         const profileUpdateData: any = {};
-        
+
         if (profile.name !== undefined) profileUpdateData.name = profile.name;
         if (profile.age !== undefined) {
           const age = parseInt(profile.age);
@@ -361,13 +370,20 @@ export async function PATCH(
             throw new Error("Idade deve ser um número entre 18 e 99 anos");
           }
         }
-        if (profile.slogan !== undefined) profileUpdateData.slogan = profile.slogan;
-        if (profile.description !== undefined) profileUpdateData.description = profile.description;
-        if (profile.images !== undefined) profileUpdateData.images = profile.images;
-        if (profile.scholarity !== undefined) profileUpdateData.scholarity = profile.scholarity;
-        if (profile.languages !== undefined) profileUpdateData.languages = profile.languages;
-        if (profile.hasLocal !== undefined) profileUpdateData.hasLocal = profile.hasLocal;
-        if (profile.neighborhoods !== undefined) profileUpdateData.neighborhoods = profile.neighborhoods;
+        if (profile.slogan !== undefined)
+          profileUpdateData.slogan = profile.slogan;
+        if (profile.description !== undefined)
+          profileUpdateData.description = profile.description;
+        if (profile.images !== undefined)
+          profileUpdateData.images = profile.images;
+        if (profile.scholarity !== undefined)
+          profileUpdateData.scholarity = profile.scholarity;
+        if (profile.languages !== undefined)
+          profileUpdateData.languages = profile.languages;
+        if (profile.hasLocal !== undefined)
+          profileUpdateData.hasLocal = profile.hasLocal;
+        if (profile.neighborhoods !== undefined)
+          profileUpdateData.neighborhoods = profile.neighborhoods;
 
         if (Object.keys(profileUpdateData).length > 0) {
           updatedProfile = await tx.producerProfile.update({
@@ -381,7 +397,7 @@ export async function PATCH(
       // 4. Atualizar contato específico se fornecido
       if (contactId && contactValue !== undefined) {
         console.log("Atualizando contato:", { contactId, contactValue });
-        
+
         updatedContact = await tx.producerContact.update({
           where: { id: parseInt(contactId) },
           data: { value: contactValue },
@@ -391,37 +407,44 @@ export async function PATCH(
 
       // 5. Atualizar dados do producer
       const updateData: any = {};
-      
+
       // Campos administrativos
       if (signature !== undefined) updateData.signature = signature;
-      if (verificationStatus !== undefined) updateData.verificationStatus = verificationStatus;
+      if (verificationStatus !== undefined)
+        updateData.verificationStatus = verificationStatus;
       if (typeof isVerified === "boolean") updateData.isVerified = isVerified;
-      
+
       // Campos pessoais do producer
       if (producerData.name !== undefined) updateData.name = producerData.name;
-      if (producerData.document !== undefined) updateData.document = producerData.document;
-      if (producerData.nationality !== undefined) updateData.nationality = producerData.nationality;
-      if (producerData.phone !== undefined) updateData.phone = producerData.phone;
+      if (producerData.document !== undefined)
+        updateData.document = producerData.document;
+      if (producerData.nationality !== undefined)
+        updateData.nationality = producerData.nationality;
+      if (producerData.phone !== undefined)
+        updateData.phone = producerData.phone;
       if (producerData.birthday !== undefined) {
         // Validar data de nascimento
         const birthDate = new Date(producerData.birthday);
         if (isNaN(birthDate.getTime())) {
           throw new Error("Data de nascimento inválida");
         }
-        
+
         const today = new Date();
         const age = today.getFullYear() - birthDate.getFullYear();
         if (age < 18) {
           throw new Error("Deve ter pelo menos 18 anos");
         }
-        
+
         updateData.birthday = birthDate;
       }
 
       // Campos de documentos (se fornecidos)
-      if (producerData.documentFrontPhoto !== undefined) updateData.documentFrontPhoto = producerData.documentFrontPhoto;
-      if (producerData.documentBackPhoto !== undefined) updateData.documentBackPhoto = producerData.documentBackPhoto;
-      if (producerData.selfieWithDocument !== undefined) updateData.selfieWithDocument = producerData.selfieWithDocument;
+      if (producerData.documentFrontPhoto !== undefined)
+        updateData.documentFrontPhoto = producerData.documentFrontPhoto;
+      if (producerData.documentBackPhoto !== undefined)
+        updateData.documentBackPhoto = producerData.documentBackPhoto;
+      if (producerData.selfieWithDocument !== undefined)
+        updateData.selfieWithDocument = producerData.selfieWithDocument;
 
       console.log("Dados para atualizar no producer:", updateData);
 
@@ -437,7 +460,7 @@ export async function PATCH(
         updatedUser,
         updatedProfile,
         updatedProducer,
-        updatedContact
+        updatedContact,
       };
     });
 
@@ -450,21 +473,22 @@ export async function PATCH(
         user: result.updatedUser,
         profile: result.updatedProfile,
         producer: result.updatedProducer,
-        contact: result.updatedContact
+        contact: result.updatedContact,
       },
     });
   } catch (error) {
     console.error("Erro ao atualizar anunciante:", error);
-    
+
     // Retornar erro mais específico
-    const errorMessage = error instanceof Error ? error.message : "Erro interno do servidor";
-    
+    const errorMessage =
+      error instanceof Error ? error.message : "Erro interno do servidor";
+
     return NextResponse.json(
-      { 
+      {
         error: errorMessage,
-        details: error instanceof Error ? error.stack : undefined
+        details: error instanceof Error ? error.stack : undefined,
       },
-      { status: 500 }
+      { status: 500 },
     );
   } finally {
     await prisma.$disconnect();
