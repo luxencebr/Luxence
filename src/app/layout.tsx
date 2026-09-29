@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Providers from "./provider";
 import AnalyticsTracker from "@/components/AnalyticsTracker";
+import GoogleTagManager from "@/components/GoogleTagManager";
 import "../styles/globals.css";
 import "../styles/variables.css";
 import "../styles/Fonts.css";
@@ -54,6 +55,7 @@ export default function RootLayout({
       <body>
         <Providers>
           <AnalyticsTracker />
+          <GoogleTagManager />
           {children}
         </Providers>
       </body>
