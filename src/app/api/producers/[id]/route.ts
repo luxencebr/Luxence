@@ -1,4 +1,6 @@
 import { prisma } from "@/utils/prisma";
+import { auth } from "@/auth";
+import { countUniqueProfileView, getVisitorIdentity, setVisitorCookie } from "@/lib/profile-view-tracking";
 import { type NextRequest, NextResponse } from "next/server";
 
 function getStartOfCurrentWeek(): Date {
@@ -129,26 +131,33 @@ export async function GET(
       });
     }
 
-    await prisma.$transaction([
-      prisma.profileView.create({
-        data: { profileId },
-      }),
-      prisma.producerProfile.update({
-        where: { id: profileId },
-        data: { views: { increment: 1 } },
-      }),
-    ]);
+    const session = await auth();
+    const isOwner = session?.user?.id === String(producer.user.id);
+    const identity = isOwner ? null : getVisitorIdentity(request, session?.user?.id);
+    const countedViews = identity
+      ? await countUniqueProfileView(profileId, identity.visitorHash)
+      : null;
+    const currentViews = countedViews ?? (identity
+      ? (await prisma.producerProfile.findUnique({
+          where: { id: profileId },
+          select: { views: true },
+        }))?.views
+      : producer.profile!.views);
 
-    return NextResponse.json(
+    const response = NextResponse.json(
       {
         ...producer,
         profile: {
           ...producer.profile,
           lastWeekViews,
+          views: currentViews ?? producer.profile!.views,
         },
       },
       { status: 200 },
     );
+    response.headers.set("Cache-Control", "private, no-store");
+    setVisitorCookie(response, identity?.cookieValue);
+    return response;
   } catch (error) {
     console.error("[v0] Erro ao buscar produtor:", error);
     return NextResponse.json(

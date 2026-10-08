@@ -387,6 +387,7 @@ model ProducerProfile {
   lastWeekViews Int     @default(0)
   lastWeekViewsUpdatedAt DateTime?
   profileViews ProfileView[]
+  profileVisitors ProfileVisitor[]
   reviews     Review[]
 }
 
@@ -635,6 +636,16 @@ model ProfileView {
   profile   ProducerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   @@index([profileId, viewedAt])
+}
+
+model ProfileVisitor {
+  profileId     Int
+  visitorHash   String   @db.Char(64)
+  lastCountedAt DateTime
+
+  profile ProducerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@id([profileId, visitorHash])
 }
 
 model HomeSliderImage {
