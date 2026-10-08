@@ -75,6 +75,15 @@ function Header() {
           </Link>
 
           <Link
+            href="/blog"
+            className={`${styles.navBtn} ${
+              isActive("/blog") ? styles.active : ""
+            }`}
+          >
+            Blog
+          </Link>
+
+          <Link
             href="/suport"
             className={`${styles.navBtn} ${
               isActive("/suport") ? styles.active : ""
@@ -196,6 +205,16 @@ function Header() {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Sobre
+              </Link>
+
+              <Link
+                href="/blog"
+                className={`${styles.mobileNavBtn} ${
+                  isActive("/blog") ? styles.active : ""
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Blog
               </Link>
 
               <Link

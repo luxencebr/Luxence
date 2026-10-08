@@ -357,8 +357,9 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
 
   const price = localProducer.profile.prices?.[0];
 
+  const advertiserName = localProducer.profile.name?.trim() || localProducer.name.trim();
   const whatsappMsg = encodeURIComponent(
-    "Olá! Vi seu perfil na Luxence!\n\nFiquei interessado em seus serviços. Vamos conversar?",
+    `Olá, ${advertiserName}! Vi seu perfil na Luxence!\n\nFiquei interessado em seus serviços. Vamos conversar?`,
   );
 
   const CONTACT_CONFIG: Record<
