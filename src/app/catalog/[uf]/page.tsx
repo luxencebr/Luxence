@@ -2,12 +2,13 @@
 
 import { useEffect, useMemo, useState, useRef, useCallback } from "react";
 import { useSession } from "next-auth/react";
+import type { Session } from "next-auth";
 import { useParams } from "next/navigation";
 import styles from "./page.module.css";
 
 import FilterPopup, { extractFilterOptions } from "@/components/FilterPopup/FilterPopup";
 import SortDropdown, { SortOption, SortDirection } from "@/components/SortDropdown/SortDropdown";
-// import DistancePopup from "@/components/DistancePopup/DistancePopup";
+import LocalPopup, { type DistanceSelection } from "@/components/LocalPopup/LocalPopup";
 import ProductsCatalog from "@/components/ProductsCatalog/ProductsCatalog";
 
 import { Producer } from "@/types/Producer";
@@ -45,7 +46,7 @@ function resolvePreferredGender(preferred?: Gender[] | null): Gender {
   return "trans";
 }
 
-function resolveInitialGender(session: any): Gender {
+function resolveInitialGender(session: Session | null): Gender {
   if (!session?.user) return "female";
 
   // 👉 Caso seja anunciante
@@ -79,6 +80,17 @@ function orderBySignature(items: Producer[]): Producer[] {
   return priority.flatMap((level) =>
     shuffle(items.filter((item) => item.signature === level))
   );
+}
+
+function fetchCatalogPage(uf: string, page: number, distance: DistanceSelection | null, gender: Gender | null, signal?: AbortSignal) {
+  const url = `/api/catalog/${uf}?page=${page}&limit=15`;
+  return fetch(url, distance ? {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...distance, gender }),
+    cache: "no-store",
+    signal,
+  } : { signal });
 }
 
 // Nova função: ordena por critério, depois por plano, depois aleatoriamente
@@ -283,7 +295,7 @@ export default function CatalogPage() {
 
   const { data: session, status } = useSession();
 
-  const [producers, setProducers] = useState<any[]>([]);
+  const [producers, setProducers] = useState<Producer[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -306,6 +318,13 @@ export default function CatalogPage() {
   const [filterOptions, setFilterOptions] = useState<ReturnType<typeof extractFilterOptions> | null>(null);
   const [sortBy, setSortBy] = useState<SortOption>("default");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+  const [distanceFilter, setDistanceFilter] = useState<DistanceSelection | null>(null);
+  const [unavailableLocations, setUnavailableLocations] = useState(0);
+  const requestGeneration = useRef(0);
+  const changeDistanceFilter = useCallback((next: DistanceSelection | null) => {
+    setDistanceFilter((previous) => previous?.lat === next?.lat &&
+      previous?.lng === next?.lng && previous?.radius === next?.radius ? previous : next);
+  }, []);
 
   useEffect(() => {
     if (status !== "authenticated") return;
@@ -354,24 +373,30 @@ export default function CatalogPage() {
 
   // 🔹 Fetch com paginação
   useEffect(() => {
+    const controller = new AbortController();
+    requestGeneration.current++;
     async function fetchCatalog() {
       try {
         setLoading(true);
-        const res = await fetch(`/api/catalog/${uf}?page=1&limit=15`);
+        setError(null);
+        const res = await fetchCatalogPage(uf, 1, distanceFilter, selectedGender, controller.signal);
         if (!res.ok) throw new Error("Erro ao carregar catálogo");
         const data = await res.json();
+        if (controller.signal.aborted) return;
         setProducers(data.producers);
         setHasMore(data.pagination.hasMore);
+        setUnavailableLocations(data.unavailableLocations || 0);
         setPage(1);
-      } catch (err) {
-        setError("Não foi possível carregar os produtores");
+      } catch {
+        if (!controller.signal.aborted) setError("Não foi possível carregar os produtores");
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) setLoading(false);
       }
     }
 
     fetchCatalog();
-  }, [uf]);
+    return () => controller.abort();
+  }, [uf, distanceFilter, selectedGender]);
 
   // 🔹 Carregar mais produtores
   const loadMore = useCallback(async () => {
@@ -380,19 +405,21 @@ export default function CatalogPage() {
     try {
       setLoadingMore(true);
       const nextPage = page + 1;
-      const res = await fetch(`/api/catalog/${uf}?page=${nextPage}&limit=15`);
+      const generation = requestGeneration.current;
+      const res = await fetchCatalogPage(uf, nextPage, distanceFilter, selectedGender);
       if (!res.ok) throw new Error("Erro ao carregar mais produtores");
       const data = await res.json();
-      
+      if (generation !== requestGeneration.current) return;
       setProducers(prev => [...prev, ...data.producers]);
       setHasMore(data.pagination.hasMore);
+      setUnavailableLocations(data.unavailableLocations || 0);
       setPage(nextPage);
     } catch (err) {
       console.error("Erro ao carregar mais produtores:", err);
     } finally {
       setLoadingMore(false);
     }
-  }, [uf, page, loadingMore, hasMore]);
+  }, [uf, page, loadingMore, hasMore, distanceFilter, selectedGender]);
 
   // 🔹 Infinite scroll
   useEffect(() => {
@@ -415,9 +442,10 @@ export default function CatalogPage() {
 
   // 🔹 Filtro simples por gênero (FRONT)
   const visibleProducers = useMemo(() => {
-    if (!filterOptions) return orderBySignature(producersByGender);
+    if (!filterOptions) return distanceFilter ? producersByGender : orderBySignature(producersByGender);
     
     const filtered = applyFilters(producersByGender, activeFilters, filterOptions);
+    if (distanceFilter) return filtered; // API já ordenou todos os resultados por proximidade antes de paginar.
     
     // Aplicar ordenação
     let sorted: Producer[];
@@ -469,9 +497,9 @@ export default function CatalogPage() {
     }
     
     return sorted;
-  }, [producersByGender, activeFilters, filterOptions, sortBy, sortDirection]);
+  }, [producersByGender, activeFilters, filterOptions, sortBy, sortDirection, distanceFilter]);
 
-  if (loading) {
+  if (loading && producers.length === 0) {
     return (
       <div className={styles.catalogPage}>
         <div className={styles.layout}>
@@ -526,7 +554,7 @@ export default function CatalogPage() {
                   className={`${styles.genderButton} ${
                     isSelected ? styles.selected : ""
                   }`}
-                  onClick={() => setSelectedGender(gender as any)}
+                  onClick={() => setSelectedGender(gender as Gender)}
                 >
                   {gender === "female" && "Mulheres"}
                   {gender === "male" && "Homens"}
@@ -552,23 +580,30 @@ export default function CatalogPage() {
                 producers={producersByGender}
                 onApply={setActiveFilters}
               />
-              <SortDropdown 
-                onSortChange={(sort, direction) => {
-                  setSortBy(sort);
-                  setSortDirection(direction);
-                }} 
-              />
+              {distanceFilter ? <span>Mais próximos</span> : (
+                <SortDropdown
+                  onSortChange={(sort, direction) => {
+                    setSortBy(sort);
+                    setSortDirection(direction);
+                  }}
+                />
+              )}
             </div>
-            <div className={styles.right}>{/* <DistancePopup /> */}</div>
+            <div className={styles.right}><LocalPopup onFilterChange={changeDistanceFilter} /></div>
           </div>
+          {distanceFilter && unavailableLocations > 0 && (
+            <p>{unavailableLocations} perfil(is) sem distância disponível não aparecem neste filtro.</p>
+          )}
         </header>
 
-        <ProductsCatalog
-          producers={visibleProducers.map((p) => ({
-            ...p,
-            age: calculateAge(p.birthday),
-          }))}
-        />
+        {loading ? <p>Filtrando perfis...</p> : (
+          <ProductsCatalog
+            producers={visibleProducers.map((p) => ({
+              ...p,
+              age: calculateAge(p.birthday),
+            }))}
+          />
+        )}
 
         {loadingMore && (
           <div className={styles.loadingMore}>

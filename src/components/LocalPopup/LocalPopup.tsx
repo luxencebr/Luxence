@@ -7,7 +7,9 @@ import { BsRadar } from "react-icons/bs";
 
 import Popup from "../ui/Popup/Popup";
 
-export default function LocalPopup() {
+export type DistanceSelection = { lat: number; lng: number; radius: number };
+
+export default function LocalPopup({ onFilterChange }: { onFilterChange: (filter: DistanceSelection | null) => void }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const [hasLocation, setHasLocation] = useState(false);
@@ -24,16 +26,21 @@ export default function LocalPopup() {
       try {
         const parsed = JSON.parse(stored);
 
-        if (typeof parsed.lat === "number" && typeof parsed.lng === "number") {
+        if (typeof parsed.lat === "number" && typeof parsed.lng === "number" &&
+            parsed.lat >= -90 && parsed.lat <= 90 && parsed.lng >= -180 && parsed.lng <= 180 &&
+            [5, 10, 25, 50].includes(parsed.radius)) {
           setCoords({ lat: parsed.lat, lng: parsed.lng });
-          setRadius(parsed.radius ?? 10);
+          setRadius(parsed.radius);
           setHasLocation(true);
+          onFilterChange(parsed);
+        } else {
+          localStorage.removeItem("user_distance_filter");
         }
       } catch {
         localStorage.removeItem("user_distance_filter");
       }
     }
-  }, []);
+  }, [onFilterChange]);
 
   function requestLocation() {
     if (!navigator.geolocation) {
@@ -44,10 +51,12 @@ export default function LocalPopup() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
+        const lat = Math.round(latitude * 1000) / 1000;
+        const lng = Math.round(longitude * 1000) / 1000;
 
         const locationData = {
-          lat: latitude,
-          lng: longitude,
+          lat,
+          lng,
           radius,
         };
 
@@ -56,17 +65,27 @@ export default function LocalPopup() {
           JSON.stringify(locationData)
         );
 
-        setCoords({ lat: latitude, lng: longitude });
+        setCoords({ lat, lng });
         setHasLocation(true);
         setError(null);
+        onFilterChange(locationData);
       },
       () => {
         setError(
           "Para filtrar anunciantes pela distância precisamos da sua localização para o calculo."
         );
         setHasLocation(false);
-      }
+      },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 },
     );
+  }
+
+  function clearLocation() {
+    localStorage.removeItem("user_distance_filter");
+    setCoords(null);
+    setHasLocation(false);
+    setError(null);
+    onFilterChange(null);
   }
 
   return (
@@ -115,6 +134,7 @@ export default function LocalPopup() {
           {hasLocation && coords && (
             <div className={styles.filters}>
               <p className={styles.subtitle}>Mostrar perfis em um raio de:</p>
+              <p>Localização aproximada. O endereço dos perfis não é exibido.</p>
 
               <div className={styles.radiusOptions}>
                 {[5, 10, 25, 50].map((value) => (
@@ -129,14 +149,9 @@ export default function LocalPopup() {
                       setRadius(value);
 
                       if (coords) {
-                        localStorage.setItem(
-                          "user_distance_filter",
-                          JSON.stringify({
-                            lat: coords.lat,
-                            lng: coords.lng,
-                            radius: value,
-                          })
-                        );
+                        const selection = { ...coords, radius: value };
+                        localStorage.setItem("user_distance_filter", JSON.stringify(selection));
+                        onFilterChange(selection);
                       }
                     }}
                   >
@@ -144,6 +159,7 @@ export default function LocalPopup() {
                   </button>
                 ))}
               </div>
+              <button className={styles.primaryButton} onClick={clearLocation}>Desativar filtro</button>
             </div>
           )}
         </div>
