@@ -1,0 +1,13 @@
+.git
+.next
+node_modules
+**/node_modules
+**/.env
+**/.env.*
+**/*.pem
+**/*.key
+**/*.sql
+**/*.tar
+**/*.tar.gz
+doc
+AGENTS.md
