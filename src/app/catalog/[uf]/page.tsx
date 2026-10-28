@@ -580,7 +580,7 @@ export default function CatalogPage() {
                 producers={producersByGender}
                 onApply={setActiveFilters}
               />
-              {distanceFilter ? <span>Mais próximos</span> : (
+              {!distanceFilter && (
                 <SortDropdown
                   onSortChange={(sort, direction) => {
                     setSortBy(sort);
@@ -591,8 +591,14 @@ export default function CatalogPage() {
             </div>
             <div className={styles.right}><LocalPopup onFilterChange={changeDistanceFilter} /></div>
           </div>
-          {distanceFilter && unavailableLocations > 0 && (
-            <p>{unavailableLocations} perfil(is) sem distância disponível não aparecem neste filtro.</p>
+          {distanceFilter && (
+            <div className={styles.distanceNotice} role="status">
+              <strong>Distância ativa: até {distanceFilter.radius} km.</strong>
+              <span>Perfis mais próximos primeiro.</span>
+              {unavailableLocations > 0 && (
+                <span>{unavailableLocations} {unavailableLocations === 1 ? "perfil sem distância disponível não aparece" : "perfis sem distância disponível não aparecem"} neste filtro.</span>
+              )}
+            </div>
           )}
         </header>
 

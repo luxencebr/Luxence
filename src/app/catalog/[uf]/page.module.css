@@ -81,6 +81,24 @@
   gap: 8px;
 }
 
+.distanceNotice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--primary-color);
+  border-radius: 8px;
+  background: var(--background-complementary-color);
+  color: var(--contrast-color);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.distanceNotice strong {
+  color: var(--primary-color);
+}
+
 /* Adicionando estilos para estados de loading e erro */
 .loadingState,
 .errorState {

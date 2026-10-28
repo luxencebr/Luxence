@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import styles from "./LocalPupup.module.css";
-import { IoIosClose } from "react-icons/io";
 import { BsRadar } from "react-icons/bs";
-
-import Popup from "../ui/Popup/Popup";
 
 export type DistanceSelection = { lat: number; lng: number; radius: number };
 
 export default function LocalPopup({ onFilterChange }: { onFilterChange: (filter: DistanceSelection | null) => void }) {
   const [isOpen, setIsOpen] = useState(false);
+  const menuId = useId();
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   const [hasLocation, setHasLocation] = useState(false);
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
@@ -42,6 +42,28 @@ export default function LocalPopup({ onFilterChange }: { onFilterChange: (filter
     }
   }, [onFilterChange]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+
+    function handlePointerDown(event: PointerEvent) {
+      if (!dropdownRef.current?.contains(event.target as Node)) setIsOpen(false);
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsOpen(false);
+        triggerRef.current?.focus();
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen]);
+
   function requestLocation() {
     if (!navigator.geolocation) {
       setError("Geolocalização não suportada.");
@@ -69,6 +91,8 @@ export default function LocalPopup({ onFilterChange }: { onFilterChange: (filter
         setHasLocation(true);
         setError(null);
         onFilterChange(locationData);
+        setIsOpen(false);
+        triggerRef.current?.focus();
       },
       () => {
         setError(
@@ -86,41 +110,32 @@ export default function LocalPopup({ onFilterChange }: { onFilterChange: (filter
     setHasLocation(false);
     setError(null);
     onFilterChange(null);
+    setIsOpen(false);
+    triggerRef.current?.focus();
   }
 
   return (
-    <Popup
-      trigger={
-        <>
-          Distância
-          <span>
-            <BsRadar />
-          </span>
-        </>
-      }
-      triggerClass={styles.trigger}
-      popupClass={styles.popup}
-      isOpen={isOpen}
-      onOpenChange={setIsOpen}
-    >
-      <>
-        <div className={styles.header}>
-          <h1>Distância</h1>
-          <button
-            className={styles.closeButton}
-            onClick={() => setIsOpen(false)}
-            aria-label="Fechar filtros"
-          >
-            <IoIosClose />
-          </button>
-        </div>
+    <div className={styles.container} ref={dropdownRef}>
+      <button
+        ref={triggerRef}
+        type="button"
+        className={styles.trigger}
+        aria-expanded={isOpen}
+        aria-controls={menuId}
+        onClick={() => setIsOpen((open) => !open)}
+      >
+        {hasLocation ? `Até ${radius} km` : "Distância"}
+        <BsRadar aria-hidden="true" />
+      </button>
 
-        <div className={styles.layout}>
+      {isOpen && (
+        <div className={styles.dropdown} id={menuId}>
           {!hasLocation && (
             <div className={styles.locationRequest}>
-              <p>Para isso precisamos da sua localização.</p>
+              <p>Permita sua localização para ver perfis próximos.</p>
 
               <button
+                type="button"
                 className={styles.primaryButton}
                 onClick={requestLocation}
               >
@@ -133,8 +148,7 @@ export default function LocalPopup({ onFilterChange }: { onFilterChange: (filter
 
           {hasLocation && coords && (
             <div className={styles.filters}>
-              <p className={styles.subtitle}>Mostrar perfis em um raio de:</p>
-              <p>Localização aproximada. O endereço dos perfis não é exibido.</p>
+              <p className={styles.subtitle}>Mostrar perfis até:</p>
 
               <div className={styles.radiusOptions}>
                 {[5, 10, 25, 50].map((value) => (
@@ -155,17 +169,19 @@ export default function LocalPopup({ onFilterChange }: { onFilterChange: (filter
                         localStorage.setItem("user_distance_filter", JSON.stringify(selection));
                         onFilterChange(selection);
                       }
+                      setIsOpen(false);
+                      triggerRef.current?.focus();
                     }}
                   >
                     {value} km
                   </button>
                 ))}
               </div>
-              <button className={styles.primaryButton} onClick={clearLocation}>Desativar filtro</button>
+              <button type="button" className={styles.clearButton} onClick={clearLocation}>Desativar filtro</button>
             </div>
           )}
         </div>
-      </>
-    </Popup>
+      )}
+    </div>
   );
 }
