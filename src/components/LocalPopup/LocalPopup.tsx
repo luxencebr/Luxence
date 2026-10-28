@@ -140,6 +140,8 @@ export default function LocalPopup({ onFilterChange }: { onFilterChange: (filter
                 {[5, 10, 25, 50].map((value) => (
                   <button
                     key={value}
+                    type="button"
+                    aria-pressed={radius === value}
                     className={
                       radius === value
                         ? styles.radiusActive
