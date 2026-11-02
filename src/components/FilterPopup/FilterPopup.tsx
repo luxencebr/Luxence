@@ -274,9 +274,12 @@ export function extractFilterOptions(producers: Producer[]) {
 interface FilterPopupProps {
   producers: Producer[];
   onApply: (filters: ActiveFilters) => void;
+  onOpen: () => void;
+  loading: boolean;
+  loadError: string | null;
 }
 
-export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
+export default function FilterPopup({ producers, onApply, onOpen, loading, loadError }: FilterPopupProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [filters, setFilters] = useState<ActiveFilters>({});
   const [appliedFilters, setAppliedFilters] = useState<ActiveFilters>({});
@@ -945,7 +948,10 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
       triggerClass={styles.trigger}
       popupClass={styles.popup}
       isOpen={isOpen}
-      onOpenChange={setIsOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open);
+        if (open) onOpen();
+      }}
     >
       <header className={styles.header}>
         <h3>Filtros</h3>
@@ -960,7 +966,10 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
         </button>
       </header>
 
-      <div className={styles.content}>
+      {loading && <p role="status">Carregando todas as opções de filtro...</p>}
+      {loadError && <p role="alert">{loadError}</p>}
+
+      {!loading && !loadError && <div className={styles.content}>
         <AgeRange />
 
         <CheckboxList
@@ -1059,7 +1068,7 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
           selected={filters.payments || []}
           onToggle={(id) => toggleArrayFilter("payments", id)}
         />
-      </div>
+      </div>}
 
       <footer className={styles.footer}>
         <button
@@ -1097,6 +1106,7 @@ export default function FilterPopup({ producers, onApply }: FilterPopupProps) {
 
         <button
           className={styles.apply}
+          disabled={loading || !!loadError}
           onClick={() => {
             // Build final filters with current range values
             const finalFilters: ActiveFilters = {

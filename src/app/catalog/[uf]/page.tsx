@@ -82,8 +82,8 @@ function orderBySignature(items: Producer[]): Producer[] {
   );
 }
 
-function fetchCatalogPage(uf: string, page: number, distance: DistanceSelection | null, gender: Gender | null, signal?: AbortSignal) {
-  const url = `/api/catalog/${uf}?page=${page}&limit=15`;
+function fetchCatalogPage(uf: string, page: number, distance: DistanceSelection | null, gender: Gender | null, signal?: AbortSignal, limit = 15) {
+  const url = `/api/catalog/${uf}?page=${page}&limit=${limit}`;
   return fetch(url, distance ? {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -91,6 +91,20 @@ function fetchCatalogPage(uf: string, page: number, distance: DistanceSelection 
     cache: "no-store",
     signal,
   } : { signal });
+}
+
+async function fetchAllCatalogPages(uf: string, distance: DistanceSelection | null, gender: Gender | null, signal: AbortSignal): Promise<Producer[]> {
+  const all: Producer[] = [];
+  let page = 1;
+
+  while (true) {
+    const response = await fetchCatalogPage(uf, page, distance, gender, signal, 50);
+    if (!response.ok) throw new Error("Erro ao carregar opções dos filtros");
+    const data = await response.json();
+    all.push(...data.producers);
+    if (!data.pagination.hasMore) return all;
+    page++;
+  }
 }
 
 // Nova função: ordena por critério, depois por plano, depois aleatoriamente
@@ -316,6 +330,10 @@ export default function CatalogPage() {
 
   const [activeFilters, setActiveFilters] = useState<ActiveFilters>({});
   const [filterOptions, setFilterOptions] = useState<ReturnType<typeof extractFilterOptions> | null>(null);
+  const [filterPool, setFilterPool] = useState<Producer[] | null>(null);
+  const [filterPoolLoading, setFilterPoolLoading] = useState(false);
+  const [filterPoolError, setFilterPoolError] = useState<string | null>(null);
+  const filterRequest = useRef<AbortController | null>(null);
   const [sortBy, setSortBy] = useState<SortOption>("default");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [distanceFilter, setDistanceFilter] = useState<DistanceSelection | null>(null);
@@ -363,18 +381,49 @@ export default function CatalogPage() {
     });
   }, [producers, selectedGender]);
 
-  // Extract filter options from current gender producers
-  useEffect(() => {
-    if (producersByGender.length > 0) {
-      const options = extractFilterOptions(producersByGender);
-      setFilterOptions(options);
+  const filterProducersByGender = useMemo(() => {
+    if (!filterPool || !selectedGender) return null;
+    return filterPool.filter((producer) => normalizeGender(producer.user?.gender) === selectedGender);
+  }, [filterPool, selectedGender]);
+
+  const loadFilterPool = useCallback(async () => {
+    if (filterPool || filterPoolLoading || !selectedGender) return;
+    const controller = new AbortController();
+    filterRequest.current?.abort();
+    filterRequest.current = controller;
+    setFilterPoolLoading(true);
+    setFilterPoolError(null);
+
+    try {
+      const all = await fetchAllCatalogPages(uf, distanceFilter, selectedGender, controller.signal);
+      if (!controller.signal.aborted) setFilterPool(all);
+    } catch {
+      if (!controller.signal.aborted) setFilterPoolError("Não foi possível carregar todos os perfis. Tente novamente.");
+    } finally {
+      if (!controller.signal.aborted) setFilterPoolLoading(false);
     }
-  }, [producersByGender]);
+  }, [uf, distanceFilter, selectedGender, filterPool, filterPoolLoading]);
+
+  useEffect(() => {
+    if (Object.keys(activeFilters).length > 0 && !filterPool && !filterPoolLoading && !filterPoolError) {
+      void loadFilterPool();
+    }
+  }, [activeFilters, filterPool, filterPoolLoading, filterPoolError, loadFilterPool]);
+
+  // As opções do filtro usam o catálogo completo quando ele estiver disponível.
+  useEffect(() => {
+    setFilterOptions(extractFilterOptions(filterProducersByGender ?? producersByGender));
+  }, [filterProducersByGender, producersByGender]);
 
   // 🔹 Fetch com paginação
   useEffect(() => {
     const controller = new AbortController();
     requestGeneration.current++;
+    filterRequest.current?.abort();
+    filterRequest.current = null;
+    setFilterPool(null);
+    setFilterPoolLoading(false);
+    setFilterPoolError(null);
     async function fetchCatalog() {
       try {
         setLoading(true);
@@ -400,7 +449,7 @@ export default function CatalogPage() {
 
   // 🔹 Carregar mais produtores
   const loadMore = useCallback(async () => {
-    if (loadingMore || !hasMore) return;
+    if (loadingMore || !hasMore || Object.keys(activeFilters).length > 0) return;
 
     try {
       setLoadingMore(true);
@@ -419,12 +468,12 @@ export default function CatalogPage() {
     } finally {
       setLoadingMore(false);
     }
-  }, [uf, page, loadingMore, hasMore, distanceFilter, selectedGender]);
+  }, [uf, page, loadingMore, hasMore, distanceFilter, selectedGender, activeFilters]);
 
   // 🔹 Infinite scroll
   useEffect(() => {
     const handleScroll = () => {
-      if (loading || loadingMore || !hasMore) return;
+      if (loading || loadingMore || !hasMore || Object.keys(activeFilters).length > 0) return;
 
       const scrollTop = window.scrollY;
       const windowHeight = window.innerHeight;
@@ -438,13 +487,15 @@ export default function CatalogPage() {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [loading, loadingMore, hasMore, loadMore]);
+  }, [loading, loadingMore, hasMore, loadMore, activeFilters]);
 
   // 🔹 Filtro simples por gênero (FRONT)
   const visibleProducers = useMemo(() => {
-    if (!filterOptions) return distanceFilter ? producersByGender : orderBySignature(producersByGender);
+    const hasActiveFilters = Object.keys(activeFilters).length > 0;
+    const candidates = hasActiveFilters ? (filterProducersByGender ?? []) : producersByGender;
+    if (!filterOptions) return distanceFilter ? candidates : orderBySignature(candidates);
     
-    const filtered = applyFilters(producersByGender, activeFilters, filterOptions);
+    const filtered = applyFilters(candidates, activeFilters, filterOptions);
     if (distanceFilter) return filtered; // API já ordenou todos os resultados por proximidade antes de paginar.
     
     // Aplicar ordenação
@@ -497,7 +548,7 @@ export default function CatalogPage() {
     }
     
     return sorted;
-  }, [producersByGender, activeFilters, filterOptions, sortBy, sortDirection, distanceFilter]);
+  }, [producersByGender, filterProducersByGender, activeFilters, filterOptions, sortBy, sortDirection, distanceFilter]);
 
   if (loading && producers.length === 0) {
     return (
@@ -577,8 +628,11 @@ export default function CatalogPage() {
           <div className={styles.catalogOptions}>
             <div className={styles.left}>
               <FilterPopup
-                producers={producersByGender}
+                producers={filterProducersByGender ?? producersByGender}
                 onApply={setActiveFilters}
+                onOpen={() => void loadFilterPool()}
+                loading={filterPoolLoading}
+                loadError={filterPoolError}
               />
               {!distanceFilter && (
                 <SortDropdown
@@ -602,7 +656,12 @@ export default function CatalogPage() {
           )}
         </header>
 
-        {loading ? <p>Filtrando perfis...</p> : (
+        {filterPoolError && Object.keys(activeFilters).length > 0 && !filterPool && (
+          <p role="alert">{filterPoolError} Abra os filtros para tentar novamente.</p>
+        )}
+        {loading || (Object.keys(activeFilters).length > 0 && !filterPool) ? (
+          !filterPoolError && <p>Filtrando perfis...</p>
+        ) : (
           <ProductsCatalog
             producers={visibleProducers.map((p) => ({
               ...p,
@@ -618,7 +677,7 @@ export default function CatalogPage() {
           </div>
         )}
 
-        {!hasMore && visibleProducers.length > 0 && (
+        {(!hasMore || Object.keys(activeFilters).length > 0) && visibleProducers.length > 0 && (
           <div className={styles.endMessage}>
             <p>Você chegou ao final da lista.</p>
           </div>

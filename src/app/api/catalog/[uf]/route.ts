@@ -71,6 +71,7 @@ async function getCatalog(
 
     const producers = await prisma.producer.findMany({
       where: whereClause,
+      orderBy: { id: "asc" },
       include: {
         user: {
           include: {
