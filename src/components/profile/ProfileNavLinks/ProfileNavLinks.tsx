@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import styles from "./ProfileNavLinks.module.css";
 import { User, CreditCard, Lock, Crown } from "lucide-react";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 const navItems = [
   {
@@ -24,6 +26,7 @@ const navItems = [
 ];
 
 export default function ProfileNavLinks() {
+  const { locale } = useSiteLocale();
   const pathname = usePathname();
 
   return (
@@ -39,7 +42,7 @@ export default function ProfileNavLinks() {
             className={`${styles.link} ${isActive ? styles.active : ""}`}
           >
             {route.icon && <route.icon className={styles.icon} />}
-            <span>{route.label}</span>
+            <span>{uiText(locale, route.label)}</span>
           </Link>
         );
       })}

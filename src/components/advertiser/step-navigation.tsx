@@ -1,6 +1,8 @@
 "use client";
 
 import styles from "./step-navigation.module.css";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 interface StepNavigationProps {
   currentStep: number;
@@ -34,6 +36,8 @@ export default function StepNavigation({
   onPrevSubstep,
   canProceedSubstep,
 }: StepNavigationProps) {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
   const hasSubsteps = substep !== undefined && totalSubsteps !== undefined && totalSubsteps > 1;
   const isLastSubstep = hasSubsteps && substep === totalSubsteps;
   const isFirstSubstep = hasSubsteps && substep === 1;
@@ -94,10 +98,10 @@ export default function StepNavigation({
             color: "orange",
             margin: 0,
             fontSize: "12px",
-            textWrap: "nowrap",
+            textWrap: "wrap",
           }}
         >
-          ⚠ Preencha corretamente as informações
+          ⚠ {t("Preencha corretamente as informações")}
         </p>
       )}
 
@@ -107,7 +111,7 @@ export default function StepNavigation({
           className={`${styles.button} ${styles.buttonBack}`}
           disabled={isLoading}
         >
-          ← Voltar
+          ← {t("Voltar")}
         </button>
       )}
 
@@ -120,12 +124,12 @@ export default function StepNavigation({
         {isLoading ? (
           <>
             <span className={styles.spinner}></span>
-            {isSubmitting ? "Enviando..." : "Carregando..."}
+            {isSubmitting ? t("Enviando...") : t("Carregando...")}
           </>
         ) : (
           currentStep === totalSteps && (!hasSubsteps || isLastSubstep)
-            ? "Finalizar"
-            : "Próximo →"
+            ? t("Finalizar")
+            : `${t("Próximo")} →`
         )}
       </button>
     </div>

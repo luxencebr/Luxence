@@ -12,8 +12,13 @@ import { HiOutlinePencil } from "react-icons/hi2";
 
 import styles from "./page.module.css";
 import type { Post } from "@/types/Posts";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 export default function PostPage({ initialPost }: { initialPost: Post }) {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
+  const dateLocale = { pt: "pt-BR", en: "en-US", es: "es-ES" }[locale];
   const { id } = useParams();
   const [post, setPost] = useState<Post | null>(initialPost);
   const [otherPosts, setOtherPosts] = useState<Post[]>([]);
@@ -256,7 +261,7 @@ export default function PostPage({ initialPost }: { initialPost: Post }) {
                 objectFit: "cover",
               }}
             />
-            <p>Carregando publicação...</p>
+            <p>{t("Carregando publicação...")}</p>
           </div>
         </div>
       </main>
@@ -268,10 +273,9 @@ export default function PostPage({ initialPost }: { initialPost: Post }) {
       <main className={styles.postPage}>
         <div className={styles.layout}>
           <div className={styles.errorState}>
-            <p>Publicação não encontrada</p>
+            <p>{t("Publicação não encontrada")}</p>
             <small>
-              A publicação que você está procurando pode ter sido removida ou
-              não existe.
+              {t("A publicação que você está procurando pode ter sido removida ou não existe.")}
             </small>
           </div>
         </div>
@@ -486,8 +490,8 @@ export default function PostPage({ initialPost }: { initialPost: Post }) {
             </div>
 
             <small className={styles.date}>
-              Publicado em{" "}
-              {new Date(post.createdAt).toLocaleDateString("pt-BR")}
+              {t("Publicado em")}{" "}
+              {new Date(post.createdAt).toLocaleDateString(dateLocale)}
             </small>
           </div>
 
@@ -540,7 +544,7 @@ export default function PostPage({ initialPost }: { initialPost: Post }) {
 
         {/* Outros posts */}
         <div className={styles.others}>
-          <h2 className={styles.othersTitle}>Outras Publicações</h2>
+          <h2 className={styles.othersTitle}>{t("Outras Publicações")}</h2>
           <div className={styles.othersList}>
             {otherPosts.map((p) => (
               <a
@@ -562,7 +566,7 @@ export default function PostPage({ initialPost }: { initialPost: Post }) {
                 <div className={styles.otherInfo}>
                   <h3 className={styles.otherTitle}>{p.title}</h3>
                   <small className={styles.otherDate}>
-                    {new Date(p.createdAt).toLocaleDateString("pt-BR")}
+                    {new Date(p.createdAt).toLocaleDateString(dateLocale)}
                   </small>
                 </div>
               </a>

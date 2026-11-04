@@ -4,6 +4,8 @@ import React from "react";
 
 import { useEffect, useState } from "react";
 import styles from "./verification-step.module.css";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 interface VerificationStepProps {
   formData: any;
@@ -21,6 +23,8 @@ export default function VerificationStep({
   substep: externalSubstep,
   onSubstepChange,
 }: VerificationStepProps) {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
   const [substep, setSubstep] = useState<1 | 2>(externalSubstep as 1 | 2 || 1);
   
   // Sincronizar substep interno com externo
@@ -110,11 +114,11 @@ export default function VerificationStep({
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h2>Verificação de Identidade</h2>
+        <h2>{t("Verificação de Identidade")}</h2>
         <p>
           {substep === 1
-            ? "Envie fotos nítidas da frente e verso do seu documento."
-            : "Agora uma selfie segurando o documento ao lado do rosto."}
+            ? t("Envie fotos nítidas da frente e verso do seu documento.")
+            : t("Agora uma selfie segurando o documento ao lado do rosto.")}
         </p>
       </div>
 
@@ -124,7 +128,7 @@ export default function VerificationStep({
           <>
             {/* Frente */}
             <div className={styles.uploadBox}>
-              <label className={styles.label}>Frente do Documento</label>
+              <label className={styles.label}>{t("Frente do Documento")}</label>
 
               {previewFront ? (
                 <div className={styles.previewWrapper}>
@@ -141,13 +145,13 @@ export default function VerificationStep({
                       onUpdate({ documentFrontFile: null });
                     }}
                   >
-                    Remover
+                    {t("Remover")}
                   </button>
                 </div>
               ) : (
                 <>
                   <label htmlFor="front-upload" className={styles.customUpload}>
-                    <span>Enviar Foto</span>
+                    <span>{t("Enviar Foto")}</span>
                   </label>
                   <input
                     id="front-upload"
@@ -167,7 +171,7 @@ export default function VerificationStep({
 
             {/* Verso */}
             <div className={styles.uploadBox}>
-              <label className={styles.label}>Verso do Documento</label>
+              <label className={styles.label}>{t("Verso do Documento")}</label>
 
               {previewBack ? (
                 <div className={styles.previewWrapper}>
@@ -184,13 +188,13 @@ export default function VerificationStep({
                       onUpdate({ documentBackFile: null });
                     }}
                   >
-                    Remover
+                    {t("Remover")}
                   </button>
                 </div>
               ) : (
                 <>
                   <label htmlFor="back-upload" className={styles.customUpload}>
-                    <span>Enviar Foto</span>
+                    <span>{t("Enviar Foto")}</span>
                   </label>
                   <input
                     id="back-upload"
@@ -212,7 +216,7 @@ export default function VerificationStep({
           <>
             {/* Selfie */}
             <div className={styles.uploadBox}>
-              <label className={styles.label}>Selfie com o documento</label>
+              <label className={styles.label}>{t("Selfie com o documento")}</label>
 
               {previewSelfie ? (
                 <div className={styles.previewWrapper}>
@@ -229,7 +233,7 @@ export default function VerificationStep({
                       onUpdate({ selfieWithDocumentFile: null });
                     }}
                   >
-                    Remover
+                    {t("Remover")}
                   </button>
                 </div>
               ) : (
@@ -238,7 +242,7 @@ export default function VerificationStep({
                     htmlFor="selfie-upload"
                     className={styles.customUpload}
                   >
-                    <span>Enviar Foto</span>
+                    <span>{t("Enviar Foto")}</span>
                   </label>
                   <input
                     id="selfie-upload"

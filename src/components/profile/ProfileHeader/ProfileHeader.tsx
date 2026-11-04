@@ -3,6 +3,8 @@
 import { usePathname, useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import styles from "./ProfileHeader.module.css";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 interface RouteInfo {
   title: string;
@@ -33,6 +35,7 @@ const routeInfo: Record<string, RouteInfo> = {
 };
 
 export default function ProfileHeader() {
+  const { locale } = useSiteLocale();
   const pathname = usePathname();
   const router = useRouter();
   const isMainRoute = pathname === "/profile";
@@ -63,8 +66,8 @@ export default function ProfileHeader() {
 
       {/* Título e subtítulo (desktop e mobile) */}
       <div className={styles.headerContent}>
-        <h1 className={styles.title}>{info.title}</h1>
-        <p className={styles.subtitle}>{info.subtitle}</p>
+        <h1 className={styles.title}>{uiText(locale, info.title)}</h1>
+        <p className={styles.subtitle}>{uiText(locale, info.subtitle)}</p>
       </div>
 
       {/* Mobile: espaço para centralizar */}

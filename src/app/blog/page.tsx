@@ -9,8 +9,13 @@ import { FaRegTrashCan } from "react-icons/fa6";
 
 import type { Post } from "@/types/Posts";
 import NewPostPopup from "@/components/NewPostPopup/NewPost";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 export default function BlogPage() {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
+  const dateLocale = { pt: "pt-BR", en: "en-US", es: "es-ES" }[locale];
   const { data: session } = useSession();
   const isAdmin = session?.user?.role === "ADMIN";
 
@@ -96,7 +101,7 @@ export default function BlogPage() {
               objectFit: "cover",
             }}
           />
-          <p>Carregando publicações...</p>
+          <p>{t("Carregando publicações...")}</p>
         </div>
       </div>
     );
@@ -106,7 +111,7 @@ export default function BlogPage() {
     <main className={styles.container}>
       {isAdmin ? (
         <>
-          <h1 className={styles.title}>Painel de Controle</h1>
+          <h1 className={styles.title}>{t("Painel de Controle")}</h1>
 
           <NewPostPopup posts={posts || []} setPosts={setPosts} />
 
@@ -122,8 +127,8 @@ export default function BlogPage() {
                       <div className={styles.itemInfo}>
                         <h2 className={styles.itemTitle}>{post.title}</h2>
                         <small className={styles.itemDate}>
-                          Publicado em{" "}
-                          {new Date(post.createdAt).toLocaleDateString("pt-BR")}
+                          {t("Publicado em")}{" "}
+                          {new Date(post.createdAt).toLocaleDateString(dateLocale)}
                         </small>
                       </div>
                     </div>
@@ -132,7 +137,7 @@ export default function BlogPage() {
                       className={`${styles.deleteBtn} ${deletingPostId === post.id ? styles.deleting : ""}`}
                       onClick={(e) => handleDeletePost(post.id, e)}
                       disabled={deletingPostId === post.id}
-                      title="Deletar publicação"
+                      title={t("Deletar publicação")}
                     >
                       {deletingPostId === post.id ? (
                         <span className={styles.spinner} />
@@ -145,7 +150,7 @@ export default function BlogPage() {
               ))
             ) : (
               <div className={styles.noPosts}>
-                <p> Ainda não foram feitas publicações</p>
+                <p>{t("Ainda não foram feitas publicações")}</p>
               </div>
             )}
           </ul>
@@ -179,17 +184,17 @@ export default function BlogPage() {
                           : post.content}
                       </p>
                       <small className={styles.date}>
-                        Publicado em{" "}
-                        {new Date(post.createdAt).toLocaleDateString("pt-BR")}
+                        {t("Publicado em")}{" "}
+                        {new Date(post.createdAt).toLocaleDateString(dateLocale)}
                       </small>
-                      <div className={styles.readMore}>Leia mais</div>
+                      <div className={styles.readMore}>{t("Leia mais")}</div>
                     </div>
                   </Link>
                 </article>
               ))
             ) : (
               <div className={styles.noPosts}>
-                <p> Ainda não foram feitas publicações</p>
+                <p>{t("Ainda não foram feitas publicações")}</p>
               </div>
             )}
           </div>

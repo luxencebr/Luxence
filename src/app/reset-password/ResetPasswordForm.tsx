@@ -6,8 +6,12 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import styles from "./page.module.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 export default function ResetPasswordForm() {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
   const searchParams = useSearchParams();
   const router = useRouter();
   const token = searchParams.get("token");
@@ -22,7 +26,7 @@ export default function ResetPasswordForm() {
 
   useEffect(() => {
     if (!token) {
-      setError("Token inválido ou expirado.");
+      setError(t("Token inválido ou expirado."));
     }
   }, [token]);
 
@@ -31,12 +35,12 @@ export default function ResetPasswordForm() {
     setError("");
 
     if (password.length < 6) {
-      setError("A senha deve ter pelo menos 6 caracteres.");
+      setError(t("A senha deve ter pelo menos 6 caracteres."));
       return;
     }
 
     if (password !== confirmPassword) {
-      setError("As senhas não coincidem.");
+      setError(t("As senhas não coincidem."));
       return;
     }
 
@@ -52,13 +56,13 @@ export default function ResetPasswordForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "Erro ao redefinir senha");
+        throw new Error(data.error || t("Erro ao redefinir senha"));
       }
 
       setSuccess(true);
       setTimeout(() => router.push("/"), 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao redefinir senha");
+      setError(err instanceof Error ? err.message : t("Erro ao redefinir senha"));
     } finally {
       setIsLoading(false);
     }
@@ -87,8 +91,8 @@ export default function ResetPasswordForm() {
                 d="M14 27l7 7 16-16"
               />
             </svg>
-            <h2>Senha redefinida!</h2>
-            <p>Você será redirecionado para a página inicial...</p>
+            <h2>{t("Senha redefinida!")}</h2>
+            <p>{t("Você será redirecionado para a página inicial...")}</p>
           </div>
         </div>
       </div>
@@ -98,21 +102,21 @@ export default function ResetPasswordForm() {
   return (
     <div className={styles.container}>
       <div className={styles.card}>
-        <h1>Redefinir senha</h1>
-        <p className={styles.description}>Digite sua nova senha abaixo.</p>
+        <h1>{t("Redefinir senha")}</h1>
+        <p className={styles.description}>{t("Digite sua nova senha abaixo.")}</p>
 
         <form
           onSubmit={handleSubmit}
           className={`${styles.form} ${isLoading ? styles.disabled : ""}`}
         >
           <label htmlFor="password">
-            Nova senha:
+            {t("Nova senha:")}
             <div className={styles.passwordWrapper}>
               <input
                 name="password"
                 id="password"
                 type={showPassword ? "text" : "password"}
-                placeholder="Sua nova senha..."
+                placeholder={t("Sua nova senha...")}
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);
@@ -133,13 +137,13 @@ export default function ResetPasswordForm() {
           </label>
 
           <label htmlFor="confirmPassword">
-            Confirmar senha:
+            {t("Confirmar senha:")}
             <div className={styles.passwordWrapper}>
               <input
                 name="confirmPassword"
                 id="confirmPassword"
                 type={showConfirmPassword ? "text" : "password"}
-                placeholder="Confirme sua senha..."
+                placeholder={t("Confirme sua senha...")}
                 value={confirmPassword}
                 onChange={(e) => {
                   setConfirmPassword(e.target.value);
@@ -163,7 +167,7 @@ export default function ResetPasswordForm() {
             {isLoading ? (
               <span className={styles.spinner}></span>
             ) : (
-              "Redefinir senha"
+              t("Redefinir senha")
             )}
           </button>
         </form>

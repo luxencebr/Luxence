@@ -2,6 +2,8 @@
 
 import { useEffect } from "react";
 import styles from "./confirmation-step.module.css";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 interface ConfirmationStepProps {
   formData: any;
@@ -14,6 +16,8 @@ export default function ConfirmationStep({
   onUpdate,
   onValidate,
 }: ConfirmationStepProps) {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
   useEffect(() => {
     if (onValidate) {
       onValidate(!!formData.agreed);
@@ -23,74 +27,74 @@ export default function ConfirmationStep({
     <div className={styles.container}>
       {/* Cabeçalho */}
       <div className={styles.header}>
-        <h2>Confirmação</h2>
-        <p>Revise suas informações antes de finalizar o cadastro</p>
+        <h2>{t("Confirmação")}</h2>
+        <p>{t("Revise suas informações antes de finalizar o cadastro")}</p>
       </div>
 
       {/* CONTA */}
       <div className={styles.section}>
-        <h3>Conta</h3>
+        <h3>{t("Conta")}</h3>
         <div className={styles.infoList}>
           <p>
-            <strong>Nome:</strong> {formData.name || "Não informado"}
+            <strong>{t("Nome:")}</strong> {formData.name || t("Não informado")}
           </p>
           <p>
-            <strong>Email:</strong> {formData.email || "Não informado"}
+            <strong>{t("Email:")}</strong> {formData.email || t("Não informado")}
           </p>
           <p>
-            <strong>Gênero:</strong>{" "}
+            <strong>{t("Gênero:")}</strong>{" "}
             {formData.gender === "MALE"
-              ? "Homem"
+              ? t("Homem")
               : formData.gender === "FEMALE"
-                ? "Mulher"
+                ? t("Mulher")
                 : formData.gender === "TRANS"
-                  ? "Trans"
-                  : "Não informado"}
+                  ? t("Trans")
+                  : t("Não informado")}
           </p>
           <p>
-            <strong>Interesses:</strong>{" "}
+            <strong>{t("Interesses:")}</strong>{" "}
             {formData.preferences && formData.preferences.length > 0
               ? formData.preferences
                   .map((p: string) =>
                     p === "MALE"
-                      ? "Homem"
+                      ? t("Homem")
                       : p === "FEMALE"
-                        ? "Mulher"
-                        : "Trans",
+                        ? t("Mulher")
+                        : t("Trans"),
                   )
                   .join(", ")
-              : "Não informado"}
+              : t("Não informado")}
           </p>
         </div>
       </div>
 
       {/* PERFIL */}
       <div className={styles.section}>
-        <h3>Perfil</h3>
+        <h3>{t("Perfil")}</h3>
         <div className={styles.infoList}>
           <p>
-            <strong>Data de Nascimento:</strong>{" "}
-            {formData.birthday || "Não informado"}
+            <strong>{t("Data de Nascimento:")}</strong>{" "}
+            {formData.birthday || t("Não informado")}
           </p>
           <p>
-            <strong>Nacionalidade:</strong>{" "}
-            {formData.nationality || "Não informado"}
+            <strong>{t("Nacionalidade:")}</strong>{" "}
+            {formData.nationality || t("Não informado")}
           </p>
           <p>
-            <strong>Documento:</strong> {formData.document || "Não informado"}
+            <strong>{t("Documento:")}</strong> {formData.document || t("Não informado")}
           </p>
           <p>
-            <strong>Telefone:</strong> {formData.phone || "Não informado"}
+            <strong>{t("Telefone:")}</strong> {formData.phone || t("Não informado")}
           </p>
         </div>
       </div>
 
       {/* VERIFICAÇÃO */}
       <div className={styles.section}>
-        <h3>Verificação de Identidade</h3>
+        <h3>{t("Verificação de Identidade")}</h3>
         <div className={styles.infoList}>
           <p>
-            <strong>Frente do Documento:</strong>{" "}
+            <strong>{t("Frente do Documento:")}</strong>{" "}
             {formData.documentFrontFile ? (
               <img
                 src={
@@ -101,11 +105,11 @@ export default function ConfirmationStep({
                 className={styles.thumbnail}
               />
             ) : (
-              "Não enviada"
+              t("Não enviada")
             )}
           </p>
           <p>
-            <strong>Verso do Documento:</strong>{" "}
+            <strong>{t("Verso do Documento:")}</strong>{" "}
             {formData.documentBackFile ? (
               <img
                 src={
@@ -116,11 +120,11 @@ export default function ConfirmationStep({
                 className={styles.thumbnail}
               />
             ) : (
-              "Não enviada"
+              t("Não enviada")
             )}
           </p>
           <p>
-            <strong>Selfie com Documento:</strong>{" "}
+            <strong>{t("Selfie com Documento:")}</strong>{" "}
             {formData.selfieWithDocumentFile ? (
               <img
                 src={
@@ -131,7 +135,7 @@ export default function ConfirmationStep({
                 className={styles.thumbnail}
               />
             ) : (
-              "Não enviada"
+              t("Não enviada")
             )}
           </p>
         </div>

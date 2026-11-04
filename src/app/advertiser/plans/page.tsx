@@ -5,6 +5,8 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 import { FaCheck, FaXmark } from "react-icons/fa6";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 interface BenefitBase {
   id: number;
@@ -22,6 +24,8 @@ interface Plan {
 }
 
 export default function Plans() {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
   const { data: session } = useSession();
   const router = useRouter();
   const [loadingPlan, setLoadingPlan] = useState<"SILVER" | "GOLD" | "DIAMOND" | null>(null);
@@ -140,15 +144,15 @@ export default function Plans() {
   return (
     <div className={styles.advertiserPage}>
       <div className={styles.layout}>
-        <h1>Anuncie Conosco!</h1>
+        <h1>{t("Anuncie Conosco!")}</h1>
         <div className={styles.signatures}>
           {plans.map((plan) => (
             <article key={plan.id} className={styles.signatureCard}>
               <h2>
-                Plano {plan.title} <span>{plan.price}</span>
+                {t("Plano")} {t(plan.title)} <span>{plan.price}</span>
               </h2>
               <p className={styles.price}></p>
-              <p className={styles.description}>{plan.description}</p>
+              <p className={styles.description}>{t(plan.description)}</p>
               <ul className={styles.benefits}>
                 {benefitList.map((b) => {
                   const value = plan.benefits[b.id];
@@ -167,7 +171,7 @@ export default function Plans() {
                       ) : b.type === "string" ? (
                         (value && (
                           <>
-                            <FaCheck /> {value}
+                            <FaCheck /> {t(String(value))}
                           </>
                         )) || <FaXmark />
                       ) : value ? (
@@ -175,9 +179,9 @@ export default function Plans() {
                       ) : (
                         <FaXmark />
                       )}{" "}
-                      {b.name}
+                      {t(b.name)}
                       {b.type === "number" && value === Infinity
-                        ? " Ilimitados"
+                        ? ` ${t("Ilimitados")}`
                         : null}
                     </li>
                   );
@@ -188,7 +192,7 @@ export default function Plans() {
                 onClick={() => handleSelectPlan(plan.signature)}
                 disabled={loadingPlan !== null}
               >
-                {loadingPlan === plan.signature ? 'Processando...' : `Seja ${plan.title}`}
+                {loadingPlan === plan.signature ? t("Processando...") : `${t("Seja")} ${t(plan.title)}`}
               </button>
             </article>
           ))}

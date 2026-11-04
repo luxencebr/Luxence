@@ -10,10 +10,14 @@ import ProfileStep from "@/components/advertiser/steps/profile-step";
 import VerificationStep from "@/components/advertiser/steps/verification-step";
 import ConfirmationStep from "@/components/advertiser/steps/confirmation-step";
 import StepNavigation from "@/components/advertiser/step-navigation";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 const TOTAL_STEPS = 4;
 
 export default function AdvertiserRegistrationContent() {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
   const { update: updateSession } = useSession();
   const [currentStep, setCurrentStep] = useState(1);
   
@@ -317,8 +321,8 @@ export default function AdvertiserRegistrationContent() {
                 d="M14 27l7 7 16-16"
               />
             </svg>
-            <h2>Cadastro realizado com sucesso!</h2>
-            <p>Redirecionando para seu perfil...</p>
+            <h2>{t("Cadastro realizado com sucesso!")}</h2>
+            <p>{t("Redirecionando para seu perfil...")}</p>
             <div className={styles.loadingBar}>
               <div className={styles.loadingBarProgress}></div>
             </div>
@@ -330,8 +334,8 @@ export default function AdvertiserRegistrationContent() {
         {/* Lateral esquerda */}
         <aside className={styles.side}>
           <div className={styles.header}>
-            <h1>Anuncie Conosco!</h1>
-            <p>Complete seu cadastro em apenas alguns passos</p>
+            <h1>{t("Anuncie Conosco!")}</h1>
+            <p>{t("Complete seu cadastro em apenas alguns passos")}</p>
           </div>
           <StepIndicator currentStep={currentStep} totalSteps={TOTAL_STEPS} />
         </aside>

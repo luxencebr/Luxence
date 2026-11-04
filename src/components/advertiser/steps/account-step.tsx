@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState, useRef, useCallback } from "react";
 import styles from "./account-step.module.css";
 import { FaMars, FaVenus, FaTransgender, FaEye, FaEyeSlash, FaTimes } from "react-icons/fa";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 interface AccountStepProps {
   formData: any;
@@ -18,6 +20,7 @@ interface AccountStepProps {
 type Substep = 1 | 2;
 
 function PasswordRequirements({ password }: { password: string }) {
+  const { locale } = useSiteLocale();
   const requirements = useMemo(
     () => [
       {
@@ -53,7 +56,7 @@ function PasswordRequirements({ password }: { password: string }) {
           className={`${styles.requirement} ${styles.requirementUnmet}`}
         >
           <FaTimes />
-          <span>{req.label}</span>
+          <span>{uiText(locale, req.label)}</span>
         </div>
       ))}
     </div>
@@ -91,6 +94,8 @@ export default function AccountStep({
   onSubstepChange,
   onSendVerificationCode,
 }: AccountStepProps) {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
   const [substep, setSubstep] = useState<Substep>(externalSubstep as Substep || 1);
   
   // Armazenar o email que foi verificado
@@ -396,35 +401,35 @@ export default function AccountStep({
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h2>Criar Conta</h2>
+        <h2>{t("Criar Conta")}</h2>
         <p>
           {substep === 1
-            ? "Preencha seus dados para começar a anunciar"
+            ? t("Preencha seus dados para começar a anunciar")
             : formData.emailVerified
-            ? "Email verificado com sucesso!"
-            : "Digite o código enviado para seu email"}
+            ? t("Email verificado com sucesso!")
+            : t("Digite o código enviado para seu email")}
         </p>
       </div>
 
       {substep === 1 && (
         <div className={styles.section}>
         <label className={styles.label}>
-          Nome completo:
+          {t("Nome completo:")}
           <input
             type="text"
             value={formData.name || ""}
             onChange={(e) => onUpdate({ name: e.target.value })}
             onBlur={() => handleBlur("name")}
-            placeholder="Seu nome completo..."
+            placeholder={t("Seu nome completo...")}
             className={getInputClass("name", nameError, formData.name)}
           />
           {nameError && touched.name && (
-            <small className={styles.error}>{nameError}</small>
+            <small className={styles.error}>{t(nameError)}</small>
           )}
         </label>
 
         <label className={styles.label}>
-          Email:
+          {t("Email:")}
           <input
             type="email"
             value={formData.email || ""}
@@ -436,23 +441,23 @@ export default function AccountStep({
           {emailChecking && (
             <small className={styles.loading}>
               <span className={styles.spinner}></span>
-              Verificando email...
+              {t("Verificando email...")}
             </small>
           )}
           {emailError && !emailChecking && touched.email && (
-            <small className={styles.error}>{emailError}</small>
+            <small className={styles.error}>{t(emailError)}</small>
           )}
         </label>
 
         <label className={styles.label}>
-          Senha:
+          {t("Senha:")}
           <div className={styles.passwordWrapper}>
             <input
               type={showPassword ? "text" : "password"}
               value={formData.password || ""}
               onChange={(e) => onUpdate({ password: e.target.value })}
               onBlur={() => handleBlur("password")}
-              placeholder="Sua senha..."
+              placeholder={t("Sua senha...")}
               className={getInputClass("password", passwordError, formData.password)}
             />
             <button
@@ -465,19 +470,19 @@ export default function AccountStep({
           </div>
           <PasswordRequirements password={formData.password || ""} />
           {passwordError && touched.password && (
-            <small className={styles.error}>{passwordError}</small>
+            <small className={styles.error}>{t(passwordError)}</small>
           )}
         </label>
 
         <label className={styles.label}>
-          Confirmar senha:
+          {t("Confirmar senha:")}
           <div className={styles.passwordWrapper}>
             <input
               type={showConfirmPassword ? "text" : "password"}
               value={formData.confirmPassword || ""}
               onChange={(e) => onUpdate({ confirmPassword: e.target.value })}
               onBlur={() => handleBlur("confirmPassword")}
-              placeholder="Confirme a senha..."
+              placeholder={t("Confirme a senha...")}
               className={getInputClass("confirmPassword", confirmPasswordError, formData.confirmPassword)}
             />
             <button
@@ -489,12 +494,12 @@ export default function AccountStep({
             </button>
           </div>
           {confirmPasswordError && touched.confirmPassword && (
-            <small className={styles.error}>{confirmPasswordError}</small>
+            <small className={styles.error}>{t(confirmPasswordError)}</small>
           )}
         </label>
 
         <div className={styles.genderSection}>
-          <span className={styles.sectionTitle}>Qual seu gênero?</span>
+          <span className={styles.sectionTitle}>{t("Qual seu gênero?")}</span>
           <div className={styles.genderGroup}>
             <label className={formData.gender === "MALE" ? styles.selected : ""}>
               <input
@@ -509,7 +514,7 @@ export default function AccountStep({
               />
               <span>
                 <i><FaMars /></i>
-                Homem
+                {t("Homem")}
               </span>
             </label>
             <label className={formData.gender === "FEMALE" ? styles.selected : ""}>
@@ -525,7 +530,7 @@ export default function AccountStep({
               />
               <span>
                 <i><FaVenus /></i>
-                Mulher
+                {t("Mulher")}
               </span>
             </label>
             <label className={formData.gender === "TRANS" ? styles.selected : ""}>
@@ -541,17 +546,17 @@ export default function AccountStep({
               />
               <span>
                 <i><FaTransgender /></i>
-                Trans
+                {t("Trans")}
               </span>
             </label>
           </div>
           {genderError && touched.gender && (
-            <small className={styles.error}>{genderError}</small>
+            <small className={styles.error}>{t(genderError)}</small>
           )}
         </div>
 
         <div className={styles.genderSection}>
-          <span className={styles.sectionTitle}>E seus interesses?</span>
+          <span className={styles.sectionTitle}>{t("E seus interesses?")}</span>
           <div className={styles.genderGroup}>
             <label className={(formData.preferences || []).includes("MALE") ? styles.selected : ""}>
               <input
@@ -562,7 +567,7 @@ export default function AccountStep({
               />
               <span>
                 <i><FaMars /></i>
-                Homem
+                {t("Homem")}
               </span>
             </label>
             <label className={(formData.preferences || []).includes("FEMALE") ? styles.selected : ""}>
@@ -574,7 +579,7 @@ export default function AccountStep({
               />
               <span>
                 <i><FaVenus /></i>
-                Mulher
+                {t("Mulher")}
               </span>
             </label>
             <label className={(formData.preferences || []).includes("TRANS") ? styles.selected : ""}>
@@ -586,12 +591,12 @@ export default function AccountStep({
               />
               <span>
                 <i><FaTransgender /></i>
-                Trans
+                {t("Trans")}
               </span>
             </label>
           </div>
           {preferencesError && touched.preferences && (
-            <small className={styles.error}>{preferencesError}</small>
+            <small className={styles.error}>{t(preferencesError)}</small>
           )}
         </div>
       </div>
@@ -603,12 +608,12 @@ export default function AccountStep({
             <>
               <div className={styles.verificationInfo}>
                 <p>
-                  Enviamos um código de 6 dígitos para <strong>{formData.email}</strong>
+                  {t("Enviamos um código de 6 dígitos para")} <strong>{formData.email}</strong>
                 </p>
               </div>
 
               <label className={styles.label}>
-                Código de verificação:
+                {t("Código de verificação:")}
                 <input
                   type="text"
                   value={verificationCode}
@@ -626,10 +631,10 @@ export default function AccountStep({
                 {verifyingCode && (
                   <small className={styles.loading}>
                     <span className={styles.spinner}></span>
-                    Verificando código...
+                    {t("Verificando código...")}
                   </small>
                 )}
-                {codeError && !verifyingCode && <small className={styles.error}>{codeError}</small>}
+                {codeError && !verifyingCode && <small className={styles.error}>{t(codeError)}</small>}
               </label>
 
               <div className={styles.verificationActions}>
@@ -639,7 +644,7 @@ export default function AccountStep({
                   className={styles.resendButton}
                   disabled={sendingCode}
                 >
-                  {sendingCode ? "Reenviando..." : "Reenviar código"}
+                  {sendingCode ? t("Reenviando...") : t("Reenviar código")}
                 </button>
 
                 <button
@@ -651,7 +656,7 @@ export default function AccountStep({
                   }}
                   className={styles.changeEmailButton}
                 >
-                  Mudar email
+                  {t("Mudar email")}
                 </button>
               </div>
             </>
@@ -675,8 +680,8 @@ export default function AccountStep({
                   d="M14 27l7 7 16-16"
                 />
               </svg>
-              <h3>Email verificado!</h3>
-              <p>Redirecionando para a próxima etapa...</p>
+              <h3>{t("Email verificado!")}</h3>
+              <p>{t("Redirecionando para a próxima etapa...")}</p>
             </div>
           )}
         </div>

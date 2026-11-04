@@ -61,7 +61,7 @@
 }
 
 .postHeader {
-  height: 40px;
+  min-height: 40px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -304,7 +304,7 @@
 }
 
 .othersTitle {
-  font-size: 24 px;
+  font-size: 24px;
   color: var(--contrast-color);
 }
 
@@ -366,6 +366,31 @@
   text-decoration: none;
 
   transition: 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .postHeader,
+  .titleEditable,
+  .titleEditable .editableValue {
+    min-width: 0;
+    height: auto;
+  }
+
+  .postHeader {
+    align-items: flex-start;
+  }
+
+  .titleEditable .editableValue {
+    display: block;
+    overflow-wrap: anywhere;
+    line-height: 1.3;
+  }
+
+  .othersList > .otherCard {
+    flex: none;
+    width: 100%;
+    max-width: none;
+  }
 }
 
 .otherCard:hover {

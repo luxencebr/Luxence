@@ -1,6 +1,8 @@
-"use-client";
+"use client";
 
 import styles from "./step-indicator.module.css";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 interface StepIndicatorProps {
   currentStep: number;
@@ -13,6 +15,7 @@ export default function StepIndicator({
   currentStep,
   totalSteps,
 }: StepIndicatorProps) {
+  const { locale } = useSiteLocale();
   return (
     <div className={styles.container}>
       <div className={styles.steps}>
@@ -43,7 +46,7 @@ export default function StepIndicator({
                   isActive ? styles.labelActive : ""
                 }`}
               >
-                {step}
+                {uiText(locale, step)}
               </div>
             </div>
           );

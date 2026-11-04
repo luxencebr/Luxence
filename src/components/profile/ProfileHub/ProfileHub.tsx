@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { User, Lock, CreditCard, ChevronRight, Crown } from "lucide-react";
 import styles from "./ProfileHub.module.css";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 const navItems = [
   {
@@ -26,6 +28,7 @@ const navItems = [
 ];
 
 export default function ProfileHub() {
+  const { locale } = useSiteLocale();
   return (
     <div className={styles.container}>
       <div className={styles.cards}>
@@ -35,8 +38,8 @@ export default function ProfileHub() {
               <item.icon size={24} />
             </div>
             <div className={styles.cardContent}>
-              <h3 className={styles.cardTitle}>{item.label}</h3>
-              <p className={styles.cardDescription}>{item.description}</p>
+              <h3 className={styles.cardTitle}>{uiText(locale, item.label)}</h3>
+              <p className={styles.cardDescription}>{uiText(locale, item.description)}</p>
             </div>
             <ChevronRight className={styles.chevron} size={20} />
           </Link>

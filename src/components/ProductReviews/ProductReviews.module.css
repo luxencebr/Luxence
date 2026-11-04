@@ -278,6 +278,30 @@
 }
 
 @media (max-width: 768px) {
+  .productReviews {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .layout {
+    flex: none;
+    width: 100%;
+  }
+
+  .reviewsList,
+  .reviewItem,
+  .reviewItemLayout,
+  .userReview {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .reviewerName,
+  .reviewComment {
+    overflow-wrap: anywhere;
+  }
+
   .flex {
     flex-direction: column;
   }

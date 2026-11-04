@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import styles from "./profile-step.module.css";
 import Dropdown from "@/components/ui/Dropdown/Dropdown";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 interface ProfileStepProps {
   formData: any;
@@ -155,6 +157,8 @@ export default function ProfileStep({
   onUpdate,
   onValidate,
 }: ProfileStepProps) {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
   const [documentError, setDocumentError] = useState<string | null>(null);
   const [birthError, setBirthError] = useState<string | null>(null);
   const [phoneError, setPhoneError] = useState<string | null>(null);
@@ -360,13 +364,13 @@ export default function ProfileStep({
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h2>Perfil</h2>
-        <p>Preencha as informações básicas do seu perfil</p>
+        <h2>{t("Perfil")}</h2>
+        <p>{t("Preencha as informações básicas do seu perfil")}</p>
       </div>
 
       <div className={styles.section}>
         <label className={styles.label}>
-          Data de nascimento:
+          {t("Data de nascimento:")}
           <input
             type="text"
             value={formData.birthday || ""}
@@ -386,16 +390,16 @@ export default function ProfileStep({
         </label>
 
         <label className={styles.label}>
-          Nacionalidade:
+          {t("Nacionalidade:")}
           <Dropdown
-            trigger={formData.nationality || "Selecione a nacionalidade"}
+            trigger={formData.nationality || t("Selecione a nacionalidade")}
             selectedValue={formData.nationality || ""}
             triggerClassName={`${styles.trigger} ${
               touched.nationality && nationalityError ? styles.triggerError : ""
             }`}
             menuClassName={styles.menu}
             searchable={true}
-            searchPlaceholder="Buscar país..."
+            searchPlaceholder={t("Buscar país...")}
             options={countries}
             onSelect={(value) => {
               onUpdate({ nationality: value });
@@ -411,7 +415,7 @@ export default function ProfileStep({
         </label>
 
         <label className={styles.label}>
-          Documento (CPF ou Passaporte):
+          {t("Documento (CPF ou Passaporte):")}
           <input
             type="text"
             value={formData.document || ""}
@@ -432,7 +436,7 @@ export default function ProfileStep({
           {documentChecking && (
             <small className={styles.loading}>
               <span className={styles.spinner}></span>
-              Verificando documento...
+              {t("Verificando documento...")}
             </small>
           )}
           {documentError && !documentChecking && (
@@ -443,7 +447,7 @@ export default function ProfileStep({
         </label>
 
         <label className={styles.label}>
-          Telefone de contato:
+          {t("Telefone de contato:")}
           <input
             type="tel"
             value={formData.phone || ""}
@@ -458,7 +462,7 @@ export default function ProfileStep({
           {phoneChecking && (
             <small className={styles.loading}>
               <span className={styles.spinner}></span>
-              Verificando telefone...
+              {t("Verificando telefone...")}
             </small>
           )}
           {phoneError && !phoneChecking && (
