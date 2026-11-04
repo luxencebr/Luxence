@@ -10,10 +10,14 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 import Popup from "../ui/Popup/Popup";
 import action from "./action";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 type PopupView = "login" | "forgot-password" | "account-deleted";
 
 export default function LogIn() {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
   const [isOpen, setIsOpen] = useState(false);
   const [currentView, setCurrentView] = useState<PopupView>("login");
 
@@ -137,7 +141,7 @@ export default function LogIn() {
 
   return (
     <Popup
-      trigger={"Conecte-se"}
+      trigger={t("Conecte-se")}
       triggerClass={styles.trigger}
       popupClass={styles.popup}
       isOpen={isOpen}
@@ -147,7 +151,7 @@ export default function LogIn() {
         <>
           <div className={styles.formContent}>
             <div className={styles.formHeader}>
-              <h1>Conecte-se</h1>
+              <h1>{t("Conecte-se")}</h1>
               <button
                 onClick={() => setIsOpen(false)}
                 className={styles.closeButton}
@@ -175,24 +179,24 @@ export default function LogIn() {
               aria-busy={isLoading}
             >
               <label htmlFor="email">
-                Email:
+                {t("Email:")}
                 <input
                   name="email"
                   id="email"
                   type="email"
-                  placeholder="Seu email..."
+                  placeholder={t("Seu email...")}
                   onChange={() => setErrors({})}
                 />
               </label>
 
               <label htmlFor="password">
-                Senha:
+                {t("Senha:")}
                 <div className={styles.passwordWrapper}>
                   <input
                     name="password"
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Sua senha..."
+                    placeholder={t("Sua senha...")}
                     onChange={() => setErrors({})}
                   />
                   <button
@@ -210,14 +214,14 @@ export default function LogIn() {
                 onClick={handleForgotPassword}
                 className={styles.helpLink}
               >
-                Esqueceu a senha?
+                {t("Esqueceu a senha?")}
               </a>
 
               <button type="submit" className={styles.submit}>
                 {isLoading ? (
                   <span className={styles.spinner}></span>
                 ) : (
-                  "Conecte-se"
+                  t("Conecte-se")
                 )}
               </button>
             </form>
@@ -269,16 +273,15 @@ export default function LogIn() {
                   d="M14 27l7 7 16-16"
                 />
               </svg>
-              <p>Email enviado!</p>
+              <p>{t("Email enviado!")}</p>
               <span className={styles.successMessage}>
-                Se o email existir em nossa base, você receberá um link para
-                redefinir sua senha.
+                {t("Se o email existir em nossa base, você receberá um link para redefinir sua senha.")}
               </span>
               <button
                 onClick={() => setIsOpen(false)}
                 className={styles.submit}
               >
-                Fechar
+                {t("Fechar")}
               </button>
             </div>
           ) : (
@@ -291,7 +294,7 @@ export default function LogIn() {
                   >
                     <IoArrowBack />
                   </button>
-                  <h1>Recuperar senha</h1>
+                  <h1>{t("Recuperar senha")}</h1>
                 </div>
                 <button
                   onClick={() => setIsOpen(false)}
@@ -302,7 +305,7 @@ export default function LogIn() {
               </div>
 
               <p className={styles.description}>
-                Digite seu email e enviaremos um link para redefinir sua senha.
+                {t("Digite seu email e enviaremos um link para redefinir sua senha.")}
               </p>
 
               <form
@@ -313,12 +316,12 @@ export default function LogIn() {
                 }`}
               >
                 <label htmlFor="forgot-email">
-                  Email:
+                  {t("Email:")}
                   <input
                     name="email"
                     id="forgot-email"
                     type="email"
-                    placeholder="Seu email..."
+                    placeholder={t("Seu email...")}
                     value={forgotEmail}
                     onChange={(e) => {
                       setForgotEmail(e.target.value);
@@ -332,7 +335,7 @@ export default function LogIn() {
                   {forgotLoading ? (
                     <span className={styles.spinner}></span>
                   ) : (
-                    "Enviar link"
+                    t("Enviar link")
                   )}
                 </button>
               </form>
@@ -363,9 +366,9 @@ export default function LogIn() {
                   d="M14 27l7 7 16-16"
                 />
               </svg>
-              <p>Conta reativada!</p>
+              <p>{t("Conta reativada!")}</p>
               <span className={styles.successMessage}>
-                Sua conta foi reativada com sucesso. Você pode fazer login normalmente agora.
+                {t("Sua conta foi reativada com sucesso. Você pode fazer login normalmente agora.")}
               </span>
               <button
                 onClick={() => {
@@ -374,7 +377,7 @@ export default function LogIn() {
                 }}
                 className={styles.submit}
               >
-                Fazer Login
+                {t("Fazer Login")}
               </button>
             </div>
           ) : (
@@ -387,7 +390,7 @@ export default function LogIn() {
                   >
                     <IoArrowBack />
                   </button>
-                  <h1>Conta Excluída</h1>
+                  <h1>{t("Conta Excluída")}</h1>
                 </div>
                 <button
                   onClick={() => setIsOpen(false)}
@@ -398,7 +401,7 @@ export default function LogIn() {
               </div>
 
               <p className={styles.description}>
-                Esta conta foi excluída. Você pode reativá-la inserindo sua senha abaixo.
+                {t("Esta conta foi excluída. Você pode reativá-la inserindo sua senha abaixo.")}
               </p>
 
               <form
@@ -408,7 +411,7 @@ export default function LogIn() {
                 }`}
               >
                 <label htmlFor="reactivate-email">
-                  Email:
+                  {t("Email:")}
                   <input
                     id="reactivate-email"
                     type="email"
@@ -419,13 +422,13 @@ export default function LogIn() {
                 </label>
 
                 <label htmlFor="reactivate-password">
-                  Senha:
+                  {t("Senha:")}
                   <div className={styles.passwordWrapper}>
                     <input
                       name="password"
                       id="reactivate-password"
                       type={showPassword ? "text" : "password"}
-                      placeholder="Sua senha..."
+                      placeholder={t("Sua senha...")}
                       value={reactivatePassword}
                       onChange={(e) => {
                         setReactivatePassword(e.target.value);
@@ -447,7 +450,7 @@ export default function LogIn() {
                   {reactivateLoading ? (
                     <span className={styles.spinner}></span>
                   ) : (
-                    "Reativar Conta"
+                    t("Reativar Conta")
                   )}
                 </button>
               </form>

@@ -3,10 +3,14 @@
 import { useEffect, useId, useRef, useState } from "react";
 import styles from "./LocalPupup.module.css";
 import { BsRadar } from "react-icons/bs";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 export type DistanceSelection = { lat: number; lng: number; radius: number };
 
 export default function LocalPopup({ onFilterChange }: { onFilterChange: (filter: DistanceSelection | null) => void }) {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
   const [isOpen, setIsOpen] = useState(false);
   const menuId = useId();
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -124,7 +128,7 @@ export default function LocalPopup({ onFilterChange }: { onFilterChange: (filter
         aria-controls={menuId}
         onClick={() => setIsOpen((open) => !open)}
       >
-        {hasLocation ? `Até ${radius} km` : "Distância"}
+        {hasLocation ? `${{ pt: "Até", en: "Within", es: "Hasta" }[locale]} ${radius} km` : t("Distância")}
         <BsRadar aria-hidden="true" />
       </button>
 
@@ -132,23 +136,23 @@ export default function LocalPopup({ onFilterChange }: { onFilterChange: (filter
         <div className={styles.dropdown} id={menuId}>
           {!hasLocation && (
             <div className={styles.locationRequest}>
-              <p>Permita sua localização para ver perfis próximos.</p>
+              <p>{t("Permita sua localização para ver perfis próximos.")}</p>
 
               <button
                 type="button"
                 className={styles.primaryButton}
                 onClick={requestLocation}
               >
-                Usar minha localização
+                {t("Usar minha localização")}
               </button>
 
-              {error && <span className={styles.error}>{error}</span>}
+              {error && <span className={styles.error}>{t(error)}</span>}
             </div>
           )}
 
           {hasLocation && coords && (
             <div className={styles.filters}>
-              <p className={styles.subtitle}>Mostrar perfis até:</p>
+              <p className={styles.subtitle}>{t("Mostrar perfis até:")}</p>
 
               <div className={styles.radiusOptions}>
                 {[5, 10, 25, 50].map((value) => (
@@ -177,7 +181,7 @@ export default function LocalPopup({ onFilterChange }: { onFilterChange: (filter
                   </button>
                 ))}
               </div>
-              <button type="button" className={styles.clearButton} onClick={clearLocation}>Desativar filtro</button>
+              <button type="button" className={styles.clearButton} onClick={clearLocation}>{t("Desativar filtro")}</button>
             </div>
           )}
         </div>

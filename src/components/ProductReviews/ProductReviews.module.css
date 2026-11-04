@@ -1,5 +1,7 @@
 .productReviews {
   width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   max-width: 960px;
   margin: 0 auto;
 
@@ -11,6 +13,8 @@
 }
 
 .layout {
+  min-width: 0;
+  box-sizing: border-box;
   background: var(--background-complementary-color);
   box-shadow: none;
   flex: 1;
@@ -271,6 +275,21 @@
 
 .flex > * {
   flex: 1;
+}
+
+@media (max-width: 768px) {
+  .flex {
+    flex-direction: column;
+  }
+
+  .flex > * {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .nameInput {
+    width: 100%;
+  }
 }
 
 .label {

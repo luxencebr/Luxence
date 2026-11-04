@@ -12,6 +12,8 @@ import Dropdown from "../ui/Dropdown/Dropdown";
 
 import type { Producer } from "@/types/Producer";
 import { dispatchProfileUpdateEvent } from "@/utils/profileUpdateEvent";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 function formatNeighborhood(name: string) {
   return name
@@ -64,6 +66,8 @@ interface ProductLocationProps {
 }
 
 function ProductLocation({ producer, canEdit }: ProductLocationProps) {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -316,13 +320,13 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
             <span>
               <HiLocationMarker />
             </span>
-            Localidades
+            {t("Localidades")}
           </h2>
 
           {canEdit ? (
             !isEditing ? (
               <button className={styles.editBtn} onClick={handleEdit}>
-                Editar <HiOutlinePencil />
+                {t("Editar")} <HiOutlinePencil />
               </button>
             ) : (
               <div className={styles.editActions}>
@@ -331,7 +335,7 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
                   onClick={handleSave}
                   disabled={isSaving}
                 >
-                  {isSaving ? "Salvando..." : "Salvar"}
+                  {t(isSaving ? "Salvando..." : "Salvar")}
                 </button>
 
                 <button
@@ -339,7 +343,7 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
                   onClick={handleCancel}
                   disabled={isSaving}
                 >
-                  Cancelar
+                  {t("Cancelar")}
                 </button>
               </div>
             )
@@ -358,7 +362,7 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
                   <span>
                     <FaLocationArrow />
                   </span>
-                  Minha Localização
+                  {t("Minha Localização")}
                 </h3>
 
                 {!isEditing ? (
@@ -369,13 +373,13 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
                 ) : (
                   <div className={styles.editGroup}>
                     <label>
-                      Estado:
+                      {t("Estado:")}
                       <Dropdown
-                        trigger={selectedState || "Selecione um Estado"}
+                        trigger={selectedState || t("Selecione um Estado")}
                         triggerClassName={styles.trigger}
                         menuClassName={styles.menu}
                         searchable={true}
-                        searchPlaceholder="Buscar estado..."
+                        searchPlaceholder={t("Buscar estado...")}
                         options={states.map((st) => `${st.nome} - ${st.sigla}`)}
                         selectedValue={
                           states.find((st) => st.sigla === selectedState)
@@ -393,13 +397,13 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
 
                     {selectedState && (
                       <label>
-                        Cidade:
+                        {t("Cidade:")}
                         <Dropdown
-                          trigger={selectedCity || "Selecione uma Cidade"}
+                          trigger={selectedCity || t("Selecione uma Cidade")}
                           triggerClassName={styles.trigger}
                           menuClassName={styles.menu}
                           searchable={true}
-                          searchPlaceholder="Buscar cidade..."
+                          searchPlaceholder={t("Buscar cidade...")}
                           options={cities.map((c) => c.nome)}
                           selectedValue={selectedCity}
                           onSelect={(value) => handleCityChange(value)}
@@ -411,10 +415,10 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
 
                     {selectedCity && (
                       <label>
-                        Bairro:
+                        {t("Bairro:")}
                         <input
                           type="text"
-                          placeholder="Digite o bairro"
+                          placeholder={t("Digite o bairro")}
                           value={selectedNeighborhood}
                           onChange={(e) =>
                             handleNeighborhoodChange(e.target.value)
@@ -427,21 +431,21 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
               </div>
 
               <div className={styles.line}>
-                <h3 className={styles.title}>Locais que Atendo</h3>
+                <h3 className={styles.title}>{t("Locais que Atendo")}</h3>
 
                 {!isEditing ? (
                   <p className={styles.address}>
                     {(() => {
-                      const items = locations.map((loc) => loc.option.label);
+                      const items = locations.map((loc) => t(loc.option.label));
 
                       if (hasLocal) {
-                        items.push("Possui local");
+                        items.push(t("Possui local"));
                       }
 
-                      if (items.length === 0) return "Não informado";
+                      if (items.length === 0) return t("Não informado");
                       if (items.length === 1) return items[0];
 
-                      return `${items.slice(0, -1).join(", ")} e ${items.at(
+                      return `${items.slice(0, -1).join(", ")} ${{ pt: "e", en: "and", es: "y" }[locale]} ${items.at(
                         -1,
                       )}`;
                     })()}
@@ -480,7 +484,7 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
                               }
                             }}
                           />
-                          {opt.id}. {opt.label}
+                          {opt.id}. {t(opt.label)}
                         </label>
                       );
                     })}
@@ -492,7 +496,7 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
                         checked={hasLocal}
                         onChange={(e) => setHasLocal(e.target.checked)}
                       />
-                      {LOCATIONS_OPTIONS.length + 1}. Possui Local
+                      {LOCATIONS_OPTIONS.length + 1}. {t("Possui Local")}
                       {!hasLocal && "?"}
                     </label>
                   </>
@@ -500,21 +504,21 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
               </div>
 
               <div className={styles.line}>
-                <h3 className={styles.title}>Bairros que Atendo</h3>
+                <h3 className={styles.title}>{t("Bairros que Atendo")}</h3>
                 {!isEditing ? (
                   <p className={styles.address}>
                     {neighborhoodsServed.length === 0
-                      ? "Nenhum bairro informado."
+                      ? t("Nenhum bairro informado.")
                       : formatNeighborhoodList(neighborhoodsServed)}
                   </p>
                 ) : (
                   <>
                     <label>
-                      Adicionar Bairro
+                      {t("Adicionar Bairro")}
                       <div className={styles.addNeighborhood}>
                         <input
                           type="text"
-                          placeholder="Digite um bairro"
+                          placeholder={t("Digite um bairro")}
                           value={newNeighborhood}
                           onChange={(e) => setNewNeighborhood(e.target.value)}
                           onKeyDown={(e) => {
@@ -603,9 +607,7 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
 
                         <div className={styles.ocult}>
                           <p>
-                            As seguintes informações são{" "}
-                            <strong>PRIVADAS</strong> e apenas você e a{" "}
-                            <span>Luence</span> têm acesso
+                            {t("As seguintes informações são privadas e apenas você e a Luxence têm acesso")}
                           </p>
                           <label htmlFor="">
                             Rua:
@@ -650,7 +652,7 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
                       </div>
 
                       <div className={styles.line}>
-                        <h3 className={styles.title}>Comodidades</h3>
+                        <h3 className={styles.title}>{t("Comodidades")}</h3>
                         <div className={styles.amenities}>
                           {AMENITIES_OPTIONS.map((opt) => {
                             const exists = amenities.some(
@@ -687,7 +689,7 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
                                     }
                                   }}
                                 />
-                                {opt.id}. {opt.label}
+                                {opt.id}. {t(opt.label)}
                               </label>
                             );
                           })}
@@ -703,7 +705,7 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
                       <span>
                         <TbHomeCheck />
                       </span>
-                      Minha Localidade
+                      {t("Minha Localidade")}
                     </h3>
 
                     <p className={styles.address}>
@@ -712,16 +714,16 @@ function ProductLocation({ producer, canEdit }: ProductLocationProps) {
                   </div>
 
                   <div className={styles.line}>
-                    <h3 className={styles.title}>Comodidades</h3>
+                    <h3 className={styles.title}>{t("Comodidades")}</h3>
                     <p>
                       {amenities.length === 0
-                        ? "Nenhuma informada."
-                        : amenities.map((a) => a.option.label).join(", ")}
+                        ? t("Nenhuma informada.")
+                        : amenities.map((a) => t(a.option.label)).join(", ")}
                     </p>
                   </div>
                 </>
               ) : (
-                <p className={styles.nonHasLocal}>Não possui local</p>
+                <p className={styles.nonHasLocal}>{t("Não possui local")}</p>
               )}
             </div>
           </div>

@@ -7,6 +7,8 @@ import { HiOutlinePencil } from "react-icons/hi2";
 
 import type { Producer } from "@/types/Producer";
 import { dispatchProfileUpdateEvent } from "@/utils/profileUpdateEvent";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 interface ProductServicesProps {
   producer: Producer;
@@ -14,6 +16,8 @@ interface ProductServicesProps {
 }
 
 function ProductServices({ producer, canEdit }: ProductServicesProps) {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -99,12 +103,12 @@ function ProductServices({ producer, canEdit }: ProductServicesProps) {
     <section className={styles.productServices}>
       <div className={styles.layout}>
         <div className={styles.header}>
-          <h2>Serviços</h2>
+          <h2>{t("Serviços")}</h2>
 
           {canEdit ? (
             !isEditing ? (
               <button className={styles.editBtn} onClick={handleEdit}>
-                Editar <HiOutlinePencil />
+                {t("Editar")} <HiOutlinePencil />
               </button>
             ) : (
               <div className={styles.editActions}>
@@ -113,7 +117,7 @@ function ProductServices({ producer, canEdit }: ProductServicesProps) {
                   onClick={handleSave}
                   disabled={isSaving}
                 >
-                  {isSaving ? "Salvando..." : "Salvar"}
+                  {t(isSaving ? "Salvando..." : "Salvar")}
                 </button>
 
                 <button
@@ -121,7 +125,7 @@ function ProductServices({ producer, canEdit }: ProductServicesProps) {
                   onClick={handleCancel}
                   disabled={isSaving}
                 >
-                  Cancelar
+                  {t("Cancelar")}
                 </button>
               </div>
             )
@@ -138,7 +142,7 @@ function ProductServices({ producer, canEdit }: ProductServicesProps) {
               <ul className={styles.servicesList}>
                 {services.map((s) => (
                   <li key={s.id}>
-                    {s.label}
+                    {t(s.label)}
 
                     {s.status === "yes" && (
                       <span className={`${styles.green} ${styles.status}`}>
@@ -166,7 +170,7 @@ function ProductServices({ producer, canEdit }: ProductServicesProps) {
               <div className={styles.servicesList}>
                 {services.map((s) => (
                   <div key={s.id} className={styles.serviceItem}>
-                    <span className={styles.label}>{s.label}</span>
+                    <span className={styles.label}>{t(s.label)}</span>
 
                     <div className={styles.radioGroup}>
                       <label className={styles.radioOption}>

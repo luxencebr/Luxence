@@ -7,6 +7,8 @@ import SignupPage from "../Signup/Signup";
 
 import styles from "./AuthRequiredPopup.module.css";
 import { IoClose } from "react-icons/io5";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 interface AuthRequiredPopupProps {
   active: boolean;
@@ -17,6 +19,7 @@ export default function AuthRequiredPopup({
   active,
   onActiveChange,
 }: AuthRequiredPopupProps) {
+  const { locale } = useSiteLocale();
   const [isOpen, setIsOpen] = useState(active);
 
   // sincroniza quando o pai mudar
@@ -39,7 +42,7 @@ export default function AuthRequiredPopup({
     >
       <div className={styles.header}>
         <div className={styles.left}>
-          <h1 className={styles.title}>Quase lá...</h1>
+          <h1 className={styles.title}>{uiText(locale, "Quase lá...")}</h1>
         </div>
         <button
           onClick={() => handleOpenChange(false)}
@@ -50,9 +53,7 @@ export default function AuthRequiredPopup({
       </div>
       <div className={styles.content}>
         <p className={styles.text}>
-          Para usar este recurso, basta conectar em sua conta ou realizar seu
-          cadastro em minutos. Assim você desbloqueia todas as funcionalidades
-          da Luxence.
+          {uiText(locale, "Para usar este recurso, basta conectar em sua conta ou realizar seu cadastro em minutos. Assim você desbloqueia todas as funcionalidades da Luxence.")}
         </p>
       </div>
       <div className={styles.footer}>

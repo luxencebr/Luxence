@@ -8,6 +8,8 @@ import { Sparkles } from "lucide-react";
 
 import type { Producer, ProducerAppearance } from "@/types/Producer";
 import { dispatchProfileUpdateEvent } from "@/utils/profileUpdateEvent";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 interface ProductAboutProps {
   producer: Producer;
@@ -148,6 +150,8 @@ function generateBioSuggestions(
 }
 
 export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -305,7 +309,7 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
   return (
     <section className={styles.container}>
       <div className={styles.header}>
-        <h2 className={styles.title}>Sobre Mim</h2>
+        <h2 className={styles.title}>{t("Sobre Mim")}</h2>
 
         {canEdit ? (
           !isEditing ? (
@@ -319,7 +323,7 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
                 onClick={handleSave}
                 disabled={isSaving}
               >
-                {isSaving ? "Salvando..." : "Salvar"}
+                {t(isSaving ? "Salvando..." : "Salvar")}
               </button>
 
               <button
@@ -355,7 +359,7 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
                   className={styles.readMoreButton}
                   onClick={() => setExpanded(!expanded)}
                 >
-                  {expanded ? "Ler menos" : "Ler mais"}
+                  {t(expanded ? "Ler menos" : "Ler mais")}
                 </button>
               )}
             </>
@@ -368,7 +372,7 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
                   </p>
                 </div>
               ) : (
-                <p style={{ opacity: "0.75" }}>Não há biografia</p>
+                <p style={{ opacity: "0.75" }}>{t("Não há biografia")}</p>
               )}
             </>
           )}
@@ -379,7 +383,7 @@ export default function ProductAbout({ producer, canEdit }: ProductAboutProps) {
             className={styles.textarea}
             value={bio}
             onChange={(e) => setBio(e.target.value)}
-            placeholder="Conte um pouco sobre você..."
+            placeholder={t("Conte um pouco sobre você...")}
             rows={5}
           />
 

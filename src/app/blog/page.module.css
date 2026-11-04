@@ -1,4 +1,6 @@
 .container {
+  width: 100%;
+  box-sizing: border-box;
   min-height: 90vh;
   max-width: 960px;
   margin: 0 auto;
@@ -136,6 +138,23 @@
 }
 
 @media (max-width: 768px) {
+  .postsFlex {
+    column-count: 1;
+  }
+
+  .post {
+    min-width: 0;
+    padding: 16px;
+  }
+
+  .post h2 {
+    font-size: 20px;
+    text-align: left;
+  }
+
+  .post p {
+    text-align: left;
+  }
 }
 
 .postsList {

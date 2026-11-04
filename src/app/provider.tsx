@@ -11,6 +11,7 @@ import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
 import AccountStatusManager from "@/components/AccountStatusManager/AccountStatusManager";
 import { ScrollTop } from "@/utils/ScrollTop";
+import { SiteLocaleProvider } from "@/lib/site-locale";
 
 const AGE_CONFIRMED_KEY = "luxence_age_confirmed";
 
@@ -42,10 +43,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   if (noLayout) {
     return (
-      <SessionProvider>
+      <SiteLocaleProvider><SessionProvider>
         <AccountStatusManager />
         {children}
-      </SessionProvider>
+      </SessionProvider></SiteLocaleProvider>
     );
   }
 
@@ -54,7 +55,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <SessionProvider>
+    <SiteLocaleProvider><SessionProvider>
       <AccountStatusManager />
       <Header />
       <ScrollTop />
@@ -67,6 +68,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           onExitSite={handleExitSite}
         />
       )}
-    </SessionProvider>
+    </SessionProvider></SiteLocaleProvider>
   );
 }

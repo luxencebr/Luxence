@@ -7,6 +7,8 @@ import { TbCoinFilled } from "react-icons/tb";
 import { FaMoneyBills, FaPix, FaCreditCard } from "react-icons/fa6";
 import { HiOutlinePencil } from "react-icons/hi2";
 import { dispatchProfileUpdateEvent } from "@/utils/profileUpdateEvent";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 interface ProductValuesProps {
   producer: Producer;
@@ -14,6 +16,8 @@ interface ProductValuesProps {
 }
 
 function ProductValues({ producer, canEdit }: ProductValuesProps) {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -164,13 +168,13 @@ function ProductValues({ producer, canEdit }: ProductValuesProps) {
             <span>
               <TbCoinFilled />
             </span>
-            Valores
+            {t("Valores")}
           </h2>
 
           {canEdit ? (
             !isEditing ? (
               <button className={styles.editBtn} onClick={handleEdit}>
-                Editar <HiOutlinePencil />
+                {t("Editar")} <HiOutlinePencil />
               </button>
             ) : (
               <div className={styles.editActions}>
@@ -179,7 +183,7 @@ function ProductValues({ producer, canEdit }: ProductValuesProps) {
                   onClick={handleSave}
                   disabled={isSaving}
                 >
-                  {isSaving ? "Salvando..." : "Salvar"}
+                  {t(isSaving ? "Salvando..." : "Salvar")}
                 </button>
 
                 <button
@@ -187,7 +191,7 @@ function ProductValues({ producer, canEdit }: ProductValuesProps) {
                   onClick={handleCancel}
                   disabled={isSaving}
                 >
-                  Cancelar
+                  {t("Cancelar")}
                 </button>
               </div>
             )
@@ -207,7 +211,7 @@ function ProductValues({ producer, canEdit }: ProductValuesProps) {
                     orderedPrices.map((price) => (
                       <dl key={price.option.id} className={styles.valueItem}>
                         <dt className={styles.priceOption}>
-                          {price.option.label}
+                          {t(price.option.label)}
                         </dt>
                         <dd className={styles.priceValue}>
                           {price.value > 0 ? (
@@ -218,14 +222,14 @@ function ProductValues({ producer, canEdit }: ProductValuesProps) {
                               })}
                             </>
                           ) : (
-                            "A combinar"
+                            t("A combinar")
                           )}
                         </dd>
                       </dl>
                     ))
                   ) : (
                     <span style={{ display: "block", textAlign: "center" }}>
-                      Não informado
+                      {t("Não informado")}
                     </span>
                   )}
                 </>
@@ -269,13 +273,13 @@ function ProductValues({ producer, canEdit }: ProductValuesProps) {
                               }
                             }}
                           />
-                          {opt.label}
+                          {t(opt.label)}
                         </label>
 
                         {exists && (
                           <input
                             type="number"
-                            placeholder="Valor"
+                            placeholder={t("Valor")}
                             value={priceDrafts[opt.id] ?? ""}
                             onChange={(e) =>
                               setPriceDrafts((prev) => ({
@@ -293,7 +297,7 @@ function ProductValues({ producer, canEdit }: ProductValuesProps) {
             </div>
 
             <div className={styles.valuesPayments}>
-              <h3 className={styles.subTitle}>Métodos de Pagamento</h3>
+              <h3 className={styles.subTitle}>{t("Métodos de Pagamento")}</h3>
 
               <div className={styles.payments}>
                 {isEditing ? (
@@ -328,7 +332,7 @@ function ProductValues({ producer, canEdit }: ProductValuesProps) {
                             }}
                           />
                           <span>{opt.icon}</span>
-                          {opt.label}
+                          {t(opt.label)}
                         </label>
                       );
                     })}
@@ -344,12 +348,12 @@ function ProductValues({ producer, canEdit }: ProductValuesProps) {
                         return (
                           <div key={p.id} className={styles.paymentOption}>
                             <span>{opt?.icon}</span>
-                            {p.option.label}
+                            {t(p.option.label)}
                           </div>
                         );
                       })
                     ) : (
-                      <p>Não Informados</p>
+                      <p>{t("Não Informados")}</p>
                     )}
                   </>
                 )}

@@ -4,6 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import styles from "./SortDropdown.module.css";
 import { IoSwapVertical } from "react-icons/io5";
 import { FiCheck } from "react-icons/fi";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 export type SortOption = "default" | "name" | "time" | "views" | "rating";
 export type SortDirection = "asc" | "desc";
@@ -29,6 +31,8 @@ export default function SortDropdown({
   initialSort = "default",
   initialDirection = "desc",
 }: SortDropdownProps) {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedSort, setSelectedSort] = useState<SortOption>(initialSort);
   const [sortDirection, setSortDirection] =
@@ -107,7 +111,7 @@ export default function SortDropdown({
 
   const getLabel = () => {
     const option = sortOptions.find((opt) => opt.value === selectedSort);
-    if (!option) return "Padrão";
+    if (!option) return t("Padrão");
 
     let label = option.label;
 
@@ -126,7 +130,7 @@ export default function SortDropdown({
       }
     }
 
-    return label;
+    return t(label);
   };
 
   return (
@@ -134,7 +138,7 @@ export default function SortDropdown({
       <button
         className={styles.sortButton}
         onClick={() => setIsOpen(!isOpen)}
-        aria-label="Ordenar"
+        aria-label={t("Ordenar")}
       >
         <IoSwapVertical />
         <span>{getLabel()}</span>
@@ -150,7 +154,7 @@ export default function SortDropdown({
               }`}
               onClick={() => handleSortSelect(option.value)}
             >
-              <span>{option.label}</span>
+              <span>{t(option.label)}</span>
               {selectedSort === option.value && (
                 <FiCheck className={styles.checkIcon} />
               )}

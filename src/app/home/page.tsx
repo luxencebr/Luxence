@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 import { Producer } from "@/types/Producer";
 
 import styles from "./page.module.css";
+import { useSiteLocale } from "@/lib/site-locale";
+import { siteCopy } from "@/lib/site-copy";
+import { uiText } from "@/lib/ui-text";
 
 import ProductsRow from "@/components/ProductRow/ProductRow";
 import Slider from "@/components/about/Slider/Slider";
@@ -17,6 +20,8 @@ interface HomeData {
 }
 
 export default function HomePage() {
+  const { locale } = useSiteLocale();
+  const t = siteCopy[locale].home;
   const { data: session } = useSession();
   const canEdit = session?.user?.role === "ADMIN";
   const [sliderImages, setSliderImages] = useState([]);
@@ -153,7 +158,7 @@ export default function HomePage() {
                 objectFit: "cover",
               }}
             />
-            <p>Carregando produtores...</p>
+            <p>{t[0]}</p>
           </div>
         </div>
       </main>
@@ -165,7 +170,7 @@ export default function HomePage() {
       <main className={styles.homePage}>
         <div className={styles.layout}>
           <div className={styles.errorState}>
-            <p>{error}</p>
+            <p>{uiText(locale, error)}</p>
           </div>
         </div>
       </main>
@@ -179,14 +184,14 @@ export default function HomePage() {
         
         <ProductsRow 
           producers={homeData.new} 
-          title="Novidades" 
+          title={t[1]}
           maxItems={29}
           sortParam="time"
         />
         
         <ProductsRow 
           producers={homeData.topViews} 
-          title="Top Views" 
+          title={t[2]}
           highlight 
           maxItems={10}
           sortParam="views"
@@ -194,7 +199,7 @@ export default function HomePage() {
         
         <ProductsRow 
           producers={homeData.topReviews} 
-          title="Top Reviews" 
+          title={t[3]}
           maxItems={29}
           sortParam="rating"
         />
@@ -202,7 +207,7 @@ export default function HomePage() {
         {homeData.nearby.length > 0 && (
           <ProductsRow 
             producers={homeData.nearby} 
-            title="Perto de Você" 
+            title={t[4]}
             maxItems={29}
             sortParam="default"
           />

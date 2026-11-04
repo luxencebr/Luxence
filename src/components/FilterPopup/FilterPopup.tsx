@@ -8,6 +8,8 @@ import Popup from "../ui/Popup/Popup";
 import styles from "./FilterPopup.module.css";
 import { CiFilter } from "react-icons/ci";
 import { IoCloseOutline } from "react-icons/io5";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 const APPEARANCE_VALUE_LABELS: Record<string, Record<string, string>> = {
   ethnicity: {
@@ -280,6 +282,8 @@ interface FilterPopupProps {
 }
 
 export default function FilterPopup({ producers, onApply, onOpen, loading, loadError }: FilterPopupProps) {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
   const [isOpen, setIsOpen] = useState(false);
   const [filters, setFilters] = useState<ActiveFilters>({});
   const [appliedFilters, setAppliedFilters] = useState<ActiveFilters>({});
@@ -412,13 +416,13 @@ export default function FilterPopup({ producers, onApply, onOpen, loading, loadE
 
   function getAppearanceLabel(key: string, value: string): string {
     // Valores booleanos
-    if (value === "sim") return "Sim";
-    if (value === "não") return "Não";
+    if (value === "sim") return t("Sim");
+    if (value === "não") return t("Não");
 
     // Valores com mapa de labels
     const labelMap = APPEARANCE_VALUE_LABELS[key];
     if (labelMap && labelMap[value]) {
-      return labelMap[value];
+      return t(labelMap[value]);
     }
 
     // Fallback: capitalizar primeira letra
@@ -513,7 +517,7 @@ export default function FilterPopup({ producers, onApply, onOpen, loading, loadE
       return (
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
-            <h4>Idade (Anos)</h4>
+            <h4>{t("Idade (Anos)")}</h4>
           </div>
           <div className={styles.range}>
             <div className={styles.inputs}>
@@ -650,7 +654,7 @@ export default function FilterPopup({ producers, onApply, onOpen, loading, loadE
       return (
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
-            <h4>Preço (R$)</h4>
+            <h4>{t("Preço (R$)")}</h4>
           </div>
           <div className={styles.range}>
             <div className={styles.inputs}>
@@ -786,7 +790,7 @@ export default function FilterPopup({ producers, onApply, onOpen, loading, loadE
       return (
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
-            <h4>Dote (cm)</h4>
+            <h4>{t("Dote (cm)")}</h4>
           </div>
           <div className={styles.range}>
             <div className={styles.inputs}>
@@ -908,7 +912,7 @@ export default function FilterPopup({ producers, onApply, onOpen, loading, loadE
           <span>
             <CiFilter />
           </span>
-          Filtros
+          {t("Filtros")}
           {(() => {
             let count = 0;
             
@@ -954,29 +958,29 @@ export default function FilterPopup({ producers, onApply, onOpen, loading, loadE
       }}
     >
       <header className={styles.header}>
-        <h3>Filtros</h3>
+        <h3>{t("Filtros")}</h3>
 
         <button
           type="button"
           onClick={() => setIsOpen(false)}
           className={styles.close}
-          aria-label="Fechar"
+          aria-label={t("Fechar")}
         >
           <IoCloseOutline />
         </button>
       </header>
 
-      {loading && <p role="status">Carregando todas as opções de filtro...</p>}
-      {loadError && <p role="alert">{loadError}</p>}
+      {loading && <p role="status">{t("Carregando todas as opções de filtro...")}</p>}
+      {loadError && <p role="alert">{t(loadError)}</p>}
 
       {!loading && !loadError && <div className={styles.content}>
         <AgeRange />
 
         <CheckboxList
-          title="Nacionalidade"
+          title={t("Nacionalidade")}
           options={options.nationalities.map((n) => ({
             value: n.value,
-            label: n.label,
+            label: t(n.label),
           }))}
           selected={filters.nationality || []}
           onToggle={(value) => toggleArrayFilter("nationality", value)}
@@ -985,7 +989,7 @@ export default function FilterPopup({ producers, onApply, onOpen, loading, loadE
         {APPEARANCE_KEYS.map((key) => (
           <CheckboxList
             key={key}
-            title={APPEARANCE_LABELS[key]}
+            title={t(APPEARANCE_LABELS[key])}
             options={options.appearance[key].map((value) => ({
               value,
               label: getAppearanceLabel(key, value),
@@ -996,60 +1000,60 @@ export default function FilterPopup({ producers, onApply, onOpen, loading, loadE
         ))}
 
         <CheckboxList
-          title="Audiência"
+          title={t("Audiência")}
           options={options.audiences.map((a) => ({
             value: a.id,
-            label: a.label,
+            label: t(a.label),
           }))}
           selected={filters.audience || []}
           onToggle={(id) => toggleArrayFilter("audience", id)}
         />
 
         <CheckboxList
-          title="Idiomas"
+          title={t("Idiomas")}
           options={options.languages.map((l) => ({
             value: l.value,
-            label: l.label,
+            label: t(l.label),
           }))}
           selected={filters.languages || []}
           onToggle={(value) => toggleArrayFilter("languages", value)}
         />
 
         <CheckboxList
-          title="Serviços"
+          title={t("Serviços")}
           options={options.services.map((s) => ({
             value: s.id,
-            label: s.label,
+            label: t(s.label),
           }))}
           selected={filters.services || []}
           onToggle={(id) => toggleArrayFilter("services", id)}
         />
 
         <CheckboxList
-          title="Fetiches"
+          title={t("Fetiches")}
           options={options.fetiches.map((f) => ({
             value: f.id,
-            label: f.label,
+            label: t(f.label),
           }))}
           selected={filters.fetiches || []}
           onToggle={(id) => toggleArrayFilter("fetiches", id)}
         />
 
         <CheckboxList
-          title="Localização"
+          title={t("Localização")}
           options={options.locations.map((l) => ({
             value: l.id,
-            label: l.label,
+            label: t(l.label),
           }))}
           selected={filters.locations || []}
           onToggle={(id) => toggleArrayFilter("locations", id)}
         />
 
         <CheckboxList
-          title="Duração"
+          title={t("Duração")}
           options={options.durations.map((d) => ({
             value: d.id,
-            label: d.label,
+            label: t(d.label),
           }))}
           selected={filters.durations || []}
           onToggle={(id) => toggleArrayFilter("durations", id)}
@@ -1060,10 +1064,10 @@ export default function FilterPopup({ producers, onApply, onOpen, loading, loadE
         <DoteRange />
 
         <CheckboxList
-          title="Pagamentos"
+          title={t("Pagamentos")}
           options={options.payments.map((p) => ({
             value: p.id,
-            label: p.label,
+            label: t(p.label),
           }))}
           selected={filters.payments || []}
           onToggle={(id) => toggleArrayFilter("payments", id)}
@@ -1101,7 +1105,7 @@ export default function FilterPopup({ producers, onApply, onOpen, loading, loadE
             setIsOpen(false);
           }}
         >
-          Limpar
+          {t("Limpar")}
         </button>
 
         <button
@@ -1142,7 +1146,7 @@ export default function FilterPopup({ producers, onApply, onOpen, loading, loadE
             setIsOpen(false);
           }}
         >
-          Aplicar filtros
+          {t("Aplicar filtros")}
         </button>
       </footer>
     </Popup>

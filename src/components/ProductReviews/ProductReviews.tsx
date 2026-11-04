@@ -9,6 +9,8 @@ import AuthRequiredPopup from "@/components/AuthRequiredPopup/AuthRequiredPopup"
 
 import type { Producer } from "@/types/Producer";
 import type { Review } from "@/types/Producer";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 interface ProductReviewsProps {
   producer: Producer;
@@ -21,6 +23,8 @@ function ProductReviews({
   onLoginClick,
   onSignupClick,
 }: ProductReviewsProps) {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
   const { data: session } = useSession();
 
   const [reviews, setReviews] = useState<Review[]>(
@@ -264,8 +268,8 @@ function ProductReviews({
       {showDeleteConfirm && (
         <div className={styles.modal}>
           <div className={styles.modalContent}>
-            <h3>Confirmar exclusão</h3>
-            <p>Tem certeza que deseja excluir esta avaliação?</p>
+            <h3>{t("Confirmar exclusão")}</h3>
+            <p>{t("Tem certeza que deseja excluir esta avaliação?")}</p>
             <div className={styles.modalActions}>
               <button
                 className={styles.modalCancel}
@@ -274,13 +278,13 @@ function ProductReviews({
                   setDeletingReviewId(null);
                 }}
               >
-                Cancelar
+                {t("Cancelar")}
               </button>
               <button
                 className={styles.modalConfirm}
                 onClick={handleDeleteReview}
               >
-                Excluir
+                {t("Excluir")}
               </button>
             </div>
           </div>
@@ -289,7 +293,7 @@ function ProductReviews({
 
       <div className={styles.layout}>
         <div className={styles.header}>
-          <h2>{approvedReviews.length} Avaliações</h2>
+          <h2>{approvedReviews.length} {t("Avaliações")}</h2>
           <span className={styles.ratingValue}>
             <span>
               <FaHeart />
@@ -311,14 +315,14 @@ function ProductReviews({
                   <div className={styles.reviewItemLayout}>
                     <div className={styles.reviewInfo}>
                       <p className={styles.reviewerName}>
-                        {review.reviewerName || "Anônimo"}
+                        {review.reviewerName || t("Anônimo")}
                       </p>
                     </div>
                     {review.comment && (
                       <p className={styles.reviewComment}>{review.comment}</p>
                     )}
                     <span className={styles.reviewDate}>
-                      {new Date(review.createdAt).toLocaleDateString("pt-BR")}
+                      {new Date(review.createdAt).toLocaleDateString({ pt: "pt-BR", en: "en-US", es: "es-ES" }[locale])}
                     </span>
 
                     {(isOwnReview || isProfileOwner) && (
@@ -326,7 +330,7 @@ function ProductReviews({
                         className={styles.deleteButton}
                         onClick={() => confirmDeleteReview(review.id)}
                       >
-                        Remover avaliação
+                        {t("Remover avaliação")}
                       </button>
                     )}
                   </div>
@@ -335,7 +339,7 @@ function ProductReviews({
             })
           ) : (
             <li className={styles.noReviews}>
-              <p>Este produtor ainda não possui avaliações.</p>
+              <p>{t("Este produtor ainda não possui avaliações.")}</p>
             </li>
           )}
         </ul>
@@ -347,7 +351,7 @@ function ProductReviews({
               visibleCount < approvedReviews.length ? showMore : showLess
             }
           >
-            {visibleCount < approvedReviews.length ? "Ver mais" : "Ver menos"}
+            {t(visibleCount < approvedReviews.length ? "Ver mais" : "Ver menos")}
           </button>
         )}
       </div>
@@ -356,7 +360,7 @@ function ProductReviews({
         <div className={`${styles.layout} ${styles.user}`}>
           <div className={styles.userReview}>
             <div className={styles.producerCall}>
-              <p>Avaliações pendentes de aprovação</p>
+              <p>{t("Avaliações pendentes de aprovação")}</p>
             </div>
 
             {pendingReviews.length > 0 ? (
@@ -369,15 +373,15 @@ function ProductReviews({
                     <div className={styles.reviewItemLayout}>
                       <div className={styles.reviewInfo}>
                         <p className={styles.reviewerName}>
-                          {review.reviewerName || "Anônimo"}
-                          <span className={styles.pendingBadge}>Pendente</span>
+                          {review.reviewerName || t("Anônimo")}
+                          <span className={styles.pendingBadge}>{t("Pendente")}</span>
                         </p>
                       </div>
                       {review.comment && (
                         <p className={styles.reviewComment}>{review.comment}</p>
                       )}
                       <span className={styles.reviewDate}>
-                        {new Date(review.createdAt).toLocaleDateString("pt-BR")}
+                        {new Date(review.createdAt).toLocaleDateString({ pt: "pt-BR", en: "en-US", es: "es-ES" }[locale])}
                       </span>
 
                       <div className={styles.approvalButtons}>
@@ -386,18 +390,14 @@ function ProductReviews({
                           onClick={() => handleApproveReview(review.id, true)}
                           disabled={approvingReviewId === review.id}
                         >
-                          {approvingReviewId === review.id
-                            ? "Aprovando..."
-                            : "Aprovar"}
+                          {t(approvingReviewId === review.id ? "Aprovando..." : "Aprovar")}
                         </button>
                         <button
                           className={styles.rejectButton}
                           onClick={() => handleApproveReview(review.id, false)}
                           disabled={approvingReviewId === review.id}
                         >
-                          {approvingReviewId === review.id
-                            ? "Rejeitando..."
-                            : "Rejeitar"}
+                          {t(approvingReviewId === review.id ? "Rejeitando..." : "Rejeitar")}
                         </button>
                       </div>
                     </div>
@@ -406,7 +406,7 @@ function ProductReviews({
               </ul>
             ) : (
               <div className={styles.noPendingReviews}>
-                <p>Nenhuma avaliação pendente no momento.</p>
+                <p>{t("Nenhuma avaliação pendente no momento.")}</p>
               </div>
             )}
           </div>
@@ -415,12 +415,12 @@ function ProductReviews({
         <div className={`${styles.layout} ${styles.user}`}>
           <div className={styles.userReview}>
             <div className={styles.producerCall}>
-              <p>O que achou do nosso encontro, amor?</p>
+              <p>{t("O que achou do nosso encontro, amor?")}</p>
             </div>
 
             {userHasReviewed ? (
               <div className={styles.alreadyReviewedMessage}>
-                <p>✓ Você avaliou este produtor</p>
+                <p>{t("✓ Você avaliou este produtor")}</p>
                 {userReview && !userReview.isApproved && (
                   <p
                     style={{
@@ -429,23 +429,23 @@ function ProductReviews({
                       color: "#ff9800",
                     }}
                   >
-                    Sua avaliação está em análise
+                    {t("Sua avaliação está em análise")}
                   </p>
                 )}
               </div>
             ) : (
               <>
-                <p className={styles.ratingLabel}>Sua avaliação:</p>
+                <p className={styles.ratingLabel}>{t("Sua avaliação:")}</p>
 
                 <div className={styles.flex}>
                   <label htmlFor="" className={styles.label}>
-                    Nome:
+                    {t("Nome:")}
                     <input
                       type="text"
                       placeholder={
                         session
-                          ? "Deixe vazio para anônimo"
-                          : "Faça login para avaliar..."
+                          ? t("Deixe vazio para anônimo")
+                          : t("Faça login para avaliar...")
                       }
                       className={styles.nameInput}
                       value={userName}
@@ -457,7 +457,7 @@ function ProductReviews({
                   </label>
 
                   <label htmlFor="" className={styles.label}>
-                    Nota:
+                    {t("Nota:")}
                     <div className={styles.hearts}>
                       {[1, 2, 3, 4, 5].map((star) => (
                         <button
@@ -487,12 +487,12 @@ function ProductReviews({
                 </div>
 
                 <label htmlFor="" className={styles.label}>
-                  Comentário:
+                  {t("Comentário:")}
                   <textarea
                     placeholder={
                       session
-                        ? "Deixe seu comentário (Mínimo 10 caracteres)..."
-                        : "Faça login para deixar um comentário..."
+                        ? t("Deixe seu comentário (Mínimo 10 caracteres)...")
+                        : t("Faça login para deixar um comentário...")
                     }
                     className={styles.commentInput}
                     rows={1}
@@ -511,7 +511,7 @@ function ProductReviews({
                 {error && <p className={styles.errorMessage}>{error}</p>}
                 {success && (
                   <p className={styles.successMessage}>
-                    ✓ Avaliação enviada com sucesso!
+                    ✓ {t("Avaliação enviada com sucesso!")}
                     <span
                       style={{
                         display: "block",
@@ -519,7 +519,7 @@ function ProductReviews({
                         marginTop: "0.25rem",
                       }}
                     >
-                      Sua avaliação entrará em análise pelo produtor.
+                      {t("Sua avaliação entrará em análise pelo produtor.")}
                     </span>
                   </p>
                 )}
@@ -531,7 +531,7 @@ function ProductReviews({
                     isSubmitting || !session || !userRating || userHasReviewed
                   }
                 >
-                  {isSubmitting ? "Enviando..." : "Enviar avaliação"}
+                  {t(isSubmitting ? "Enviando..." : "Enviar avaliação")}
                 </button>
               </>
             )}

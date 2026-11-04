@@ -10,6 +10,8 @@ import { HiOutlinePencil } from "react-icons/hi2";
 import { BsPeople } from "react-icons/bs";
 import { FaCheck, FaMinus, FaXmark } from "react-icons/fa6";
 import { dispatchProfileUpdateEvent } from "@/utils/profileUpdateEvent";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 interface ProductAudienceProps {
   producer: Producer;
@@ -28,6 +30,8 @@ interface OtherLanguage {
 }
 
 function ProductAudience({ producer, canEdit }: ProductAudienceProps) {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [backup, setBackup] = useState<{
@@ -182,12 +186,12 @@ function ProductAudience({ producer, canEdit }: ProductAudienceProps) {
   return (
     <section id="audience" className={styles.container}>
       <div className={styles.header}>
-        <h2 className={styles.title}>Audiência</h2>
+        <h2 className={styles.title}>{t("Audiência")}</h2>
 
         {canEdit ? (
           !isEditing ? (
             <button className={styles.editBtn} onClick={handleEdit}>
-              Editar <HiOutlinePencil />
+              {t("Editar")} <HiOutlinePencil />
             </button>
           ) : (
             <div className={styles.editActions}>
@@ -196,7 +200,7 @@ function ProductAudience({ producer, canEdit }: ProductAudienceProps) {
                 onClick={handleSave}
                 disabled={isSaving}
               >
-                {isSaving ? "Salvando..." : "Salvar"}
+                {t(isSaving ? "Salvando..." : "Salvar")}
               </button>
 
               <button
@@ -204,7 +208,7 @@ function ProductAudience({ producer, canEdit }: ProductAudienceProps) {
                 onClick={handleCancel}
                 disabled={isSaving}
               >
-                Cancelar
+                {t("Cancelar")}
               </button>
             </div>
           )
@@ -220,7 +224,7 @@ function ProductAudience({ producer, canEdit }: ProductAudienceProps) {
           <div className={styles.card} data-field="producer-audience">
             <div className={styles.cardHeader}>
               <BsPeople className={styles.icon} />
-              <h3 className={styles.cardTitle}>Público</h3>
+              <h3 className={styles.cardTitle}>{t("Público")}</h3>
             </div>
 
             {/* VISUALIZAÇÃO */}
@@ -229,7 +233,7 @@ function ProductAudience({ producer, canEdit }: ProductAudienceProps) {
                 {audience.map((a) => (
                   <li className={styles.audienceItem} key={a.id}>
                     <div className={styles.audienceDisplay}>
-                      <span>{a.label}</span>
+                      <span>{t(a.label)}</span>
 
                       {a.status === "yes" && (
                         <i className={`${styles.green} ${styles.status}`}>
@@ -260,7 +264,7 @@ function ProductAudience({ producer, canEdit }: ProductAudienceProps) {
                 {audience.map((a) => (
                   <div key={a.id} className={styles.audienceItem}>
                     <div className={styles.audienceDisplay}>
-                      <span className={styles.label}>{a.label}</span>
+                      <span className={styles.label}>{t(a.label)}</span>
 
                       <div className={styles.radioGroup}>
                         <label className={styles.radioOption}>
@@ -326,7 +330,7 @@ function ProductAudience({ producer, canEdit }: ProductAudienceProps) {
           <div className={styles.card} data-field="producer-languages">
             <div className={styles.cardHeader}>
               <Languages className={styles.icon} />
-              <h3 className={styles.cardTitle}>Idiomas</h3>
+              <h3 className={styles.cardTitle}>{t("Idiomas")}</h3>
             </div>
 
             {!isEditing ? (
@@ -347,9 +351,9 @@ function ProductAudience({ producer, canEdit }: ProductAudienceProps) {
                     >
                       {" "}
                       <div className={styles.langDisplay}>
-                        <span className={styles.language}>{lang.label}</span>
+                        <span className={styles.language}>{t(lang.label)}</span>
                         <span className={styles.level}>
-                          {lang.value || "Não falo"}
+                          {t(lang.value || "Não falo")}
                         </span>
                       </div>
                     </div>
@@ -363,8 +367,8 @@ function ProductAudience({ producer, canEdit }: ProductAudienceProps) {
                         className={styles.languageItem}
                       >
                         <div className={styles.langDisplay}>
-                          <span className={styles.language}>{lang.name}</span>
-                          <span className={styles.level}>{lang.level}</span>
+                          <span className={styles.language}>{t(lang.name)}</span>
+                          <span className={styles.level}>{t(lang.level)}</span>
                         </div>
                       </div>
                     ))}
@@ -381,11 +385,11 @@ function ProductAudience({ producer, canEdit }: ProductAudienceProps) {
                           !fixedLanguages.portugues ? styles.notSpeaking : ""
                         }`}
                       >
-                        Português
+                        {t("Português")}
                       </span>
                       <span>
                         <Dropdown
-                          trigger={fixedLanguages.portugues || "Não Falo"}
+                          trigger={t(fixedLanguages.portugues || "Não Falo")}
                           triggerClassName={`${styles.trigger} ${
                             !fixedLanguages.portugues ? styles.notSpeaking : ""
                           }`}
@@ -402,7 +406,7 @@ function ProductAudience({ producer, canEdit }: ProductAudienceProps) {
                                 }))
                               }
                             >
-                              {lvl}
+                              {t(lvl)}
                             </button>
                           ))}
                         </Dropdown>
@@ -418,11 +422,11 @@ function ProductAudience({ producer, canEdit }: ProductAudienceProps) {
                           !fixedLanguages.portugues ? styles.notSpeaking : ""
                         }`}
                       >
-                        Inglês
+                        {t("Inglês")}
                       </span>
                       <span>
                         <Dropdown
-                          trigger={fixedLanguages.ingles || "Não Falo"}
+                          trigger={t(fixedLanguages.ingles || "Não Falo")}
                           triggerClassName={`${styles.trigger} ${
                             !fixedLanguages.ingles ? styles.notSpeaking : ""
                           }`}
@@ -439,7 +443,7 @@ function ProductAudience({ producer, canEdit }: ProductAudienceProps) {
                                 }))
                               }
                             >
-                              {lvl}
+                              {t(lvl)}
                             </button>
                           ))}
                         </Dropdown>
@@ -455,11 +459,11 @@ function ProductAudience({ producer, canEdit }: ProductAudienceProps) {
                           !fixedLanguages.portugues ? styles.notSpeaking : ""
                         }`}
                       >
-                        Espanhol
+                        {t("Espanhol")}
                       </span>
                       <span>
                         <Dropdown
-                          trigger={fixedLanguages.espanhol || "Não Falo"}
+                          trigger={t(fixedLanguages.espanhol || "Não Falo")}
                           triggerClassName={`${styles.trigger} ${
                             !fixedLanguages.espanhol ? styles.notSpeaking : ""
                           }`}
@@ -476,7 +480,7 @@ function ProductAudience({ producer, canEdit }: ProductAudienceProps) {
                                 }))
                               }
                             >
-                              {lvl}
+                              {t(lvl)}
                             </button>
                           ))}
                         </Dropdown>
@@ -490,14 +494,14 @@ function ProductAudience({ producer, canEdit }: ProductAudienceProps) {
                         <input
                           type="text"
                           className={styles.langInput}
-                          placeholder="Outro idioma"
+                          placeholder={t("Outro idioma")}
                           value={lang.name}
                           onChange={(e) =>
                             updateOtherLanguageName(index, e.target.value)
                           }
                         />
                         <Dropdown
-                          trigger={lang.level || "Nível"}
+                          trigger={t(lang.level || "Nível")}
                           triggerClassName={styles.trigger}
                           menuClassName={styles.menu}
                         >

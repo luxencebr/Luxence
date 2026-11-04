@@ -2,8 +2,11 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 export default function CatalogRedirect() {
+  const { locale } = useSiteLocale();
   const router = useRouter();
 
   useEffect(() => {
@@ -38,10 +41,7 @@ export default function CatalogRedirect() {
           objectFit: "cover",
         }}
       />
-      <p>
-        Redirecionando para o<br />
-        catálogo da sua região...
-      </p>
+      <p>{uiText(locale, "Redirecionando para o catálogo da sua região...")}</p>
     </div>
   );
 }

@@ -4,18 +4,19 @@ import styles from "./LanguagesPopup.module.css";
 import { IoIosArrowDown, IoIosClose } from "react-icons/io";
 
 import Popup from "../ui/Popup/Popup";
+import { useSiteLocale, type SiteLocale } from "@/lib/site-locale";
 
 export default function LanguagesPopup() {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedLang, setSelectedLang] = useState("br");
+  const { locale, setLocale } = useSiteLocale();
 
   const languages = [
-    { code: "br", country: "Brasil", label: "Português" },
-    { code: "us", country: "United States", label: "English" },
-    { code: "es", country: "España", label: "Español" },
+    { code: "pt" as SiteLocale, flag: "br", country: "Brasil", label: "Português" },
+    { code: "en" as SiteLocale, flag: "us", country: "United States", label: "English" },
+    { code: "es" as SiteLocale, flag: "es", country: "España", label: "Español" },
   ];
 
-  const currentLang = languages.find((lang) => lang.code === selectedLang);
+  const currentLang = languages.find((lang) => lang.code === locale);
 
   useEffect(() => {
     if (isOpen) {
@@ -34,7 +35,7 @@ export default function LanguagesPopup() {
       trigger={
         <>
           <img
-            src={`/flags/${currentLang?.code}.svg`}
+            src={`/flags/${currentLang?.flag}.svg`}
             alt={currentLang?.label}
             className={styles.flagProp}
           />
@@ -47,7 +48,7 @@ export default function LanguagesPopup() {
       onOpenChange={setIsOpen}
     >
       <div className={styles.popupHeader}>
-        <span>Região e Linguagem</span>{" "}
+        <span>{{ pt: "Idioma", en: "Language", es: "Idioma" }[locale]}</span>{" "}
         <button className={styles.closeButton} onClick={() => setIsOpen(false)}>
           <IoIosClose />
         </button>
@@ -56,15 +57,15 @@ export default function LanguagesPopup() {
         <button
           key={lang.code}
           className={`${styles.languageOption} ${
-            lang.code === selectedLang ? styles.activeLang : ""
+            lang.code === locale ? styles.activeLang : ""
           }`}
           onClick={() => {
-            setSelectedLang(lang.code);
+            setLocale(lang.code);
             setIsOpen(false);
           }}
         >
           <img
-            src={`/flags/${lang.code}.svg`}
+            src={`/flags/${lang.flag}.svg`}
             alt={lang.label}
             className={styles.flagProp}
           />

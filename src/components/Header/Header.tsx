@@ -12,8 +12,14 @@ import Dropdown from "@/components/ui/Dropdown/Dropdown";
 
 import LogIn from "@/components/LogIn/LogIn";
 import { useSession, signOut } from "next-auth/react";
+import { useSiteLocale } from "@/lib/site-locale";
+import { siteCopy } from "@/lib/site-copy";
+import { uiText } from "@/lib/ui-text";
 
 function Header() {
+  const { locale } = useSiteLocale();
+  const nav = siteCopy[locale].nav;
+  const t = (value: string) => uiText(locale, value);
   const { data: session } = useSession();
 
   const pathname = usePathname();
@@ -53,7 +59,7 @@ function Header() {
               isActive("/home") ? styles.active : ""
             }`}
           >
-            Início
+            {nav[0]}
           </Link>
 
           <Link
@@ -62,7 +68,7 @@ function Header() {
               isActive("/catalog") ? styles.active : ""
             }`}
           >
-            Catálogo
+            {nav[1]}
           </Link>
 
           <Link
@@ -71,7 +77,7 @@ function Header() {
               isActive("/about") ? styles.active : ""
             }`}
           >
-            Sobre
+            {nav[2]}
           </Link>
 
           <Link
@@ -80,7 +86,7 @@ function Header() {
               isActive("/blog") ? styles.active : ""
             }`}
           >
-            Blog
+            {nav[3]}
           </Link>
 
           <Link
@@ -89,14 +95,14 @@ function Header() {
               isActive("/suport") ? styles.active : ""
             }`}
           >
-            Suporte
+            {nav[4]}
           </Link>
 
           <Link
             href={"/advertiser/plans"}
             className={`${styles.navBtn} ${styles.plans} `}
           >
-            Assine Já!
+            {nav[5]}
           </Link>
         </nav>
         <div className={styles.headerButtons}>
@@ -110,7 +116,7 @@ function Header() {
                       <IoPerson />
                     </span>
                     {(() => {
-                      if (!session.user?.name) return "Usuário";
+                      if (!session.user?.name) return t("Usuário");
 
                       const parts = session.user.name.trim().split(/\s+/);
                       if (parts.length === 1) return parts[0];
@@ -129,29 +135,29 @@ function Header() {
                   href={`/product/${session?.user?.producerId}`}
                   className={styles.menuItem}
                 >
-                  Ver Perfil
+                  {t("Ver Perfil")}
                 </Link>
                 <Link href="/profile" className={styles.menuItem}>
-                  Painel de Controle
+                  {t("Painel de Controle")}
                 </Link>
                 {session.user.signature !== "COPPER" ? (
                   <Link href={""} className={styles.menuItem}>
-                    Minha Assinatura
+                    {t("Minha Assinatura")}
                   </Link>
                 ) : (
                   <Link href="/advertiser/plans" className={styles.menuItem}>
-                    Assine Já!
+                    {nav[5]}
                   </Link>
                 )}
                 <button onClick={handleSignOut} className={styles.menuItem}>
-                  Sair
+                  {t("Sair")}
                 </button>
               </Dropdown>
             </>
           ) : (
             <>
               <Link href="/advertiser" className={styles.advertiseBtn}>
-                Anuncie Conosco
+                {t("Anuncie Conosco")}
               </Link>
               <LogIn />
               <LanguagesPopup />
@@ -184,7 +190,7 @@ function Header() {
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                Início
+                {nav[0]}
               </Link>
 
               <Link
@@ -194,7 +200,7 @@ function Header() {
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                Catálogo
+                {nav[1]}
               </Link>
 
               <Link
@@ -204,7 +210,7 @@ function Header() {
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                Sobre
+                {nav[2]}
               </Link>
 
               <Link
@@ -214,7 +220,7 @@ function Header() {
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                Blog
+                {nav[3]}
               </Link>
 
               <Link
@@ -223,14 +229,14 @@ function Header() {
                   isActive("/suport") ? styles.active : ""
                 }`}
               >
-                Suporte
+                {nav[4]}
               </Link>
 
               <Link
                 href={"/advertiser/plans"}
                 className={`${styles.mobileNavBtn} ${styles.plans} `}
               >
-                Assine Já!
+                {nav[5]}
               </Link>
             </nav>
 
@@ -248,7 +254,7 @@ function Header() {
                   </span>
                   <span className={styles.mobileUserName}>
                     {(() => {
-                      if (!session.user?.name) return "Usuário";
+                      if (!session.user?.name) return t("Usuário");
 
                       const parts = session.user.name.trim().split(/\s+/);
                       if (parts.length === 1) return parts[0];
@@ -264,7 +270,7 @@ function Header() {
                   className={styles.mobileMenuItem}
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Painel de Controle
+                  {t("Painel de Controle")}
                 </Link>
                 {session.user.signature !== "COPPER" ? (
                   <Link
@@ -272,7 +278,7 @@ function Header() {
                     className={styles.mobileMenuItem}
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Minha Assinatura
+                    {t("Minha Assinatura")}
                   </Link>
                 ) : (
                   <Link
@@ -280,7 +286,7 @@ function Header() {
                     className={styles.mobileMenuItem}
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Assine Já!
+                    {nav[5]}
                   </Link>
                 )}
                 <button
@@ -290,13 +296,13 @@ function Header() {
                   }}
                   className={styles.mobileMenuItem}
                 >
-                  Sair
+                  {t("Sair")}
                 </button>
               </div>
             ) : (
               <div className={styles.mobileAuthButtons}>
                 <Link href="/advertiser" className={styles.advertiseBtn}>
-                  Anuncie Conosco
+                  {t("Anuncie Conosco")}
                 </Link>
                 <LogIn />
               </div>

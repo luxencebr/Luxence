@@ -1,4 +1,6 @@
 "use client";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 import type React from "react";
 
@@ -60,6 +62,8 @@ interface ProductInfoProps {
 }
 
 function ProductInfo({ producer, canEdit }: ProductInfoProps) {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const [atBottom, setAtBottom] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -416,7 +420,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                           }
                         }}
                         disabled={isSavingName}
-                        placeholder="Apenas letras"
+                        placeholder={t("Apenas letras")}
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
                             e.preventDefault();
@@ -448,7 +452,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                           className={styles.editableSave}
                           onClick={handleSaveName}
                           disabled={isSavingName}
-                          title="Salvar"
+                          title={t("Salvar")}
                         >
                           <IoCheckmark />
                         </button>
@@ -457,7 +461,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                           type="button"
                           className={styles.editableCancel}
                           onClick={handleCancelName}
-                          title="Cancelar"
+                          title={t("Cancelar")}
                         >
                           <IoClose />
                         </button>
@@ -471,7 +475,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                       canEdit && !currentlyEditing ? handleEditName : undefined
                     }
                   >
-                    {name || "Adicionar Nome"}
+                    {name || t("Adicionar Nome")}
                     {canEdit && !currentlyEditing && (
                       <HiOutlinePencil className={styles.editIcon} />
                     )}
@@ -551,7 +555,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                               className={styles.editableSave}
                               onClick={handleSaveAge}
                               disabled={isSavingAge}
-                              title="Salvar"
+                              title={t("Salvar")}
                             >
                               <IoCheckmark />
                             </button>
@@ -560,7 +564,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                               type="button"
                               className={styles.editableCancel}
                               onClick={handleCancelAge}
-                              title="Cancelar"
+                              title={t("Cancelar")}
                             >
                               <IoClose />
                             </button>
@@ -576,7 +580,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                             : undefined
                         }
                       >
-                        {age || (canEdit ? "Adicionar Idade" : "")}
+                        {age || (canEdit ? t("Adicionar Idade") : "")}
                         {canEdit && !currentlyEditing && (
                           <HiOutlinePencil className={styles.editIcon} />
                         )}
@@ -591,7 +595,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
               <div className={styles.weeklyViews}>
                 <FaEye />
                 <strong>{localProducer.profile.views}</strong>
-                <span className={styles.label}>visualizações</span>
+                <span className={styles.label}>{t("visualizações")}</span>
               </div>
 
               <div
@@ -605,7 +609,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                       type="text"
                       value={slogan}
                       onChange={(e) => setSlogan(e.target.value)}
-                      placeholder="Digite seu slogan..."
+                      placeholder={t("Digite seu slogan...")}
                       disabled={isSavingSlogan}
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
@@ -634,7 +638,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                           className={styles.editableSave}
                           onClick={handleSaveSlogan}
                           disabled={isSavingSlogan}
-                          title="Salvar"
+                          title={t("Salvar")}
                         >
                           <IoCheckmark />
                         </button>
@@ -643,7 +647,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                           type="button"
                           className={styles.editableCancel}
                           onClick={handleCancelSlogan}
-                          title="Cancelar"
+                          title={t("Cancelar")}
                         >
                           <IoClose />
                         </button>
@@ -661,7 +665,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                       }
                       title={
                         !hasCustomSlogan && canEdit
-                          ? "Slogan sugerido — clique para personalizar"
+                          ? t("Slogan sugerido — clique para personalizar")
                           : undefined
                       }
                     >
@@ -703,7 +707,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                 <span>
                   <FaHeart />
                 </span>
-                Avaliações
+                {t("Avaliações")}
               </h2>
               <IoIosArrowDown />
             </div>
@@ -717,8 +721,8 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                     <p className={styles.reviewCount}>
                       {approvedReviews.length}{" "}
                       {approvedReviews.length === 1
-                        ? "avaliação"
-                        : "avaliações"}
+                        ? t("avaliação")
+                        : t("avaliações")}
                     </p>
                   </div>
                   <div className={styles.ratingDisplay}>
@@ -732,7 +736,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                   </div>
                 </>
               ) : (
-                <p className={styles.noData}>Ainda não há avaliações</p>
+                <p className={styles.noData}>{t("Ainda não há avaliações")}</p>
               )}
             </div>
           </button>
@@ -746,25 +750,25 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                 <span>
                   <TbCoinFilled />
                 </span>
-                Valores
+                {t("Valores")}
               </h2>
               <IoIosArrowDown />
             </div>
             <div className={styles.cardContent}>
               {price ? (
                 <p>
-                  A partir de:
+                  {t("A partir de:")}
                   <span>
                     {price.value > 0
                       ? `R$ ${price.value.toFixed(2).replace(".", ",")}`
-                      : "A combinar"}{" "}
-                    <span>{price.option.label}</span>
+                      : t("A combinar")}{" "}
+                    <span>{t(price.option.label)}</span>
                   </span>
                 </p>
               ) : canEdit ? (
-                <p>Informe seus valores!</p>
+                <p>{t("Informe seus valores!")}</p>
               ) : (
-                <p>Ainda não há valores...</p>
+                <p>{t("Ainda não há valores...")}</p>
               )}
             </div>
           </button>
@@ -778,7 +782,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                 <span>
                   <HiLocationMarker />
                 </span>
-                Localização
+                {t("Localização")}
               </h2>
               <IoIosArrowDown />
             </div>
@@ -792,16 +796,16 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                   {localProducer.user.locality?.state}
                   {localProducer.profile.local ? (
                     <i>
-                      <TbHomeCheck /> com local
+                      <TbHomeCheck /> {t("com local")}
                     </i>
                   ) : (
                     <i>
-                      <TbHomeX /> sem local
+                      <TbHomeX /> {t("sem local")}
                     </i>
                   )}
                 </p>
               ) : (
-                <p>Informe sua localização</p>
+                <p>{t("Informe sua localização")}</p>
               )}
             </div>
           </button>
@@ -871,7 +875,7 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                           setContactValue("");
                         }}
                       >
-                        Cancelar
+                        {t("Cancelar")}
                       </button>
 
                       {(contact.value || contactValue.trim()) && (
@@ -901,8 +905,8 @@ function ProductInfo({ producer, canEdit }: ProductInfoProps) {
                           }}
                         >
                           {contact.value && !contactValue.trim()
-                            ? "Remover"
-                            : "Salvar"}
+                            ? t("Remover")
+                            : t("Salvar")}
                         </button>
                       )}
                     </div>

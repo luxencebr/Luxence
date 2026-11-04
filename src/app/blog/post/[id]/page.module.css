@@ -1,9 +1,13 @@
 .postPage {
+  width: 100%;
+  box-sizing: border-box;
   max-width: 960px;
   margin: 0 auto;
 }
 
 .layout {
+  min-width: 0;
+  box-sizing: border-box;
   padding: 16px;
 
   display: flex;
@@ -75,6 +79,7 @@
 
 .postInfo > * {
   flex: 1;
+  min-width: 0;
 }
 
 .date {
@@ -308,6 +313,41 @@
   display: flex;
   flex-flow: row nowrap;
   gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .simplePost,
+  .postInfo,
+  .othersList {
+    flex-direction: column;
+  }
+
+  .post,
+  .postContent,
+  .otherCard {
+    min-width: 0;
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+  }
+
+  .content,
+  .contentEditableValue,
+  .contentEditableEdit {
+    aspect-ratio: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .content {
+    text-align: left;
+    text-indent: 0;
+  }
+
+  .postImage,
+  .addImageBtn {
+    aspect-ratio: 4 / 3;
+  }
 }
 
 .otherCard {

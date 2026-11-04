@@ -1,4 +1,6 @@
 "use client";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 import { useState } from "react";
 import type { Producer } from "@/types/Producer";
@@ -90,6 +92,8 @@ export default function ProductAppearance({
   producer,
   canEdit,
 }: ProductAppearanceProps) {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -359,12 +363,12 @@ export default function ProductAppearance({
   return (
     <section className={styles.container}>
       <div className={styles.header}>
-        <h2 className={styles.title}>Aparência</h2>
+        <h2 className={styles.title}>{t("Aparência")}</h2>
 
         {canEdit &&
           (!isEditing ? (
             <button className={styles.editBtn} onClick={handleEdit}>
-              Editar <HiOutlinePencil />
+              {t("Editar")} <HiOutlinePencil />
             </button>
           ) : (
             <div className={styles.editActions}>
@@ -373,7 +377,7 @@ export default function ProductAppearance({
                 onClick={handleSave}
                 disabled={isSaving}
               >
-                {isSaving ? "Salvando..." : "Salvar"}
+                {t(isSaving ? "Salvando..." : "Salvar")}
               </button>
 
               <button
@@ -381,7 +385,7 @@ export default function ProductAppearance({
                 onClick={handleCancel}
                 disabled={isSaving}
               >
-                Cancelar
+                {t("Cancelar")}
               </button>
             </div>
           ))}
@@ -408,13 +412,13 @@ export default function ProductAppearance({
               .map((a) => (
                 <li key={a.id} className={styles.item}>
                   <div className={styles.itemContent}>
-                    <span className={styles.label}>{a.label}</span>
+                    <span className={styles.label}>{t(a.label)}</span>
 
                     {!isEditing ? (
                       <>
                         <span className={styles.value}>
                           {a.valueType === APPEARANCE_VALUE_TYPE.BOOLEAN &&
-                            (a.value === true
+                            t(a.value === true
                               ? "Sim"
                               : a.value === false
                               ? "Não"
@@ -425,14 +429,14 @@ export default function ProductAppearance({
                             (a.value !== null
                               ? a.value
                               : canEdit
-                              ? "Informe e atraia mais cliques!"
-                              : "Não informado")}
+                              ? t("Informe e atraia mais cliques!")
+                              : t("Não informado"))}
                           {a.valueType === APPEARANCE_VALUE_TYPE.OPTION &&
                             (() => {
                               if (!a.value) {
-                                return canEdit
+                                return t(canEdit
                                   ? "Informe e atraia mais cliques!"
-                                  : "Não informado";
+                                  : "Não informado");
                               }
 
                               const optionName = APPEARANCE_OPTIONS.find(
@@ -443,7 +447,7 @@ export default function ProductAppearance({
                                 (opt) => opt.name === a.value
                               )?.label;
 
-                              return label ?? "—";
+                              return label ? t(label) : "—";
                             })()}
                         </span>
                       </>

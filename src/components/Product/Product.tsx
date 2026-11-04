@@ -11,6 +11,8 @@ import { FaHeart } from "react-icons/fa6";
 import ValueDropdown from "../ValuesDropdown/ValuesDropdown";
 
 import type { Producer } from "@/types/Producer";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 interface ProductProps {
   producer: Producer;
@@ -54,7 +56,9 @@ const DEFAULT_SLOGANS = [
 ];
 
 function Product({ producer, variant }: ProductProps) {
-  const name = producer.profile?.name || producer.name || "Perfil sem nome";
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
+  const name = producer.profile?.name || producer.name || t("Perfil sem nome");
   const age = producer.profile?.age;
   const city = producer.user?.locality?.city || "";
   const neighborhood = producer.user?.locality?.neighborhood || "";
@@ -79,7 +83,7 @@ function Product({ producer, variant }: ProductProps) {
     >
       <Link href={`/product/${producer.id}`} className={styles.productLink}>
         <div className={styles.producerImage}>
-          <img src={firstImage || "/placeholder.svg"} alt={`Foto de ${name}`} />
+          <img src={firstImage || "/placeholder.svg"} alt={`${{ pt: "Foto de", en: "Photo of", es: "Foto de" }[locale]} ${name}`} />
         </div>
 
         <div className={styles.itemInfo}>
@@ -113,20 +117,20 @@ function Product({ producer, variant }: ProductProps) {
               <span>
                 <FaHeart />
               </span>
-              {approvedReviews.length} Avaliações
+              {approvedReviews.length} {t("Avaliações")}
             </span>
 
             {producer.profile?.prices && producer.profile.prices.length > 0 && (
               <div className={styles.value}>
-                <span>A partir de</span>
+                <span>{t("A partir de")}</span>
                 <div>
                   {producer.profile.prices[0].value > 0
                     ? producer.profile.prices[0].value.toLocaleString("pt-BR", {
                         style: "currency",
                         currency: "BRL",
                       })
-                    : "A combinar"}{" "}
-                  <span>- {producer.profile.prices[0].option.label}</span>
+                    : t("A combinar")}{" "}
+                  <span>- {t(producer.profile.prices[0].option.label)}</span>
                 </div>
               </div>
             )}
@@ -137,14 +141,14 @@ function Product({ producer, variant }: ProductProps) {
                   <span>
                     <TbHomeCheck />
                   </span>
-                  Possui local
+                  {t("Possui local")}
                 </>
               ) : (
                 <>
                   <span>
                     <TbHomeX />
                   </span>
-                  Não possui local
+                  {t("Não possui local")}
                 </>
               )}
             </span>

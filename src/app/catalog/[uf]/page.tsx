@@ -12,6 +12,9 @@ import LocalPopup, { type DistanceSelection } from "@/components/LocalPopup/Loca
 import ProductsCatalog from "@/components/ProductsCatalog/ProductsCatalog";
 
 import { Producer } from "@/types/Producer";
+import { useSiteLocale } from "@/lib/site-locale";
+import { siteCopy } from "@/lib/site-copy";
+import { uiText } from "@/lib/ui-text";
 
 function calculateAge(birthday: string | Date) {
   const birth = new Date(birthday);
@@ -304,6 +307,9 @@ function applyFilters(producers: Producer[], filters: ActiveFilters, options: Re
 }
 
 export default function CatalogPage() {
+  const { locale } = useSiteLocale();
+  const t = siteCopy[locale].catalog;
+  const translate = (value: string) => uiText(locale, value);
   const params = useParams<{ uf: string }>();
   const uf = params.uf.toUpperCase();
 
@@ -564,7 +570,7 @@ export default function CatalogPage() {
                 objectFit: "cover",
               }}
             />
-            <p>Carregando produtores...</p>
+            <p>{siteCopy[locale].home[0]}</p>
           </div>
         </div>
       </div>
@@ -576,7 +582,7 @@ export default function CatalogPage() {
       <div className={styles.catalogPage}>
         <div className={styles.layout}>
           <div className={styles.errorState}>
-            <p>{error}</p>
+            <p>{translate(error)}</p>
           </div>
         </div>
       </div>
@@ -607,22 +613,22 @@ export default function CatalogPage() {
                   }`}
                   onClick={() => setSelectedGender(gender as Gender)}
                 >
-                  {gender === "female" && "Mulheres"}
-                  {gender === "male" && "Homens"}
-                  {gender === "trans" && "Trans"}
+                  {gender === "female" && t[0]}
+                  {gender === "male" && t[1]}
+                  {gender === "trans" && t[2]}
                 </button>
               );
             })}
           </div>
 
           <h1 className={styles.welcomeText}>
-            Encontre acompanhantes{" "}
+            {t[3]}{" "}
             <strong className={styles.gender}>
-              {selectedGender === "female" && "Mulheres"}
-              {selectedGender === "male" && "Homens"}
-              {selectedGender === "trans" && "Trans"}
+              {selectedGender === "female" && t[0]}
+              {selectedGender === "male" && t[1]}
+              {selectedGender === "trans" && t[2]}
             </strong>{" "}
-            em <strong>{uf}</strong>
+            {t[4]} <strong>{uf}</strong>
           </h1>
 
           <div className={styles.catalogOptions}>
@@ -647,20 +653,20 @@ export default function CatalogPage() {
           </div>
           {distanceFilter && (
             <div className={styles.distanceNotice} role="status">
-              <strong>Distância ativa: até {distanceFilter.radius} km.</strong>
-              <span>Perfis mais próximos primeiro.</span>
+              <strong>{{ pt: "Distância ativa: até", en: "Distance filter: within", es: "Filtro de distancia: hasta" }[locale]} {distanceFilter.radius} km.</strong>
+              <span>{translate("Perfis mais próximos primeiro.")}</span>
               {unavailableLocations > 0 && (
-                <span>{unavailableLocations} {unavailableLocations === 1 ? "perfil sem distância disponível não aparece" : "perfis sem distância disponível não aparecem"} neste filtro.</span>
+                <span>{unavailableLocations} {translate(unavailableLocations === 1 ? "perfil sem distância disponível não aparece" : "perfis sem distância disponível não aparecem")} {translate("neste filtro.")}</span>
               )}
             </div>
           )}
         </header>
 
         {filterPoolError && Object.keys(activeFilters).length > 0 && !filterPool && (
-          <p role="alert">{filterPoolError} Abra os filtros para tentar novamente.</p>
+          <p role="alert">{translate(filterPoolError)} {translate("Abra os filtros para tentar novamente.")}</p>
         )}
         {loading || (Object.keys(activeFilters).length > 0 && !filterPool) ? (
-          !filterPoolError && <p>Filtrando perfis...</p>
+          !filterPoolError && <p>{t[5]}</p>
         ) : (
           <ProductsCatalog
             producers={visibleProducers.map((p) => ({
@@ -673,13 +679,13 @@ export default function CatalogPage() {
         {loadingMore && (
           <div className={styles.loadingMore}>
             <div className={styles.spinner}></div>
-            <p>Carregando mais produtores...</p>
+            <p>{t[6]}</p>
           </div>
         )}
 
         {(!hasMore || Object.keys(activeFilters).length > 0) && visibleProducers.length > 0 && (
           <div className={styles.endMessage}>
-            <p>Você chegou ao final da lista.</p>
+            <p>{t[7]}</p>
           </div>
         )}
       </div>

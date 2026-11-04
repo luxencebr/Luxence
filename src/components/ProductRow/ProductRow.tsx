@@ -10,6 +10,8 @@ import { IoAddOutline } from "react-icons/io5";
 import type { Producer } from "../../types/Producer";
 import CatalogItem from "@/components/Product/Product";
 import RowControls from "@/components/ui/HorizontalControls/HorizontalControls";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 const ViewMoreItem = () => (
   <a className={styles.viewMoreItem} href="/ver-mais">
@@ -32,6 +34,7 @@ function ProductRow({
   highlight = false,
   sortParam,
 }: ProductRowProps) {
+  const { locale } = useSiteLocale();
   const router = useRouter();
   const scrollContainerRef = useRef<HTMLUListElement>(null);
 
@@ -146,7 +149,7 @@ function ProductRow({
           onClick={handleViewMore}
           className={styles.headerButton}
         >
-          Veja Mais
+          {uiText(locale, "Veja Mais")}
         </a>
       </div>
 

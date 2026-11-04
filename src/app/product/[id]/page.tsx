@@ -18,12 +18,15 @@ import ProfileCompletionChecklist from "@/components/ProfileCompletionChecklist/
 import styles from "./page.module.css";
 import ProductAudience from "@/components/ProductAudience/ProductAudience";
 import ProductAppearance from "@/components/ProductAppearance/ProductAppearance";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 interface ProductPageProps {
   params: Promise<{ id: string }>;
 }
 
 export default function ProductPage({ params }: ProductPageProps) {
+  const { locale } = useSiteLocale();
   const { data: session } = useSession();
 
   const { id } = React.use(params);
@@ -85,8 +88,8 @@ export default function ProductPage({ params }: ProductPageProps) {
             objectFit: "cover",
           }}
         />
-        {loading && <p>Carregando Perfil</p>}
-        {!loading && !producer && <p>Produto não encontrado</p>}
+        {loading && <p>{uiText(locale, "Carregando Perfil")}</p>}
+        {!loading && !producer && <p>{uiText(locale, "Produto não encontrado")}</p>}
       </div>
     );
   }
