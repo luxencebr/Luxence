@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import styles from "./ProfileCompletionChecklist.module.css";
 import { useSiteLocale } from "@/lib/site-locale";
 import { uiText } from "@/lib/ui-text";
@@ -104,6 +104,20 @@ export default function ProfileCompletionChecklist({
   const [verification, setVerification] = useState<ProfileVerificationResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const hasFocusedCompletion = useRef(false);
+
+  useEffect(() => {
+    if (hasFocusedCompletion.current || !verification || verification.isComplete) return;
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("complete") !== "1") return;
+    const checklist = document.getElementById("complete-profile");
+    if (!checklist) return;
+    hasFocusedCompletion.current = true;
+    checklist.scrollIntoView({ behavior: "smooth", block: "start" });
+    checklist.focus({ preventScroll: true });
+    url.searchParams.delete("complete");
+    window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
+  }, [verification]);
 
   useEffect(() => {
     fetchVerificationStatus(true);
@@ -290,7 +304,7 @@ export default function ProfileCompletionChecklist({
   }
 
   return (
-    <div className={styles.container}>
+    <div id="complete-profile" className={styles.container} tabIndex={-1}>
       <div className={styles.header}>
         <div className={styles.headerContent}>
           <div className={styles.headerLeft}>
@@ -312,6 +326,11 @@ export default function ProfileCompletionChecklist({
           </div>
         </div>
       </div>
+
+      <p className={styles.pendingNotice} role="status">
+        {t("Seu perfil ainda não aparece no catálogo. Complete os itens pendentes abaixo para publicá-lo automaticamente.")}
+      </p>
+      <a href="/profile/complete" className={styles.completeLink}>{t("Concluir perfil")}</a>
 
       <div className={styles.steps}>
         {STEPS.map((step) => {

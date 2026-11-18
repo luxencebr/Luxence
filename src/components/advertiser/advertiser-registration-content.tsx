@@ -264,7 +264,7 @@ export default function AdvertiserRegistrationContent() {
         });
 
         // Redirecionar (a animação continuará até o carregamento da página)
-        window.location.href = `/product/${producerId}`;
+        window.location.href = `/profile/complete`;
       })();
     } catch (e) {
       console.error(e);
@@ -321,8 +321,8 @@ export default function AdvertiserRegistrationContent() {
                 d="M14 27l7 7 16-16"
               />
             </svg>
-            <h2>{t("Cadastro realizado com sucesso!")}</h2>
-            <p>{t("Redirecionando para seu perfil...")}</p>
+            <h2>{t("Conta criada com sucesso!")}</h2>
+            <p>{t("Seu perfil ainda precisa ser completado para aparecer no catálogo. Vamos mostrar o que falta.")}</p>
             <div className={styles.loadingBar}>
               <div className={styles.loadingBarProgress}></div>
             </div>

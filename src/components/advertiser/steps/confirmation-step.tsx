@@ -29,6 +29,7 @@ export default function ConfirmationStep({
       <div className={styles.header}>
         <h2>{t("Confirmação")}</h2>
         <p>{t("Revise suas informações antes de finalizar o cadastro")}</p>
+        <p>{t("Depois de criar a conta, complete seu perfil para aparecer no catálogo.")}</p>
       </div>
 
       {/* CONTA */}

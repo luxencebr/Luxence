@@ -1,0 +1,52 @@
+name: luxence-staging
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: luxence_staging
+      MYSQL_USER: staging
+      MYSQL_PASSWORD: ${DB_PASSWORD:?}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?}
+    volumes:
+      - mysql:/var/lib/mysql
+    mem_limit: 768m
+    healthcheck:
+      test: [CMD, mysqladmin, ping, -h, localhost]
+      interval: 10s
+      retries: 30
+  app:
+    build:
+      context: ../..
+      dockerfile: deploy/staging/Dockerfile
+      args:
+        NEXT_PUBLIC_GTM_ID: ${NEXT_PUBLIC_GTM_ID:-}
+    restart: unless-stopped
+    mem_limit: 1536m
+    environment:
+      DATABASE_URL: mysql://staging:${DB_PASSWORD}@db:3306/luxence_staging
+      NEXTAUTH_SECRET: ${AUTH_SECRET:?}
+      AUTH_SECRET: ${AUTH_SECRET:?}
+      AUTH_URL: https://staging.luxence.com.br
+      NEXTAUTH_URL: https://staging.luxence.com.br
+      AUTH_TRUST_HOST: "true"
+      DO_SPACES_REGION: nyc3
+      DO_SPACES_ENDPOINT: https://staging.luxence.com.br
+      DO_SPACES_BUCKET: staging-disabled
+      PROFILE_MEDIA_DIR: /app/profile-media
+    volumes:
+      - profile-media:/app/profile-media
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      default:
+      proxy:
+        aliases: [luxence-staging-app]
+volumes:
+  mysql:
+  profile-media:
+networks:
+  proxy:
+    external: true
+    name: sah_proxy

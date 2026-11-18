@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/utils/prisma";
-import { deleteFromSpaces } from "@/lib/deleteFromSpaces";
 import { uploadToSpaces } from "@/lib/uploadToSpaces";
+import { deleteProfileImageUrl } from "@/lib/profile-media";
 import sharp from "sharp";
 import { updateProducerVerificationStatus } from "@/lib/profile-verification";
 import { syncSubscriptionCounters } from "@/lib/subscription-helpers";
@@ -71,15 +71,11 @@ export async function DELETE(req: Request, context: any) {
     }
 
     if (typeof image.url === "string") {
-      const key = image.url.split(`/${process.env.DO_SPACES_BUCKET}/`)[1];
-      await deleteFromSpaces(key);
+      await deleteProfileImageUrl(image.url);
     }
 
-    if (typeof image.originalUrl === "string") {
-      const key = image.originalUrl.split(
-        `/${process.env.DO_SPACES_BUCKET}/`
-      )[1];
-      await deleteFromSpaces(key);
+    if (typeof image.originalUrl === "string" && image.originalUrl !== image.url) {
+      await deleteProfileImageUrl(image.originalUrl);
     }
 
     const updatedImages = images.filter((img) => img.id !== imageId);
@@ -168,7 +164,7 @@ export async function PATCH(req: Request, context: any) {
       );
     }
 
-    const originalResponse = await fetch(originalImageUrl);
+    const originalResponse = await fetch(new URL(originalImageUrl, req.url));
     const originalBuffer = Buffer.from(await originalResponse.arrayBuffer());
 
     const croppedBuffer = await sharp(originalBuffer)
@@ -181,8 +177,7 @@ export async function PATCH(req: Request, context: any) {
       .toBuffer();
 
     if (image.url && image.url !== originalImageUrl) {
-      const oldKey = image.url.split(`/${process.env.DO_SPACES_BUCKET}/`)[1];
-      await deleteFromSpaces(oldKey);
+      await deleteProfileImageUrl(image.url);
     }
 
     const newCroppedUrl = await uploadToSpaces({

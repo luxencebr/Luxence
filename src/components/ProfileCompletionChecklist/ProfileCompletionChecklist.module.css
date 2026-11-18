@@ -81,6 +81,17 @@
   text-align: right;
 }
 
+.pendingNotice {
+  margin: 0 0 var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  border-left: 3px solid var(--warning-color);
+  border-radius: var(--radius-xs);
+  background: rgba(255, 193, 7, 0.08);
+  color: var(--contrast-color);
+  font-size: var(--ft-sm);
+  line-height: 1.45;
+}
+
 .steps {
   display: flex;
   flex-wrap: nowrap;
@@ -276,3 +287,4 @@
     font-size: 11px;
   }
 }
+.completeLink { display: inline-block; margin: 0 0 1rem; padding: .7rem 1rem; border-radius: 8px; background: #dfc544; color: #171717; font-weight: 700; text-decoration: none; }
