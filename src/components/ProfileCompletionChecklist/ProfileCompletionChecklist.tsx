@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useMemo, useCallback } from "react";
 import styles from "./ProfileCompletionChecklist.module.css";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 interface ProfileVerificationResult {
   status: "YELLOW" | "GREEN" | "RED";
@@ -97,6 +99,8 @@ export default function ProfileCompletionChecklist({
   producerId,
   onComplete,
 }: ProfileCompletionChecklistProps) {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
   const [verification, setVerification] = useState<ProfileVerificationResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
@@ -291,7 +295,7 @@ export default function ProfileCompletionChecklist({
         <div className={styles.headerContent}>
           <div className={styles.headerLeft}>
             <h3 className={styles.title}>
-              {verification.isComplete ? "Perfil Completo" : "Complete seu Perfil"}
+              {t(verification.isComplete ? "Perfil Completo" : "Complete seu Perfil")}
             </h3>
             <span className={styles.badge}>
               {completedCount}/{totalCount}
@@ -320,7 +324,7 @@ export default function ProfileCompletionChecklist({
               onClick={() => !isComplete && handleStepClick(step.anchor, step.id)}
               disabled={isComplete}
               type="button"
-              title={step.description}
+              title={t(step.description)}
             >
               <div className={styles.stepIcon}>
                 {isComplete ? (
@@ -333,7 +337,7 @@ export default function ProfileCompletionChecklist({
                   </svg>
                 )}
               </div>
-              <span className={styles.stepTitle}>{step.title}</span>
+              <span className={styles.stepTitle}>{t(step.title)}</span>
             </button>
           );
         })}
@@ -345,7 +349,7 @@ export default function ProfileCompletionChecklist({
             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
           </svg>
           <p className={styles.footerText}>
-            Complete todos os campos acima para que seu perfil seja exibido no catálogo
+            {t("Complete todos os campos acima para que seu perfil seja exibido no catálogo")}
           </p>
         </div>
       )}

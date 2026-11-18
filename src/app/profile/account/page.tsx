@@ -5,6 +5,8 @@ import { useSession } from "next-auth/react";
 import Card from "@/components/ui/Card/Card";
 import LoadingContainer from "@/components/ui/LoadingContainer/LoadingContainer";
 import styles from "./account.module.css";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 interface AddressData {
   cep: string;
@@ -18,6 +20,8 @@ interface AddressData {
 }
 
 export default function AccountPage() {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(true);
   const [isAdvertiser, setIsAdvertiser] = useState(false);
@@ -374,7 +378,7 @@ export default function AccountPage() {
       const data = await res.json();
 
       if (data.erro) {
-        alert("CEP não encontrado");
+        alert(t("CEP não encontrado"));
         return;
       }
 
@@ -387,7 +391,7 @@ export default function AccountPage() {
       }));
     } catch (err) {
       console.error("Erro buscando CEP:", err);
-      alert("Erro ao buscar CEP");
+      alert(t("Erro ao buscar CEP"));
     } finally {
       setIsFetchingCep(false);
     }
@@ -426,7 +430,7 @@ export default function AccountPage() {
       });
 
       if (!response.ok) {
-        throw new Error("Erro ao salvar dados");
+        throw new Error(t("Erro ao salvar dados"));
       }
 
       setIsEditing((prev) => ({ ...prev, [field]: false }));
@@ -441,7 +445,7 @@ export default function AccountPage() {
       }
     } catch (error) {
       console.error("Erro ao salvar:", error);
-      alert("Erro ao salvar dados. Tente novamente.");
+      alert(t("Erro ao salvar dados. Tente novamente."));
     } finally {
       setIsSaving(false);
     }
@@ -459,7 +463,7 @@ export default function AccountPage() {
   };
 
   const formatAddress = () => {
-    if (!address.street && !address.city) return "Não informado";
+    if (!address.street && !address.city) return t("Não informado");
     const parts = [
       address.street,
       address.number && `nº ${address.number}`,
@@ -474,7 +478,7 @@ export default function AccountPage() {
   return (
     <>
       {isLoading ? (
-        <LoadingContainer message="Carregando dados da conta..." />
+        <LoadingContainer message={t("Carregando dados da conta...")} />
       ) : (
         <div className={styles.container}>
           <div className={styles.content}>
@@ -486,7 +490,7 @@ export default function AccountPage() {
                 <div className={styles.cardHeader}>
                   <div className={styles.cardTitleSection}>
                     <div>
-                      <h3 className={styles.cardTitle}>Editar Nome</h3>
+                      <h3 className={styles.cardTitle}>{t("Editar Nome")}</h3>
                     </div>
                   </div>
                   {isEditing.name && (
@@ -496,14 +500,14 @@ export default function AccountPage() {
                         disabled={isSaving}
                         className={styles.saveButton}
                       >
-                        {isSaving ? "Salvando..." : "Salvar"}
+                        {isSaving ? t("Salvando...") : t("Salvar")}
                       </button>
                       <button
                         onClick={() => handleCancel("name")}
                         disabled={isSaving}
                         className={styles.cancelButton}
                       >
-                        Cancelar
+                        {t("Cancelar")}
                       </button>
                     </div>
                   )}
@@ -515,12 +519,12 @@ export default function AccountPage() {
                     onChange={(e) => handleChange("name", e.target.value)}
                     onKeyPress={(e) => handleKeyPress(e, "name")}
                     className={styles.input}
-                    placeholder="Digite seu nome"
+                    placeholder={t("Digite seu nome")}
                     autoFocus
                   />
                 ) : (
                   <p className={styles.value}>
-                    {formData.name || "Não informado"}
+                    {formData.name || t("Não informado")}
                   </p>
                 )}
               </div>
@@ -534,7 +538,7 @@ export default function AccountPage() {
                 <div className={styles.cardHeader}>
                   <div className={styles.cardTitleSection}>
                     <div>
-                      <h3 className={styles.cardTitle}>Alterar E-mail</h3>
+                      <h3 className={styles.cardTitle}>{t("Alterar E-mail")}</h3>
                     </div>
                   </div>
                   {isEditing.email && (
@@ -546,21 +550,21 @@ export default function AccountPage() {
                             disabled={sendingCode || verifyingCode}
                             className={styles.saveButton}
                           >
-                            {sendingCode ? "Reenviando..." : "Reenviar código"}
+                            {sendingCode ? t("Reenviando...") : t("Reenviar código")}
                           </button>
                           <button
                             onClick={handleChangeEmail}
                             disabled={verifyingCode}
                             className={styles.cancelButton}
                           >
-                            Trocar email
+                            {t("Trocar email")}
                           </button>
                           <button
                             onClick={handleCancelEmailEdit}
                             disabled={verifyingCode}
                             className={styles.cancelButton}
                           >
-                            Cancelar
+                            {t("Cancelar")}
                           </button>
                         </>
                       ) : (
@@ -576,14 +580,14 @@ export default function AccountPage() {
                             }
                             className={styles.saveButton}
                           >
-                            {sendingCode ? "Enviando..." : "Enviar código"}
+                            {sendingCode ? t("Enviando...") : t("Enviar código")}
                           </button>
                           <button
                             onClick={handleCancelEmailEdit}
                             disabled={sendingCode}
                             className={styles.cancelButton}
                           >
-                            Cancelar
+                            {t("Cancelar")}
                           </button>
                         </>
                       )}
@@ -603,18 +607,18 @@ export default function AccountPage() {
                         }
                         onKeyPress={(e) => handleKeyPress(e, "emailCode")}
                         className={styles.input}
-                        placeholder="Digite o código de 6 dígitos"
+                        placeholder={t("Digite o código de 6 dígitos")}
                         maxLength={6}
                         autoFocus
                       />
                       {verifyingCode && (
-                        <p className={styles.loading}>Verificando código...</p>
+                        <p className={styles.loading}>{t("Verificando código...")}</p>
                       )}
                       {codeError && (
                         <p className={styles.codeError}>{codeError}</p>
                       )}
                       <p className={styles.codeSentText}>
-                        Um código foi enviado para <strong>{newEmail}</strong>
+                        {t("Um código foi enviado para")} <strong>{newEmail}</strong>
                       </p>
                     </div>
                   ) : (
@@ -625,11 +629,11 @@ export default function AccountPage() {
                         onChange={(e) => handleEmailChange(e.target.value)}
                         onKeyPress={(e) => handleKeyPress(e, "email")}
                         className={styles.input}
-                        placeholder="Digite seu novo e-mail"
+                        placeholder={t("Digite seu novo e-mail")}
                         autoFocus
                       />
                       {emailChecking && (
-                        <p className={styles.loading}>Verificando email...</p>
+                        <p className={styles.loading}>{t("Verificando email...")}</p>
                       )}
                       {codeError && (
                         <p className={styles.codeError}>{codeError}</p>
@@ -638,7 +642,7 @@ export default function AccountPage() {
                   )
                 ) : (
                   <p className={styles.value}>
-                    {formData.email || "Não informado"}
+                    {formData.email || t("Não informado")}
                   </p>
                 )}
               </div>
@@ -655,7 +659,7 @@ export default function AccountPage() {
                   <div className={styles.cardHeader}>
                     <div className={styles.cardTitleSection}>
                       <div>
-                        <h3 className={styles.cardTitle}>Alterar Telefone</h3>
+                        <h3 className={styles.cardTitle}>{t("Alterar Telefone")}</h3>
                       </div>
                     </div>
                     {isEditing.phone && (
@@ -665,14 +669,14 @@ export default function AccountPage() {
                           disabled={isSaving}
                           className={styles.saveButton}
                         >
-                          {isSaving ? "Salvando..." : "Salvar"}
+                          {isSaving ? t("Salvando...") : t("Salvar")}
                         </button>
                         <button
                           onClick={() => handleCancel("phone")}
                           disabled={isSaving}
                           className={styles.cancelButton}
                         >
-                          Cancelar
+                          {t("Cancelar")}
                         </button>
                       </div>
                     )}
@@ -684,12 +688,12 @@ export default function AccountPage() {
                       onChange={(e) => handleChange("phone", e.target.value)}
                       onKeyPress={(e) => handleKeyPress(e, "phone")}
                       className={styles.input}
-                      placeholder="Digite seu telefone"
+                      placeholder={t("Digite seu telefone")}
                       autoFocus
                     />
                   ) : (
                     <p className={styles.value}>
-                      {formData.phone || "Não informado"}
+                      {formData.phone || t("Não informado")}
                     </p>
                   )}
                 </div>
@@ -706,7 +710,7 @@ export default function AccountPage() {
                 <div className={styles.cardHeader}>
                   <div className={styles.cardTitleSection}>
                     <div>
-                      <h3 className={styles.cardTitle}>Editar Endereço</h3>
+                      <h3 className={styles.cardTitle}>{t("Editar Endereço")}</h3>
                     </div>
                   </div>
                   {isEditing.address && (
@@ -716,14 +720,14 @@ export default function AccountPage() {
                         disabled={isSaving || !address.cep || !address.number}
                         className={styles.saveButton}
                       >
-                        {isSaving ? "Salvando..." : "Salvar"}
+                        {isSaving ? t("Salvando...") : t("Salvar")}
                       </button>
                       <button
                         onClick={() => handleCancel("address")}
                         disabled={isSaving}
                         className={styles.cancelButton}
                       >
-                        Cancelar
+                        {t("Cancelar")}
                       </button>
                     </div>
                   )}
@@ -747,7 +751,7 @@ export default function AccountPage() {
                     </div>
 
                     <div className={styles.halfWidth}>
-                      <label className={styles.label}>Estado</label>
+                      <label className={styles.label}>{t("Estado")}</label>
                       <input
                         type="text"
                         value={address.state}
@@ -761,7 +765,7 @@ export default function AccountPage() {
                     </div>
 
                     <div className={styles.halfWidth}>
-                      <label className={styles.label}>Cidade</label>
+                      <label className={styles.label}>{t("Cidade")}</label>
                       <input
                         type="text"
                         value={address.city}
@@ -769,13 +773,13 @@ export default function AccountPage() {
                           handleAddressChange("city", e.target.value)
                         }
                         className={styles.input}
-                        placeholder="Cidade"
+                        placeholder={t("Cidade")}
                         readOnly
                       />
                     </div>
 
                     <div className={styles.fullWidth}>
-                      <label className={styles.label}>Bairro</label>
+                      <label className={styles.label}>{t("Bairro")}</label>
                       <input
                         type="text"
                         value={address.neighborhood}
@@ -783,13 +787,13 @@ export default function AccountPage() {
                           handleAddressChange("neighborhood", e.target.value)
                         }
                         className={styles.input}
-                        placeholder="Bairro"
+                        placeholder={t("Bairro")}
                         readOnly
                       />
                     </div>
 
                     <div className={styles.fullWidth}>
-                      <label className={styles.label}>Rua</label>
+                      <label className={styles.label}>{t("Rua")}</label>
                       <input
                         type="text"
                         value={address.street}
@@ -797,13 +801,13 @@ export default function AccountPage() {
                           handleAddressChange("street", e.target.value)
                         }
                         className={styles.input}
-                        placeholder="Rua"
+                        placeholder={t("Rua")}
                         readOnly
                       />
                     </div>
 
                     <div className={styles.halfWidth}>
-                      <label className={styles.label}>Número *</label>
+                      <label className={styles.label}>{t("Número")} *</label>
                       <input
                         type="text"
                         value={address.number}
@@ -812,13 +816,13 @@ export default function AccountPage() {
                         }
                         onKeyPress={(e) => handleKeyPress(e, "address")}
                         className={styles.input}
-                        placeholder="Número"
+                        placeholder={t("Número")}
                         required
                       />
                     </div>
 
                     <div className={styles.halfWidth}>
-                      <label className={styles.label}>Complemento</label>
+                      <label className={styles.label}>{t("Complemento")}</label>
                       <input
                         type="text"
                         value={address.complement}
@@ -827,7 +831,7 @@ export default function AccountPage() {
                         }
                         onKeyPress={(e) => handleKeyPress(e, "address")}
                         className={styles.input}
-                        placeholder="Apto, bloco, etc"
+                        placeholder={t("Apto, bloco, etc")}
                       />
                     </div>
                   </div>

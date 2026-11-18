@@ -11,6 +11,8 @@ import { IoIosClose } from "react-icons/io";
 import { GoUpload } from "react-icons/go";
 
 import Popup from "@/components/ui/Popup/Popup";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 interface NewPostFormProps {
   posts: Post[];
@@ -18,6 +20,8 @@ interface NewPostFormProps {
 }
 
 export default function NewPostForm({ setPosts, posts }: NewPostFormProps) {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -69,7 +73,7 @@ export default function NewPostForm({ setPosts, posts }: NewPostFormProps) {
     } catch (err) {
       console.error("Erro ao criar publicação:", err);
       alert(
-        `Não foi possível criar a publicação: ${err instanceof Error ? err.message : "Erro desconhecido"}`,
+        `${t("Não foi possível criar a publicação")}: ${err instanceof Error ? t(err.message) : t("Erro desconhecido")}`,
       );
     }
   };
@@ -81,7 +85,7 @@ export default function NewPostForm({ setPosts, posts }: NewPostFormProps) {
           <span>
             <FaPlus />
           </span>
-          Adicionar
+          {t("Adicionar")}
         </>
       }
       triggerClass={styles.trigger}
@@ -90,7 +94,7 @@ export default function NewPostForm({ setPosts, posts }: NewPostFormProps) {
       onOpenChange={setIsOpen}
     >
       <div className={styles.popupHeader}>
-        <span>Nova Publicação</span>{" "}
+        <span>{t("Nova Publicação")}</span>{" "}
         <button className={styles.closeButton} onClick={() => setIsOpen(false)}>
           <IoIosClose />
         </button>
@@ -99,12 +103,12 @@ export default function NewPostForm({ setPosts, posts }: NewPostFormProps) {
         <div className={styles.content}>
           <div className={styles.column}>
             <label htmlFor="title" className={styles.inputLabel}>
-              Título
+              {t("Título")}
               <input
                 className={styles.titleInput}
                 id="title"
                 name="title"
-                placeholder="Título"
+                placeholder={t("Título")}
                 required
               />
             </label>
@@ -119,7 +123,7 @@ export default function NewPostForm({ setPosts, posts }: NewPostFormProps) {
             />
             {preview ? (
               <div className={styles.imagePreview}>
-                <img src={preview || "/placeholder.svg"} alt="preview" />
+                <img src={preview || "/placeholder.svg"} alt={t("Prévia da imagem")} />
                 <button
                   className={styles.removeBtn}
                   type="button"
@@ -133,25 +137,25 @@ export default function NewPostForm({ setPosts, posts }: NewPostFormProps) {
                 <span>
                   <GoUpload />
                 </span>{" "}
-                Adicionar imagem
+                {t("Adicionar imagem")}
               </label>
             )}
           </div>
 
           <label htmlFor="content" className={styles.inputLabel}>
-            Conteúdo
+            {t("Conteúdo")}
             <textarea
               id="content"
               className={styles.contentInput}
               name="content"
-              placeholder="Conteúdo"
+              placeholder={t("Conteúdo")}
               required
             />
           </label>
         </div>
 
         <button className={styles.submitBtn} type="submit">
-          Publicar
+          {t("Publicar")}
         </button>
       </form>
     </Popup>

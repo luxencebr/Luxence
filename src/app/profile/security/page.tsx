@@ -8,8 +8,12 @@ import Card from "@/components/ui/Card/Card";
 import LoadingContainer from "@/components/ui/LoadingContainer/LoadingContainer";
 import styles from "./security.module.css";
 import { AlertTriangle } from "lucide-react";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 function PasswordRequirements({ password }: { password: string }) {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
   const requirements = useMemo(
     () => [
       {
@@ -47,7 +51,7 @@ function PasswordRequirements({ password }: { password: string }) {
           className={`${styles.requirement} ${styles.requirementUnmet}`}
         >
           <FaTimes />
-          <span>{req.label}</span>
+          <span>{t(req.label)}</span>
         </div>
       ))}
     </div>
@@ -55,6 +59,8 @@ function PasswordRequirements({ password }: { password: string }) {
 }
 
 export default function SecurityPage() {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(true);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
@@ -377,7 +383,7 @@ export default function SecurityPage() {
   return (
     <>
       {isLoading ? (
-        <LoadingContainer message="Carregando configurações de segurança..." />
+        <LoadingContainer message={t("Carregando configurações de segurança...")} />
       ) : (
         <div className={styles.container}>
           <div className={styles.content}>
@@ -394,10 +400,9 @@ export default function SecurityPage() {
                 <div className={styles.cardHeader}>
                   <div className={styles.cardTitleSection}>
                     <div>
-                      <h3 className={styles.cardTitle}>Alterar Senha</h3>
+                      <h3 className={styles.cardTitle}>{t("Alterar Senha")}</h3>
                       <p className={styles.cardDescription}>
-                        Mantenha sua conta segura alterando sua senha
-                        regularmente
+                        {t("Mantenha sua conta segura alterando sua senha regularmente")}
                       </p>
                     </div>
                   </div>
@@ -408,14 +413,14 @@ export default function SecurityPage() {
                         disabled={isSaving}
                         className={styles.saveButton}
                       >
-                        {isSaving ? "Salvando..." : "Salvar"}
+                        {isSaving ? t("Salvando...") : t("Salvar")}
                       </button>
                       <button
                         onClick={handleCancelPasswordChange}
                         disabled={isSaving}
                         className={styles.cancelButton}
                       >
-                        Cancelar
+                        {t("Cancelar")}
                       </button>
                     </div>
                   )}
@@ -424,7 +429,7 @@ export default function SecurityPage() {
                 {isChangingPassword && (
                   <div className={styles.passwordForm}>
                     <div className={styles.inputGroup}>
-                      <label className={styles.label}>Senha Atual</label>
+                      <label className={styles.label}>{t("Senha Atual")}</label>
                       <div className={styles.passwordWrapper}>
                         <input
                           type={showPasswords.current ? "text" : "password"}
@@ -437,7 +442,7 @@ export default function SecurityPage() {
                           }
                           onKeyPress={handleKeyPress}
                           className={styles.input}
-                          placeholder="Digite sua senha atual"
+                          placeholder={t("Digite sua senha atual")}
                           autoFocus
                         />
                         <button
@@ -451,7 +456,7 @@ export default function SecurityPage() {
                     </div>
 
                     <div className={styles.inputGroup}>
-                      <label className={styles.label}>Nova Senha</label>
+                      <label className={styles.label}>{t("Nova Senha")}</label>
                       <div className={styles.passwordWrapper}>
                         <input
                           type={showPasswords.new ? "text" : "password"}
@@ -461,7 +466,7 @@ export default function SecurityPage() {
                           }
                           onKeyPress={handleKeyPress}
                           className={styles.input}
-                          placeholder="Digite sua nova senha"
+                          placeholder={t("Digite sua nova senha")}
                         />
                         <button
                           type="button"
@@ -475,7 +480,7 @@ export default function SecurityPage() {
 
                     <div className={styles.inputGroup}>
                       <label className={styles.label}>
-                        Confirmar Nova Senha
+                        {t("Confirmar Nova Senha")}
                       </label>
                       <div className={styles.passwordWrapper}>
                         <input
@@ -489,7 +494,7 @@ export default function SecurityPage() {
                           }
                           onKeyPress={handleKeyPress}
                           className={styles.input}
-                          placeholder="Confirme sua nova senha"
+                          placeholder={t("Confirme sua nova senha")}
                         />
                         <button
                           type="button"
@@ -504,13 +509,13 @@ export default function SecurityPage() {
                     <PasswordRequirements password={passwordData.newPassword} />
 
                     {passwordError && (
-                      <p className={styles.error}>{passwordError}</p>
+                      <p className={styles.error}>{t(passwordError)}</p>
                     )}
                   </div>
                 )}
 
                 {passwordSuccess && (
-                  <p className={styles.success}>Senha alterada com sucesso!</p>
+                  <p className={styles.success}>{t("Senha alterada com sucesso!")}</p>
                 )}
               </div>
             </Card>
@@ -521,9 +526,9 @@ export default function SecurityPage() {
                 <div className={styles.cardHeader}>
                   <div className={styles.cardTitleSection}>
                     <div>
-                      <h3 className={styles.cardTitle}>Notificações</h3>
+                      <h3 className={styles.cardTitle}>{t("Notificações")}</h3>
                       <p className={styles.cardDescription}>
-                        Configure como você deseja receber nossas notificações
+                        {t("Configure como você deseja receber nossas notificações")}
                       </p>
                     </div>
                   </div>
@@ -538,10 +543,10 @@ export default function SecurityPage() {
                   >
                     <div className={styles.notificationInfo}>
                       <span className={styles.notificationLabel}>
-                        Notificações por Email
+                        {t("Notificações por Email")}
                       </span>
                       <span className={styles.notificationSubtext}>
-                        Receba atualizações importantes por email
+                        {t("Receba atualizações importantes por email")}
                       </span>
                     </div>
                     <div className={styles.switch}>
@@ -566,10 +571,10 @@ export default function SecurityPage() {
                   >
                     <div className={styles.notificationInfo}>
                       <span className={styles.notificationLabel}>
-                        Notificações por WhatsApp
+                        {t("Notificações por WhatsApp")}
                       </span>
                       <span className={styles.notificationSubtext}>
-                        Receba mensagens importantes via WhatsApp
+                        {t("Receba mensagens importantes via WhatsApp")}
                       </span>
                     </div>
                     <div className={styles.switch}>
@@ -592,9 +597,9 @@ export default function SecurityPage() {
                 <div className={styles.cardHeader}>
                   <div className={styles.cardTitleSection}>
                     <div>
-                      <h3 className={styles.cardTitle}>Sessões Ativas</h3>
+                      <h3 className={styles.cardTitle}>{t("Sessões Ativas")}</h3>
                       <p className={styles.cardDescription}>
-                        Gerencie os dispositivos conectados à sua conta
+                        {t("Gerencie os dispositivos conectados à sua conta")}
                       </p>
                     </div>
                   </div>
@@ -605,7 +610,7 @@ export default function SecurityPage() {
                         disabled={isLoggingOut === "all"}
                         className={styles.dangerButton}
                       >
-                        {isLoggingOut === "all" ? "Desconectando..." : "Desconectar Todos"}
+                        {isLoggingOut === "all" ? t("Desconectando...") : t("Desconectar Todos")}
                       </button>
                     </div>
                   )}
@@ -619,7 +624,7 @@ export default function SecurityPage() {
                         className={`${styles.sessionItem} ${sessionItem.isCurrent ? styles.currentSession : ""}`}
                       >
                         {sessionItem.isCurrent && (
-                          <div className={styles.currentBadge}>Sessão Atual</div>
+                          <div className={styles.currentBadge}>{t("Sessão Atual")}</div>
                         )}
                         
                         <div className={styles.sessionContent}>
@@ -634,7 +639,7 @@ export default function SecurityPage() {
                             
                             <div className={styles.sessionDetails}>
                               <div className={styles.deviceName}>
-                                {sessionItem.browser} em {sessionItem.os}
+                                {sessionItem.browser} {t("em")} {sessionItem.os}
                               </div>
                               
                               <div className={styles.sessionMeta}>
@@ -646,7 +651,7 @@ export default function SecurityPage() {
                                 <div className={styles.activityInfo}>
                                   <Clock size={14} />
                                   <span>
-                                    {new Date(sessionItem.lastActivity).toLocaleString('pt-BR', {
+                                    {new Date(sessionItem.lastActivity).toLocaleString({ pt: 'pt-BR', en: 'en-US', es: 'es-ES' }[locale], {
                                       day: '2-digit',
                                       month: '2-digit',
                                       year: 'numeric',
@@ -664,7 +669,7 @@ export default function SecurityPage() {
                               onClick={() => handleLogoutSession(sessionItem.id, sessionItem.isCurrent)}
                               disabled={isLoggingOut === sessionItem.id}
                               className={styles.logoutButton}
-                              title="Desconectar sessão"
+                              title={t("Desconectar sessão")}
                             >
                               {isLoggingOut === sessionItem.id ? (
                                 <div className={styles.spinner} />
@@ -679,7 +684,7 @@ export default function SecurityPage() {
                   </div>
                 ) : (
                   <div className={styles.noSessions}>
-                    <p>Nenhuma sessão ativa encontrada</p>
+                    <p>{t("Nenhuma sessão ativa encontrada")}</p>
                   </div>
                 )}
               </div>
@@ -701,10 +706,10 @@ export default function SecurityPage() {
                       <h3
                         className={`${styles.cardTitle} ${styles.dangerTitle}`}
                       >
-                        Excluir Conta
+                        {t("Excluir Conta")}
                       </h3>
                       <p className={styles.cardDescription}>
-                        Esta ação desativará permanentemente sua conta
+                        {t("Esta ação desativará permanentemente sua conta")}
                       </p>
                     </div>
                   </div>
@@ -716,15 +721,15 @@ export default function SecurityPage() {
                         className={styles.dangerButton}
                       >
                         {isDeletingAccount
-                          ? "Excluindo..."
-                          : "Confirmar Exclusão"}
+                          ? t("Excluindo...")
+                          : t("Confirmar Exclusão")}
                       </button>
                       <button
                         onClick={handleCancelDelete}
                         disabled={isDeletingAccount}
                         className={styles.cancelButton}
                       >
-                        Cancelar
+                        {t("Cancelar")}
                       </button>
                     </div>
                   )}
@@ -734,16 +739,15 @@ export default function SecurityPage() {
                   <div className={styles.deleteConfirmation}>
                     <div className={styles.warningBox}>
                       <h4>
-                        <AlertTriangle size={20} /> Atenção!
+                        <AlertTriangle size={20} /> {t("Atenção!")}
                       </h4>
                       <p>
-                        Esta ação desativará sua conta e você não poderá mais
-                        acessá-la.
+                        {t("Esta ação desativará sua conta e você não poderá mais acessá-la.")}
                       </p>
                     </div>
 
                     <div className={styles.inputGroup}>
-                      <label className={styles.label}>Senha Atual</label>
+                      <label className={styles.label}>{t("Senha Atual")}</label>
                       <div className={styles.passwordWrapper}>
                         <input
                           type={showDeletePassword ? "text" : "password"}
@@ -753,7 +757,7 @@ export default function SecurityPage() {
                             setDeleteError(null);
                           }}
                           className={styles.input}
-                          placeholder="Digite sua senha para confirmar"
+                          placeholder={t("Digite sua senha para confirmar")}
                           autoFocus
                         />
                         <button
@@ -769,7 +773,7 @@ export default function SecurityPage() {
                     </div>
 
                     {deleteError && (
-                      <p className={styles.error}>{deleteError}</p>
+                      <p className={styles.error}>{t(deleteError)}</p>
                     )}
                   </div>
                 )}

@@ -21,6 +21,8 @@ import {
 } from "lucide-react";
 import LoadingContainer from "@/components/ui/LoadingContainer/LoadingContainer";
 import styles from "./signature.module.css";
+import { useSiteLocale } from "@/lib/site-locale";
+import { uiText } from "@/lib/ui-text";
 
 interface BenefitBase {
   id: number;
@@ -189,6 +191,8 @@ const renderBenefitValue = (
 };
 
 const SignaturePage = memo(function SignaturePage() {
+  const { locale } = useSiteLocale();
+  const t = (value: string) => uiText(locale, value);
   const { data: session } = useSession();
   const [currentSignature, setCurrentSignature] = useState<Signature>("COPPER");
   const [subscriptionInfo, setSubscriptionInfo] =
@@ -278,7 +282,7 @@ const SignaturePage = memo(function SignaturePage() {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("pt-BR");
+    return new Date(dateString).toLocaleDateString({ pt: "pt-BR", en: "en-US", es: "es-ES" }[locale]);
   };
 
   const getUsagePercentage = (used: number, max: number) => {
@@ -294,7 +298,7 @@ const SignaturePage = memo(function SignaturePage() {
   };
 
   if (isLoading) {
-    return <LoadingContainer message="Carregando dados da assinatura..." />;
+    return <LoadingContainer message={t("Carregando dados da assinatura...")} />;
   }
 
   const currentPlan = plans.find((p) => p.id === currentSignature);
@@ -315,14 +319,14 @@ const SignaturePage = memo(function SignaturePage() {
           <div className={styles.currentPlanContent}>
             <div className={styles.currentPlanHeader}>
               <div className={styles.currentPlanInfo}>
-                <h3 className={styles.currentPlanTitle}>Plano Atual</h3>
+                <h3 className={styles.currentPlanTitle}>{t("Plano Atual")}</h3>
                 <div className={styles.currentPlanDetails}>
                   <span className={styles.planName}>
-                    {currentPlan?.title || "Cobre"}
+                    {t(currentPlan?.title || "Cobre")}
                   </span>
                   {currentPlan?.title == "Cobre" && (
                     <span className={styles.planPrice}>
-                      {currentPlan?.price || "Gratuito"}
+                      {t(currentPlan?.price || "Gratuito")}
                     </span>
                   )}
                 </div>
@@ -336,7 +340,7 @@ const SignaturePage = memo(function SignaturePage() {
                     disabled={loadingPlan !== null}
                   >
                     <ArrowUp size={16} />
-                    Fazer Upgrade
+                    {t("Fazer Upgrade")}
                   </button>
                 ) : (
                   subscriptionInfo && (
@@ -344,8 +348,8 @@ const SignaturePage = memo(function SignaturePage() {
                       <div className={styles.remainingTime}>
                         <span style={{ color: getStatusColor() }}>
                           {subscriptionInfo.isExpired
-                            ? "Expirada"
-                            : `${subscriptionInfo.daysRemaining} dias restantes`}
+                            ? t("Expirada")
+                            : `${subscriptionInfo.daysRemaining} ${t("dias restantes")}`}
                         </span>
                       </div>
                       <div className={styles.dateItem}>
@@ -365,13 +369,13 @@ const SignaturePage = memo(function SignaturePage() {
                 <div className={styles.usageSection}>
                   <h4 className={styles.sectionTitle}>
                     <TrendingUp size={20} />
-                    Uso dos Recursos
+                    {t("Uso dos Recursos")}
                   </h4>
 
                   <div className={styles.usageGrid}>
                     <div className={styles.usageItem}>
                       <div className={styles.usageHeader}>
-                        <span>Fotos</span>
+                        <span>{t("Fotos")}</span>
                         <span>
                           {subscriptionInfo.usage.photosUsed} /{" "}
                           {subscriptionInfo.limits.maxPhotos === -1
@@ -397,7 +401,7 @@ const SignaturePage = memo(function SignaturePage() {
                     {subscriptionInfo.limits.maxVideos > 0 && (
                       <div className={styles.usageItem}>
                         <div className={styles.usageHeader}>
-                          <span>Vídeos</span>
+                          <span>{t("Vídeos")}</span>
                           <span>
                             {subscriptionInfo.usage.videosUsed} /{" "}
                             {subscriptionInfo.limits.maxVideos === -1
@@ -451,34 +455,34 @@ const SignaturePage = memo(function SignaturePage() {
 
                 <div className={styles.limitsSection}>
                   <h4 className={styles.sectionTitle}>
-                    <Crown size={20} /> Recursos Disponíveis
+                    <Crown size={20} /> {t("Recursos Disponíveis")}
                   </h4>
                   <div className={styles.limitsList}>
                     <div
                       className={`${styles.limitItem} ${subscriptionInfo.limits.maxVideos > 0 ? styles.available : styles.unavailable}`}
                     >
-                      Vídeos no Perfil
+                      {t("Vídeos no Perfil")}
                     </div>
                     <div
                       className={`${styles.limitItem} ${subscriptionInfo.limits.hasCommentControl ? styles.available : styles.unavailable}`}
                     >
-                      Controle de Comentários
+                      {t("Controle de Comentários")}
                     </div>
                     <div
                       className={`${styles.limitItem} ${subscriptionInfo.limits.hasVoiceDemo ? styles.available : styles.unavailable}`}
                     >
-                      Demonstração de Voz
+                      {t("Demonstração de Voz")}
                     </div>
                     <div
                       className={`${styles.limitItem} ${subscriptionInfo.limits.hasFeaturedProfile ? styles.available : styles.unavailable}`}
                     >
-                      Perfil em Destaque
+                      {t("Perfil em Destaque")}
                     </div>
                     {subscriptionInfo.limits.priority && (
                       <div
                         className={`${styles.limitItem} ${styles.available}`}
                       >
-                        Prioridade: {subscriptionInfo.limits.priority}
+                        {t("Prioridade")}: {t(subscriptionInfo.limits.priority)}
                       </div>
                     )}
                   </div>
@@ -491,7 +495,7 @@ const SignaturePage = memo(function SignaturePage() {
 
       {availablePlans.length > 0 && (
         <div id="plans-section" className={styles.plansSection}>
-          <h3 className={styles.plansTitle}>Faça Upgrade do seu Plano</h3>
+          <h3 className={styles.plansTitle}>{t("Faça Upgrade do seu Plano")}</h3>
           <div className={styles.plansGrid}>
             {availablePlans.map((plan: Plan) => (
               <Card
@@ -503,15 +507,15 @@ const SignaturePage = memo(function SignaturePage() {
               >
                 <div className={styles.planContent}>
                   {plan.popular && (
-                    <div className={styles.popularBadge}>Mais Popular</div>
+                    <div className={styles.popularBadge}>{t("Mais Popular")}</div>
                   )}
 
                   <div className={styles.planHeader}>
-                    <h4 className={styles.planName}>{plan.title}</h4>
-                    <div className={styles.planPrice}>{plan.price}</div>
+                    <h4 className={styles.planName}>{t(plan.title)}</h4>
+                    <div className={styles.planPrice}>{t(plan.price).replace("/mês", `/${t("mês")}`)}</div>
                   </div>
 
-                  <p className={styles.planDescription}>{plan.description}</p>
+                  <p className={styles.planDescription}>{t(plan.description)}</p>
 
                   <ul className={styles.benefits}>
                     {benefitList.map((benefit) => {
@@ -526,9 +530,9 @@ const SignaturePage = memo(function SignaturePage() {
                         >
                           {benefitDisplay.icon}
                           {benefitDisplay.text && (
-                            <span>{benefitDisplay.text}</span>
+                            <span>{t(benefitDisplay.text)}</span>
                           )}
-                          <span>{benefit.name}</span>
+                          <span>{t(benefit.name)}</span>
                         </li>
                       );
                     })}
@@ -541,8 +545,8 @@ const SignaturePage = memo(function SignaturePage() {
                       disabled={loadingPlan !== null}
                     >
                       {loadingPlan === plan.id
-                        ? "Processando..."
-                        : "Fazer Upgrade"}
+                        ? t("Processando...")
+                        : t("Fazer Upgrade")}
                     </button>
                   </div>
                 </div>
